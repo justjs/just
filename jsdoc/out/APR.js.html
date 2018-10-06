@@ -1,4 +1,32 @@
-/**
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: APR.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: APR.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
  * @file A file that defines {@link APR} as global.
  * @author Alexis Puga Ruíz (APR)
  * @version  0.1
@@ -14,14 +42,14 @@
 	'use strict';
 
 	function fp(c,p,f){c[p]=c[p]||f}
-	function fl(o){/* source: mozilla & github/jonathantneal/polyfill */var _=[];fp(o,'addEventListener',function(t,l){var s=this,fa=function(s,t,f){s.attachEvent('on'+t,f);_.push({s:s,t:t,l:l,f:f})},f1=function(e){var h=l.handleEvent,H=D.documentElement;e=e||W.event;fp(e,'target',e.srcElement||s);fp(e,'currentTarget',s);fp(e,'relatedTarget',e.fromElement);fp(e,'timeStamp',+new Date());fp(e,'pageX',e.clientX+H.scrollLeft);fp(e,'pageY',e.clientY+H.scrollTop);h?h(e):l.call(s,e)},f2=function(e){if(D.readyState!='complete'){if(e!=0)return f1(e);e=new Event(t);e.srcElement=W;f2(e)}};t!='DOMContentLoaded'?fa(s,t,f1):fa(D,'readystatechange',f2),f2(0)});fp(o,'removeEventListener',function(t,l){var i=_.length,h;while(--i>=0)if((h=_[i]).s==this&&h.t==t&&h.l==l&&h.s.detachEvent('on'+(t=='DOMContentLoaded'?'readystatechange':t),h.f))break})}
+	function fl(o){/* mozilla &amp; github/jonathantneal/polyfill */var _=[];fp(o,'addEventListener',function(t,l){var s=this,fa=function(s,t,f){s.attachEvent('on'+t,f);_.push({s:s,t:t,l:l,f:f})},f1=function(e){var h=l.handleEvent,H=D.documentElement;e=e||W.event;fp(e,'target',e.srcElement||s);fp(e,'currentTarget',s);fp(e,'relatedTarget',e.fromElement);fp(e,'timeStamp',+new Date());fp(e,'pageX',e.clientX+H.scrollLeft);fp(e,'pageY',e.clientY+H.scrollTop);h?h(e):l.call(s,e)},f2=function(e){if(D.readyState!='complete'){if(e!=0)return f1(e);e=new Event(t);e.srcElement=W;f2(e)}};t!='DOMContentLoaded'?fa(s,t,f1):fa(D,'readystatechange',f2),f2(0)});fp(o,'removeEventListener',function(t,l){var i=_.length,h;while(--i>=0)if((h=_[i]).s==this&amp;&amp;h.t==t&amp;&amp;h.l==l&amp;&amp;h.s.detachEvent('on'+(t=='DOMContentLoaded'?'readystatechange':t),h.f))break})}
 	function fy(o){return o.prototype}
-	function ff(o,f){for(var k in o)Object.prototype.hasOwnProperty.call(o,k)&&f(k,o[k])}
+	function ff(o,f){for(var k in o)Object.prototype.hasOwnProperty.call(o,k)&amp;&amp;f(k,o[k])}
 	function fg(o,p,g){O.defineProperty?O.defineProperty(o,p,{get:g}):o.__defineGetter__(p,g)};
 	function fv(o,p){var v=['moz','webkit','ms','o'],i=v.length,fn;while(--i>=0)if(fn=o[p+v[i]])return fn}
 
-	E=!fy(E)||!fy(E).constructor.name?function(t,o){var e,b,c;o=o&&typeof o=='object'?o:{};b=!!o.bubbles;c=!!o.cancelable;if('createEvent' in D)return(e=D.createEvent('Event')).initEvent(t,b,c),e;e=D.createEventObject();e.type=t;e.bubbles=b;e.cancelable=c;return e}:Event;
-	W.CustomEvent=W.CustomEvent&&typeof W.CustomEvent=='object'?function(t,o){var e=D.createEvent('CustomEvent');o=o&&typeof o=='object'?o:{};e.initCustomEvent(t,!!o.bubbles,!!o.cancelable,o.detail);return e}:W.CustomEvent||function(t,o){var e=new Event(t,o);e.detail=(o&&typeof o=='object'?o:{}).detail;return e};
+	E=!fy(E)||!fy(E).constructor.name?function(t,o){var e,b,c;o=o&amp;&amp;typeof o=='object'?o:{};b=!!o.bubbles;c=!!o.cancelable;if('createEvent' in D)return(e=D.createEvent('Event')).initEvent(t,b,c),e;e=D.createEventObject();e.type=t;e.bubbles=b;e.cancelable=c;return e}:Event;
+	W.CustomEvent=W.CustomEvent&amp;&amp;typeof W.CustomEvent=='object'?function(t,o){var e=D.createEvent('CustomEvent');o=o&amp;&amp;typeof o=='object'?o:{};e.initCustomEvent(t,!!o.bubbles,!!o.cancelable,o.detail);return e}:W.CustomEvent||function(t,o){var e=new Event(t,o);e.detail=(o&amp;&amp;typeof o=='object'?o:{}).detail;return e};
 
 	fp(W,'WeakMap',function(){var s={},i=0,t=fy(this);t.set=function(k,v){s[k.__WeakMapID=i++]=v};t.get=function(k){return s[k.__WeakMapID]};t.has=function(k){return k._id in s};t.delete=function(k){delete s[k.__WeakMapID]}});
 	fp(Number,'isNaN',function(v){return v!==v});
@@ -32,14 +60,14 @@
 	fp(O,'values',function(o){var r=[];ff(o,function(k,v){r.push(v)});return r});
 	fp(A,'isArray',function(a){return fy(O).toString.call(a)==='[object Array]'});
 
-	fp(fy(S),'trim',function(){/* source: mozilla */return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g,'')});
-	fp(fy(A),'filter',function(fn){var i=0,f=this.length>>>0,r=[],v;for(;i<f;i++)fn((v=this[i]),i,this)&&r.push(v);return r});
-	fp(fy(A),'indexOf',function(k,i){var f=this.length>>>0;i=i<<0;for(i+=i<0?f:0;i<f;i++)if(this[i]===k)return i;return -1});
-	fp(fy(A),'from',function(a,fn,t){var s=this,l=O(a),f=l.length>>>0,r=typeof s=='function'?O(new s(f)):new Array(f),i=-1;while(++i<f)r[i]=fn?fn.call(t,l[i],i):l[i];r.length=f;return r});
-	fp(fy(A),'forEach',function(fn,t){var s=O(this),n=s.length,k;for(k=0;k<n;k++)fn.call(t,s[k],k,s);});
+	fp(fy(S),'trim',function(){/* mozilla */return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g,'')});
+	fp(fy(A),'filter',function(fn){var i=0,f=this.length>>>0,r=[],v;for(;i&lt;f;i++)fn((v=this[i]),i,this)&amp;&amp;r.push(v);return r});
+	fp(fy(A),'indexOf',function(k,i){var f=this.length>>>0;i=i&lt;&lt;0;for(i+=i&lt;0?f:0;i&lt;f;i++)if(this[i]===k)return i;return -1});
+	fp(fy(A),'from',function(a,fn,t){var s=this,l=O(a),f=l.length>>>0,r=typeof s=='function'?O(new s(f)):new Array(f),i=-1;while(++i&lt;f)r[i]=fn?fn.call(t,l[i],i):l[i];r.length=f;return r});
+	fp(fy(A),'forEach',function(fn,t){var s=O(this),n=s.length,k;for(k=0;k&lt;n;k++)fn.call(t,s[k],k,s);});
 	fp(fy(F),'bind',function(T){var a=fy(A).slice.call(arguments,1),b=this,fa=function(){},fb=function(){return b.apply(this instanceof fa?this:T,a.concat(fy(A).slice.call(arguments)))};fa.prototype=fy(this);fb.prototype=new fa();return fb});
-	fp(fy(F),'some',function(f,_){/* source: mozilla */var t=this,i=t.length>>>0;while(--i>=0){if(i in t&&f.call(_,t[i],i,t))return !0}return !1});
-	fp(fy(E),'preventDefault',function(){this.cancelable&&(this.returnValue=!1)});
+	fp(fy(F),'some',function(f,_){/* mozilla */var t=this,i=t.length>>>0;while(--i>=0){if(i in t&amp;&amp;f.call(_,t[i],i,t))return !0}return !1});
+	fp(fy(E),'preventDefault',function(){this.cancelable&amp;&amp;(this.returnValue=!1)});
 	fp(fy(E),'stopPropagation',function(){this.cancelBubble=!0});
 	fp(fy(E),'stopImmediatePropagation',function(){this.cancelBubble=this.cancelImmediate=!0});
 	fp(T,'origin',function(){return this.protocol+'//'+this.host});
@@ -47,12 +75,12 @@
 
 	if (!fy(T).addEventListener) fl(fy(Window)), fl(fy(T)), fl(fy(HTMLDocument));
 
-	ff((function(fs){return{previousElementSibling:function(){return fs(this,'previous')},nextElementSibling:function(){return fs(this,'next')}}})(function fs(e,k){while((e=e[k+'Sibling'])&&e.nodeType!=1);return e}),function(k,v){(v in D.documentElement)||fg(fy(T),k,v)});
+	ff((function(fs){return{previousElementSibling:function(){return fs(this,'previous')},nextElementSibling:function(){return fs(this,'next')}}})(function fs(e,k){while((e=e[k+'Sibling'])&amp;&amp;e.nodeType!=1);return e}),function(k,v){(v in D.documentElement)||fg(fy(T),k,v)});
 
-	!function(g){var fs=function(t){return fy(A).join.call(t,' ')},fi=function(t,s){return(' '+fs(t)+' ').indexOf(' '+s+' ')},fv=function(s){if(!(s=s+'')||/\s/.test(s))throw Error('"'+s+'" is invalid');return s},ft=function(s,f){var t=this;return t.contains(s)?(f===!1&&t.remove(s),!1):(f===!0&&t.add(s),!0)},fe=function(){return fy(A).filter.call(this,function(v,k){return !isNaN(k)})},fc=function(s){return !/\s/.test(s)&&fi(this,s)>=0},fr=function(a,b){var t=this;if(!b)throw TypeError('Not enough arguments');return t.contains(a=fv(a))&&(b=fv(b))&&(t.remove(a),t.add(b),!0)},fh=function(f,s){var t=this;ff(fe.call(t),function(k,v){f.call(s,v,+k,t)})},fk=function(){return O.keys(fe.call(this))},fT=function(e){var t=this;t.value=(e.getAttribute('class')||'').trim();t.length=t.value?fy(A).push.apply(t,t.value.split(/\s+/)):0;t.element=e;fy(fT).toString=function(){return fs(this)};fy(fT)._values=fy(fT)._entries=fe;fy(fT)._keys=fk},_=D.createElementNS('http://www.w3.org/2000/svg','g'),p='classList';fp(W,g,fT);(p in _)||fg(fy(T),p,function(){return new W[g](this)});fp(fy(fT),'add',function(){var t=this,a=arguments,i,s;for(i=0;i<a.length;i++)t.contains(s=fv(a[i]))||(fy(A).push.call(t,s),t.element.setAttribute('class',fs(t)))});fp(fy(fT),'remove',function(){var t=this,a=arguments,i=a.length,s;while(--i>=0)if(t.contains(s=fv(a[i]))){fh.call(t,function(v,k){v===s&&fy(A).splice.call(t,k,1)});t.element.setAttribute('class',fs(t))}});fp(fy(fT),'item',function(i){return this[i]||null});fp(fy(fT),'contains',fc);fp(fy(fT),'replace',fr);fp(fy(fT),'toggle',ft);fp(fy(fT),'forEach',fh);_[p].add('a','b');_[p].contains('b')||(fy(W[g]).contains=fc);_[p].toggle('c',!1)||(fy(W[g]).toggle=ft);_=null}
+	!function(g){var fs=function(t){return fy(A).join.call(t,' ')},fi=function(t,s){return(' '+fs(t)+' ').indexOf(' '+s+' ')},fv=function(s){if(!(s=s+'')||/\s/.test(s))throw Error('"'+s+'" is invalid');return s},ft=function(s,f){var t=this;return t.contains(s)?(f===!1&amp;&amp;t.remove(s),!1):(f===!0&amp;&amp;t.add(s),!0)},fe=function(){return fy(A).filter.call(this,function(v,k){return !isNaN(k)})},fc=function(s){return !/\s/.test(s)&amp;&amp;fi(this,s)>=0},fr=function(a,b){var t=this;if(!b)throw TypeError('Not enough arguments');return t.contains(a=fv(a))&amp;&amp;(b=fv(b))&amp;&amp;(t.remove(a),t.add(b),!0)},fh=function(f,s){var t=this;ff(fe.call(t),function(k,v){f.call(s,v,+k,t)})},fk=function(){return O.keys(fe.call(this))},fT=function(e){var t=this;t.value=(e.getAttribute('class')||'').trim();t.length=t.value?fy(A).push.apply(t,t.value.split(/\s+/)):0;t.element=e;fy(fT).toString=function(){return fs(this)};fy(fT)._values=fy(fT)._entries=fe;fy(fT)._keys=fk},_=D.createElementNS('http://www.w3.org/2000/svg','g'),p='classList';fp(W,g,fT);(p in _)||fg(fy(T),p,function(){return new W[g](this)});fp(fy(fT),'add',function(){var t=this,a=arguments,i,s;for(i=0;i&lt;a.length;i++)t.contains(s=fv(a[i]))||(fy(A).push.call(t,s),t.element.setAttribute('class',fs(t)))});fp(fy(fT),'remove',function(){var t=this,a=arguments,i=a.length,s;while(--i>=0)if(t.contains(s=fv(a[i]))){fh.call(t,function(v,k){v===s&amp;&amp;fy(A).splice.call(t,k,1)});t.element.setAttribute('class',fs(t))}});fp(fy(fT),'item',function(i){return this[i]||null});fp(fy(fT),'contains',fc);fp(fy(fT),'replace',fr);fp(fy(fT),'toggle',ft);fp(fy(fT),'forEach',fh);_[p].add('a','b');_[p].contains('b')||(fy(W[g]).contains=fc);_[p].toggle('c',!1)||(fy(W[g]).toggle=ft);_=null}
 	('DOMTokenList');
-	/* source: mozilla */fp(fy(E),'matches',fy(E).matchesSelector||fv(fy(E),'MatchesSelector')||function(s){var t=this,m=(t.document||t.ownerDocument).querySelectorAll(s);while(--i>=0&&m[i]!==t);return i>-1});
-	/* source: github/paulirish/1579671 */fp(W,'requestAnimationFrame',fv(W,'RequestAnimationFrame')||(function(l){return function(fn){var n=+new Date,c=Math.max(0,16-n-l),i=W.setTimeout(function(){fn(n+c)},c);l=n+c;return i}})(0));fp(W,'cancelAnimationFrame',fv(W,'CancelAnimationFrame')||fv(W,'CancelRequestAnimationFrame')||function(i){clearTimeout(i)});
+	/* mozilla */fp(fy(E),'matches',fy(E).matchesSelector||fv(fy(E),'MatchesSelector')||function(s){var t=this,m=(t.document||t.ownerDocument).querySelectorAll(s);while(--i>=0&amp;&amp;m[i]!==t);return i>-1});
+	/* github/paulirish/1579671 */fp(W,'requestAnimationFrame',fv(W,'RequestAnimationFrame')||(function(l){return function(fn){var n=+new Date,c=Math.max(0,16-n-l),i=W.setTimeout(function(){fn(n+c)},c);l=n+c;return i}})(0));fp(W,'cancelAnimationFrame',fv(W,'CancelAnimationFrame')||fv(W,'CancelRequestAnimationFrame')||function(i){clearTimeout(i)});
 })(window, document, Object, String, Array, Function, Event, Element, Location);
 
 /**
@@ -94,7 +122,7 @@
 		 * @return {boolean} true if `object` is `window` or has the common properties, false otherwise.
 		 */
 		'isWindow' : function (object) {
-			return object === window || APR.is(object, {}) && object.document && object.setInterval;
+			return object === window || APR.is(object, {}) &amp;&amp; object.document &amp;&amp; object.setInterval;
 		},
 		/**
 		 * An store of private members.
@@ -196,10 +224,10 @@
 		 * @example
 		 * is(123, 4); // true: "4" is a number.
 		 *
-		 * @example <caption>Note that the following is not the same:</caption>
+		 * @example &lt;caption>Note that the following is not the same:&lt;/caption>
 		 * is({}, 'object') === is({}, Object); // false.
 		 * 
-		 * @example <caption>Multiple arguments will be evaluated as "OR".</caption>
+		 * @example &lt;caption>Multiple arguments will be evaluated as "OR".&lt;/caption>
 		 * is(new Number(NaN), new Number(NaN), NaN, Number, 'number', Object, {}, {a: 1}); // true (in each case).
 		 * 
 		 * @example
@@ -223,11 +251,11 @@
 				}
 
 				if (Number.isNaN(value) || Number.isNaN(type)) {
-					return Number.isNaN(type) && Number.isNaN(value);
+					return Number.isNaN(type) &amp;&amp; Number.isNaN(value);
 				}
 
 				if (Array.isArray(type) || Array.isArray(value)) {
-					return Array.isArray(type) && Array.isArray(value);
+					return Array.isArray(type) &amp;&amp; Array.isArray(value);
 				}
 
 				if (type instanceof Function) {
@@ -259,13 +287,13 @@
 		 * @param  {*} value A value to test against `defaultValue`.
 		 * @param  {APR~is_type} defaultValue A defaultValue value with an expected {@link APR~is_type} for `value`.
 		 * 
-		 * @example <caption>Using a value that {@link APR~is_type|"looks like"} `defaultValue` is the recommended usage:</caption>
+		 * @example &lt;caption>Using a value that {@link APR~is_type|"looks like"} `defaultValue` is the recommended usage:&lt;/caption>
 		 * get('a', ['b']); // ['b']
 		 * 
-		 * @example <caption>Note that you can use any of {@link APR~is_type}, like 'object'.</caption>
+		 * @example &lt;caption>Note that you can use any of {@link APR~is_type}, like 'object'.&lt;/caption>
 		 * get(['a'], 'object'); // Object(['a']); -> Array['a'];
 		 *
-		 * @example <caption>If you pass a {@link APR~is_type|Constructor}, it will be initialized.</caption>
+		 * @example &lt;caption>If you pass a {@link APR~is_type|Constructor}, it will be initialized.&lt;/caption>
 		 * get(null, Function); // new Function(null); -> function anonymous();
 		 * // Please note that the Function constructor (the one used when `defaultValue` is 'function' or Function)
 		 * // may throw a CSP Error, so it's not recommended to use it. Use: function someFn () { [...] }; instead. i.e.:
@@ -279,7 +307,7 @@
 				return value;
 			}
 			
-			if (APR.is(defaultValue, 'string') && _.isTypeofOperand(defaultValue = defaultValue.toLowerCase())) {
+			if (APR.is(defaultValue, 'string') &amp;&amp; _.isTypeofOperand(defaultValue = defaultValue.toLowerCase())) {
 
 				return (defaultValue !== 'undefined'
 					? window[defaultValue[0].toUpperCase() + defaultValue.slice(1)](value)
@@ -335,7 +363,7 @@
 
 			arrayLike = APR.get(arrayLike, [arrayLike]);
 
-			for (i = 0, f = arrayLike.length; i < f; i++) {
+			for (i = 0, f = arrayLike.length; i &lt; f; i++) {
 				returnedValues[i] = fn.call(thisArg, arrayLike[i], i, arrayLike, returnedValues);
 			}
 
@@ -367,16 +395,16 @@
 		 * 
 		 * @param {string} [url=window.location.href] A relative, an absolute or a blob url.
 		 * 
-		 * @example <caption>An absolute url:</caption>
+		 * @example &lt;caption>An absolute url:&lt;/caption>
 		 * parseUrl(window.location.href);
 		 * 
-		 * @example <caption>A relative url:</caption>
+		 * @example &lt;caption>A relative url:&lt;/caption>
 		 * parseUrl('/?a#c?d'); // "/" is the pathname, "?a" the search and "#c?d" the hash.
 		 *
-		 * @example <caption>A blob url:</caption>
+		 * @example &lt;caption>A blob url:&lt;/caption>
 		 * parseUrl('blob:'); // Same as 'blob:' + `window.location.href`
 		 *
-		 * @example <caption>Some good-to-know urls:</caption>
+		 * @example &lt;caption>Some good-to-know urls:&lt;/caption>
 		 * parseUrl(); // Same as `window.location`.
 		 * parseUrl('a'); // Something that doesn't start with "/", "?", or "#" is evaluated as a host.
 		 * parseUrl('a:b'); // "a:b" is a host, since "b" is not a number.
@@ -485,7 +513,7 @@
 				object = {};
 			}
 
-			for (i = 0, f = properties.length - 1; i < f; i += 2) {
+			for (i = 0, f = properties.length - 1; i &lt; f; i += 2) {
 				key = properties[i];
 				value = properties[i + 1];
 				object[key] = value;
@@ -527,7 +555,7 @@
 		 */
 		'inArray' : function (array, value) {
 			return array.some(function (v) {
-				return value === v || (Number.isNaN(value) && Number.isNaN(v));
+				return value === v || (Number.isNaN(value) &amp;&amp; Number.isNaN(v));
 			});
 		},
 		/**
@@ -580,17 +608,17 @@
 		 * @param  {Array} [path=[path]] The ordered keys.
 		 * @param  {APR~access_handler} [handler] A custom function.
 		 * @throws {TypeError} If some property causes access problems.
-		 * @example <caption>Accessing to some existent property</caption>
+		 * @example &lt;caption>Accessing to some existent property&lt;/caption>
 		 *
 		 * access({a: {b: {c: {d: 4}}}}, ['a', 'b', 'c', 'd'], function (currentObject, currentKey, propertyExists, path) {
 		 *     return propertyExists ? currentObject[currentKey] : null;
 		 * }); // returns 4.
 		 *
-		 * @example <caption>Accessing to some existent property with a non-JSON-like-object as a value</caption>
+		 * @example &lt;caption>Accessing to some existent property with a non-JSON-like-object as a value&lt;/caption>
 		 *
 		 * access({a: 1}, ['a', 'b', 'c']); // throws TypeError.
 		 *
-		 * @example <caption>Accessing to some non-existent property</caption>
+		 * @example &lt;caption>Accessing to some non-existent property&lt;/caption>
 		 *
 		 * var obj = {z: 1, prototype: [...]};
 		 * 
@@ -680,8 +708,8 @@
 		 * @param  {string} url The url of the file.
 		 * @param  {APR~load_handler} [handler] If it's a function: it will be triggered (without appending the element),
 		 *                                  otherwise: the element will be appended to {@link APR.head|head}.
-		 * @property {Object.<APR~load_synonym, APR~load_tag>} SYNOMYMS_FOR_TAGS Defines synonyms for {@link APR~load_tag|element-tags}.
-		 * @property {Object.<APR~load_tag, APR~load_srcLikeAttribute>} NON_SRC_ATTRIBUTES {@link APR~load_tag|Element-tags} that are known for not using 'src' to fetch an url.
+		 * @property {Object.&lt;APR~load_synonym, APR~load_tag>} SYNOMYMS_FOR_TAGS Defines synonyms for {@link APR~load_tag|element-tags}.
+		 * @property {Object.&lt;APR~load_tag, APR~load_srcLikeAttribute>} NON_SRC_ATTRIBUTES {@link APR~load_tag|Element-tags} that are known for not using 'src' to fetch an url.
 		 * @example
 		 * 
 		 * load('link', '/css/index.css', function (loadedFile) {
@@ -697,10 +725,10 @@
 		 *
 		 * });
 		 *
-		 * @example <caption>Modifying "constants".</caption>
+		 * @example &lt;caption>Modifying "constants".&lt;/caption>
 		 *
 		 * load.SYNONYMS_FOR_TAGS['font'] = 'link';
-		 * load('font', '/myFont.css', function () { [...] }); // loads <link href='/myFont.css'/>.
+		 * load('font', '/myFont.css', function () { [...] }); // loads &lt;link href='/myFont.css'/>.
 		 * 
 		 */
 		'load' : (function () {
@@ -721,7 +749,7 @@
 					element.rel = 'stylesheet';
 				}
 			
-				if (APR.parseUrl(url).origin !== window.location.origin && APR.inArray(['video', 'img', 'script'], tag)) {
+				if (APR.parseUrl(url).origin !== window.location.origin &amp;&amp; APR.inArray(['video', 'img', 'script'], tag)) {
 					element.setAttribute('crossorigin', 'anonymous');
 				}
 
@@ -881,11 +909,11 @@
 			 * @private
 			 * @ignore
 			 * 
-			 * @property {Object.<APR.Define~namespace, {
+			 * @property {Object.&lt;APR.Define~namespace, {
 			 *     state: string
 			 * }>} defined A list of namespaces that were defined by {@link APR.Define}.
 			 * 
-			 * @property {Object.<APR.Define~namespace, {
+			 * @property {Object.&lt;APR.Define~namespace, {
 			 *     handler: function,
 			 *     thisArgForHandler,
 			 *     dependencies: APR.Define~namespace[]
@@ -912,7 +940,7 @@
 
 					var isKnownModule = definedModules[namespace];
 
-					if (!_.getModule(namespace) && !isKnownModule) {
+					if (!_.getModule(namespace) &amp;&amp; !isKnownModule) {
 						throw new Error(namespace + ' is not defined.');
 					}
 
@@ -1070,7 +1098,7 @@
 			 * Loads files and waits until everything (in these files) gets added.
 			 * Then, magic happens.
 			 * 
-			 * @param  {Object.<APR.Define~namespace, string>} urls A namespace with a url as a value.
+			 * @param  {Object.&lt;APR.Define~namespace, string>} urls A namespace with a url as a value.
 			 */
 			'load' : (function () {
 
@@ -1157,7 +1185,7 @@
 			 * Adds dependencies and a handler to the module.
 			 *
 			 * @instance
-			 * @param  {(Array<APR.Define~namespace>|APR.Define~using_modulesAsObject)} [modules=APR.Define~using_handler] The dependencies for the module or `handler`.
+			 * @param  {(Array&lt;APR.Define~namespace>|APR.Define~using_modulesAsObject)} [modules=APR.Define~using_handler] The dependencies for the module or `handler`.
 			 * @param  {APR.Define~using_handler} handler Some handler.
 			 * @param  {*} thisArgForHandler `this` for `handler`.
 			 */
@@ -1228,14 +1256,14 @@
  * module name and the "value" is the URL (or the value of an attribute [containing the URL]
  * if the attribute name is enclosed within brackets).
  *
- * @example <caption>Adding the attribute to a link Element.</caption>
+ * @example &lt;caption>Adding the attribute to a link Element.&lt;/caption>
  *
- * <link rel='preload' href='/js/index.js' id='index' data-APR-define='{"[id]Module" : "[href]"}' />
+ * &lt;link rel='preload' href='/js/index.js' id='index' data-APR-define='{"[id]Module" : "[href]"}' />
  * // Preloads "/js/index.js" and loads the module "indexModule" with "/js/index.js" as the URL.
  *
- * @example <caption>Adding multiple links to the script tag which loads "APR.js".</caption>
+ * @example &lt;caption>Adding multiple links to the script tag which loads "APR.js".&lt;/caption>
  *
- * <script src='APR.js' data-APR-define='{"index" : "/js/index.js", "module" : "/js/module.js"}'></script>
+ * &lt;script src='APR.js' data-APR-define='{"index" : "/js/index.js", "module" : "/js/module.js"}'>&lt;/script>
  * @callback onDocumentReady_findScriptsToDefine
  */
 function findScriptsToDefine () {
@@ -1252,4 +1280,26 @@ function findScriptsToDefine () {
 
 	});
 
-});
+});</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="APR.html">APR</a></li><li><a href="APR.Define.html">APR.Define</a></li></ul><h3><a href="global.html">Global</a></h3>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a>
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

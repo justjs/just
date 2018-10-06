@@ -1,0 +1,13 @@
+{
+	"opts": {
+		"encoding": "utf8",
+		"destination": "./out/",
+		"tutorials": "./tutorials"
+	},
+	"templates": {
+		"default": {
+			"includeDate": false,
+			"useLongnameInNav": true
+		}
+	}
+}
