@@ -1,76 +1,174 @@
-APR.Define('APR.Element', APR).requires({
-	'0.APR.Event' : APR.self.setFileUrl('APREvent', 'js'),
-	'1.APR.State' : APR.self.setFileUrl('APRState', 'js')
+APR.Define('APR/Element').using({
+	'0:APR/Event' : APR.self.setFileUrl('APREvent', 'js'),
+	'1:APR/State' : APR.self.setFileUrl('APRState', 'js')
 }, function (APREvent, APRState) {
 
 	'use strict';
 
-	function APRElement (element) {
+	var _ = Object.assign(APR.createPrivateKey(), {
 		
+		'createElement' : function (tagName, namespace) {
+
+			var namespaces = APRElement.prototype.NAMESPACES;
+			var namespaceURI = namespaces[namespace] || namespaces[tagName] || namespace;
+			var element;
+
+			tagName = tagName.toLowerCase();
+
+			element = namespaceURI
+				? document.createElementNS(namespaceURI, tagName)
+				: document.createElement(tagName);
+
+			return element;
+
+		},
+		'createBounds' : function (position, size) {
+
+			var x = position.x << 0 || position.left << 0;
+			var y = position.y << 0 || position.top << 0;
+			var width = size.width << 0;
+			var height = size.height << 0;
+
+			return {
+				'x' : x,
+				'y' : y,
+				'left' : x,
+				'top' : y,
+				'width' : width,
+				'height' : height,
+				'bottom' : y + height,
+				'right' : x + width
+			};
+
+		},
+		'getWindowBounds' : function () {
+			
+			var html = APR.html;
+			var position = {
+				'x' : window.scrollX || window.pageXOffset || html.scrollLeft,
+				'y' : window.scrollY || window.pageYOffset || html.scrollTop
+			};
+			var size = {
+				'width' : window.innerWidth || html.clientWidth,
+				'height' : window.innerHeight || html.clientHeight
+			};
+
+			return _.createBounds(position, size);
+
+		},
+		'getDocumentBounds' : function () {
+
+			var html = APR.html;
+			var body = APR.body;
+			var position = {
+				'x' : 0,
+				'y' : 0
+			};
+			var size = {
+				'width' : Math.max(
+					body.scrollWidth,
+					body.offsetWidth,
+					html.clientWidth,
+					html.scrollWidth,
+					html.offsetWidth
+				),
+				'height' : Math.max(
+					body.scrollHeight,
+					body.offsetHeight,
+					html.clientHeight,
+					html.scrollHeight,
+					html.offsetHeight
+				)
+			};
+
+			return _.createBounds(position, size);
+
+		}
+	});
+
+	function APRElement (elements) {
+
 		if (!APR.is(this, APRElement)) {
 			return new APRElement(element);
 		}
 
-		this.element = element;
+		if (APR.is(elements, APRElement)) {
+			return elements;
+		}
 
-		APRState.call(this, element);
+		if (APR.is(elements, 'string')) {
+			elements = APRElement.findAll(elements);
+		}
+		else if (!APR.is(elements, [])) {
+			throw new TypeError(elements + ' should be either an string or an array.');
+		}
+
+		this.length = Array.prototype.push.apply(this, elements);
+
+		APRState.call(this);
 	
 	}
 
-	function APRElementCollection (elements) {
+	Object.assign(APRElement, {
+		'createElement' : function (elementAsString) {
 
-		if (!APR.is(this, APRElementCollection)) {
-			return new APRElementCollection(elements);
-		}
+			var tagName = (elementAsString.match(/(^|\t+)[a-z0-9\s]+/i) || [''])[0].trim();
+			var stringParts = elementAsString.split('>');
+			var namespace, attributes = stringParts[0].replace(/\:(\.*)\;/, function (_, ns) {
+				namespace = ns;
+				return '';
+			});
+			var text = stringParts[1] || '';
+			var element;
 
-		this.elements = elements;
-		this.length = this.elements.length;
+			if (!tagName) {
+				return document.createTextNode(text);
+			}
 
-	}
+			element = new APRElement(_.createElement(tagName, namespace));
 
-	APRElementCollection.prototype = Object.assign(APRElementCollection.prototype, {
+			// FIX: Backreference didn't work on quotes. 
+			attributes = attributes.replace(/\[\s*([\w\-\:]+)(\s*\=\s*(\"([^\"]*)\"|\'([^\"]*)\')\s*)?\]/g, function replaceAttribute (regexp, name, quoted, attributeValue, valueDoubleQuotes, valueSingleQuotes) {
+				element.setAttributes(APR.setDynamicKeys({}, [
+					name, attributeValue ? (valueDoubleQuotes || valueSingleQuotes) : true
+				]), namespace);
+				return '';
+			}).trim();
 
-		'each' : function each (fn) {
-
-			APR.eachElement(this.elements, function (element, i) {
-				fn.call(element, i, this);
+			attributes = attributes.replace(/\[\s*([\w\-]+)\s*\=\s*(\"(\{.+\})\"|\'(\{.+\})\')\s*\]/, function replaceJSONAttribute (_, name, value, json) {
+				element.setAttributes(APR.setDynamicKeys({}, [
+					name, json
+				]), namespace);
+				return '';
 			});
 
-			return this;
+			attributes = attributes.replace(/\.([\w\-]+)/g, function replaceClass (_, name) {
+				element.get().classList.add(name);
+				return '';
+			}).trim();
+
+			attributes = attributes.replace(/\#([\w\-]+)/g, function replaceID (_, id) {
+				element.get().setAttribute('id', id);
+				return '';
+			}).trim();
+
+			element.setText(text);
+
+			return element;
 
 		},
-		'get' : function getItem (i) {
-			return this.elements[i];
-		}
-
-	}, {'constructor' : APRElementCollection});
-
-	APRElement.prototype.SUPPORTED_NAMESPACES = {
-		'html' : 'http://www.w3.org/1999/xhtml',
-		'mathml' : 'http://www.w3.org/1998/Math/MathML',
-		'svg' : 'http://www.w3.org/2000/svg',
-		'xlink' : 'http://www.w3.org/1999/xlink',
-		'xml' : 'http://www.w3.org/XML/1998/namespace',
-		'xmlns' : 'http://www.w3.org/2000/xmlns/',
-		'xbl' : 'http://www.mozilla.org/xbl',
-		'xul' : 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul'
-	};
-
-	Object.assign(APRElement, {
-		'createElement' : createElementFromString,
 		'findAllByState' : function () {
-			return new APRElementCollection(APRState.findElementsByState.apply(null, arguments));
+			return APRState.findElementsByState.apply(null, arguments);
 		},
 		'findAll' : function (selector, parent) {
-			return new APRElementCollection(APR.getElements(selector, parent));
+			return APR.getElements(selector, parent);
 		},
 		'find' : function (selector, parent) {
-			var elements = APR.getElements(selector, parent);
-			return new APRElement(elements.length ? elements[0] : elements);
+			return APR.getElements(selector, parent)[0];
 		},
 		'autoresizeTextarea' : function (textarea) {
 
-			if (!APR.is(textarea.tagName, /^textarea$/i)) {
+			if (!/^textarea$/i.test(textarea.tagName)) {
 				throw new TypeError('The given element is not a textarea.');
 			}
 
@@ -83,434 +181,513 @@ APR.Define('APR.Element', APR).requires({
 	});
 
 	APRElement.prototype = Object.assign(Object.create(APRState.prototype), APRElement.prototype, {
-		
-		'get' : function () {
-			return this.element;
+		'NAMESPACES' : {
+			'html' : 'http://www.w3.org/1999/xhtml',
+			'mathml' : 'http://www.w3.org/1998/Math/MathML',
+			'svg' : 'http://www.w3.org/2000/svg',
+			'xlink' : 'http://www.w3.org/1999/xlink',
+			'xml' : 'http://www.w3.org/XML/1998/namespace',
+			'xmlns' : 'http://www.w3.org/2000/xmlns/',
+			'xbl' : 'http://www.mozilla.org/xbl',
+			'xul' : 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul'
 		},
-		'changeCSS' : function changeCSS (styles) {
+		'get' : function (handler) {
 
-			var element = this.element;
+			var results = APR.eachElement(this, function (element, i) {
+				return APR.is(handler, 'function') ? handler.call(element, new APRElement(element), i) : element;
+			});
 
-			APR.eachProperty(styles, function (value, name) {
-				element.style[name] = value;
+			return APR.getFirstOrMultiple(results);
+
+		},
+		'each' : function (fn) {
+
+			if (APR.is(fn, 'function')) {
+				throw new TypeError(fn + ' must be a function.');
+			}
+
+			APR.eachElement(this, function (element, i) {
+				fn.call(element, new APRElement(element), i, this);
 			});
 
 			return this;
 
 		},
-		'getCSS' : function getCSS (propertyName) {
-			var element = this.element;
-			return (element.currentStyle || window.getComputedStyle(element))[propertyName];
-		},
-		'setText' : function setText (text) {
+		'changeCss' : function (styles) {
 
-			var element = this.element;
-			
-			text = APR.get(text, '');
+			if (!APR.is(styles, {})) {
+				throw new TypeError(styles + ' must be a key-value object.');
+			}
 
-			if ('textContent' in element) {
-				element.textContent = text;
-			}
-			else if ('innerText' in element) {
-				element.innerText = text;
-			}
+			APR.eachElement(this, function (element) {
+
+				APR.eachProperty(styles, function (value, name) {
+					element.style[name] = value;
+				});
+
+			});
 
 			return this;
 
 		},
-		'getText' : function getText () {
+		/**
+		 * @example
+		 * APRElement('body, html').chain('classList.add')('a', 'b').setText('c');
+		 * // Same as:
+		 * // APRElement('body, html').each(function (element) {
+		 * //     this.classList.add('a');
+		 * //     this.classList.add('b');
+		 * // }).setText('c');
+		 * 
+		 * @example <caption>If you want the returned values, you can access to the `results` property:</caption>
+		 * APRElement('body, html').chain('classList.contains')('someClass').results;
+		 * // returns [APR.body.classList.contains('someClass'), APR.html.classList.contains('someClass')]
+		 * 
+		 */
+		'chain' : function (property) {
 
-			var element = this.element;
+			var propertyPath, fn;
 
-			return (
-				'textContent' in element ? element.textContent :
-				'innerText' in element ? element.innerText :
-				''
-			);
+			if (APR.is(property, 'function')) {
+				fn = property;
+			}
+			else {
+				propertyPath = APR.get(property, APR.get(property, 'string').split('.'));
+			}
+			
+			return function (arg) {
+
+				var args = arguments;
+				var results = APRElement.eachElement(this, function (element) {
+					return (fn || APR.access(element, propertyPath)).apply(this, args);
+				});
+
+				this.results = APR.getFirstOrMultiple(results);
+
+				return this;
+
+			}.bind(this);
 
 		},
-		'getClosestText' : function getClosestText (_wasInitialized) {
-			var element = _wasInitialized ? this.element : this.element.firstChild;
-			return element ? (element.nodeType === 3 ? this.getText() : '') + APRElement(element.nextSibling).getClosestText(true) : '';
+		'setText' : function (text) {
+
+			text = APR.get(text, 'string');
+			
+			APR.eachElement(this, function (element) {
+			
+				if ('textContent' in element) {
+					element.textContent = text;
+				}
+				else if ('innerText' in element) {
+					element.innerText = text;
+				}
+
+			});
+
+			return this;
+
+		},
+		'getText' : function () {
+
+			var results = APR.eachElement(this, function (element) {
+
+				return (
+					'textContent' in element ? element.textContent :
+					'innerText' in element ? element.innerText :
+					''
+				);
+
+			});
+
+			return APR.getFirstOrMultiple(results);
+
 		},
 		/**
 		 *  
-		 *	@returns {object} top, left, right, bottom,
+		 *	@returns {Object} top, left, right, bottom,
 		 *		width, height, x and y
 		 *
 		 */
-		'getBounds' : function getBounds () {
+		'getBounds' : function () {
 
-			var element = this.element;
-			var bounds;
-			var elementBounds;
+			var results = APR.eachElement(this, function (element) {
 
-			if (APR.is(element, 'window')) {
-				return _getWindowBounds();
-			}
-			else if (APR.is(element.tagName, /^html$/i)) {
-				return _getDocumentBounds();
-			}
+				var bounds;
+				var elementBounds;
 
-			try {
-				bounds = element.getBoundingClientRect();
-			}
-			catch (exception) {/* unspecified error IE11 (?) */}
+				if (APR.isWindow(element)) {
+					return _.getWindowBounds();
+				}
+				else if (/^html$/i.test(element.tagName)) {
+					return _.getDocumentBounds();
+				}
 
-			return _createBounds(bounds, {
-				'width' : bounds.width || (bounds.right - bounds.left),
-				'height' : bounds.height || (bounds.bottom - bounds.top)
+				try {
+					bounds = element.getBoundingClientRect();
+				}
+				catch (exception) {/* unspecified error IE11 (?) */}
+
+				return _.createBounds(bounds, {
+					'width' : bounds.width || (bounds.right - bounds.left),
+					'height' : bounds.height || (bounds.bottom - bounds.top)
+				});
+
 			});
 
-		},
-		'isInsideBounds' : function isInsideBounds (bounds) {
-
-			var elementBounds = this.getBounds();
-
-			return (
-				elementBounds.bottom > 0 &&
-				elementBounds.right > 0 &&
-				elementBounds.left < bounds.width &&
-				elementBounds.top < bounds.height
-			);
+			return APR.getFirstOrMultiple(results);
 
 		},
-		'fitInBounds' : function fitInBounds (bounds) {
+		'isInsideBounds' : function (bounds) {
 
-			var element = this.element;
-			var ratio = Math.min(bounds.width / element.width, bounds.height / element.height);
+			var results = APR.eachElement(this, function (element) {
 
-			element.width *= ratio;
-			element.height *= ratio;
+				var elementBounds = new APRElement(element).getBounds();
+
+				return (
+					elementBounds.bottom > 0 &&
+					elementBounds.right > 0 &&
+					elementBounds.left < bounds.width &&
+					elementBounds.top < bounds.height
+				);
+
+			});
+
+			return APR.getFirstOrMultiple(results);
+
+		},
+		'fitInBounds' : function (bounds) {
+
+			APR.eachElement(this, function (element) {
+
+				var ratio = Math.min(bounds.width / element.width, bounds.height / element.height);
+
+				element.width *= ratio;
+				element.height *= ratio;
+
+			});
 
 			return this;
 
 		},
-		'isVisible' : function isVisible () {
+		'isVisible' : function () {
 			
-			var bounds = this.getBounds();
+			var results = APR.eachElement(this, function (element) {
 
-			return !this.isHidden() && !!(bounds.width || bounds.height);
+				var bounds = element.getBounds();
 
-		},
-		'isOnScreen' : function isOnScreen () {
-			return this.isVisible() && this.isInsideBounds(_getWindowBounds());
-		},
-		'getAttributes' : function getAttributes () {
-		
-			var attributes = {};
-
-			APR.eachProperty(this.element.attributes, function (attribute) {
-				attributes[attribute.name || attribute.nodeName] = attribute.value || attribute.nodeValue;
-			});
-
-			return attributes;
-
-		},
-		'setAttributes' : function setAttributes (attributes) {
-
-			var element = this.element;
-
-			APR.eachProperty(attributes, function (value, name) {
-				
-				var namespace = name.split(/^[\w\-]+\:/)[1];
-				var namespaceURI = APRElement.prototype.SUPPORTED_NAMESPACES[namespace];
-
-				if (namespaceURI) {
-					element.setAttributeNS(namespaceURI, name, value);
-				}
-				else {
-					element.setAttribute(name, value);
-				}
+				return !APRElement(element).isHidden() && !!(bounds.width || bounds.height);
 
 			});
-
-			return this;
+			
+			return APR.getFirstOrMultiple(results);
 
 		},
-		'replaceAttributes' : function replaceAttributes (attributes, allowNullValues) {
+		'isOnScreen' : function () {
 
-			var element = this.element;
-
-			APR.eachProperty(attributes, function (newName, name) {
-				
-				var value = element.getAttribute(name) || '';
-				
-				if (!value && !allowNullValues) {
-					return;
-				}
-
-				element.setAttribute(newName, value);
-				element.removeAttribute(name);
-
+			this.each(function (element) {
+				element.isVisible() && element.isInsideBounds();
+			});
+			var results = APR.eachElement(this, function (element) {
+				var AprElement = new APRElement(element);
+				return AprElement.isVisible() && AprElement.isInsideBounds(_.getWindowBounds());
 			});
 
-			return this;
-		},
-		'removeAttributes' : function removeAttributes () {
-		
-			var element = this.element;
+			return APR.getFirstOrMultiple(results);
 
-			APR.eachElement(arguments, function (name) {
-				element.removeAttribute(name);
+		},
+		'getAttributes' : function () {
+			
+			var results = APR.eachElement(this, function (element) {
+
+				var attributes = {};
+
+				APR.eachProperty(element.attributes, function (attribute) {
+					elements[attribute.name || attribute.nodeName] = attribute.value || attribute.nodeValue;
+				});
+
+				return attributes;
+			
 			});
 
-			return this;
+			return APR.getFirstOrMultiple(results);
 
 		},
-		'cloneAttributes' : function cloneAttributes (target) {
-			return this.element.setAttributes(APRElement(target).getAttributes());
-		},
+		'setAttributes' : function (attributes) {
 
-		'find' : function findOneElement (selector) {
-			return APRElement.find(selector, this.element);
-		},
-		'findAll' : function findAllElements (selector) {
-			return APRElement.findAll(selector, this.element);
-		},
-		'appendTo' : function appendElementToParent (parent) {
-			parent.appendChild(this.element);
-			return APRElement(parent);
-		},
-		'append' : function appendElement (child) {
-			this.element.appendChild(child);
-			return this;
-		},
-		'delete' : function deleteElement () {
-			var element = this.element;
-			element.parentNode.removeChild(element);
-			return this;
-		},
-		'clone' : function cloneElement (options) {
-			return APRElement(this.element.cloneNode(true));
-		},
-		'removeChildren' : function removeChildren () {
-
-			var element = this.element;
-
-			while (this.hasChilds()) {
-				element.removeChild(element.firstChild);
+			if (!APR.is(attributes, {})) {
+				throw new TypeError(attributes + ' must be a key-value object.');
 			}
 
+			APR.eachElement(this, function (element) {
+
+				APR.eachProperty(attributes, function (value, name) {
+					
+					var namespace = name.split(/^[\w\-]+\:/)[1];
+					var namespaceURI = APRElement.prototype.NAMESPACES[namespace];
+
+					if (namespaceURI) {
+						this.setAttributeNS(namespaceURI, name, value);
+					}
+					else {
+						this.setAttribute(name, value);
+					}
+
+				}, element);
+
+			});
+
 			return this;
 
 		},
-		'hasChilds' : function hasChilds () {
-			return !!this.element.firstChild;
-		},
-		'getChildren' : function getChildren () {
-			return APRElement(this.element.children);
-		},
-		'isHidden' : function isHidden () {
-			var element = this.element;
-			return element.parentNode === null || element.getAttribute('hidden') !== null;
-		},
-		'replaceWith' : function replaceElement (newElement) {
+		'replaceAttributes' : function (attributes, allowEmptyValues) {
 
-			newElement.appendTo(this.element.parentNode);
-			this.delete();
+			APR.eachElement(this, function (element) {
+
+				APR.eachProperty(attributes, function (newName, name) {
+					
+					var value = this.getAttribute(name) || '';
+					
+					if (!value && !allowEmptyValues) {
+						return;
+					}
+
+					this.setAttribute(newName, value);
+					this.removeAttribute(name);
+
+				}, element);
+
+			});
+
+			return this;
+
+		},
+		'removeAttributes' : function (attribute) {
+		
+			var attributes = arguments;
+
+			APR.eachElement(this, function (element) {
+
+				APR.eachElement(attributes, function (name) {
+					this.removeAttribute(name);
+				}, element);
+
+			});
+
+			return this;
+
+		},
+		'cloneAttributes' : function (target) {
+			return this.setAttributes(new APRElement(target).getAttributes());
+		},
+		'find' : function (selector) {
+
+			var results = APR.eachElement(this, function (parent) {
+				return new APRElement(APRElement.find(selector, parent));
+			});
+
+			return APR.getFirstOrMultiple(results);
+
+		},
+		'findAll' : function (selector) {
+			
+			var results = APR.eachElement(this, function (parent) {
+				return new APRElement(APRElement.findAll(selector, parent));
+			});
+
+			return APR.getFirstOrMultiple(results);
+
+		},
+		'findAllByState' : function (state) {
+
+			var results = APR.eachElement(this, function (parent) {
+				return new APRElement(APRElement.findAllByState(state, parent));
+			});
+
+			return APR.getFirstOrMultiple(results);
+
+		},
+		'appendTo' : function (parent) {
+
+			APR.eachElement(this, function (child) {	
+				this.appendChild(child);
+			}, parent);
+
+			return this;
+
+		},
+		'clone' : function (options) {
+
+			var deep = APR.get((options = APR.get(options, {})).deep, true);
+			var results = APR.eachElement(this, function (target) {
+				
+				return new APRElement(target.cloneNode(deep)).copy({
+					'doNotCloneAttributes' : true
+				});
+
+			});
+
+			return APR.getFirstOrMultiple(results);
+
+		},
+		'remove' : function () {
+			
+			APR.eachElement(this, function (element) {
+				element.parentNode.removeChild(element);
+			});
+
+			return this;
+
+		},
+		'removeChildren' : function () {
+
+			APR.eachElement(this, function (element) {
+
+				while (element.firstChild) {
+					element.removeChild(element.firstChild);
+				}
+
+			});
+
+			return this;
+
+		},
+		'isHidden' : function () {
+			
+			var results = APR.eachElement(this, function (element) {
+				return element.parentNode === null || element.getAttribute('hidden') !== null;
+			});
+			
+			return APR.getFirstOrMultiple(results);
+
+		},
+		'replaceWith' : function (newElement) {
+
+			var results = APR.eachElement(this, function (target) {
+				return new APRElement(target.parentNode.replaceChild(newElement, target));
+			});
+
+			return APR.getFirstOrMultiple(results);
+
+		},
+		'copy' : function (options) {
+
+			options = APR.get(options, {});
+
+			APR.eachElement(this, function (element) {
+
+				if (!options.doNotCloneAttributes) {
+					element.cloneAttributes(target);
+				}
+
+				if (!options.doNotCloneEvents) {
+					element.cloneEvents(target);
+				}
+
+				if (!options.doNotCloneProperties) {
+					element.cloneProperties(target);
+				}
+
+				if (!options.doNotCloneStates) {
+					element.cloneStates(target);
+				}
+
+			});
+
+			return this;
+
+		},
+		'replaceTag' : function (tagName) {
+			
+			var newElement = new APRElement(APRElement.createElement(tagName)).copy();
+				
+			this.replaceWith(newElement);
 
 			return newElement;
 
 		},
-		'replaceTag' : function replaceTag (tagName) {
-		
-			var element = this.element;
-
-			return this.replaceElement(createElementFromString(tagName)
-				.cloneAttributes(element)
-				.cloneEvents(element)
-				.cloneProperties(element)
-				.cloneStates(element)
-			);
-		},
-		'isCSSPropertySupported' : function isCSSPropertySupported (cssProperty) {
-			var gcs = window.getComputedStyle;
-			return APR.is(gcs, 'function') && !APR.is(gcs(APR.body)[cssProperty], 'undefined');
-		},
-		'getRemoteParent' : function getRemoteParent (fn) {
+		'getRemoteParent' : function (fn) {
 			
-			var parentNode;
+			var results = APR.eachElement(this, function (element) {
 
-			while (
-				(parentNode = (parentNode || this.element).parentNode) &&
-				(parentNode.nodeType && parentNode.nodeType !== Node.DOCUMENT_NODE || (parentNode = null)) &&
-				!fn.call(parentNode)
-			);
-			
-			return parentNode;
+				var parentNode;
+
+				while (
+					(parentNode = (parentNode || element).parentNode) &&
+					(parentNode.nodeType && parentNode.nodeType !== Node.DOCUMENT_NODE || (parentNode = null)) &&
+					!fn.call(parentNode)
+				);
+				
+				return parentNode;
+
+			});
+
+			return APR.getFirstOrMultiple(results);
 		
 		}
 	}, (function () {
 
-		var _ = APR.createPrivateKey();
+		var properties = APR.createPrivateKey();
 
 		return {
-			'accessToProperty' : function accessToProperty (path, fn) {
-				APR.access(_(this.element), path, fn);
-				return this;
-			},
-			'setProperty' : function setProperty (path, value) {
-				this.accessToProperty(path, function (lastProperty) {
-					this[lastProperty] = value;
+			'accessToProperty' : function (path, fn) {
+				
+				APR.eachElement(this, function (element) {
+					APR.access(properties(element), path, fn);
 				});
+
 				return this;
+
 			},
-			'getProperty' : function getProperty (path) {
-				return this.accessToProperty(path, function (lastProperty, exists) {
-					return exists ? this[lastProperty] : void 0;
+			'setProperty' : function (path, value) {
+
+				this.accessToProperty(path, function (v, k) {
+					v[k] = value;
+				});
+
+				return this;
+
+			},
+			'getProperty' : function (path) {
+				return this.accessToProperty(arguments, function (v, k, exists) {
+					return exists ? v[k] : void 0;
 				});
 			},
-			'hasProperty' : function hasProperty (path) {
-				return this.accessToProperty(path, function (lastProperty, exists) {
+			'hasProperty' : function (path) {
+				return this.accessToProperty(arguments, function (v, k, exists) {
 					return exists;
 				});
 			},
-			'removeProperty' : function removeProperty (path) {
-				this.accessToProperty(path, function (lastProperty) {
-					delete this[lastProperty];
+			'removeProperty' : function (path) {
+				
+				this.accessToProperty(arguments, function (v, k) {
+					delete v[k];
 				});
+
 				return this;
+
 			},
-			'getAllProperties' : function getAllProperties () {
-				return Object.assign({}, _(this.element));
+			'getAllProperties' : function () {
+
+				var results = APR.eachElement(this, function (element) {
+					return Object.assign({}, properties(element));
+				});
+
+				return APR.getFirstOrMultiple(results);
+
 			},
-			'cloneProperties' : function cloneProperties (target) {
-				Object.assign(_(target), this.getAllProperties());
+			'cloneProperties' : function (target) {
+
+				var targetProperties = Object.assign({}, properties(target));
+
+				APR.eachElement(this, function (element) {
+					Object.assign(properties(element), targetProperties);
+				});
+
 				return this;
 			}
 		};
 
 	})(), {'constructor' : APRElement});
-
-	function _createElement (tagName, namespace) {
-
-		var supportedNamespaces = APRElement.prototype.SUPPORTED_NAMESPACES;
-		var namespaceURI = supportedNamespaces[namespace] || supportedNamespaces[tagName] || namespace;
-		var element;
-
-		tagName = tagName.toLowerCase();
-
-		element = namespaceURI
-			? document.createElementNS(namespaceURI, tagName)
-			: document.createElement(tagName);
-
-		return new APRElement(element);
-
-	}
-
-	function _createBounds (position, size) {
-
-		var x = position.x << 0 || position.left << 0;
-		var y = position.y << 0 || position.top << 0;
-		var width = size.width << 0;
-		var height = size.height << 0;
-
-		return {
-			'x' : x,
-			'y' : y,
-			'left' : x,
-			'top' : y,
-			'width' : width,
-			'height' : height,
-			'bottom' : y + height,
-			'right' : x + width
-		};
-
-	}
-
-	function createElementFromString (elementAsString) {
-
-		var tagName = (elementAsString.match(/(^|\t+)[a-z0-9\s]+/i) || [''])[0].trim();
-		var stringParts = elementAsString.split('>');
-		var namespace, attributes = stringParts[0].replace(/\:(\.*)\;/, function (_, ns) {
-			namespace = ns;
-			return '';
-		});
-		var text = stringParts[1] || '';
-		var element;
-
-		if (!tagName) {
-			return document.createTextNode(text);
-		}
-
-		element = _createElement(tagName, namespace);
-
-		// FIX: Backreference didn't work on quotes. 
-		attributes = attributes.replace(/\[\s*([\w\-\:]+)(\s*\=\s*(\"([^\"]*)\"|\'([^\"]*)\')\s*)?\]/g, function replaceAttribute (regexp, name, quoted, attributeValue, valueDoubleQuotes, valueSingleQuotes) {
-			element.setAttributes(APR.setObjectProperties({}, [
-				name, attributeValue ? (valueDoubleQuotes || valueSingleQuotes) : true
-			]), namespace);
-			return '';
-		}).trim();
-
-		attributes = attributes.replace(/\[\s*([\w\-]+)\s*\=\s*(\"(\{.+\})\"|\'(\{.+\})\')\s*\]/, function replaceJSONAttribute (_, name, value, json) {
-			element.setAttributes(APR.setObjectProperties({}, [
-				name, json
-			]), namespace);
-			return '';
-		});
-
-		attributes = attributes.replace(/\.([\w\-]+)/g, function replaceClass (_, name) {
-			element.get().classList.add(name);
-			return '';
-		}).trim();
-
-		attributes = attributes.replace(/\#([\w\-]+)/g, function replaceID (_, id) {
-			element.get().setAttribute('id', id);
-			return '';
-		}).trim();
-
-		element.setText(text);
-
-		return element;
-
-	}
-
-	function _getWindowBounds () {
-		
-		var html = APR.html;
-		var position = {
-			'x' : window.scrollX || window.pageXOffset || html.scrollLeft,
-			'y' : window.scrollY || window.pageYOffset || html.scrollTop
-		};
-		var size = {
-			'width' : window.innerWidth || html.clientWidth,
-			'height' : window.innerHeight || html.clientHeight
-		};
-
-		return _createBounds(position, size);
-
-	}
-
-	function _getDocumentBounds () {
-
-		var html = APR.html;
-		var body = APR.body;
-		var position = {
-			'x' : 0,
-			'y' : 0
-		};
-		var size = {
-			'width' : Math.max(
-				body.scrollWidth,
-				body.offsetWidth,
-				html.clientWidth,
-				html.scrollWidth,
-				html.offsetWidth
-			),
-			'height' : Math.max(
-				body.scrollHeight,
-				body.offsetHeight,
-				html.clientHeight,
-				html.scrollHeight,
-				html.offsetHeight
-			)
-		};
-
-		return _createBounds(position, size);
-
-	}
 		
 	if (!APR.Element) {
 		APR.Element = APRElement;

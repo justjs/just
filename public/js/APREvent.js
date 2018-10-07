@@ -1,107 +1,151 @@
-APR.Define('APR.Event', APR).init(function () {
+APR.Define('APR/Event').using(function () {
 
-	var _ = APR.createPrivateKey({
+	var _ = APR.createPrivateKey();
 
-		'debounce' : (function () {
-
-			var _timeout;
-
-			return function (handler) {
-
-				var element = this.self.element;
-				var args = Array.prototype.slice.call(arguments, 1);
-
-				clearTimeout(_timeout);
-
-				_timeout = setTimeout(function () {
-
-					_timeout = null;
-
-					handler.apply(element, args);
-
-				}, 100);
-
-			};
-
-		})()
-
-	});
-
-	function APREvent (element) {
+	function APREvent (elements) {
 
 		if (!APR.is(this, APREvent)) {
-			return new APREvent(element);
+			return new APREvent(elements);
 		}
 
-		this.element = element;
-
-		if (!_(this.element).attachedEvents) {
-			_(this.element).attachedEvents = {};
+		if (elements) {
+			this.length = Array.prototype.push.apply(this, APR.get(elements, [elements]));
 		}
 
-		_(this).self = this;
+		APR.eachElement(this, function (element) {
+			
+			if (!_(element).attachedEvents) {
+				_(element).attachedEvents = {};
+			}
+
+		});
 
 	}
 
+	Object.assign(APREvent, {
+		'getAttachedEvents' : function (element) {
+			return _(element).attachedEvents;
+		}
+	});
+
 	Object.assign(APREvent.prototype, {
 
-		'addEvent' : function (name, handler, options) {
+		'addEvent' : (function () {
 
-			var _this = this;
-			var listener = function (e) {
-				
-				if (options.isOneTimeEvent) {
-					_this.removeListener(listener);
-				}
+			var throttle = (function () {
 
-				if (!options.debounce) {
-					handler.call(this, e, options.detail);
-				}
-				else {
-					_(_this).debounce(handler, e, options.detail);
-				}
+				var useTimeout = (function () {
 
-			};
-			var type = name.slice(name.lastIndexOf('.') + 1);
-			var uid = name;
+					var timeout;
 
-			options = APR.get(options, {
-				'bubbles' : false,
-				'isOneTimeEvent' : false,
-				'debounce' : false,
+					return function (fn, ms) {
+
+						clearTimeout(timeout);
+
+						timeout = setTimeout(function () {
+							timeout = fn(), null;
+						}, ms);
+
+					};
+
+				})();
+				var useRAF = (function () { /* source: mozilla */
+
+					var ticking = false;
+
+					return function (fn) {
+						
+						if (ticking) {
+							return;
+						}
+							
+						window.requestAnimationFrame(function () {
+							ticking = fn(), false;
+						});
+
+						ticking = true;
+
+					};
+
+				})();
+
+				return function (ms, fn, args, thisArg) {
+
+					var handler = function () {
+						fn.apply(thisArg, args);
+					};
+
+					if (APR.is(ms, 'number')) {
+						useTimeout(handler, ms);
+					}
+					else {
+						useRAF(handler);
+					}
+
+				};
+
+			})();
+			var DEFAULT_OPTIONS = {
+				'useCapture' : false,
+				'once' : false,
 				'detail' : null,
-				'isCloned' : false
-			});
-
-			APR.eachProperty(options, function (v, k) {
-				
-				if (v) {
-					uid += '_' + k;
-				}
-
-			});
-
-			if (_(handler).handlerID === uid && _(this.element).attachedEvents[uid]) {
-				return this;
-			}
-
-			if (options.isCustomEvent) {
-				type = name;
-			}
-
-			this.element.addEventListener(type, listener, options.bubbles);
-
-			_(this.element).attachedEvents[_(handler).handlerID = uid] = {
-				'type' : type,
-				'name' : name,
-				'originalListener' : handler,
-				'listener' : listener,
-				'options' : options
+				'bubbles' : void 0,
+				'throttle' : void 0,
+				'isCloned' : void 0,
+				'isCustomEvent' : void 0
 			};
 
-			return this;
+			return function (name, handler, options) {
 
-		},
+				var instance = this;
+				var listener = function (e) {
+					
+					if (options.once) {
+						instance.removeListener(listener);
+					}
+
+					if (!options.throttle) {
+						handler.call(this, e, options.detail);
+					}
+					else {
+						throttle(options.throttle, handler, [e, options.detail], this);
+					}
+
+				};
+				var type = (options = APR.get(options, {})).isCustomEvent ? name.slice(name.lastIndexOf('.') + 1) : name;
+				var id = name;
+
+				options = Object.assign(options, DEFAULT_OPTIONS);
+
+				if (APR.is(options.bubbles, 'boolean')) {
+					options.useCapture = !options.bubbles;
+				}
+
+				if (_(handler).id === id && _(this).attachedEvents[id]) {
+					return this;
+				}
+
+				_(handler).id = id;
+
+				APR.eachElement(this, function (element) {
+
+					element.addEventListener(type, listener, options.useCapture);
+
+					_(element).attachedEvents[id] = {
+						'type' : type,
+						'name' : name,
+						'originalListener' : handler,
+						'listener' : listener,
+						'options' : options
+					};
+
+				});
+
+				return this;
+
+			};
+
+		})(),
 		'addCustomEvent' : function (type, handler, options) {
 		
 			this.addEvent(type, handler, Object.assign(APR.get(options, {}), {
@@ -111,17 +155,12 @@ APR.Define('APR.Event', APR).init(function () {
 			return this;
 
 		},
-		'createEvent' : function (type, handler, options) {
-			return new CustomEvent(type, options);
-		},
 		'removeEvent' : function (name, listenerName) {
 
-			var _this = this;
-
-			APR.eachProperty(this.getAttachedEvents(), function (handler, id) {
+			this.eachEvent(function (handler, id) {
 
 				if (handler.name === name && APR.is(listenerName, 'undefined') || APR.getFunctionName(handler.originalListener) === listenerName) {
-					_this.removeListener(handler.originalListener);
+					this.removeListener(handler.originalListener);
 				}
 
 			});
@@ -131,58 +170,106 @@ APR.Define('APR.Event', APR).init(function () {
 		},
 		'removeListener' : function (listener) {
 
-			var handlerID = _(listener).handlerID;
-			var handler = this.getAttachedEvents(handlerID);
+			var id = _(listener).id;
 
-			this.element.removeEventListener(handler.type, handler.listener, handler.options.bubbles);
-			
-			delete _(this.element).attachedEvents[handlerID];
-			delete _(listener).handlerID;
+			APR.eachElement(this, function (element) {
+
+				var handler = APREvent.getAttachedEvents(element)[id];
+
+				element.removeEventListener(handler.type, handler.listener, handler.options.useCapture);
+				
+				delete _(element).attachedEvents[id];
+
+			});
+
+			delete _(listener).id;
 
 			return this;
 		},
-		'getAttachedEvents' : function (key) {
-			var attachedEvents = _(this.element).attachedEvents;
-			return key ? attachedEvents[key] : attachedEvents;
-		},
 		'cloneEvents' : function (target) {
-		
-			APR.eachProperty(this.getAttachedEvents(), function (handler, id) {
-				APREvent(target).addEvent(handler.name, handler.originalListener, APR.assign(handler.options, {
+			
+			var aprTarget = new APREvent(target);
+
+			this.eachEvent(function (handler, id) {
+
+				aprTarget.addEvent(handler.name, handler.originalListener, APR.assign(handler.options, {
 					'isCloned' : true
 				}));
+
 			});
 			
 			return this;
 
 		},
+		'eachEvent' : function (handler, thisArg) {
+			
+			APR.eachElement(this, function (element) {
+				APR.eachProperty(APREvent.getAttachedEvents(element), handler, thisArg);
+			}, this);
+
+			return this;
+		},
 		'triggerEvent' : function (type, params) {
 
-			var _this = this;
-			var element = this.element;
-
-			APR.eachProperty(this.getAttachedEvents(), function (handler) {
+			this.eachEvent(function () {
 
 				if (handler.type !== type) {
 					return;
 				}
 
 				if (!APR.is(params, 'undefined')) {
-					handler.options = APR.get(handler.options, {});
-					handler.options = Object.assign(handler.options, {'detail' : params});
+					handler.options = Object.assign(APR.get(handler.options, {}), {'detail' : params});
 				}
 
-				element.dispatchEvent(_this.createEvent(type, handler.listener, handler.options));
+				element.dispatchEvent(new CustomEvent(type, handler.options));
 
 			});
 
 			return this;
 
 		},
+		'addGlobalEvent' : (function () {
+
+			var NON_BUBBLING_TO_BUBBLING = {
+				'focus' : 'focusin',
+				'blur' : 'focusout',
+				'mouseenter' : 'mouseover',
+				'mouseleave' : 'mouseout'
+			};
+			var NON_BUBBLING_EVENTS = ['load', 'unload', 'abort', 'error'];
+
+			return function (eventName, events, options) {
+
+				if (!APR.is(events, {})) {
+					throw new TypeError('"' + events + '" must be a key-value object.');
+				}
+
+				options = APR.get(options, {});
+
+				if (!options.force && APR.inArray(NON_BUBBLING_EVENTS, eventName)) {
+					throw new TypeError(eventName + ' doesn\'t bubble, but you can attach it anyway adding {force: true} (in the options parameter).');
+				}
+
+				this.addEvent(NON_BUBBLING_TO_BUBBLING[eventName] || eventName, function (e, params) {
+					
+					var deepestElement = this;
+					var currentNode = e.target;
+
+					
+
+				}, Object.assign(options, {
+					'bubbles' : true
+				}));
+
+				return this;
+
+			};
+
+		})(),
 		'addGlobalEvent' : function (eventName, events, options) {
 
 			if (!APR.is(events, {})) {
-				throw new TypeError('"' + events + '" must be an object.');
+				throw new TypeError('"' + events + '" must be a key-value object.');
 			}
 
 			this.addEvent(eventName, function (e) {
