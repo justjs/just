@@ -1,83 +1,120 @@
-APR.Define('APR.State', APR).requires({
-	'0.APR.Event' : APR.self.setFileUrl('APREvent', 'js')
+APR.Define('APR/State').using({
+	'0:APR/Event' : APR.self.setFileUrl('APREvent', 'js')
 }, function (APREvent) {
 
 	'use strict';
 	
-	var _ = APR.createPrivateKey({
+	var _ = Object.assign(APR.createPrivateKey({
 
 		'getStateName' : function (stateKey) {
-			return _isLiteralKey(stateKey) ? stateKey : this.self.getState(stateKey) || '';
+			
+			var results = APR.eachElement(this, function (element) {
+				return _.isLiteralKey(stateKey) ? stateKey : _.getStates(element)[stateKey] || '';
+			});
+
+			return APR.getFirstOrMultiple(results);
+
 		},
 		'addStatesToAttribute' : function (states) {
-			this.self.element.setAttribute('data-APR-states', JSON.stringify(Object.assign(this.self.getStates(), states)));
+
+			APR.eachElement(this, function (element) {
+				
+				var key = APRState.ATTRIBUTE_NAME;
+				var value = Object.assign(_.getStates(element), states);
+				
+				element.setAttribute(key, JSON.stringify(value));
+
+			});
+
 		}
 
+	}), {
+		'isLiteralKey' : function (stateKey) {
+			return /^("|').+("|')$/.test(stateKey);
+		},
+		'getStates' : function (element) {
+
+			var states = element.getAttribute(APRState.ATTRIBUTE_NAME);
+			
+			if (!states) {
+				throw new TypeError('The element must have a "' + APRState.ATTRIBUTE_NAME + '" attribute.');
+			}
+
+			return APR.stringToJSON(states);
+		
+		}
 	});
 
-	function APRState (element) {
+	function APRState (elements) {
 
 		if (!APR.is(this, APRState)) {
-			return new APRState(element);
+			return new APRState(elements);
 		}
 
-		this.element = element;
-		_(this).self = this;
+		if (elements) {
+			this.length = Array.prototype.push.apply(this, APR.get(elements, [elements]));
+		}
 
-		APREvent.call(this, element);
+		APREvent.call(this);
 
 	}
 
 	Object.assign(APRState, {
-		'findElementsByState' : findElementsByState
+		'ATTRIBUTE_NAME' : 'data-APR-states',
+		'findElementsByState' : function (stateKey, parent) {
+			return APR.getElements('*[' + APRState.ATTRIBUTE_NAME + ']', parent).filter(function (element) {
+				return APR.inArray(Object.keys(_.getStates(element)), stateKey);
+			});
+		}
 	});
 
 	APRState.prototype = Object.assign(Object.create(APREvent.prototype), APRState.prototype, {
 
 		'getStates' : function () {
-			return _getStates(this.element);
+
+			var results = APR.eachElement(this, function (element) {
+				return _.getStates(element);
+			});
+
+			return APR.getFirstOrMultiple(results);
+
 		},
 		'getState' : function (stateKey) {
-			return _getStates(this.element)[stateKey];
+
+			var results = APR.eachElement(this, function (element) {
+				return _.getStates(element)[stateKey];
+			});
+
+			return APR.getFirstOrMultiple(results);
+
 		},
 		'getEventName' : function (stateKey) {
 			return 'APRState.' + _(this).getStateName(stateKey).replace(/[\W\_]+/g, '').toLowerCase();
 		},
 		'listenState' : function (stateKey, handler, eventOptions) {
 
-			var _this = this;
+			var instance = this;
 
-			if (_isLiteralKey(stateKey)) {
-				_(this).addStatesToAttribute(APR.setObjectProperties({}, [stateKey, stateKey]));
+			if (_.isLiteralKey(stateKey)) {
+				_(this).addStatesToAttribute(APR.setDynamicKeys({}, [stateKey, stateKey]));
 			}
 
 			this.addCustomEvent(this.getEventName(stateKey), function (e, params) {
-				
-				var element = this;
-				var state = params.state;
-				var eventName = e.type;
-				
-				if (!APR.is(state.action, /^(add|toggle|remove)$/i)) {
-					return;
-				}
 
-				element.classList[state.action.toLowerCase()](eventName);
+				var element = this;
+				var state = _(e.detail).state;
+
+				delete _(e.detail);
 
 				if (APR.is(state.originalEvent, 'undefined')) {
 					return;
 				}
 
-				params.state = Object.assign(state, {
+				handler.call(element, state.originalEvent, params, Object.assign(state, {
 					'event' : e,
-					'target' : element,
-					'handler' : handler,
-					'action' : state.action,
-					'originalEvent' : state.originalEvent,
-					'name' : _(_this).getStateName(stateKey),
-					'hasIt' : _this.hasState(stateKey)
-				});
-
-				handler.call(element, state.originalEvent, params);
+					'name' : _(instance).getStateName(stateKey),
+					'hasIt' : instance.hasState(stateKey)
+				}));
 
 			}, eventOptions);
 
@@ -86,18 +123,35 @@ APR.Define('APR.State', APR).requires({
 		},
 		'changeState' : function (stateKey, action, originalEvent, eventParams) {
 
-			this.triggerEvent(this.getEventName(stateKey), Object.assign(APR.get(eventParams, {}), {
-				'state' : {
-					'action' : action,
-					'originalEvent' : originalEvent
-				}
-			}));
+			var eventName = this.getEventName(stateKey);
+
+			if (!/^(add|remove|toggle)$/i.test(action)) {
+				throw new TypeError('"' + action + '" is not a valid action.');
+			}
+
+			element.classList[action.toLowerCase()](eventName);
+			eventParams = APR.get(eventParams, {});
+
+			_(eventParams).state = {
+				'action' : action,
+				'originalEvent' : originalEvent,
+				'eventName' : eventName
+			};
+
+			this.triggerEvent(eventName, eventParams);
 
 			return this;
 
 		},
 		'hasState' : function (stateKey) {
-			return this.element.classList.contains(this.getEventName(stateKey));
+
+			var stateName = this.getStateName(stateKey);
+			var results = APR.eachElement(this, function (element) {
+				return element.classList.contains(stateName);
+			}, this);
+
+			return APR.getFirstOrMultiple(results);
+
 		},
 		'addState' : function (stateKey, originalEvent, eventParams) {
 			return this.changeState(stateKey, 'add', originalEvent, eventParams);
@@ -110,38 +164,6 @@ APR.Define('APR.State', APR).requires({
 		}
 
 	}, {'constructor' : APRState});
-
-	function findElementsByState (stateKey, parent) {
-
-		var elements = [];
-
-		APR.eachElement(APR.getElements('*[data-APR-states]', parent), function (element) {
-
-			if (APR.inArray(Object.keys(_getStates(element)), stateKey)) {
-				elements.push(element);
-			}
-
-		});
-
-		return elements;
-
-	}
-
-	function _isLiteralKey (stateKey) {
-		return APR.has(stateKey, /^("|').+("|')$/);
-	}
-
-	function _getStates (element) {
-
-		var states = element.getAttribute('data-APR-states');
-		
-		if (!states) {
-			throw new TypeError('The element must have a "data-APR-states" attribute.');
-		}
-
-		return APR.stringToJSON(states);
-	
-	}
 
 	if (!APR.State) {
 		APR.State = APRState;
