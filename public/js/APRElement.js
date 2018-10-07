@@ -608,17 +608,7 @@ APR.Define('APR/Element').using({
 		'getRemoteParent' : function (fn) {
 			
 			var results = APR.eachElement(this, function (element) {
-
-				var parentNode;
-
-				while (
-					(parentNode = (parentNode || element).parentNode) &&
-					(parentNode.nodeType && parentNode.nodeType !== Node.DOCUMENT_NODE || (parentNode = null)) &&
-					!fn.call(parentNode)
-				);
-				
-				return parentNode;
-
+				return APR.getRemoteParent(element, fn);
 			});
 
 			return APR.getFirstOrMultiple(results);

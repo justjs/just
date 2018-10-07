@@ -659,6 +659,38 @@
 			return value.length === 1 ? value[0] : value;
 		},
 		/**
+		 * A function that checks if `this` is the Node that you're looking for.
+		 * 
+		 * @typedef {function} APR~getRemoteParent_fn
+		 * @this {Node}
+		 * @return {boolean}
+		 */
+		/**
+		 * Goes up through the `element` parent's, until `fn` returns true
+		 * or a non-Node is found.
+		 * 
+		 * @param  {Node} element Some child.
+		 * @param  {APR~getRemoteParent_fn} fn Some custom handler.     
+		 * @return {?Node} The current Node when `fn` returns true.
+		 * @example
+		 * APR.getRemoteParent(APR.body, function () {
+		 *     return this.tagName === 'HTML';
+		 * }); // returns the html Element.
+		 */
+		'getRemoteParent' : function (element, fn) {
+
+			var parentNode = null;
+
+			while (
+				(parentNode = (parentNode || element).parentNode) &&
+				(parentNode.nodeType && parentNode.nodeType !== Node.DOCUMENT_NODE || (parentNode = null)) &&
+				!fn.call(parentNode)
+			);
+			
+			return parentNode;
+		
+		},
+		/**
 		 * A custom function to append the created element.
 		 * 
 		 * @typedef {function} APR~load_handler

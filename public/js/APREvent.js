@@ -121,13 +121,13 @@ APR.Define('APR/Event').using(function () {
 					options.useCapture = !options.bubbles;
 				}
 
-				if (_(handler).id === id && _(this).attachedEvents[id]) {
-					return this;
-				}
-
-				_(handler).id = id;
-
 				APR.eachElement(this, function (element) {
+
+					if (_(handler).id === id && _(element).attachedEvents[id]) {
+						return;
+					}
+
+					_(handler).id = id;
 
 					element.addEventListener(type, listener, options.useCapture);
 
@@ -251,11 +251,31 @@ APR.Define('APR/Event').using(function () {
 				}
 
 				this.addEvent(NON_BUBBLING_TO_BUBBLING[eventName] || eventName, function (e, params) {
-					
-					var deepestElement = this;
-					var currentNode = e.target;
 
-					
+					var somethingMatched = false;
+
+					APR.getRemoteParent(this, function () {
+
+						if (this === e.target) {
+							return true;
+						}
+
+						APR.eachProperty(events, function (handler, selector) {
+							
+							if (this.matches(selector)) {
+								somethingMatched = true;
+								handler.call(this, e, params);
+							}
+
+						}, this);
+
+						return false;
+
+					});
+
+					if (!somethingMatched && APR.is(events['elsewhere'], 'function')) {
+						events['elsewhere'].call(this, e, params);
+					}
 
 				}, Object.assign(options, {
 					'bubbles' : true
@@ -265,50 +285,7 @@ APR.Define('APR/Event').using(function () {
 
 			};
 
-		})(),
-		'addGlobalEvent' : function (eventName, events, options) {
-
-			if (!APR.is(events, {})) {
-				throw new TypeError('"' + events + '" must be a key-value object.');
-			}
-
-			this.addEvent(eventName, function (e) {
-
-				var element = this;
-				var wasEventCalled = false;
-				var currentTarget = e.target;
-
-				while (currentTarget && currentTarget !== element) {
-
-					APR.eachProperty(events, function (handler, targetSelector) {
-
-						var slicedSelector = targetSelector.slice(1);
-
-						if (targetSelector[0] === '.' && APR.hasClass.call(currentTarget, slicedSelector) ||
-							targetSelector[0] === '#' && currentTarget.id === slicedSelector ||
-							targetSelector.toUpperCase() === currentTarget.tagName
-						) {
-							wasEventCalled = true;
-							handler.call(currentTarget, e, options);
-						}
-
-					});
-
-					currentTarget = currentTarget.parentNode;
-				
-				}
-
-				if (!wasEventCalled && APR.is(events['elsewhere'], 'function')) {
-					events['elsewhere'].call(element, e, APR.get(options, {}).params);
-				}
-
-			}, Object.assign(options, {
-				'bubbles' : true
-			}));
-
-			return this;
-
-		}
+		})()
 
 	}, {'constructor' : APREvent});
 
