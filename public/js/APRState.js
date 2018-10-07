@@ -49,10 +49,6 @@ APR.Define('APR/State').using({
 
 	}
 
-APRState.url.replaceState(this.href);
-APRState.url.listenState(/\#/, function () {
-
-});
 	Object.assign(APRState, {
 		'ATTRIBUTE_NAME' : 'data-APR-states',
 		'findElementsByState' : function (stateKey, parent) {
