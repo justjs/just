@@ -1,5 +1,6 @@
 APR.Define('APR/Event').using(function () {
 
+	var ArrayProto = Array.prototype;
 	var _ = APR.createPrivateKey();
 
 	function APREvent (elements) {
@@ -9,10 +10,10 @@ APR.Define('APR/Event').using(function () {
 		}
 
 		if (elements) {
-			this.length = Array.prototype.push.apply(this, APR.get(elements, [elements]));
+			this.length = ArrayProto.push.apply(this, APR.get(elements, [elements]));
 		}
 
-		APR.eachElement(this, function (element) {
+		ArrayProto.forEach.call(this, function (element) {
 			
 			if (!_(element).attachedEvents) {
 				_(element).attachedEvents = {};
@@ -121,7 +122,7 @@ APR.Define('APR/Event').using(function () {
 					options.useCapture = !options.bubbles;
 				}
 
-				APR.eachElement(this, function (element) {
+				ArrayProto.forEach.call(this, function (element) {
 
 					if (_(handler).id === id && _(element).attachedEvents[id]) {
 						return;
@@ -172,7 +173,7 @@ APR.Define('APR/Event').using(function () {
 
 			var id = _(listener).id;
 
-			APR.eachElement(this, function (element) {
+			ArrayProto.forEach.call(this, function (element) {
 
 				var handler = APREvent.getAttachedEvents(element)[id];
 
@@ -203,7 +204,7 @@ APR.Define('APR/Event').using(function () {
 		},
 		'eachEvent' : function (handler, thisArg) {
 			
-			APR.eachElement(this, function (element) {
+			ArrayProto.forEach.call(this, function (element) {
 				APR.eachProperty(APREvent.getAttachedEvents(element), handler, thisArg);
 			}, this);
 

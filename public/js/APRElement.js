@@ -5,6 +5,7 @@ APR.Define('APR/Element').using({
 
 	'use strict';
 
+	var ArrayProto = Array.prototype;
 	var _ = Object.assign(APR.createPrivateKey(), {
 		
 		'createElement' : function (tagName, namespace) {
@@ -103,7 +104,7 @@ APR.Define('APR/Element').using({
 			throw new TypeError(elements + ' should be either an string or an array.');
 		}
 
-		this.length = Array.prototype.push.apply(this, elements);
+		this.length = ArrayProto.push.apply(this, elements);
 
 		APRState.call(this);
 	
@@ -206,9 +207,9 @@ APR.Define('APR/Element').using({
 				throw new TypeError(fn + ' must be a function.');
 			}
 
-			APR.eachElement(this, function (element, i) {
+			ArrayProto.forEach.call(this, function (element, i) {
 				fn.call(element, new APRElement(element), i, this);
-			});
+			}, this);
 
 			return this;
 
@@ -219,7 +220,7 @@ APR.Define('APR/Element').using({
 				throw new TypeError(styles + ' must be a key-value object.');
 			}
 
-			APR.eachElement(this, function (element) {
+			ArrayProto.forEach.call(this, function (element) {
 
 				APR.eachProperty(styles, function (value, name) {
 					element.style[name] = value;
@@ -273,7 +274,7 @@ APR.Define('APR/Element').using({
 
 			text = APR.get(text, 'string');
 			
-			APR.eachElement(this, function (element) {
+			ArrayProto.forEach.call(this, function (element) {
 			
 				if ('textContent' in element) {
 					element.textContent = text;
@@ -357,7 +358,7 @@ APR.Define('APR/Element').using({
 		},
 		'fitInBounds' : function (bounds) {
 
-			APR.eachElement(this, function (element) {
+			ArrayProto.forEach.call(this, function (element) {
 
 				var ratio = Math.min(bounds.width / element.width, bounds.height / element.height);
 
@@ -384,9 +385,6 @@ APR.Define('APR/Element').using({
 		},
 		'isOnScreen' : function () {
 
-			this.each(function (element) {
-				element.isVisible() && element.isInsideBounds();
-			});
 			var results = APR.eachElement(this, function (element) {
 				var AprElement = new APRElement(element);
 				return AprElement.isVisible() && AprElement.isInsideBounds(_.getWindowBounds());
@@ -418,7 +416,7 @@ APR.Define('APR/Element').using({
 				throw new TypeError(attributes + ' must be a key-value object.');
 			}
 
-			APR.eachElement(this, function (element) {
+			ArrayProto.forEach.call(this, function (element) {
 
 				APR.eachProperty(attributes, function (value, name) {
 					
@@ -441,7 +439,7 @@ APR.Define('APR/Element').using({
 		},
 		'replaceAttributes' : function (attributes, allowEmptyValues) {
 
-			APR.eachElement(this, function (element) {
+			ArrayProto.forEach.call(this, function (element) {
 
 				APR.eachProperty(attributes, function (newName, name) {
 					
@@ -465,7 +463,7 @@ APR.Define('APR/Element').using({
 		
 			var attributes = arguments;
 
-			APR.eachElement(this, function (element) {
+			ArrayProto.forEach.call(this, function (element) {
 
 				APR.eachElement(attributes, function (name) {
 					this.removeAttribute(name);
@@ -504,15 +502,6 @@ APR.Define('APR/Element').using({
 			});
 
 			return APR.getFirstOrMultiple(results);
-
-		},
-		'appendTo' : function (parent) {
-
-			APR.eachElement(this, function (child) {	
-				this.appendChild(child);
-			}, parent);
-
-			return this;
 
 		},
 		'clone' : function (options) {
@@ -573,7 +562,7 @@ APR.Define('APR/Element').using({
 
 			options = APR.get(options, {});
 
-			APR.eachElement(this, function (element) {
+			ArrayProto.forEach.call(this, function (element) {
 
 				if (!options.doNotCloneAttributes) {
 					element.cloneAttributes(target);
@@ -621,7 +610,7 @@ APR.Define('APR/Element').using({
 		return {
 			'accessToProperty' : function (path, fn) {
 				
-				APR.eachElement(this, function (element) {
+				ArrayProto.forEach.call(this, function (element) {
 					APR.access(properties(element), path, fn);
 				});
 
@@ -669,7 +658,7 @@ APR.Define('APR/Element').using({
 
 				var targetProperties = Object.assign({}, properties(target));
 
-				APR.eachElement(this, function (element) {
+				ArrayProto.forEach.call(this, function (element) {
 					Object.assign(properties(element), targetProperties);
 				});
 

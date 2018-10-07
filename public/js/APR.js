@@ -31,11 +31,11 @@
 	fp(O,'keys',function(o){var r=[];ff(o,function(k){r.push(k)});return r});
 	fp(O,'values',function(o){var r=[];ff(o,function(k,v){r.push(v)});return r});
 	fp(A,'isArray',function(a){return fy(O).toString.call(a)==='[object Array]'});
+	fp(A,'from',function(a,fn,t){var s=this,l=O(a),f=l.length>>>0,r=typeof s=='function'?O(new s(f)):new Array(f),i=-1;while(++i<f)r[i]=fn?fn.call(t,l[i],i):l[i];r.length=f;return r});
 
 	fp(fy(S),'trim',function(){/* source: mozilla */return this.replace(/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g,'')});
 	fp(fy(A),'filter',function(fn){var i=0,f=this.length>>>0,r=[],v;for(;i<f;i++)fn((v=this[i]),i,this)&&r.push(v);return r});
 	fp(fy(A),'indexOf',function(k,i){var f=this.length>>>0;i=i<<0;for(i+=i<0?f:0;i<f;i++)if(this[i]===k)return i;return -1});
-	fp(fy(A),'from',function(a,fn,t){var s=this,l=O(a),f=l.length>>>0,r=typeof s=='function'?O(new s(f)):new Array(f),i=-1;while(++i<f)r[i]=fn?fn.call(t,l[i],i):l[i];r.length=f;return r});
 	fp(fy(A),'forEach',function(fn,t){var s=O(this),n=s.length,k;for(k=0;k<n;k++)fn.call(t,s[k],k,s);});
 	fp(fy(F),'bind',function(T){var a=fy(A).slice.call(arguments,1),b=this,fa=function(){},fb=function(){return b.apply(this instanceof fa?this:T,a.concat(fy(A).slice.call(arguments)))};fa.prototype=fy(this);fb.prototype=new fa();return fb});
 	fp(fy(F),'some',function(f,_){/* source: mozilla */var t=this,i=t.length>>>0;while(--i>=0){if(i in t&&f.call(_,t[i],i,t))return !0}return !1});

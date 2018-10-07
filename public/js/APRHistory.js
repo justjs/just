@@ -1,11 +1,25 @@
-APR.Define('APR.History', APR).requires({
-	'0.APR.Event' : APR.self.setFileUrl('APREvent', 'js');
-}, function (APREvent) {
+APR.Define('APR/History').using(function () {
 
 	'use strict';
 
 	var history = window.history,
 		location = window.location;
+
+	var _ = Object.assign(APR.createPrivateKey(), {
+		'addListener' : function () {
+			window.addEventListener();
+		},
+		'triggerIfMatch' : function (url, route) {
+
+			url = APR.parseUrl(url);
+
+			if (APR.is(url.pathname + url.search + url.hash, route.url)) {
+				window.dispatchEvent(new CustomEvent());
+				route.listener(route);
+			}
+
+		}
+	});
 
 	function APRHistory () {
 
@@ -13,17 +27,7 @@ APR.Define('APR.History', APR).requires({
 			return new APRHistory();
 		}
 
-		this.urls = {};
-
-	}
-
-	function _triggerIfMatch (url, route) {
-
-		url = APR.parseUrl(url);
-
-		if (APR.is(url.pathname + url.search + url.hash, route.url)) {
-			route.listener(route);
-		}
+		_(this).urls = [];
 
 	}
 
@@ -59,13 +63,13 @@ APR.Define('APR.History', APR).requires({
 			}
 
 			APR.eachProperty(this.urls, function (route, _) {
-				_triggerIfMatch(url, route);
+				_.triggerIfMatch(url, route);
 			});
 
 		},
 		'listen' : function listen (urls, listener) {
 
-			APR.eachElement(APR.get(urls, [urls]), function () {
+			APR.get(urls, [urls]).forEach(function (url) {
 
 				var route = {
 					'url' : url,
@@ -80,9 +84,11 @@ APR.Define('APR.History', APR).requires({
 					throw new TypeError('"' + route.url + '" must be in the same origin.');
 				}
 
-				this.urls[Object.keys(this.urls).length] = route;
+				_(this).urls.push(route);
 
-				_triggerIfMatch(location.href, route);
+				_.addListener();
+
+				_.triggerIfMatch(location.href, route);
 
 			});
 
@@ -97,3 +103,22 @@ APR.Define('APR.History', APR).requires({
 	}
 
 });
+
+APR.body.addState('isActive', e, {
+	'data' : true
+});
+APR.body.removeState('');
+APR.body.toggleState('');
+APR.body.listenState('isActive', function () {
+
+});
+
+APRState.pushState(this.href, e, {
+	'data' : true
+});
+APRState.replaceState(this.href);
+APRState.listenState(/\#/, function () {
+
+});
+
+APRState.changeState('replace');
