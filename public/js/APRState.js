@@ -32,41 +32,6 @@ APR.Define('APR/State').using({
 				
 			element.setAttribute(key, JSON.stringify(value));
 
-		},
-		'changeUrlState' : function () {
-
-			var title = (options = APR.get(options, {})).title;
-			var state = options.state;
-			var hashSufix = options.hashSufix || '!';
-			var eventType = '';
-			var isPush = APR.is(action, /^push$/i);
-			var isReplace = APR.is(action, /^replace$/i);
-
-			if (!isPush && !isReplace) {
-				throw new TypeError('"' + action + '" is invalid or it\'s not implemented.');
-			}
-
-			if (isPush && history.pushState) {
-				history.pushState(state, title, url);
-				eventType = 'pushState';
-			}
-			else if (isReplace && history.replaceState) {
-				history.replaceState(state, title, url);
-				eventType = 'replaceState';
-			}
-			else {
-				location.href = '#' + hashSufix + url;
-				eventType = 'hashchange';
-			}
-
-			if (!APR.is(title, 'undefined') && document.title !== title) {
-				setTitle(title);
-			}
-
-			APR.eachProperty(this.urls, function (route, _) {
-				_.triggerIfMatch(url, route);
-			});
-
 		}
 	});
 
