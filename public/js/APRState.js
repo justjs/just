@@ -32,6 +32,41 @@ APR.Define('APR/State').using({
 				
 			element.setAttribute(key, JSON.stringify(value));
 
+		},
+		'changeUrlState' : function () {
+
+			var title = (options = APR.get(options, {})).title;
+			var state = options.state;
+			var hashSufix = options.hashSufix || '!';
+			var eventType = '';
+			var isPush = APR.is(action, /^push$/i);
+			var isReplace = APR.is(action, /^replace$/i);
+
+			if (!isPush && !isReplace) {
+				throw new TypeError('"' + action + '" is invalid or it\'s not implemented.');
+			}
+
+			if (isPush && history.pushState) {
+				history.pushState(state, title, url);
+				eventType = 'pushState';
+			}
+			else if (isReplace && history.replaceState) {
+				history.replaceState(state, title, url);
+				eventType = 'replaceState';
+			}
+			else {
+				location.href = '#' + hashSufix + url;
+				eventType = 'hashchange';
+			}
+
+			if (!APR.is(title, 'undefined') && document.title !== title) {
+				setTitle(title);
+			}
+
+			APR.eachProperty(this.urls, function (route, _) {
+				_.triggerIfMatch(url, route);
+			});
+
 		}
 	});
 
@@ -59,24 +94,23 @@ APR.Define('APR/State').using({
 		'getEventName' : function (element, stateKey) {
 			return 'APRState.' + _.getStateName(element, stateKey).replace(/[\W\_]+/g, '').toLowerCase();
 		},
-		'url' : (function () {
+		'url' : Object.create({
+			'FALLBACK_HASH_SUFIX' : '!',
+			'EVENT_NAME' : 'url:hasChanged',
+			'changeState' : function (action, url, cause, eventParams) {
 
-			var STATE_KEY = '"url:hasChanged"';
+				var instance = new APRState(window);
+				var _this = this;
 
-			return Object.assign(Object.create({
+				_(instance).customHandler = function (element, privateStateDetails) {
 
-				'changeState' : function (action, url, originalEvent, eventParams) {
-
-					var title = (eventParams = APR.get(eventParams, {})).historyTitle;
-					var state = eventParams.historyState;
+					var title = (eventParams = APR.get(eventParams, {})).$title;
+					var state = eventParams.$state;
 					var eventType = '';
 					var isPush = /^push$/i.test(action);
 					var isReplace = /^replace$/i.test(action);
 					var isInit = /^init$/i.test(action);
-
-					if (APR.parseUrl(url).origin !== location.origin) {
-						throw new TypeError('"' + url + '" must be in the same origin.');
-					}
+					var wasFallbackTriggered = false;
 
 					if (!isPush && !isReplace && !isInit) {
 						throw new TypeError('"' + action + '" is invalid or it\'s not implemented.');
@@ -91,103 +125,97 @@ APR.Define('APR/State').using({
 						eventType = 'replaceState';
 					}
 					else if (!isInit) {
-						location.href = '#' + APRState.url.FALLBACK_HASH_SUFIX + url;
+						location.href = '#' + _this.FALLBACK_HASH_SUFIX + url;
 						eventType = 'hashchange';
+						wasFallbackTriggered = true;
+					}
+					else {
+						eventType = 'init';
 					}
 
 					if (!APR.is(title, 'undefined') && document.title !== title) {
 						document.title = title;
 					}
 
-					_(eventParams).state = {
-						'originalEvent' : originalEvent,
-						'action' : action,
-						'name' : name,
+					Object.assign(privateStateDetails, {
+						'type' : eventType,
+						'urlChanged' : true,
+						'wasFallbackTriggered' : wasFallbackTriggered,
 						'url' : url
-					};
+					});
 
-					new APREvent(window).triggerEvent(STATE_KEY, eventParams);
+				};
 
-					return this;
+				instance.changeState(action, '"' + this.EVENT_NAME + '"', cause, eventParams);
 
-				},
-				'pushState' : function (url, originalEvent, eventParams) {
-					return APRState.url.changeState('push', url, originalEvent, eventParams);
-				},
-				'replaceState' : function (url, originalEvent, eventParams) {
-					return APRState.url.changeState('replace', url, originalEvent, eventParams);
-				},
-				'listenState' : function (urls, handler, options) {
+				return instance;
 
-					var against = APR.get(options, {}).against;
+			},
+			'pushState' : function (url, cause, eventParams) {
+				return this.changeState('push', url, cause, eventParams);
+			},
+			'replaceState' : function (url, cause, eventParams) {
+				return this.changeState('replace', url, cause, eventParams);
+			},
+			'listenState' : function (conditions, handler, options) {
 
-					if (!APR.is(handler, 'function')) {
-						throw new TypeError('"' + handler + '" must be a function.');
-					}
+				var instance = new APRState(window);
+				var against = (options = APR.get(options, {})).against;
 
-					against = APR.get(against, [against]);
-					urls = APR.get(urls, [urls || 'href']);
+				_(handler).data = {
+					'against' : APR.get(against, [against || 'href']),
+					'conditions' : APR.get(conditions, [conditions])
+				};
 
-					new APREvent(window).addCustomEvent(STATE_KEY, function (e, params) {
+				_(instance).customHandler = function checkEachRoute (_, params, state) {
 
-						var element = this;
-						var state = APR.get(_(e.detail), {}).state;
-						var against = APR.get(options.against);
-						var originalEvent;
+					new APREvent(this).eachEvent(function (handler, id) {
 
-						if (!state) {
-							return handler.call(element, e, params), void 0;
-						}
+						var handlerData = _(handler).data;
+						var match;
 
-						originalEvent = state.originalEvent;
-
-						delete _(e.detail);
-						delete state.originalEvent;
-
-						if (APR.is(originalEvent, 'undefined')) {
+						if (!handlerData) {
 							return;
 						}
 
-						urls.forEach(function (expression) {
+						match = handlerData.conditions.some(function (condition) {
 
-							var matched = against.some(function (property) {
+							return handlerData.against.some(function (property) {
 
-								var parsedUrl = APR.parseUrl(state.url);
-								var url = parseUrl[property];
+								var parsedUrl = APR.parsedUrl(state.url);
+								var url = parsedUrl[property];
 
 								return (
-									APR.is(expression, RegExp) && expression.test(url) ||
-									APR.is(expression, 'function') && expression(url) ||
-									expression === url
+									APR.is(condition, RegExp) && condition.test(url) ||
+									APR.is(condition, 'function') && condition(url) ||
+									condition === url
 								);
 
 							});
 
-							if (!matched) {
-								return;
-							}
-
-							handler.call(element, originalEvent, params, Object.assign(state, {
-								'event' : e
-							}));
-
 						});
+
+						if (!match) {
+							return;
+						}
+
+						handler.call(this, state.cause, params, state);
 
 					});
 
-					if (location.hash || history.state) {
-						this.changeState('init', location.href, null, history.state);
-					}
+				};
 
-					return this;
-
-					
+				if (against) {
+					delete options.against;
 				}
-			}), {
-				'FALLBACK_HASH_SUFIX' : '!'
-			});
 
-		})()
+				instance.listenState('"' + this.EVENT_NAME + '"', handler, options);
+
+				return instance;
+
+			}
+
+		})
 	});
 
 	APRState.prototype = Object.assign(Object.create(APREvent.prototype), APRState.prototype, {
@@ -214,34 +242,39 @@ APR.Define('APR/State').using({
 
 			var instance = this;
 			var isLiteralKey = _.isLiteralKey(stateKey);
+			var privateHandler = APR.get(_(this), {}).customHandler;
 
-			APR.eachElement(this, function (element) {
+			ArrayProto.forEach.call(this, function (element) {
 
-				if (isLiteralKey) {
+				if (!privateHandler && isLiteralKey) {
 					_.addStatesToAttribute(element, APR.setDynamicKeys({}, [stateKey, stateKey]));
 				}
 
 				new APREvent(element).addCustomEvent(APRState.getEventName(element, stateKey), function (e, params) {
 
-					var element = this;
-					var state = APR.get(_(e.detail), {}).state;
+					var state = APR.get(_(APR.get(e.detail, {})), {}).state;
+					var cause;
 
 					if (!state) {
-						return handler.call(element, e, params), void 0;
+						return handler.call(this, e, params), void 0;
 					}
 
 					delete _(e.detail);
 
-					if (APR.is(state.originalEvent, 'undefined')) {
+					if (APR.is(state.cause, 'undefined')) {
 						return;
 					}
 
-					handler.call(element, state.originalEvent, params, {
-						'event' : e,
-						'action' : state.action,
-						'name' : _(instance).getStateName(stateKey),
-						'hasIt' : instance.hasState(stateKey)
+					Object.assign(state, {
+						'event' : e
 					});
+
+					if (APR.is(privateHandler, 'function')) {
+						privateHandler.call(this, handler, params, state);
+					}
+					else {
+						handler.call(this, state.cause, params, state);
+					}
 
 				}, eventOptions);
 
@@ -250,24 +283,42 @@ APR.Define('APR/State').using({
 			return this;
 
 		},
-		'changeState' : function (action, stateKey, originalEvent, eventParams) {
+		'changeState' : function (action, stateKey, cause, eventParams) {
 
-			if (!/^(add|remove|toggle|replace)$/.test(action = action.toLowerCase().trim())) {
-				throw new TypeError('"' + action + '" is not a valid action.');
-			}
+			var privateHandler = APR.get(_(this), {}).customHandler;
+
+			action = action.toLowerCase().trim();
+			eventParams = APR.get(eventParams, {});
 
 			ArrayProto.forEach.call(this, function (element) {
-
+			
+				var eventParamsClon = Object.assign({}, eventParams);
 				var stateName = _.getStateName(element, stateKey);
-
-				element.classList[action](stateName);
-
-				_(eventParams).state = {
+				
+				_(eventParamsClon).state = {
 					'action' : action,
-					'originalEvent' : originalEvent
+					'cause' : cause,
+					'name' : stateName
 				};
 
-				this.triggerEvent(APRState.getEventName(element, stateKey), eventParams);
+				if (APR.is(privateHandler, 'function')) {
+					privateHandler.call(this, element, _(eventParamsClon).state);
+				}
+				else if (/^(add|remove|toggle|replace)$/.test(action)) {
+					
+					element.classList[action](stateName);
+					
+					Object.assign(_(eventParamsClon).state, {
+						'hasIt' : new APRState(element).hasState(stateKey),
+						'type' : 'classList'
+					});
+
+				}
+				else {
+					throw new TypeError('"' + action + '" is not a valid action.');
+				}
+
+				new APREvent(element).triggerEvent(APRState.getEventName(element, stateKey), eventParamsClon);
 
 			}, this);
 
@@ -282,22 +333,22 @@ APR.Define('APR/State').using({
 			
 				return element.classList.contains(stateName);
 			
-			}, this);
+			});
 
 			return APR.getFirstOrMultiple(results);
 
 		},
-		'addState' : function (stateKey, originalEvent, eventParams) {
-			return this.changeState('add', stateKey, originalEvent, eventParams);
+		'addState' : function (stateKey, cause, eventParams) {
+			return this.changeState('add', stateKey, cause, eventParams);
 		},
-		'toggleState' : function (stateKey, originalEvent, eventParams) {
-			return this.changeState('toggle', stateKey, originalEvent, eventParams);
+		'toggleState' : function (stateKey, cause, eventParams) {
+			return this.changeState('toggle', stateKey, cause, eventParams);
 		},
-		'removeState' : function (stateKey, originalEvent, eventParams) {
-			return this.changeState('remove', stateKey, originalEvent, eventParams);
+		'removeState' : function (stateKey, cause, eventParams) {
+			return this.changeState('remove', stateKey, cause, eventParams);
 		},
-		'replaceState' : function (stateKey, originalEvent, eventParams) {
-			return this.changeState('replace', stateKey, originalEvent, eventParams);
+		'replaceState' : function (stateKey, cause, eventParams) {
+			return this.changeState('replace', stateKey, cause, eventParams);
 		}
 
 	}, {'constructor' : APRState});
