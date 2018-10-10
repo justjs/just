@@ -10,17 +10,12 @@ APR.Define('APR/Element').using({
 		
 		'createElement' : function (tagName, namespace) {
 
-			var namespaces = APRElement.prototype.NAMESPACES;
-			var namespaceURI = namespaces[namespace] || namespaces[tagName] || namespace;
-			var element;
-
-			tagName = tagName.toLowerCase();
-
-			element = namespaceURI
+			var namespaceURI = APR.ELEMENT_NAMESPACES[namespace] || APR.ELEMENT_NAMESPACES[tagName = tagName.toLowerCase().trim()] || namespace;
+			
+			return (namespaceURI
 				? document.createElementNS(namespaceURI, tagName)
-				: document.createElement(tagName);
-
-			return element;
+				: document.createElement(tagName)
+			);
 
 		},
 		'createBounds' : function (position, size) {
@@ -90,21 +85,26 @@ APR.Define('APR/Element').using({
 	function APRElement (elements) {
 
 		if (!APR.is(this, APRElement)) {
-			return new APRElement(element);
+			return new APRElement(elements);
 		}
 
 		if (APR.is(elements, APRElement)) {
 			return elements;
 		}
 
-		if (APR.is(elements, 'string')) {
+		if (APR.is(elements, 'undefined')) {
+			elements = [];
+		}
+		else if (APR.is(elements, 'string')) {
 			elements = APRElement.findAll(elements);
 		}
 		else if (!APR.is(elements, [])) {
 			throw new TypeError(elements + ' should be either an string or an array.');
 		}
 
-		this.length = ArrayProto.push.apply(this, elements);
+		if (this.constructor === APRElement) {
+			this.length = ArrayProto.push.apply(this, elements);
+		}
 
 		APRState.call(this);
 	
@@ -144,18 +144,18 @@ APR.Define('APR/Element').using({
 			});
 
 			attributes = attributes.replace(/\.([\w\-]+)/g, function replaceClass (_, name) {
-				element.get().classList.add(name);
+				element.chain('classList.add')(name);
 				return '';
 			}).trim();
 
 			attributes = attributes.replace(/\#([\w\-]+)/g, function replaceID (_, id) {
-				element.get().setAttribute('id', id);
+				element.chain('setAttribute')('id', id);
 				return '';
 			}).trim();
 
 			element.setText(text);
 
-			return element;
+			return element.get();
 
 		},
 		'findAllByState' : function () {
@@ -182,16 +182,7 @@ APR.Define('APR/Element').using({
 	});
 
 	APRElement.prototype = Object.assign(Object.create(APRState.prototype), APRElement.prototype, {
-		'NAMESPACES' : {
-			'html' : 'http://www.w3.org/1999/xhtml',
-			'mathml' : 'http://www.w3.org/1998/Math/MathML',
-			'svg' : 'http://www.w3.org/2000/svg',
-			'xlink' : 'http://www.w3.org/1999/xlink',
-			'xml' : 'http://www.w3.org/XML/1998/namespace',
-			'xmlns' : 'http://www.w3.org/2000/xmlns/',
-			'xbl' : 'http://www.mozilla.org/xbl',
-			'xul' : 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul'
-		},
+
 		'get' : function (handler) {
 
 			var results = APR.eachElement(this, function (element, i) {
@@ -214,38 +205,24 @@ APR.Define('APR/Element').using({
 			return this;
 
 		},
-		'changeCss' : function (styles) {
-
-			if (!APR.is(styles, {})) {
-				throw new TypeError(styles + ' must be a key-value object.');
-			}
-
-			ArrayProto.forEach.call(this, function (element) {
-
-				APR.eachProperty(styles, function (value, name) {
-					element.style[name] = value;
-				});
-
-			});
-
-			return this;
-
-		},
 		/**
-		 * @example
-		 * APRElement('body, html').chain('classList.add')('a', 'b').setText('c');
-		 * // Same as:
-		 * // APRElement('body, html').each(function (element) {
-		 * //     this.classList.add('a');
-		 * //     this.classList.add('b');
-		 * // }).setText('c');
+		 * @example <caption></caption>
+		 * APRElement('body, html')
+		 *     .chain('style', {top: '10px', left: '10px'})
+		 *     .chain('setAttribute')('a', 1)
+		 *     .chain('onload', function newFunction (log) { log(this.onload); })(console.log)
+		 *     .chain('property', {pushed: ['a']})
+		 *     .chain('property.pushed', ['b', 'c'])
+		 *     .chain('property.pushed', [])
+		 *     .chain(function (log, property) { log(this.property[property]); })(console.log, 'pushed')
+		 *     .results;
 		 * 
 		 * @example <caption>If you want the returned values, you can access to the `results` property:</caption>
 		 * APRElement('body, html').chain('classList.contains')('someClass').results;
 		 * // returns [APR.body.classList.contains('someClass'), APR.html.classList.contains('someClass')]
 		 * 
 		 */
-		'chain' : function (property) {
+		'chain' : function (property, value, isValueUndefined) {
 
 			var propertyPath, fn;
 
@@ -253,13 +230,38 @@ APR.Define('APR/Element').using({
 				fn = property;
 			}
 			else {
-				propertyPath = APR.get(property, APR.get(property, 'string').split('.'));
+				propertyPath = APR.get(property, String(property).split('.'));
+			}
+
+			if (!APR.is(value, 'undefined') || isValueUndefined && propertyPath) {
+				
+				this.each(function () {
+					
+					APR.access(this, propertyPath, function (element, property) {
+
+						if (APR.is(element[property], value) && APR.is(value, {}, []) && !APR.isObjectEmpty(value)) {
+							Object.assign(element[property], value);
+						}
+						else {
+							element[property] = value;
+						}
+
+					}, true);
+
+				});
+
+				if (!APR.is(value, 'function')) {
+					return this;
+				}
+				
+				fn = value;
+
 			}
 			
 			return function (arg) {
 
 				var args = arguments;
-				var results = APRElement.eachElement(this, function (element) {
+				var results = APR.eachElement(this, function (element) {
 					return (fn || APR.access(element, propertyPath)).apply(this, args);
 				});
 
@@ -420,11 +422,11 @@ APR.Define('APR/Element').using({
 
 				APR.eachProperty(attributes, function (value, name) {
 					
-					var namespace = name.split(/^[\w\-]+\:/)[1];
-					var namespaceURI = APRElement.prototype.NAMESPACES[namespace];
+					var namespace = name.split(':')[0];
+					var namespaceURI = APR.ELEMENT_NAMESPACES[namespace];
 
 					if (namespaceURI) {
-						this.setAttributeNS(namespaceURI, name, value);
+						this.setAttributeNS(namespaceURI, name.split(':')[1], value);
 					}
 					else {
 						this.setAttribute(name, value);
@@ -449,8 +451,8 @@ APR.Define('APR/Element').using({
 						return;
 					}
 
-					this.setAttribute(newName, value);
 					this.removeAttribute(name);
+					this.setAttribute(newName, value);
 
 				}, element);
 

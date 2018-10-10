@@ -41,7 +41,7 @@ APR.Define('APR/State').using({
 			return new APRState(elements);
 		}
 
-		if (elements) {
+		if (this.constructor === APRState) {
 			this.length = ArrayProto.push.apply(this, APR.get(elements, [elements]));
 		}
 

@@ -574,11 +574,13 @@
 		 */
 
 		/**
-		 * {@link cloneObject|Clones} `object` and accesses to a deep property in that object.
+		 * Accesses to a deep property in a new `object` (or `object` if `mutate` evals to true).
 		 * 
 		 * @param  {!Object} object The base object.
 		 * @param  {Array} [path=[path]] The ordered keys.
 		 * @param  {APR~access_handler} [handler] A custom function.
+		 * @param  {boolean} mutate If it evals to true, it will use `object` as the base object,
+		 *                          otherwise it will create a new `object` without the prototype chain.
 		 * @throws {TypeError} If some property causes access problems.
 		 * @example <caption>Accessing to some existent property</caption>
 		 *
@@ -593,30 +595,41 @@
 		 * @example <caption>Accessing to some non-existent property</caption>
 		 *
 		 * var obj = {z: 1, prototype: [...]};
-		 * 
-		 * access(obj, 'a.b.c'.split('.'), function (currentObject, currentKey, propertyExists, clonedObject, path) {
+		 * var newObj = access(obj, 'a.b.c'.split('.'), function (currentObject, currentKey, propertyExists, clonedObject, path) {
 		 *     
 		 *     if (!propertyExists) {
 		 *         clonedObject[currentKey] = path.length;
 		 *     }
 		 *     
 		 *     // At this point:
-		 *     //     `obj` stills being {z: 1, prototype: [...]},
+		 *     //     `obj` is {z: 1},
 		 *     //     `clonedObject` has a value in `currentKey`,
 		 *     //     and `this` has all the added keys (even the ones modified in `clonedObject`).
-		 *     // so, you can return `this` to assign it to `obj` later.
 		 *     return this;
 		 * 
-		 * }); // returns {z: 1, a: {b: {c: 3}}, prototype: [...]}
+		 * }); // returns {z: 1, a: {b: {c: 3}}}
+		 *
+		 * // if you want the prototype chain of obj, just copy it.
+		 * Object.assign(newObj.prototype, obj.prototype);
+		 *
+		 * @example <caption>Modifying the base object</caption>
+		 * 
+		 * var obj = {a: {b: 1}, b: {b: 2}, prototype: [...]};
+		 * 
+		 * access(obj, 'a.b', function (currentObject, currentKey, propertyExists, clonedObject, path) {
+		 *     currentObject[currentKey] = 2;
+		 * }, true);
+		 *
+		 * // now `obj` is {a: {b: 2}, b: {b: 2}, prototype: [...]}.
 		 * 
 		 * @return If `handler` is given: the returned value of that function,
 		 *         otherwise: the last value of `path` in the cloned object.
 		 */
-		'access' : function (object, path, handler) {
+		'access' : function (object, path, handler, mutate) {
 
 			var propertyExists = true;
-			var clonedObject = APR.cloneObject(object)
-			var currentObject = clonedObject;
+			var baseObject = mutate ? object : Object.assign({}, object);
+			var currentObject = baseObject;
 			var lastKey;
 
 			path = APR.get(path, [path]);
@@ -626,13 +639,13 @@
 
 				currentObject = !APR.is(currentObject[key], 'undefined') ? currentObject[key] : ((propertyExists = false), {});
 
-				if (!APR.is(currentObject, {})) {
+				if (!APR.is(currentObject, {}, null)) {
 					throw new TypeError('The value of "' + key + '" is not a "key-value" object.');
 				}
 
 			});
 
-			return handler ? handler.call(clonedObject, currentObject, lastKey, propertyExists, path) : currentObject[lastKey];
+			return handler ? handler.call(baseObject, currentObject, lastKey, propertyExists, path) : currentObject[lastKey];
 
 		},
 		/**
@@ -700,11 +713,11 @@
 		
 		/**
 		 * A tagName of an Element (such as "link").
-		 * @typedef {string} APR~load_tag
+		 * @typedef {string} APR~element_tag
 		 */
 		
 		/**
-		 * A synonym for a {@link APR~load_tag|tag}.
+		 * A synonym for a {@link APR~element_tag|tag}.
 		 * @typedef {string} APR~load_synonym
 		 */
 		
@@ -717,12 +730,12 @@
 		 * Loads an external file.
 		 *
 		 * @function
-		 * @param  {APR~load_tag} tag A tag name or {@link APR.load.SYNOMYMS_FOR_TAGS|a known type}.
+		 * @param  {APR~element_tag} tag A tag name or {@link APR.load.SYNOMYMS_FOR_TAGS|a known type}.
 		 * @param  {string} url The url of the file.
 		 * @param  {APR~load_handler} [handler] If it's a function: it will be triggered (without appending the element),
 		 *                                  otherwise: the element will be appended to {@link APR.head|head}.
-		 * @property {Object.<APR~load_synonym, APR~load_tag>} SYNOMYMS_FOR_TAGS Defines synonyms for {@link APR~load_tag|element-tags}.
-		 * @property {Object.<APR~load_tag, APR~load_srcLikeAttribute>} NON_SRC_ATTRIBUTES {@link APR~load_tag|Element-tags} that are known for not using 'src' to fetch an url.
+		 * @property {Object.<APR~load_synonym, APR~element_tag>} SYNOMYMS_FOR_TAGS Defines synonyms for {@link APR~element_tag|element-tags}.
+		 * @property {Object.<APR~element_tag, APR~load_srcLikeAttribute>} NON_SRC_ATTRIBUTES {@link APR~element_tag|Element-tags} that are known for not using 'src' to fetch an url.
 		 * @example
 		 * 
 		 * load('link', '/css/index.css', function (loadedFile) {
@@ -813,17 +826,6 @@
 
 		},
 		/**
-		 * Creates a new object similar to `object`.
-		 *
-		 * @param {Object} object Some object.
-		 * @return {Object}
-		*/
-		'cloneObject' : function (object) {
-			var clon = Object.assign({}, object);
-			Object.assign(clon.prototype, object.prototype);
-			return clon;
-		},
-		/**
 		 * Checks if an object has no direct keys.
 		 * 
 		 * @param  {Object}  object Some object.
@@ -897,7 +899,21 @@
 
 			return /,(yes|1),/i.test(consent) ? 1 : /,(no|0),/i.test(consent) ? 0 : void 0;
 
-		})()
+		})(),
+		/**
+		 * Namespace uris for known tags.
+		 * @type {Object.<APR~element_tag, string>} A tag with a namespace URI.
+		 */
+		'ELEMENT_NAMESPACES' : {
+			'html' : 'http://www.w3.org/1999/xhtml',
+			'mathml' : 'http://www.w3.org/1998/Math/MathML',
+			'svg' : 'http://www.w3.org/2000/svg',
+			'xlink' : 'http://www.w3.org/1999/xlink',
+			'xml' : 'http://www.w3.org/XML/1998/namespace',
+			'xmlns' : 'http://www.w3.org/2000/xmlns/',
+			'xbl' : 'http://www.mozilla.org/xbl',
+			'xul' : 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul'
+		}
 	});
 
 	APR.Define = (function () {
@@ -1184,7 +1200,7 @@
 			 *     A numeric index (to indicate the order of the parameters in {@link APR.Define~using_handler})
 			 *     and a {@link APR.Define~namespace|namespace}, splited by ":".
 			 * As a value:
-			 *     An {@link APR.Define.load~url|url}.
+			 *     An url.
 			 *     
 			 * @typedef {Object} APR.Define~using_modulesAsObject
 			 * @example
@@ -1254,6 +1270,121 @@
 		});
 
 		return APRDefine;
+
+	})();
+
+	APR.Promise = (function () {
+
+		var _ = Object.assign(APR.createPrivateKey(), {
+			'STATES' : ['pending', 'fullfilled', 'rejected']
+		});
+
+		function APRPromise (fn) {
+
+			if (!APR.is(this, APRPromise)) {
+				return new APRPromise(fn);
+			}
+
+			_(this).handler = fn;
+			this._state = _.STATES[0];
+
+		}
+
+		Object.assign(APRPromise.prototype, {
+			'onSuccess' : function (fn) {
+				_(this).onSuccess = fn;
+				return this;
+			},
+			'onError' : function (fn) {
+				_(this).onError = fn;
+				return this;
+			},
+			'init' : function (onSuccess, onError) {
+
+				var _this = _(this);
+				var instance = this;
+				var handler = _this.handler;
+				var promise;
+
+				if (!onSuccess) {
+					onSuccess = _this.onSuccess;
+				}
+
+				if (!onError) {
+					onError = _this.onError;
+				}
+
+				delete _this.onError;
+				delete _this.onSuccess;
+
+				if (!('Promise' in window)) {
+					
+					promise = new Promise(handler);
+					
+					if (onSuccess) {
+						promise.then(onSuccess);
+					}
+
+					if (onError) {
+						promise['catch'](onError);
+					}
+
+					return promise;
+
+				}
+
+				if (!(promise = _this.promise)) {
+					_this.promise = promise = new APRPromise(function noop () {});
+				}
+
+				(window.setImmediate || window.setTimeout)(function () {
+
+					var resolve = function (value) {
+
+						promise._state = instance._state = _.STATES[1];
+						if (!onSuccess) throw value;
+						promise._value = onSuccess(instance._value = value);
+
+					}, reject = function (reason) {
+
+						promise._state = instance._state = _.STATES[2];
+						if (!onError) throw reason;
+						promise._value = onError(instance._reason = reason);
+
+					};
+
+					try {
+
+						if (instance._state === _.STATES[0]) {
+							handler(resolve, reject);
+						}
+						else if (instance._state === _.STATES[1]) {
+							resolve(_this.promise._value);	
+						}
+						else if (instance._state === _.STATES[2]) {
+							reject(_this.promise._reason);
+						}
+
+					} catch (e) {
+						
+						if (_this.rejected) return; _this.rejected = true;
+
+						try {
+							reject(e);
+						} catch (e) {
+							throw e;
+						}
+
+					}
+
+				}, 0);
+
+				return this;
+
+			}
+		});
+
+		return APRPromise;
 
 	})();
 	

@@ -1,5 +1,7 @@
 APR.Define('APR/Event').using(function () {
 
+	'use strict';
+
 	var ArrayProto = Array.prototype;
 	var _ = APR.createPrivateKey();
 
@@ -9,7 +11,7 @@ APR.Define('APR/Event').using(function () {
 			return new APREvent(elements);
 		}
 
-		if (elements) {
+		if (this.constructor === APREvent) {
 			this.length = ArrayProto.push.apply(this, APR.get(elements, [elements]));
 		}
 
