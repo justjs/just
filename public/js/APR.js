@@ -1422,9 +1422,16 @@
 				
 				_.setImmediate(function () {
 					
-					var promiseProperties = JSON.parse(JSON.stringify(_(this)));
-					delete promiseProperties.promise;
-					console.log(_(this).nativePromise || promiseProperties);
+					var _this = Object.assign({}, _(this));
+
+					if (_this.nativePromise) return console.log(_this.nativePromise);
+
+					delete _this.onComplete;
+					delete _this.onFullfillment;
+					delete _this.onRejection;
+					delete _this.promise;
+
+					console.log(_this);
 
 				}.bind(this));
 				
