@@ -37,8 +37,8 @@
 	fp(fy(A),'filter',function(fn){var i=0,f=this.length>>>0,r=[],v;for(;i<f;i++)fn((v=this[i]),i,this)&&r.push(v);return r});
 	fp(fy(A),'indexOf',function(k,i){var f=this.length>>>0;i=i<<0;for(i+=i<0?f:0;i<f;i++)if(this[i]===k)return i;return -1});
 	fp(fy(A),'forEach',function(fn,t){var s=O(this),n=s.length,k;for(k=0;k<n;k++)fn.call(t,s[k],k,s);});
+	fp(fy(A),'some',function(f,_){/* source: mozilla */var t=this,i=t.length>>>0;while(--i>=0){if(i in t&&f.call(_,t[i],i,t))return !0}return !1});
 	fp(fy(F),'bind',function(T){var a=fy(A).slice.call(arguments,1),b=this,fa=function(){},fb=function(){return b.apply(this instanceof fa?this:T,a.concat(fy(A).slice.call(arguments)))};fa.prototype=fy(this);fb.prototype=new fa();return fb});
-	fp(fy(F),'some',function(f,_){/* source: mozilla */var t=this,i=t.length>>>0;while(--i>=0){if(i in t&&f.call(_,t[i],i,t))return !0}return !1});
 	fp(fy(E),'preventDefault',function(){this.cancelable&&(this.returnValue=!1)});
 	fp(fy(E),'stopPropagation',function(){this.cancelBubble=!0});
 	fp(fy(E),'stopImmediatePropagation',function(){this.cancelBubble=this.cancelImmediate=!0});
@@ -105,7 +105,8 @@
 		
 		/**
 		 * Implementation of private members in js.
-		 * 
+		 *
+		 * @todo  SOLVE THE FOLLOWING: this.a = 'a'; _(this); // throws [...] got the string "a".
 		 * @see {@link https://github.com/philipwalton/private-parts/blob/master/private-parts.js|source}
 		 * @param {function|object} [factory=Object.prototype] A new object with `factory` as it's prototype...
 		 * @example
@@ -1273,112 +1274,160 @@
 
 	})();
 
+	/**
+	 * A very basic version of a Promise: then, catch and finally.
+	 * 
+	 * - It contains the instance methods only (then, catch and finally).
+	 * - It instanciates every call to a new Promise, so the "new" keyword is optional.
+	 * - It replaces reserved keywords: "catch" becomes "capture" and "finally" becomes "toFinally".
+	 * - It uses native Promises (if supported) or it shims them (if they aren't).
+	 *
+	 * ... but, why is this a shim rather than a polyfill? Because:
+	 * 
+	 * - It may not cover all the spec. (it doesn't contain static methods).
+	 * - It introduces new aliases.
+	 * - It's intended to be a lightweight wrapper.
+	 * - ...
+	 *
+	 * @example <caption>By default, everything is private. So, you can only log the current promise to the console.</caption>
+	 * APR.Promise(function (resolve) { resolve(1); }).log();
+	 *
+	 */
 	APR.Promise = (function () {
 
-		var _ = Object.assign(APR.createPrivateKey(), {
-			'STATES' : ['pending', 'fullfilled', 'rejected']
+		var _ = Object.assign(APR.createPrivateKey({
+			'resolve' : function (value) {
+
+				this.state = 'fullfilled';
+				this.value = value;
+
+				if (this.onComplete) {
+					this.onComplete();
+				}
+
+				if (!this.promise) {
+					return;
+				}
+
+				try {
+					_(this.promise).resolve(_(this.promise).onFullfillment(value));
+				} catch (e) {
+					_(this.promise).reject(e);
+				}
+
+			},
+			'reject' : function (reason) {
+						
+				var currentPromise = this;
+
+				this.state = 'rejected';
+				this.reason = reason;
+
+				if (this.onComplete) {
+					this.onComplete();
+				}
+
+				while (!_(currentPromise).onRejection) {
+					currentPromise = currentPromise.promise;
+					if (!currentPromise) throw reason;
+				}
+
+				_(currentPromise).resolve(_(currentPromise).onRejection(reason));
+
+			},
+			'updateNativePromise' : function (fnName, args) {
+				return this.nativePromise
+					? (this.nativePromise = this.nativePromise[fnName].apply(this.nativePromise, args), true)
+					: false;
+			}
+		}), {
+			'setImmediate' : function (fn) {
+				(window.setImmediate || window.setTimeout)(fn, 0);
+			}
 		});
 
-		function APRPromise (fn) {
+		function APRPromise (handler) {
 
 			if (!APR.is(this, APRPromise)) {
-				return new APRPromise(fn);
+				return new APRPromise(handler);
 			}
 
-			_(this).handler = fn;
-			this._state = _.STATES[0];
+			if (!APR.is(handler, 'function')) {
+				throw new TypeError(handler + ' is not a function.');
+			}
+
+			if ('Promise' in window) {
+				_(this).nativePromise = new Promise(handler);
+				return this;
+			}
+
+			_(this).state = 'pending';
+
+			_.setImmediate(function (handler) {
+
+				var _this = _(this);
+				var done = false;
+
+				try {
+
+					handler(
+						function (value) { done = done || _this.resolve(value), true; },
+						function (reason) { done = done || _this.reject(reason), true; }
+					);
+
+				} catch (e) {
+					_this.reject(e);
+				}
+
+			}.bind(this, handler));
 
 		}
 
 		Object.assign(APRPromise.prototype, {
-			'onSuccess' : function (fn) {
-				_(this).onSuccess = fn;
-				return this;
-			},
-			'onError' : function (fn) {
-				_(this).onError = fn;
-				return this;
-			},
-			'init' : function (onSuccess, onError) {
+			'then' : function (onFullfillment, onRejection) {
 
-				var _this = _(this);
-				var instance = this;
-				var handler = _this.handler;
 				var promise;
 
-				if (!onSuccess) {
-					onSuccess = _this.onSuccess;
+				if (_(this).updateNativePromise('then', arguments)) {
+					return this;
 				}
 
-				if (!onError) {
-					onError = _this.onError;
+				promise = _(this).promise = new APRPromise(function noop () {});
+
+				_(promise).onFullfillment = onFullfillment;
+				_(promise).onRejection = onRejection;
+
+				return promise;
+
+			},
+			'capture' : function (onRejection) {
+				
+				if (!_(this).updateNativePromise('catch', arguments)) {
+					_(this).onRejection = onRejection;
+				}
+								
+				return this;
+
+			},
+			'toFinally' : function (onComplete) {
+
+				if (!_(this).updateNativePromise('finally', arguments)) {
+					_(this).onComplete = onComplete;
 				}
 
-				delete _this.onError;
-				delete _this.onSuccess;
+				return this;
 
-				if (!('Promise' in window)) {
+			},
+			'log' : function () {
+				
+				_.setImmediate(function () {
 					
-					promise = new Promise(handler);
-					
-					if (onSuccess) {
-						promise.then(onSuccess);
-					}
+					var promiseProperties = JSON.parse(JSON.stringify(_(this)));
+					delete promiseProperties.promise;
+					console.log(_(this).nativePromise || promiseProperties);
 
-					if (onError) {
-						promise['catch'](onError);
-					}
-
-					return promise;
-
-				}
-
-				if (!(promise = _this.promise)) {
-					_this.promise = promise = new APRPromise(function noop () {});
-				}
-
-				(window.setImmediate || window.setTimeout)(function () {
-
-					var resolve = function (value) {
-
-						promise._state = instance._state = _.STATES[1];
-						if (!onSuccess) throw value;
-						promise._value = onSuccess(instance._value = value);
-
-					}, reject = function (reason) {
-
-						promise._state = instance._state = _.STATES[2];
-						if (!onError) throw reason;
-						promise._value = onError(instance._reason = reason);
-
-					};
-
-					try {
-
-						if (instance._state === _.STATES[0]) {
-							handler(resolve, reject);
-						}
-						else if (instance._state === _.STATES[1]) {
-							resolve(_this.promise._value);	
-						}
-						else if (instance._state === _.STATES[2]) {
-							reject(_this.promise._reason);
-						}
-
-					} catch (e) {
-						
-						if (_this.rejected) return; _this.rejected = true;
-
-						try {
-							reject(e);
-						} catch (e) {
-							throw e;
-						}
-
-					}
-
-				}, 0);
-
+				}.bind(this));
+				
 				return this;
 
 			}
