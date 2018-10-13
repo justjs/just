@@ -84,99 +84,109 @@ APR.Define('APR/Template').using(function () {
 
 		},
 		'parse' : function () {
-				
+			
+			var template = this;
 			var tokens = this.tokens;
 			var data = _(this).data;
 			var deferredObjects = {};
-			var usedTabs = [];
-			var parent = document.createElement('div');
-			var currentBranch = parent;
-			var previousBranch;
 
-			APR.eachElement(this, function toString (element) {
+			return APR.Promise.resolve(this).then(function convertToStrings (template) {
 
-				var uid;
+				return APR.eachElement(template, function (element) {
 
-				if (APR.is(element, 'string')) {
+					var uid;
 
-					return element.replace(/\{this\.([^\}]+)\}/ig, function props (exp, property) {
-						return APR.access(tokens, property);
-					}).replace(/\{([^\}]+)\}/g, function vars (exp, property) {
-						return APR.access(data, property);
-					});
+					if (APR.is(element, 'string')) {
 
-				}
+						return element.replace(/\{this\.([^\}]+)\}/ig, function props (exp, property) {
+							return APR.access(tokens, property);
+						}).replace(/\{([^\}]+)\}/g, function vars (exp, property) {
+							return APR.access(data, property);
+						});
 
-				uid = _.getRandomString();
-
-				while (APR.is(element, 'function')) {
-					element = element.call(this);
-				}
-
-				if (APR.is(element, {})) {
-					throw new TypeError(Object.keys(element) + ' were not defined.');
-				}
-
-				if (APR.is(element, [])) {
-					element = new APRTemplate(tokens, element)
-						.onDataReceived(_(this).onDataReceived)
-						.define(_(this).definitions)
-						.addData(data);
-				}
-
-				if (APR.is(element, APRTemplate)) {
-					element = element.get();
-				}
-
-				if (!APR.is(element, Node, Element)) {
-					element = document.createTextNode(element);
-				}
-
-				deferredObjects[uid] = element;
-
-				return uid;
-
-			}).forEach(function (string, i, array) {
-
-				var previousTabs = _.getTabsCount(array[i - 1]);
-				var currentTabs = _.getTabsCount(string);
-
-				string = string.replace(/\t/g, '');
-
-				if (currentTabs > previousTabs) {
-					previousBranch = currentBranch;
-					usedTabs[currentTabs] = currentTabs;
-				}
-				else {
-
-					while (currentTabs < previousTabs && previousBranch.parentNode) {
-					
-						while (!(--previousTabs in usedTabs) && previousTabs >= 0);
-						
-						if (previousTabs in usedTabs) {
-							usedTabs.splice(previousTabs, 1);
-						}
-
-						previousBranch = previousBranch.parentNode;
-					
 					}
 
-				}
+					uid = _.getRandomString();
 
-				if (!previousBranch) {
-					previousBranch = parent;
-				}
+					while (APR.is(element, 'function')) {
+						element = element.call(this);
+					}
 
-				if (currentBranch = deferredObjects[string]) {
-					delete deferredObjects[string];
-				}
+					if (APR.is(element, {})) {
+						throw new TypeError(Object.keys(element) + ' were not defined.');
+					}
 
-				currentBranch = currentBranch || APRElement.createElement(string);
-				previousBranch.appendChild(currentBranch);
+					if (APR.is(element, [])) {
+						element = new APRTemplate(tokens, element)
+							.onDataReceived(_(this).onDataReceived)
+							.define(_(this).definitions)
+							.addData(data);
+					}
 
-			}, this);
+					if (APR.is(element, APRTemplate)) {
+						element = element.get();
+					}
 
-			return parent.children;
+					if (!APR.is(element, Node, Element)) {
+						element = document.createTextNode(element);
+					}
+
+					deferredObjects[uid] = element;
+
+					return uid;
+
+				});
+
+			}).then(function convertToElements (values) {
+
+				var usedTabs = [];
+				var parent = document.createElement('div');
+				var currentBranch = parent;
+				var previousBranch;
+
+				values.forEach(function (string, i, array) {
+
+					var previousTabs = _.getTabsCount(array[i - 1]);
+					var currentTabs = _.getTabsCount(string);
+
+					string = string.replace(/\t/g, '');
+
+					if (currentTabs > previousTabs) {
+						previousBranch = currentBranch;
+						usedTabs[currentTabs] = currentTabs;
+					}
+					else {
+
+						while (currentTabs < previousTabs && previousBranch.parentNode) {
+						
+							while (!(--previousTabs in usedTabs) && previousTabs >= 0);
+							
+							if (previousTabs in usedTabs) {
+								usedTabs.splice(previousTabs, 1);
+							}
+
+							previousBranch = previousBranch.parentNode;
+						
+						}
+
+					}
+
+					if (!previousBranch) {
+						previousBranch = parent;
+					}
+
+					if (currentBranch = deferredObjects[string]) {
+						delete deferredObjects[string];
+					}
+
+					currentBranch = currentBranch || APRElement.createElement(string);
+					previousBranch.appendChild(currentBranch);
+
+				}, this);
+
+				return parent.children;
+
+			});
 
 		}
 	});
