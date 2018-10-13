@@ -3,7 +3,18 @@ APR.Define('APR/Template').using(function () {
 	'use strict';
 
 	var ArrayProto = Array.prototype;
-	var _ = Object.assign(APR.createPrivateKeys(), {
+	var _ = Object.assign(APR.createPrivateKeys({
+		
+		'listen' : function (eventName, handler) {
+			
+			if (!APR.is(handler, 'function')) {
+				throw new TypeError(handler + ' must be a function.');
+			}
+
+			this[eventName] = handler;
+		}
+
+	}), {
 		'getRandomString' : function () { // https://gist.github.com/6174/6062387
 			return Math.random().toString(36).slice(2, 15) + Math.random().toString(36).slice(2, 15);
 		},
@@ -32,15 +43,7 @@ APR.Define('APR/Template').using(function () {
 	Object.assign(APRTemplate.prototype, {
 
 		'onDataReceived' : function (handler) {
-
-			if (!APR.is(handler, 'function')) {
-				throw new TypeError(handler + ' must be a function.');
-			}
-
-			_(this).onDataReceived = handler;
-
-			return this;
-
+			return _(this).listen('onDataReceived', handler), this;
 		},
 		'addData' : function (data) {
 			
@@ -89,106 +92,101 @@ APR.Define('APR/Template').using(function () {
 			var tokens = this.tokens;
 			var data = _(this).data;
 			var deferredObjects = {};
+			var usedTabs = [];
+			var parent = document.createElement('div');
+			var currentBranch = parent;
+			var previousBranch;
 
-			return APR.Promise.resolve(this).then(function convertToStrings (template) {
+			APR.eachElement(template, function (element) {
 
-				return APR.eachElement(template, function (element) {
+				var uid;
 
-					var uid;
+				if (APR.is(element, 'string')) {
 
-					if (APR.is(element, 'string')) {
+					return element.replace(/\{this\.([^\}]+)\}/ig, function props (exp, property) {
+						return APR.access(tokens, property);
+					}).replace(/\{([^\}]+)\}/g, function vars (exp, property) {
+						return APR.access(data, property);
+					});
 
-						return element.replace(/\{this\.([^\}]+)\}/ig, function props (exp, property) {
-							return APR.access(tokens, property);
-						}).replace(/\{([^\}]+)\}/g, function vars (exp, property) {
-							return APR.access(data, property);
-						});
+				}
 
-					}
+				uid = _.getRandomString();
 
-					uid = _.getRandomString();
+				while (APR.is(element, 'function')) {
+					element = element.call(this);
+				}
 
-					while (APR.is(element, 'function')) {
-						element = element.call(this);
-					}
+				if (APR.is(element, {})) {
+					throw new TypeError(Object.keys(element) + ' were not defined.');
+				}
 
-					if (APR.is(element, {})) {
-						throw new TypeError(Object.keys(element) + ' were not defined.');
-					}
+				if (APR.is(element, [])) {
+					element = new APRTemplate(tokens, element)
+						.onDataReceived(_(this).onDataReceived)
+						.define(_(this).definitions)
+						.addData(data);
+				}
 
-					if (APR.is(element, [])) {
-						element = new APRTemplate(tokens, element)
-							.onDataReceived(_(this).onDataReceived)
-							.define(_(this).definitions)
-							.addData(data);
-					}
+				if (APR.is(element, APRTemplate)) {
+					element = element.get();
+				}
 
-					if (APR.is(element, APRTemplate)) {
-						element = element.get();
-					}
+				if (!APR.is(element, Node, Element)) {
+					element = document.createTextNode(element);
+				}
 
-					if (!APR.is(element, Node, Element)) {
-						element = document.createTextNode(element);
-					}
+				deferredObjects[uid] = element;
 
-					deferredObjects[uid] = element;
+				return uid;
 
-					return uid;
+			}).forEach(function (string, i, array) {
 
-				});
+				var previousTabs = _.getTabsCount(array[i - 1]);
+				var currentTabs = _.getTabsCount(string);
 
-			}).then(function convertToElements (values) {
+				string = string.replace(/\t/g, '');
 
-				var usedTabs = [];
-				var parent = document.createElement('div');
-				var currentBranch = parent;
-				var previousBranch;
+				if (currentTabs > previousTabs) {
+					previousBranch = currentBranch;
+					usedTabs[currentTabs] = currentTabs;
+				}
+				else {
 
-				values.forEach(function (string, i, array) {
-
-					var previousTabs = _.getTabsCount(array[i - 1]);
-					var currentTabs = _.getTabsCount(string);
-
-					string = string.replace(/\t/g, '');
-
-					if (currentTabs > previousTabs) {
-						previousBranch = currentBranch;
-						usedTabs[currentTabs] = currentTabs;
-					}
-					else {
-
-						while (currentTabs < previousTabs && previousBranch.parentNode) {
+					while (currentTabs < previousTabs && previousBranch.parentNode) {
+					
+						while (!(--previousTabs in usedTabs) && previousTabs >= 0);
 						
-							while (!(--previousTabs in usedTabs) && previousTabs >= 0);
-							
-							if (previousTabs in usedTabs) {
-								usedTabs.splice(previousTabs, 1);
-							}
-
-							previousBranch = previousBranch.parentNode;
-						
+						if (previousTabs in usedTabs) {
+							usedTabs.splice(previousTabs, 1);
 						}
 
+						previousBranch = previousBranch.parentNode;
+					
 					}
 
-					if (!previousBranch) {
-						previousBranch = parent;
-					}
+				}
 
-					if (currentBranch = deferredObjects[string]) {
-						delete deferredObjects[string];
-					}
+				if (!previousBranch) {
+					previousBranch = parent;
+				}
 
-					currentBranch = currentBranch || APRElement.createElement(string);
-					previousBranch.appendChild(currentBranch);
+				if (currentBranch = deferredObjects[string]) {
+					delete deferredObjects[string];
+				}
 
-				}, this);
+				currentBranch = currentBranch || APRElement.createElement(string);
+				previousBranch.appendChild(currentBranch);
 
-				return parent.children;
+			}, this);
 
-			});
+			return parent.children;
 
+		},
+		'get' : function () {
+			return this.parse();
 		}
+
 	});
 
 	if (APR.Template) {
@@ -196,3 +194,4 @@ APR.Define('APR/Template').using(function () {
 	}
 
 });
+

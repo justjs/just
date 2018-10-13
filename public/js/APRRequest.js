@@ -1,230 +1,232 @@
-APR.Define('APR.Request', APR).init(function () {
+APR.Define('APR/Request').using(function () {
 	
 	'use strict';
 
-	function APRRequest (method, url, headers, options) {
+	var _ = APR.createPrivateKey({
+		'listen' : function (eventName, handler) {
 
-		var credentials;
-
-		this.method = method.toUpperCase().trim();
-		this.url = url;
-		this.isAsync = true;
-
-		if (!headers || typeof headers !== 'object') {
-			headers = {};
-		}
-
-		if (!options || typeof options !== 'object') {
-			options = {};
-		}
-
-		if (!options.credentials || typeof options.credentials !== 'object') {
-			credentials = {
-				'user' : null,
-				'password' : null
-			};
-		}
-
-		if ('XDomainRequest' in window && options.withCredentials) {
-			
-			this.xdr = new XDomainRequest();
-			this.xdr.open(this.method, this.url);
-			
-			if (headers) {
-				APR.Logger.logInformation('Custom headers are not being set. XDR does not admit that.');
+			if (APR.is(handler, 'function')) {
+				throw new TypeError(handler + ' must be a function.');
 			}
 
-			return this;
-		}
+			this.listeners = APR.get(this.listeners, {});
+			this.listeners[eventName] = handler;
 
-		this.xhr = new XMLHttpRequest();
-		this.xhr.open(this.method, this.url, this.isAsync, credentials.user, credentials.password);
+		},
+		'getListener' : function (eventName) {
+			return this.listeners[eventName];
+		},
+		'cloneRequest' : function (newFields) {
 
-		if (options.withCredentials) {
-			this.xhr.withCredentials = true;
-		}
+			var newRequest = new APRRequest(
+				newFields.method || this.public.method,
+				newFields.url || this.public.url,
+				newFields.options || this.options
+			);
 
-		APR.eachProperty({
-			'X-Requested-With' : 'XMLHttpRequest',
-			'Content-Type' : 'application/json; charset=UTF-8'
-		}, function setDefaultHeaders (v, k) {
-
-			if (!(k in headers) && !(k.toLowerCase() in headers)) {
-				headers[k] = v;
-			}
-
-		});
-
-		this.setHeaders(headers);
-
-		return this;
-	
-	}
-
-	APRRequest.prototype.setHeaders = function setRequestHeaders (headers, doNotRemoveEmptyOnes) {
-
-		if (typeof headers !== 'object') {
-			throw new TypeError("\"" + headers + "\" is not an object.");
-		}
-
-		if (this.xdr) {
-			throw new Error("Custom headers aren't permitted in a XDR object.");
-		}
-
-		APR.eachProperty.call(this.xhr, headers, function (value, key) {
+			_(newRequest).listeners = this.listeners;
+			_(newRequest).headers = this.headers;
 			
-			if (headers[key] === '' && !doNotRemoveEmptyOnes) {
-				return;
-			}
-			
-			this.setRequestHeader(key, value);
+			return newRequest;
 
-		});
-
-		return this;
-	
-	};
-
-	APRRequest.prototype.sendSync = function (data) {
-
-		var xhr, xdr;
-
-		if (navigator.sendBeacon && this.method === 'POST') {
-			navigator.sendBeacon(this.url, JSON.stringify(data));
-			return;
+		},
+		'abort' : function () {
+			(this.xhr || this.xdr).abort();
 		}
+	}, {
+		'getResponse' : function getJSONResponse (xhrLike) {
 
-		if ((xhr = this.xhr)) {
-			xhr.abort();
-			xhr = new XMLHttpRequest();
-			xhr.open(this.method, this.url, false);
-			xhr.setHeaders({
-				'Content-Type' : 'text/plain; charset=UTF-8'
-			});
-		}
-		else if ((xdr = this.xdr)) {} // (?)
-
-		(xhr || xdr).send(data);
-
-	};
-
-	APRRequest.prototype.send = function sendRequest (data, callback) {
-
-		var _this = this;
-		var isCallbackAFunction = typeof callback === 'function';
-		var onSuccess = function () {
-			
 			var response;
 
 			try {
-				response = JSON.parse(this.responseText);
+				response = JSON.parse(xhrLike.responseText);
 			}
 			catch (e) {
-				response = this.responseText;
+				response = xhrLike.responseText;
 			}
-
-			if (isCallbackAFunction) {
-				callback(false, response);
-			}
-
-		};
-		var onError = function () {
-
-			APR.Logger.log("There was an error in the request to \"" + _this.url + "\". (The status code was " + this.status + ").");
 			
-			if (isCallbackAFunction) {
-				callback(true);
-			}
+			return response;
 
-		};
-		var onReadyStateChange = function onReadyStateChange () {
+		}
+	});
 
-			if (this.readyState !== XMLHttpRequest.DONE) {
-				return;
-			}
+	function APRRequest (method, url, options) {
 
-			if (this.status < 200 || this.status >= 400) {
-				onError.call(this);
-			}
+		var _this = _(this);
+		var withCredentials;
 
-			if (this.status >= 200 && this.status < 400) {
-				onSuccess.call(this);
-			}
-
-		};
-		var xhr = this.xhr;
-
-		if (this.method === 'GET' && data) {
-			this.url += '?' + APRRequest.getObjectAsURLString(data);
-			data = null;
+		if (!APR.is(this, APRRequest)) {
+			return new APRRequest(method, url, options);
 		}
 
-		if (data && typeof data === 'object') {
-			data = JSON.stringify(data);
-		}
+		_(this).public = this;
 
-		if (this.xdr) {
+		this.method = String(method).trim();
+		this.url = url;
+		this.options = Object.assign({}, APRRequest.DEFAULT_OPTIONS, APR.get(options, {}));
+		
+		withCredentials = !APR.isObjectEmpty(options.credentials);
+
+		if (withCredentials && 'XDomainRequest' in window) {
 			
-			return (function ie8 (xdr) {
-				
-				xdr.onload = onSuccess;
-				xdr.ontimeout = onError;
-				xdr.onerror = onError;
-				setTimeout(function () {
-					xdr.send();
-				}, 0);
-
-			})(this.xdr);
-
-		}
-
-		xhr.onreadystatechange = onReadyStateChange;
-		xhr.send(data || null);
-
-	};
-
-	APRRequest.post = function makePOSTRequest (url, data, callback) {
-		new APRRequest('POST', url).send(data, callback);
-	};
-
-	APRRequest.get = function makeGETRequest (url, data, callback) {
-		new APRRequest('GET', url).send(data, callback);
-	};
-
-	APRRequest.getObjectAsURLString = function getObjectAsURLString (data) {
-	
-		var urlString = '';
-
-		APR.eachProperty(data, function (value, key) {
-			urlString += encodeURIComponent(key) + '=' + encodeURIComponent(value) + '&';
-		});
-
-		return urlString.slice(0, -1);
-
-	};
-
-	APRRequest.getURLParamsAsObject = function getURLParamsAsObject (url) {
-
-		var params = url.split('?')[1];
-		var paramsAsObject = {};
-
-		if (!params) {
-			return null;
-		}
-
-		APR.eachElement(params.split('&'), function (param) {
+			_this.xdr = new XDomainRequest();
+			_this.xdr.open(this.method, this.url);
+			// Custom headers are not being set. XDR does not admit that.
 			
-			var parts = param.split('=');
-			var key = decodeURIComponent(parts[0]);
-			var value = decodeURIComponent(parts[1]);
+			return this;
 
-			paramsAsObject[key] = value;
+		}
 
-		});
+		_this.xhr = new XMLHttpRequest();
+		_this.xhr.open(
+			this.method,
+			this.url,
+			this.options.async,
+			this.options.credentials.user,
+			this.options.credentials.password
+		);
+		_this.xhr.withCredentials = withCredentials;
 
-		return paramsAsObject;
+		this.setHeaders(options.headers);
 
-	};
+	}
+
+	Object.assign(APRRequest, {
+		'DEFAULT_OPTIONS' : {
+			'async' : true,
+			'credentials' : {},
+			'headers' : {
+				'X-Requested-With' : 'XMLHttpRequest',
+				'Content-Type' : 'application/json; charset=UTF-8'
+			}
+		},
+		'addDataToUrl' : function (url, data) {
+
+			var newUrl = url + (APR.parseUrl(url).search
+				? (url.endsWith('?') ? '' : '?')
+				: (url.endsWith('&') ? '' : '&')
+			);
+
+			APR.eachProperty(data, function (key, value) {
+				newUrl += encodeURIComponent(key) + '=' + encodeURIComponent(value) + '&';
+			});
+
+			return newUrl.slice(0, -1);
+
+		}
+	});
+
+	Object.assign(APRRequest.prototype, {
+		'onSuccess' : function (handler) {
+			return _(this).listen('onSuccess', handler), this;
+		},
+		'onError' : function (handler) {
+			return _(this).listen('onError', handler), this;
+		},
+		'modify' : function (handler) {
+			return _(this).listen('beforeSend', handler), this;
+		},
+		'setHeaders' : function (headers) {
+
+			if (!APR.is(headers, {})) {
+				throw new TypeError(headers + ' must be a key-value object.');
+			}
+
+			_(this).headers = APR.get(_(this).headers, {});
+
+			APR.eachProperty(headers, function setHeaders (value, key) {
+				_(this).headers[key] = value;
+				_(this).xhr.setRequestHeaders(key, value);
+			}, this);
+
+			return this;
+
+		},
+		'send' : function (data) {
+
+			var _this = _(this);
+			var onSuccess = function () {
+				_this.getListener('onSuccess').call(this, _.getResponse(this));
+			}, onError = function () {
+				_this.getListener('onError').call(this, _.getResponse(this));
+			};
+
+			if (APR.is(data, {})) {
+				data = JSON.stringify(data);
+			}
+
+			if (!data) {
+				data = null;
+			}
+			else if (/GET/i.test(this.method)) {
+				_this.abort();
+				_this = _(this.cloneRequest({'url' : APRRequest.addDataToUrl(this.url, data)}));
+				data = null;
+			}
+
+			_this.xhr.onreadystatechange = function () {
+
+				var response;
+
+				if (this.readyState !== XMLHttpRequest.DONE) {
+					return;
+				}
+
+				if (this.status < 200 || this.status >= 400) {
+					onSuccess.call(this);
+				}
+
+				if (this.status >= 200 && this.status < 400) {
+					onError.call(this);
+				}
+
+			};
+
+			if (_this.xdr) {
+
+				return (function ie8 (xdr) {
+
+					xdr.onload = onSuccess;
+					xdr.ontimeout = onError;
+					xdr.onerror = onError;
+					
+					if (_this.beforeSend) {
+						_this.beforeSend.call(xdr);
+					}
+
+					setTimeout(function () {
+						xdr.send(data);
+					}, 0);
+
+				})(_this.xdr), this;
+
+			}
+
+			if (_this.beforeSend) {
+				_this.beforeSend.call(_this.xhr);
+			}
+
+			_this.xhr.send(data);
+
+			return this;
+
+		},
+		'sendBeacon' : function (data) {
+
+			if (navigator.sendBeacon && this.method === 'POST') {
+				return navigator.sendBeacon(this.url, JSON.stringify(data)), this;
+			}
+
+			_this.abort();
+
+			new APRRequest(this.method, this.url, Object.assign(this.options, {'async' : false})).setHeaders({
+				'Content-Type' : 'text/plain; charset=UTF-8'
+			}).send(data);
+
+			return this;
+
+		}
+	});
 
 	if (!APR.Request) {
 		APR.Request = APRRequest;

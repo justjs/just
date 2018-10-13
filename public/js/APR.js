@@ -496,12 +496,15 @@
 
 		},
 		/**
-		 * Parses a JSON string into a JSON.
+		 * Parses a JSON string into a JSON-like.
 		 * 
 		 * @param  {string} string Some string to parse.
 		 * 
 		 * @example
 		 * stringToJSON('{"a": 1}'); // returns {a: 1}.
+		 *
+		 * @example
+		 * stringToJSON(1); // returns {}.
 		 * 
 		 * @return {!Object} A JSON-like object.
 		 */
@@ -510,7 +513,7 @@
 			var json;
 
 			try {
-				json = JSON.parse(string) || {};
+				json = JSON.parse(APR.get(string, '')) || {};
 			}
 			catch (exception) {
 				return {}
