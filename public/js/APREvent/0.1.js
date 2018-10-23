@@ -26,6 +26,7 @@ APR.Define('APR/Event').using(function () {
 	}
 
 	Object.assign(APREvent, {
+		'version' : 0.1,
 		'getAttachedEvents' : function (element) {
 			return _(element).attachedEvents;
 		}

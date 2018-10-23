@@ -40,6 +40,10 @@ APR.Define('APR/Template').using(function () {
 
 	}
 
+	Object.assign(APRTemplate, {
+		'version' : 0.1
+	});
+
 	Object.assign(APRTemplate.prototype, {
 
 		'onDataReceived' : function (handler) {

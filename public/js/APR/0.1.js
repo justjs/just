@@ -74,7 +74,10 @@
 	 * A set of the most common functions used throughout my web developments.
 	 * @namespace APR
 	 */
-	var APR = {};
+	var APR = {
+		/** @readonly */
+		'version' : 0.1
+	};
 	
 	/** Some methods */
 	Object.assign(APR, /** @lends APR */{

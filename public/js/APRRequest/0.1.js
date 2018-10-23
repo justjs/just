@@ -100,6 +100,7 @@ APR.Define('APR/Request').using(function () {
 				'Content-Type' : 'application/json; charset=UTF-8'
 			}
 		},
+		'version' : 0.1,
 		'addDataToUrl' : function (url, data) {
 
 			var newUrl = url + (APR.parseUrl(url).search

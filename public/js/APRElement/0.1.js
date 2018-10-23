@@ -111,6 +111,7 @@ APR.Define('APR/Element').using({
 	}
 
 	Object.assign(APRElement, {
+		'version' : 0.1,
 		'createElement' : function (elementAsString) {
 
 			var tagName = (elementAsString.match(/(^|\t+)[a-z0-9\s]+/i) || [''])[0].trim();

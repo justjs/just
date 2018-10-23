@@ -51,6 +51,7 @@ APR.Define('APR/State').using({
 
 	Object.assign(APRState, {
 		'ATTRIBUTE_NAME' : 'data-APR-states',
+		'version' : 0.1,
 		'findElementsByState' : function (stateKey, parent) {
 			return APR.getElements('*[' + APRState.ATTRIBUTE_NAME + ']', parent).filter(function (element) {
 				return APR.inArray(Object.keys(_.getStates(element)), stateKey);
