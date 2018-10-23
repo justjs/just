@@ -7,12 +7,12 @@ APR.Define('APR/Event').using(function () {
 
 	function APREvent (elements) {
 
-		if (!APR.is(this, APREvent)) {
+		if (!(this instanceof APREvent)) {
 			return new APREvent(elements);
 		}
 
 		if (this.constructor === APREvent) {
-			this.length = ArrayProto.push.apply(this, APR.get(elements, [elements]));
+			this.length = ArrayProto.push.apply(this, APR.defaults(elements, [elements]));
 		}
 
 		ArrayProto.forEach.call(this, function (element) {
@@ -78,7 +78,7 @@ APR.Define('APR/Event').using(function () {
 						fn.apply(thisArg, args);
 					};
 
-					if (APR.is(ms, 'number')) {
+					if (typeof ms === 'number') {
 						useTimeout(handler, ms);
 					}
 					else {
@@ -115,12 +115,12 @@ APR.Define('APR/Event').using(function () {
 					}
 
 				};
-				var type = (options = APR.get(options, {})).isCustomEvent ? name.slice(name.lastIndexOf('.') + 1) : name;
+				var type = (options = APR.defaults(options, {})).isCustomEvent ? name.slice(name.lastIndexOf('.') + 1) : name;
 				var id = name;
 
 				options = Object.assign(options, DEFAULT_OPTIONS);
 
-				if (APR.is(options.bubbles, 'boolean')) {
+				if (typeof options.bubbles === 'boolean') {
 					options.useCapture = !options.bubbles;
 				}
 
@@ -151,7 +151,7 @@ APR.Define('APR/Event').using(function () {
 		})(),
 		'addCustomEvent' : function (type, handler, options) {
 		
-			this.addEvent(type, handler, Object.assign(APR.get(options, {}), {
+			this.addEvent(type, handler, Object.assign(APR.defaults(options, {}), {
 				'isCustomEvent' : true
 			}));
 
@@ -162,7 +162,7 @@ APR.Define('APR/Event').using(function () {
 
 			this.eachEvent(function (handler, id) {
 
-				if (handler.name === name && APR.is(listenerName, 'undefined') || APR.getFunctionName(handler.originalListener) === listenerName) {
+				if (handler.name === name && typeof listenerName === 'undefined' || APR.getFunctionName(handler.originalListener) === listenerName) {
 					this.removeListener(handler.originalListener);
 				}
 
@@ -220,8 +220,8 @@ APR.Define('APR/Event').using(function () {
 					return;
 				}
 
-				if (!APR.is(params, 'undefined')) {
-					handler.options = Object.assign(APR.get(handler.options, {}), {'detail' : params});
+				if (typeof params !== 'undefined') {
+					handler.options = Object.assign(APR.defaults(handler.options, {}), {'detail' : params});
 				}
 
 				element.dispatchEvent(new CustomEvent(type, handler.options));
@@ -243,11 +243,11 @@ APR.Define('APR/Event').using(function () {
 
 			return function (eventName, events, options) {
 
-				if (!APR.is(events, {})) {
+				if (!APR.isKeyValueObject(events)) {
 					throw new TypeError('"' + events + '" must be a key-value object.');
 				}
 
-				options = APR.get(options, {});
+				options = APR.defaults(options, {});
 
 				if (!options.force && APR.inArray(NON_BUBBLING_EVENTS, eventName)) {
 					throw new TypeError(eventName + ' doesn\'t bubble, but you can attach it anyway adding {force: true} (in the options parameter).');
@@ -276,8 +276,8 @@ APR.Define('APR/Event').using(function () {
 
 					});
 
-					if (!somethingMatched && APR.is(events['elsewhere'], 'function')) {
-						events['elsewhere'].call(this, e, params);
+					if (!somethingMatched && typeof events.elsewhere === 'function') {
+						events.elsewhere.call(this, e, params);
 					}
 
 				}, Object.assign(options, {

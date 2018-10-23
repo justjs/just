@@ -7,7 +7,7 @@ APR.Define('APR/Template').using(function () {
 		
 		'listen' : function (eventName, handler) {
 			
-			if (!APR.is(handler, 'function')) {
+			if (typeof handler !== 'function') {
 				throw new TypeError(handler + ' must be a function.');
 			}
 
@@ -19,13 +19,13 @@ APR.Define('APR/Template').using(function () {
 			return Math.random().toString(36).slice(2, 15) + Math.random().toString(36).slice(2, 15);
 		},
 		'getTabsCount' : function (string) {
-			return APR.get((string + '').match(/\t/g), []).length;
+			return APR.defaults((string + '').match(/\t/g), []).length;
 		}
 	});
 
 	function APRTemplate (tokens, template) {
 
-		if (!APR.is(this, APRTemplate)) {
+		if (!(this instanceof APRTemplate)) {
 			return new APRTemplate(tokens);
 		}
 			
@@ -34,8 +34,8 @@ APR.Define('APR/Template').using(function () {
 		}
 
 		if (this.constructor === APRTemplate) {
-			this.tokens = APR.get(tokens, {'id' : tokens});
-			this.length = ArrayProto.push.apply(this, APR.get(template, [template]));
+			this.tokens = APR.defaults(tokens, {'id' : tokens});
+			this.length = ArrayProto.push.apply(this, APR.defaults(template, [template]));
 		}
 
 	}
@@ -58,7 +58,7 @@ APR.Define('APR/Template').using(function () {
 		},
 		'define' : function (definitions) {
 
-			if (!APR.is(definitions, {})) {
+			if (!APR.isKeyValueObject(definitions)) {
 				throw new TypeError(definitions + ' must be a key-value object.');
 			}
 
@@ -68,14 +68,14 @@ APR.Define('APR/Template').using(function () {
 
 					var value;
 
-					if (!APR.is(object, {})) {
+					if (!APR.isKeyValueObject(object)) {
 						return;
 					}
 
 					value = object[key];
 
-					this[i] = (APR.is(definition, 'function')
-						? definition.apply(object, APR.get(value, [value]))
+					this[i] = (typeof definition === 'function'
+						? definition.apply(object, APR.defaults(value, [value]))
 						: value
 					);
 
@@ -101,7 +101,7 @@ APR.Define('APR/Template').using(function () {
 
 				var uid;
 
-				if (APR.is(element, 'string')) {
+				if (typeof element === 'string') {
 
 					return element.replace(/\{this\.([^\}]+)\}/ig, function props (exp, property) {
 						return APR.access(tokens, property);
@@ -113,26 +113,26 @@ APR.Define('APR/Template').using(function () {
 
 				uid = _.getRandomString();
 
-				while (APR.is(element, 'function')) {
+				while (typeof element === 'function') {
 					element = element.call(this);
 				}
 
-				if (APR.is(element, {})) {
+				if (APR.isKeyValueObject(element)) {
 					throw new TypeError(Object.keys(element) + ' were not defined.');
 				}
 
-				if (APR.is(element, [])) {
+				if (Array.isArray(element)) {
 					element = new APRTemplate(tokens, element)
 						.onDataReceived(_(this).onDataReceived)
 						.define(_(this).definitions)
 						.addData(data);
 				}
 
-				if (APR.is(element, APRTemplate)) {
+				if (element instanceof APRTemplate) {
 					element = element.get();
 				}
 
-				if (!APR.is(element, Node, Element)) {
+				if (!(element instanceof Node) && !(element instanceof Element)) {
 					element = document.createTextNode(element);
 				}
 

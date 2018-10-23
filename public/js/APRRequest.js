@@ -5,11 +5,11 @@ APR.Define('APR/Request').using(function () {
 	var _ = APR.createPrivateKey({
 		'listen' : function (eventName, handler) {
 
-			if (APR.is(handler, 'function')) {
+			if (typeof handler === 'function') {
 				throw new TypeError(handler + ' must be a function.');
 			}
 
-			this.listeners = APR.get(this.listeners, {});
+			this.listeners = APR.defaults(this.listeners, {});
 			this.listeners[eventName] = handler;
 
 		},
@@ -55,7 +55,7 @@ APR.Define('APR/Request').using(function () {
 		var _this = _(this);
 		var withCredentials;
 
-		if (!APR.is(this, APRRequest)) {
+		if (!(this instanceof APRRequest)) {
 			return new APRRequest(method, url, options);
 		}
 
@@ -63,7 +63,7 @@ APR.Define('APR/Request').using(function () {
 
 		this.method = String(method).trim();
 		this.url = url;
-		this.options = Object.assign({}, APRRequest.DEFAULT_OPTIONS, APR.get(options, {}));
+		this.options = Object.assign({}, APRRequest.DEFAULT_OPTIONS, APR.defaults(options, {}));
 		
 		withCredentials = !APR.isObjectEmpty(options.credentials);
 
@@ -128,11 +128,11 @@ APR.Define('APR/Request').using(function () {
 		},
 		'setHeaders' : function (headers) {
 
-			if (!APR.is(headers, {})) {
+			if (!APR.isKeyValueObject(headers)) {
 				throw new TypeError(headers + ' must be a key-value object.');
 			}
 
-			_(this).headers = APR.get(_(this).headers, {});
+			_(this).headers = APR.defaults(_(this).headers, {});
 
 			APR.eachProperty(headers, function setHeaders (value, key) {
 				_(this).headers[key] = value;
@@ -151,7 +151,7 @@ APR.Define('APR/Request').using(function () {
 				_this.getListener('onError').call(this, _.getResponse(this));
 			};
 
-			if (APR.is(data, {})) {
+			if (APR.isKeyValueObject(data)) {
 				data = JSON.stringify(data);
 			}
 

@@ -84,21 +84,21 @@ APR.Define('APR/Element').using({
 
 	function APRElement (elements) {
 
-		if (!APR.is(this, APRElement)) {
+		if (!(this instanceof APRElement)) {
 			return new APRElement(elements);
 		}
 
-		if (APR.is(elements, APRElement)) {
+		if (elements instanceof APRElement) {
 			return elements;
 		}
 
-		if (APR.is(elements, 'undefined')) {
+		if (typeof elements === 'undefined') {
 			elements = [];
 		}
-		else if (APR.is(elements, 'string')) {
+		else if (typeof elements === 'string') {
 			elements = APRElement.findAll(elements);
 		}
-		else if (!APR.is(elements, [])) {
+		else if (!Array.isArray(elements)) {
 			throw new TypeError(elements + ' should be either an string or an array.');
 		}
 
@@ -186,7 +186,7 @@ APR.Define('APR/Element').using({
 		'get' : function (handler) {
 
 			var results = APR.eachElement(this, function (element, i) {
-				return APR.is(handler, 'function') ? handler.call(element, new APRElement(element), i) : element;
+				return typeof handler === 'function' ? handler.call(element, new APRElement(element), i) : element;
 			});
 
 			return APR.getFirstOrMultiple(results);
@@ -194,7 +194,7 @@ APR.Define('APR/Element').using({
 		},
 		'each' : function (fn) {
 
-			if (APR.is(fn, 'function')) {
+			if (typeof fn === 'function') {
 				throw new TypeError(fn + ' must be a function.');
 			}
 
@@ -226,31 +226,33 @@ APR.Define('APR/Element').using({
 
 			var propertyPath, fn;
 
-			if (APR.is(property, 'function')) {
+			if (typeof property === 'function') {
 				fn = property;
 			}
 			else {
-				propertyPath = APR.get(property, String(property).split('.'));
+				propertyPath = APR.defaults(property, String(property).split('.'));
 			}
 
-			if (!APR.is(value, 'undefined') || isValueUndefined && propertyPath) {
+			if (typeof value !== 'undefined' || isValueUndefined && propertyPath) {
 				
 				this.each(function () {
 					
 					APR.access(this, propertyPath, function (element, property) {
 
-						if (APR.is(element[property], value) && APR.is(value, {}, []) && !APR.isObjectEmpty(value)) {
-							Object.assign(element[property], value);
+						var elementProperty = element[property];
+
+						if (value && elementProperty && typeof value === 'object' && typeof elementProperty === 'object' && !APR.isEmptyObject(value)) {
+							Object.assign(elementProperty, value);
 						}
 						else {
-							element[property] = value;
+							elementProperty = value;
 						}
 
 					}, true);
 
 				});
 
-				if (!APR.is(value, 'function')) {
+				if (typeof value !== 'function') {
 					return this;
 				}
 				
@@ -274,7 +276,7 @@ APR.Define('APR/Element').using({
 		},
 		'setText' : function (text) {
 
-			text = APR.get(text, 'string');
+			text = APR.defaults(text, '');
 			
 			ArrayProto.forEach.call(this, function (element) {
 			
@@ -414,7 +416,7 @@ APR.Define('APR/Element').using({
 		},
 		'setAttributes' : function (attributes) {
 
-			if (!APR.is(attributes, {})) {
+			if (!APR.isKeyValueObject(attributes)) {
 				throw new TypeError(attributes + ' must be a key-value object.');
 			}
 
@@ -508,7 +510,7 @@ APR.Define('APR/Element').using({
 		},
 		'clone' : function (options) {
 
-			var deep = APR.get((options = APR.get(options, {})).deep, true);
+			var deep = APR.defaults((options = APR.defaults(options, {})).deep, true);
 			var results = APR.eachElement(this, function (target) {
 				
 				return new APRElement(target.cloneNode(deep)).copy({
@@ -562,7 +564,7 @@ APR.Define('APR/Element').using({
 		},
 		'copy' : function (options) {
 
-			options = APR.get(options, {});
+			options = APR.defaults(options, {});
 
 			ArrayProto.forEach.call(this, function (element) {
 

@@ -37,12 +37,12 @@ APR.Define('APR/State').using({
 
 	function APRState (elements) {
 
-		if (!APR.is(this, APRState)) {
+		if (!(this instanceof APRState)) {
 			return new APRState(elements);
 		}
 
 		if (this.constructor === APRState) {
-			this.length = ArrayProto.push.apply(this, APR.get(elements, [elements]));
+			this.length = ArrayProto.push.apply(this, APR.defaults(elements, [elements]));
 		}
 
 		APREvent.call(this);
@@ -69,7 +69,7 @@ APR.Define('APR/State').using({
 
 				_(instance).customHandler = function (element, privateStateDetails) {
 
-					var title = (eventParams = APR.get(eventParams, {})).$title;
+					var title = (eventParams = APR.defaults(eventParams, {})).$title;
 					var state = eventParams.$state;
 					var eventType = '';
 					var isPush = /^push$/i.test(action);
@@ -98,7 +98,7 @@ APR.Define('APR/State').using({
 						eventType = 'init';
 					}
 
-					if (!APR.is(title, 'undefined') && document.title !== title) {
+					if (typeof title !== 'undefined' && document.title !== title) {
 						document.title = title;
 					}
 
@@ -125,11 +125,11 @@ APR.Define('APR/State').using({
 			'listenState' : function (conditions, handler, options) {
 
 				var instance = new APRState(window);
-				var against = (options = APR.get(options, {})).against;
+				var against = (options = APR.defaults(options, {})).against;
 
 				_(handler).data = {
-					'against' : APR.get(against, [against || 'href']),
-					'conditions' : APR.get(conditions, [conditions])
+					'against' : APR.defaults(against, [against || 'href']),
+					'conditions' : APR.defaults(conditions, [conditions])
 				};
 
 				_(instance).customHandler = function checkEachRoute (_, params, state) {
@@ -151,8 +151,8 @@ APR.Define('APR/State').using({
 								var url = parsedUrl[property];
 
 								return (
-									APR.is(condition, RegExp) && condition.test(url) ||
-									APR.is(condition, 'function') && condition(url) ||
+									condition instanceof RegExp && condition.test(url) ||
+									typeof condition === 'function' && condition(url) ||
 									condition === url
 								);
 
@@ -207,7 +207,7 @@ APR.Define('APR/State').using({
 
 			var instance = this;
 			var isLiteralKey = _.isLiteralKey(stateKey);
-			var privateHandler = APR.get(_(this), {}).customHandler;
+			var privateHandler = APR.defaults(_(this), {}).customHandler;
 
 			ArrayProto.forEach.call(this, function (element) {
 
@@ -217,7 +217,7 @@ APR.Define('APR/State').using({
 
 				new APREvent(element).addCustomEvent(APRState.getEventName(element, stateKey), function (e, params) {
 
-					var state = APR.get(_(APR.get(e.detail, {})), {}).state;
+					var state = APR.defaults(_(APR.defaults(e.detail, {})), {}).state;
 					var cause;
 
 					if (!state) {
@@ -226,7 +226,7 @@ APR.Define('APR/State').using({
 
 					delete _(e.detail);
 
-					if (APR.is(state.cause, 'undefined')) {
+					if (typeof state.cause === 'undefined') {
 						return;
 					}
 
@@ -234,7 +234,7 @@ APR.Define('APR/State').using({
 						'event' : e
 					});
 
-					if (APR.is(privateHandler, 'function')) {
+					if (typeof privateHandler === 'function') {
 						privateHandler.call(this, handler, params, state);
 					}
 					else {
@@ -250,10 +250,10 @@ APR.Define('APR/State').using({
 		},
 		'changeState' : function (action, stateKey, cause, eventParams) {
 
-			var privateHandler = APR.get(_(this), {}).customHandler;
+			var privateHandler = APR.defaults(_(this), {}).customHandler;
 
 			action = action.toLowerCase().trim();
-			eventParams = APR.get(eventParams, {});
+			eventParams = APR.defaults(eventParams, {});
 
 			ArrayProto.forEach.call(this, function (element) {
 			
@@ -266,7 +266,7 @@ APR.Define('APR/State').using({
 					'name' : stateName
 				};
 
-				if (APR.is(privateHandler, 'function')) {
+				if (typeof privateHandler === 'function') {
 					privateHandler.call(this, element, _(eventParamsClon).state);
 				}
 				else if (/^(add|remove|toggle|replace)$/.test(action)) {

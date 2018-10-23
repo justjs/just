@@ -69,16 +69,7 @@
 	 * @ignore
 	 * @private
 	 */
-	var _ = /** @lends APR._ */{
-		/**
-		 * Check if `operand` is a valid string to be used in typeof.
-		 * @param  {string} operand Some typeof operand.
-		 * @return {boolean}
-		 */
-		'isTypeofOperand' : function (operand) {
-			return /^(undefined|string|object|symbol|function|number|boolean)$/.test(operand);
-		}
-	};
+	var _ = /** @lends APR._ */{};
 	/**
 	 * A set of the most common functions used throughout my web developments.
 	 * @namespace APR
@@ -94,7 +85,7 @@
 		 * @return {boolean} true if `object` is `window` or has the common properties, false otherwise.
 		 */
 		'isWindow' : function (object) {
-			return object === window || APR.is(object, {}) && object.document && object.setInterval;
+			return object === window || APR.isKeyValueObject(object) && object.document && object.setInterval;
 		},
 		/**
 		 * An store of private members.
@@ -135,7 +126,7 @@
 			var store = new WeakMap();
 			var seen = new WeakMap();
 
-			if (!APR.is(factory, 'function')) {
+			if (typeof factory !== 'function') {
 				factory = Object.create.bind(null, factory || Object.prototype);
 			}
 
@@ -143,7 +134,7 @@
 
 				var value;
 
-				if (!key || !APR.is(key, 'object')) {
+				if (!key || typeof key !== 'object') {
 					return;
 				}
 
@@ -179,119 +170,43 @@
 			return Array.from((parent || document).querySelectorAll(selector));
 		},
 		/**
-		 * Any of the following:
-		 *     an operand for typeof ("symbol", "object", ...),
-		 *     a constructor (Number, String, ...),
-		 *     a global object (undefined, Infinity, NaN, ...),
-		 *     a regular-expression (/^ something redable $/)a 
-		 *     or a value that LOOKS LIKE `value` ({}, [], '', 0, true, function () {}, ...).
-		 * @typedef APR~is_type
-		 */
-		
-		/**
-		 * Checks if `value` "looks" like any of the given `type`(s).
-		 *
-		 * @param {*} value Some `value` to test against the given `type`(s).
-		 * @param {...APR~is_type} type One or more types to evaluate `value`.
-		 * 					  
+		 * Checks if `value` is an object in a "JSON format".
+		 * 
+		 * @param {*} value Some value.
 		 * @example
-		 * is(123, 4); // true: "4" is a number.
+		 * isKeyValueObject([1, 2]); // false.
 		 *
-		 * @example <caption>Note that the following is not the same:</caption>
-		 * is({}, 'object') === is({}, Object); // false.
-		 * 
-		 * @example <caption>Multiple arguments will be evaluated as "OR".</caption>
-		 * is(new Number(NaN), new Number(NaN), NaN, Number, 'number', Object, {}, {a: 1}); // true (in each case).
-		 * 
 		 * @example
-		 * is(new Number(NaN), 'object', null, [], 123, /^NaN$/, 'NaN'); // false (in each case).
-		 *
-		 * @return {boolean} true if it's any of the given `type`(s), false otherwise.
-		 * 
+		 * isKeyValueObject({a: 1}); // true.
 		 */
-		'is' : function (value, type) {
-
-			var GLOBAL_VARS = [null, Infinity, -Infinity, false, true, void 0];
-
-			return Array.prototype.slice.call(arguments, 1).some(function (type) {
-
-				if (type === value) {
-					return true;
-				}
-
-				if (APR.inArray(GLOBAL_VARS, type) || APR.inArray(GLOBAL_VARS, value)) {
-					return type === value;
-				}
-
-				if (Number.isNaN(value) || Number.isNaN(type)) {
-					return Number.isNaN(type) && Number.isNaN(value);
-				}
-
-				if (Array.isArray(type) || Array.isArray(value)) {
-					return Array.isArray(type) && Array.isArray(value);
-				}
-
-				if (type instanceof Function) {
-					return value instanceof type;
-				}
-
-				if (type instanceof RegExp) {
-					return type.test(value);
-				}
-
-				if (typeof type === 'string') {
-
-					type = (type + '').toLowerCase().trim();
-
-					if (_.isTypeofOperand(type)) {
-						return typeof value === type;
-					}
-
-				}
-
-				return typeof type === typeof value;
-
-			});
-
+		'isKeyValueObject' : function (value) {
+			return value && typeof value === 'object' && !Array.isArray(value);
 		},
 		/**
-		 * Checks if `value` {@link APR.is|is} `defaultValue` and returns `value` (if it's) or `defaultValue` (if it isn't).
-		 * 
-		 * @param  {*} value A value to test against `defaultValue`.
-		 * @param  {APR~is_type} defaultValue A defaultValue value with an expected {@link APR~is_type} for `value`.
-		 * 
-		 * @example <caption>Using a value that {@link APR~is_type|"looks like"} `defaultValue` is the recommended usage:</caption>
-		 * get('a', ['b']); // ['b']
-		 * 
-		 * @example <caption>Note that you can use any of {@link APR~is_type}, like 'object'.</caption>
-		 * get(['a'], 'object'); // Object(['a']); -> Array['a'];
+		 * Checks if `value` looks like `defaultValue`.
 		 *
-		 * @example <caption>If you pass a {@link APR~is_type|Constructor}, it will be initialized.</caption>
-		 * get(null, Function); // new Function(null); -> function anonymous();
-		 * // Please note that the Function constructor (the one used when `defaultValue` is 'function' or Function)
-		 * // may throw a CSP Error, so it's not recommended to use it. Use: function someFn () { [...] }; instead. i.e.:
-		 * // get(null, function isNotAFn() { [...] });
+		 * @example
+		 * defaults([1, 2], {a: 1}); // {a: 1}
 		 * 
-		 * @return if `value` looks like `defaultValue` it returns `value`, otherwise it returns `defaultValue`.
+		 * @example
+		 * defaults(1, NaN); // NaN
+		 *
+		 * @returns `value` if it looks like `defaultValue` or `defaultValue` otherwise.
 		 */
-		'get' : function (value, defaultValue) {
+		'defaults' : function (value, defaultValue) {
 
-			if (APR.is(value, defaultValue)) {
+			if (APR.isKeyValueObject(defaultValue) && APR.isKeyValueObject(value)) {
 				return value;
 			}
 			
-			if (APR.is(defaultValue, 'string') && _.isTypeofOperand(defaultValue = defaultValue.toLowerCase())) {
-
-				return (defaultValue !== 'undefined'
-					? window[defaultValue[0].toUpperCase() + defaultValue.slice(1)](value)
-					: void 0
-				);
-
+			if (Array.isArray(value) && Array.isArray(defaultValue)) {
+				return value;
 			}
-			else if (APR.is(defaultValue, Function)) {
-				return defaultValue === Function ? new defaultValue(value) : defaultValue;
+
+			if (typeof value === typeof defaultValue) {
+				return value;
 			}
-			
+
 			return defaultValue;
 
 		},
@@ -330,14 +245,13 @@
 		 * @return {APR~eachElement_returnedValues} The values returned by `fn`.
 		 */
 		'eachElement' : function (arrayLike, fn, thisArg) {
-			
+				
+			var array = Array.from(arrayLike);
 			var returnedValues = [];
 			var i, f;
 
-			arrayLike = APR.get(arrayLike, [arrayLike]);
-
-			for (i = 0, f = arrayLike.length; i < f; i++) {
-				returnedValues[i] = fn.call(thisArg, arrayLike[i], i, arrayLike, returnedValues);
+			for (i = 0, f = array.length; i < f; i++) {
+				returnedValues[i] = fn.call(thisArg, array[i], i, array, returnedValues);
 			}
 
 			return returnedValues;
@@ -445,7 +359,7 @@
 			domainParts = parts.host.split(/:[0-9]+/);
 			
 			parts.hostname = domainParts[0] || '';
-			parts.port = APR.is(domainParts[1], 'number') ? domainParts[1] : '';
+			parts.port = typeof domainParts[1] === 'number' ? domainParts[1] : '';
 
 			parts.protocol = uriParts[0] + ':';
 			parts.origin = parts.protocol + '//' + parts.host;
@@ -482,7 +396,7 @@
 
 			var i, f, key, value;
 
-			if (!APR.is(object, {})) {
+			if (!APR.isKeyValueObject(object)) {
 				object = {};
 			}
 
@@ -512,8 +426,12 @@
 			
 			var json;
 
+			if (typeof string !== 'string') {
+				return {};
+			}
+
 			try {
-				json = JSON.parse(APR.get(string, '')) || {};
+				json = JSON.parse(string) || {};
 			}
 			catch (exception) {
 				return {}
@@ -636,14 +554,14 @@
 			var currentObject = baseObject;
 			var lastKey;
 
-			path = APR.get(path, [path]);
+			path = APR.defaults(path, [path]);
 			lastKey = path[path.length - 1];
 
 			APR.eachElement(path.slice(0, -1), function (key, i) {
 
-				currentObject = !APR.is(currentObject[key], 'undefined') ? currentObject[key] : ((propertyExists = false), {});
+				currentObject = typeof currentObject[key] !== 'undefined' ? currentObject[key] : ((propertyExists = false), {});
 
-				if (!APR.is(currentObject, {}, null)) {
+				if (currentObject !== null && !APR.isKeyValueObject(currentObject)) {
 					throw new TypeError('The value of "' + key + '" is not a "key-value" object.');
 				}
 
@@ -783,7 +701,7 @@
 					element.setAttribute('crossorigin', 'anonymous');
 				}
 
-				if (!APR.is(handler, 'function')) {
+				if (typeof handler !== 'function') {
 					head.appendChild(element);
 					return;
 				}
@@ -816,7 +734,7 @@
 
 			var matches;
 
-			if (!APR.is(fn, 'function')) {
+			if (typeof fn !== 'function') {
 				return '';
 			}
 
@@ -833,11 +751,15 @@
 		 * Checks if an object has no direct keys.
 		 * 
 		 * @param  {Object}  object Some object.
-		 * @return {boolean}
+		 * @return {boolean} true if it's null or not an object.
 		 */
-		'isObjectEmpty' : function (object) {
+		'isEmptyObject' : function (object) {
 			
 			var k;
+
+			if (typeof object !== 'object' || object === null) {
+				return true;
+			}
 			
 			for (k in object) {
 				if (Object.prototype.hasOwnProperty.call(object, k)) {
@@ -1056,7 +978,7 @@
 					var definedModule = definedModules[definedNamespace];
 					var deferredModule = deferredModules[definedNamespace];
 
-					if (APR.isObjectEmpty(deferredModules)) {
+					if (APR.isEmptyObject(deferredModules)) {
 						return _.onFinish(), void 0;
 					}
 
@@ -1098,11 +1020,11 @@
 		 */
 		function APRDefine (namespace) {
 
-			if (!APR.is(this, APRDefine)) {
+			if (!(this instanceof APRDefine)) {
 				return new APRDefine(namespace);
 			}
 
-			if (!APR.is(namespace, 'string')) {
+			if (typeof namespace !== 'string') {
 				throw new TypeError(namespace + ' must be an string.');
 			}
 
@@ -1176,7 +1098,7 @@
 
 				return function (urls) {
 
-					if (!APR.is(urls, {})) {
+					if (!APR.isKeyValueObject(urls)) {
 						throw new TypeError(urls + ' must be a key-value object.');
 					}
 
@@ -1228,7 +1150,7 @@
 				var namespace = _(this).namespace;
 				var deferredModule;
 
-				if (APR.is(args[0], 'function') || !args[0]) {
+				if (typeof args[0] === 'function' || !args[0]) {
 					Array.prototype.unshift.call(args, []);
 					_.callModule(namespace, handler = args[1], thisArgForHandler = args[2]);
 					return;
@@ -1240,10 +1162,10 @@
 					'dependencies' : []
 				};
 
-				if (APR.is(modules, [])) {
+				if (Array.isArray(modules)) {
 					deferredModule.dependencies = modules;
 				}
-				else if (APR.is(modules, {})) {
+				else if (APR.isKeyValueObject(modules)) {
 
 					APR.eachProperty(modules, function (url, key) {
 						
@@ -1251,7 +1173,7 @@
 						var currentNS = key.slice(splitIndex + 1);
 						var i = +key.slice(0, splitIndex);
 						
-						if (is(i, NaN)) {
+						if (Number.isNaN(i)) {
 							throw new TypeError(key + ' must contain a numeric index an a module-key splited by ":", e.g.: "0:namespace"');
 						}
 
