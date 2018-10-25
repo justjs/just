@@ -1,4 +1,4 @@
-APR.Define('APR/Template').using(function () {
+APR.Define('APR/Template', 0.1).using(function () {
 
 	'use strict';
 
@@ -41,7 +41,7 @@ APR.Define('APR/Template').using(function () {
 	}
 
 	Object.assign(APRTemplate, {
-		'version' : 0.1
+		'version' : this.version
 	});
 
 	Object.assign(APRTemplate.prototype, {

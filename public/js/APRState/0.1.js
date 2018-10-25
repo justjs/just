@@ -1,5 +1,5 @@
-APR.Define('APR/State').using({
-	'0:APR/Event' : APR.self.setFileUrl('APREvent', 'js')
+APR.Define('APR/State', 0.1).using({
+	'0:APR/Event-0.1' : APR.self.setFileUrl('APREvent', 'js', 0.1)
 }, function (APREvent) {
 
 	'use strict';
@@ -50,8 +50,8 @@ APR.Define('APR/State').using({
 	}
 
 	Object.assign(APRState, {
+		'version' : this.version,
 		'ATTRIBUTE_NAME' : 'data-APR-states',
-		'version' : 0.1,
 		'findElementsByState' : function (stateKey, parent) {
 			return APR.getElements('*[' + APRState.ATTRIBUTE_NAME + ']', parent).filter(function (element) {
 				return APR.inArray(Object.keys(_.getStates(element)), stateKey);

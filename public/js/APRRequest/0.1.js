@@ -1,4 +1,4 @@
-APR.Define('APR/Request').using(function () {
+APR.Define('APR/Request', 0.1).using(function () {
 	
 	'use strict';
 
@@ -92,6 +92,7 @@ APR.Define('APR/Request').using(function () {
 	}
 
 	Object.assign(APRRequest, {
+		'version' : this.version,
 		'DEFAULT_OPTIONS' : {
 			'async' : true,
 			'credentials' : {},
@@ -100,7 +101,6 @@ APR.Define('APR/Request').using(function () {
 				'Content-Type' : 'application/json; charset=UTF-8'
 			}
 		},
-		'version' : 0.1,
 		'addDataToUrl' : function (url, data) {
 
 			var newUrl = url + (APR.parseUrl(url).search

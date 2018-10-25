@@ -37,7 +37,8 @@
 	fp(fy(A),'filter',function(fn){var i=0,f=this.length>>>0,r=[],v;for(;i<f;i++)fn((v=this[i]),i,this)&&r.push(v);return r});
 	fp(fy(A),'indexOf',function(k,i){var f=this.length>>>0;i=i<<0;for(i+=i<0?f:0;i<f;i++)if(this[i]===k)return i;return -1});
 	fp(fy(A),'forEach',function(fn,t){var s=O(this),n=s.length,k;for(k=0;k<n;k++)fn.call(t,s[k],k,s);});
-	fp(fy(A),'some',function(f,_){/* source: mozilla */var t=this,i=t.length>>>0;while(--i>=0){if(i in t&&f.call(_,t[i],i,t))return !0}return !1});
+	fp(fy(A),'some',function(fn,t){var s=O(this),f=s.length>>>0,k;for(k=0;k<f;k++){if(fn.call(t,s[k],k,s))return !0}return !1});
+	fp(fy(A),'find',function(fn,t){var s=O(this),f=s.length>>>0,k,v;for(k=0;k<f;k++){if(fn.call(t,v=s[k],k,s))return v}return void 0});
 	fp(fy(F),'bind',function(T){var a=fy(A).slice.call(arguments,1),b=this,fa=function(){},fb=function(){return b.apply(this instanceof fa?this:T,a.concat(fy(A).slice.call(arguments)))};fa.prototype=fy(this);fb.prototype=new fa();return fb});
 	fp(fy(E),'preventDefault',function(){this.cancelable&&(this.returnValue=!1)});
 	fp(fy(E),'stopPropagation',function(){this.cancelBubble=!0});
@@ -796,7 +797,9 @@
 		'self' : Object.create({
 			'originUrl' : 'https://www.apr.com',
 			'staticOriginUrl' : 'https://www.shared.apr.com',
-			'setFileUrl' : function (name, ext, version) {return this.staticOriginUrl + '/' + ext + '/' + name + (version ? '-' + version : '') + '.' + ext}
+			'setFileUrl' : function (name, ext, version) {
+				return this.staticOriginUrl + '/' + ext + '/' + name + '/' + version + '.' + ext
+			}
 		}),
 		/**
 		 * The first body element of the current document.
@@ -867,17 +870,17 @@
 			 * @private
 			 * @ignore
 			 * 
-			 * @property {Object.<APR.Define~namespace, {
-			 *     state: string
-			 * }>} defined A list of namespaces that were defined by {@link APR.Define}.
+			 * @property {Object.<APR.Define~namespaceID, {
+			 *     state: string,
+			 *     details: Object
+			 * }>} defined A list of namespace ids that were defined by {@link APR.Define}.
 			 * 
-			 * @property {Object.<APR.Define~namespace, {
+			 * @property {Object.<APR.Define~namespaceID, {
 			 *     handler: function,
-			 *     thisArgForHandler,
-			 *     dependencies: APR.Define~namespace[]
+			 *     dependencies: APR.Define~namespaceID[]
 			 * }>} deferred Useful data for modules that need to be loaded later.
 			 * 
-			 * @property {APR.Define~namespace[]} currentlyLoading A useful variable to
+			 * @property {APR.Define~namespaceID[]} currentlyLoading A useful variable to
 			 *           check if everything got loaded by {@link APR.Define.load}.
 			 */
 			'modules' : {
@@ -894,27 +897,30 @@
 
 				var definedModules = _.modules.defined;
 
-				APR.eachProperty(_.modules.deferred, function (details, namespace) {
+				APR.eachProperty(_.modules.deferred, function (details, namespaceID) {
 
-					var isKnownModule = definedModules[namespace];
+					var isKnownModule = definedModules[namespaceID];
 
-					if (!_.getModule(namespace) && !isKnownModule) {
-						throw new Error(namespace + ' is not defined.');
+					if (!_.getModule(namespaceID) && !isKnownModule) {
+						throw new Error(namespaceID + ' is not defined.');
 					}
 
-					_.modules.defined[namespace].state = isKnownModule ? _.STATE_LOADED : _.STATE_CALLED;
-					_.updateModules(namespace);
+					_.modules.defined[namespaceID].state = isKnownModule ? _.STATE_LOADED : _.STATE_CALLED;
+					_.updateModules(namespaceID);
 
 				});
 
 			},
 			/**
-			 * Splits `namespace` and {@link APR.access|accesses} to each value starting with {@link APR.Define._.getRootElement|a global element}.
+			 * Splits a namespace and {@link APR.access|accesses} to each value starting with {@link APR.Define._.getRootElement|a global element}.
 			 *
-			 * @param  {APR.Define~namespace} namespace A given namespace.
+			 * @param  {APR.Define~namespaceID} namespaceID A given namespace id.
 			 * @return {(Object|undefined)}
 			 */
-			'getModule' : function (namespace) {
+			'getModule' : function (namespaceID) {
+
+				var namespace = _.modules[namespaceID].details.namespace;
+
 				return APR.access(APRDefine.getRootElement(), namespace.split(APRDefine.SPLIT_NAMESPACE_USING), function (v, k, isDefined) {
 					return isDefined ? v[k] : void 0;
 				});
@@ -923,16 +929,16 @@
 			 * Calls a module with the dependencies as his parameters.
 			 * Then, if everything is defined, {@link APR.Define._.updateModules|updates all the modules}.
 			 * 
-			 * @param  {APR.Define~namespace} namespace Some namespace.
+			 * @param  {APR.Define~namespaceID} namespaceID Some namespaceID.
 			 * @param  {APR.Define~using_handler} handler Some handler.
-			 * @param  {*} thisArg `this` for `handler`.
 			 * @return {boolean} true if it succeed, false otherwise.
 			 */
-			'callModule' : function (namespace, handler, thisArg) {
+			'callModule' : function (namespaceID, handler) {
 
-				var params = APR.eachElement(_.modules.deferred[namespace].dependencies, function (dependencyNS) {
+				var params = APR.eachElement(_.modules.deferred[namespaceID].dependencies, function (dependencyNS) {
 					return _.getModule(dependencyNS);
 				});
+				var thisArg = Object.assign({}, _.modules.defined[namespaceID].details);
 
 				if (params.some(function (isDefined) { return !isDefined; })) {
 					return false;
@@ -940,9 +946,9 @@
 
 				handler.apply(thisArg, params);
 
-				delete _.modules.deferred[namespace];
-				_.modules.defined[namespace].state = _.STATE_CALLED;
-				_.updateModules(namespace);
+				delete _.modules.deferred[namespaceID];
+				_.modules.defined[namespaceID].state = _.STATE_CALLED;
+				_.updateModules(namespaceID);
 
 				return true; 
 
@@ -951,7 +957,7 @@
 			 * If there are dependencies, it checks if the ones defined by `definedNamespace` got loaded or called.
 			 * If there aren't, {@link APR.Define._.onFinish|it finishes}.
 			 *
-			 * @param  {APR.Define~namespace} definedNamespace Some namespace that was defined by {@link APR.Define}.
+			 * @param  {APR.Define~namespaceID} definedNamespace Some namespaceID that was defined by {@link APR.Define}.
 			 */
 			'updateModules' : (function () {
 
@@ -987,10 +993,10 @@
 
 					if (definedModule.state === _.STATE_CALLED) {
 
-						return APR.eachProperty(deferredModules, function (currentModule, namespace) {
+						return APR.eachProperty(deferredModules, function (currentModule, namespaceID) {
 
 							if (APR.areDependencies(_.STATE_CALLED, currentModule)) {
-								_.callModule(namespace, currentModule.handler, currentModule.thisArgForHandler);
+								_.callModule(namespaceID, currentModule.handler);
 							}
 
 						}), void 0;
@@ -998,7 +1004,7 @@
 					}
 
 					if (APR.areDependencies(_.STATE_LOADED, deferredModule)) {
-						_.callModule(definedNamespace, deferredModule.handler, deferredModule.thisArgForHandler);
+						_.callModule(definedNamespace, deferredModule.handler);
 					}
 
 				};
@@ -1020,21 +1026,33 @@
 		 * Defines a namespace. 
 		 * @constructor
 		 * @param {APR.Define~namespace} namespace Some namespace.
+		 * @param {*} [version] The version of the module.
+		 * @param {string} [namespaceID="namespace-version"] An id for the namespace.
 		 */
-		function APRDefine (namespace) {
+		function APRDefine (namespace, version, namespaceID) {
 
 			if (!(this instanceof APRDefine)) {
-				return new APRDefine(namespace);
+				return new APRDefine.bind.apply(null, arguments);
 			}
 
 			if (typeof namespace !== 'string') {
 				throw new TypeError(namespace + ' must be an string.');
 			}
 
-			_(this).namespace = namespace;
+			if (typeof namespaceID !== 'string') {
+				namespaceID = '';
+				namespaceID = Array.from(arguments).join('-');
+			}
 
-			_.modules.defined[namespace] = {
-				'state' : _.STATE_LOADED
+			_(this).namespaceID = namespaceID;
+
+			_.modules.defined[namespaceID] = {
+				'state' : _.STATE_LOADED,
+				'details' : {
+					'namespace' : namespace,
+					'version' : version,
+					'id' : namespaceID
+				}
 			};
 
 		}
@@ -1056,17 +1074,17 @@
 			 * Loads files and waits until everything (in these files) gets added.
 			 * Then, magic happens.
 			 * 
-			 * @param  {Object.<APR.Define~namespace, string>} urls A namespace with a url as a value.
+			 * @param  {Object.<APR.Define~namespaceID, string>} urls A namespace id with a url as a value.
 			 */
 			'load' : (function () {
 
-				var prepareHandler = function (namespace) {
+				var prepareHandler = function (namespaceID) {
 
 					var onLoad = function () {
 
 						var modulesLoading = _.modules.currentlyLoading;
 
-						modulesLoading.splice(modulesLoading.indexOf(namespace), 1);
+						modulesLoading.splice(modulesLoading.indexOf(namespaceID), 1);
 
 						if (!modulesLoading.length) {
 							_.callDeferredModules();
@@ -1074,7 +1092,7 @@
 
 					};
 
-					_.modules.currentlyLoading.push(namespace);
+					_.modules.currentlyLoading.push(namespaceID);
 
 					return function (loadedScript) {
 
@@ -1105,8 +1123,8 @@
 						throw new TypeError(urls + ' must be a key-value object.');
 					}
 
-					APR.eachProperty(urls, function (url, namespace) {
-						APR.load('script', url, prepareHandler(namespace));
+					APR.eachProperty(urls, function (url, namespaceID) {
+						APR.load('script', url, prepareHandler(namespaceID));
 					});
 
 				};
@@ -1127,7 +1145,7 @@
 			 * 
 			 * As a key:
 			 *     A numeric index (to indicate the order of the parameters in {@link APR.Define~using_handler})
-			 *     and a {@link APR.Define~namespace|namespace}, splited by ":".
+			 *     and a {@link APR.Define~namespaceID|namespaceID}, splited by ":".
 			 * As a value:
 			 *     An url.
 			 *     
@@ -1135,7 +1153,7 @@
 			 * @example
 			 * [...]using({
 			 *     "1:index": "index.js",
-			 *     "0:APR/Define": "/APRDefine.js"
+			 *     "0:APR/Define-1.9": "/APRDefine.js"
 			 * }, function (APRDefine, index) {});
 			 */
 
@@ -1143,24 +1161,22 @@
 			 * Adds dependencies and a handler to the module.
 			 *
 			 * @instance
-			 * @param  {(Array<APR.Define~namespace>|APR.Define~using_modulesAsObject)} [modules=APR.Define~using_handler] The dependencies for the module or `handler`.
+			 * @param  {(APR.Define~namespaceID[]|APR.Define~using_modulesAsObject)} [modules=APR.Define~using_handler] The dependencies for the module or `handler`.
 			 * @param  {APR.Define~using_handler} handler Some handler.
-			 * @param  {*} thisArgForHandler `this` for `handler`.
 			 */
-			'using' : function (modules, handler, thisArgForHandler) {
+			'using' : function (modules, handler) {
 
 				var args = arguments;
-				var namespace = _(this).namespace;
+				var namespaceID = _(this).namespaceID;
 				var deferredModule;
 
 				if (typeof args[0] === 'function' || !args[0]) {
 					Array.prototype.unshift.call(args, []);
-					_.callModule(namespace, handler = args[1], thisArgForHandler = args[2]);
+					_.callModule(namespaceID, handler = args[1]);
 					return;
 				}
 
-				deferredModule = _.modules.deferred[namespace] = {
-					'thisArgForHandler' : thisArgForHandler,
+				deferredModule = _.modules.deferred[namespaceID] = {
 					'handler' : handler,
 					'dependencies' : []
 				};
@@ -1177,7 +1193,7 @@
 						var i = +key.slice(0, splitIndex);
 						
 						if (Number.isNaN(i)) {
-							throw new TypeError(key + ' must contain a numeric index an a module-key splited by ":", e.g.: "0:namespace"');
+							throw new TypeError(key + ' must contain a numeric index an a namespace-id splited by ":", e.g.: "0:namespaceID"');
 						}
 
 						deferredModule.dependencies[i] = currentNS;
@@ -1191,7 +1207,7 @@
 				}
 
 				if (!deferredModule.dependencies.length) {
-					_.callModule(namespace, handler, thisArgForHandler);
+					_.callModule(namespaceID, handler);
 				}
 
 			}

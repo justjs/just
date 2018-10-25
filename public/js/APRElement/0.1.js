@@ -1,6 +1,6 @@
-APR.Define('APR/Element').using({
-	'0:APR/Event' : APR.self.setFileUrl('APREvent', 'js'),
-	'1:APR/State' : APR.self.setFileUrl('APRState', 'js')
+APR.Define('APR/Element', 0.1).using({
+	'0:APR/Event-0.1' : APR.self.setFileUrl('APREvent', 'js', 0.1),
+	'1:APR/State-0.1' : APR.self.setFileUrl('APRState', 'js', 0.1)
 }, function (APREvent, APRState) {
 
 	'use strict';
@@ -111,7 +111,7 @@ APR.Define('APR/Element').using({
 	}
 
 	Object.assign(APRElement, {
-		'version' : 0.1,
+		'version' : this.version,
 		'createElement' : function (elementAsString) {
 
 			var tagName = (elementAsString.match(/(^|\t+)[a-z0-9\s]+/i) || [''])[0].trim();

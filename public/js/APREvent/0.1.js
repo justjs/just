@@ -1,4 +1,4 @@
-APR.Define('APR/Event').using(function () {
+APR.Define('APR/Event', 0.1).using(function () {
 
 	'use strict';
 
@@ -26,7 +26,7 @@ APR.Define('APR/Event').using(function () {
 	}
 
 	Object.assign(APREvent, {
-		'version' : 0.1,
+		'version' : this.version,
 		'getAttachedEvents' : function (element) {
 			return _(element).attachedEvents;
 		}
