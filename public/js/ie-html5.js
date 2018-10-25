@@ -1,1 +1,0 @@
-!function(A,i){i=A.length;while(i-->=0)document.createElement(A[i])}('header,nav,main,footer,section,article,aside,time,figure,figcaption'.split(','));

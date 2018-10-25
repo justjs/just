@@ -4,7 +4,6 @@
  * @version  0.1
  * @copyright Alexis Puga Ruíz 2018
  */
-
 /**
  * Some polyfills (for ie8) used in 2 o more APR modules.
  * @ignore
@@ -689,8 +688,8 @@
 
 				var element, loadedFile, attribute;
 
-				tag = load.SYNOMYMS_FOR_TAGS[tag] || tag;
-				attribute = load.NON_SRC_ATTRIBUTES[tag] || 'src';
+				tag = APR.load.SYNOMYMS_FOR_TAGS[tag] || tag;
+				attribute = APR.load.NON_SRC_ATTRIBUTES[tag] || 'src';
 
 				loadedFile = APR.getElements('[' + tag + '="' + url + '"], [' + tag + '="' + APR.parseUrl(url).href + '"]')[0];
 				
@@ -760,18 +759,14 @@
 		'isEmptyObject' : function (object) {
 			
 			var k;
-
-			if (typeof object !== 'object' || object === null) {
-				return true;
-			}
 			
 			for (k in object) {
 				if (Object.prototype.hasOwnProperty.call(object, k)) {
-					return true;
+					return false;
 				}
 			}
 
-			return false;
+			return true;
 		}
 	});
 
@@ -918,8 +913,7 @@
 			 * @return {(Object|undefined)}
 			 */
 			'getModule' : function (namespaceID) {
-
-				var namespace = _.modules[namespaceID].details.namespace;
+				var namespace = _.modules.defined[namespaceID].details.namespace;
 
 				return APR.access(APRDefine.getRootElement(), namespace.split(APRDefine.SPLIT_NAMESPACE_USING), function (v, k, isDefined) {
 					return isDefined ? v[k] : void 0;
@@ -935,9 +929,10 @@
 			 */
 			'callModule' : function (namespaceID, handler) {
 
-				var params = APR.eachElement(_.modules.deferred[namespaceID].dependencies, function (dependencyNS) {
+				var deferredModule = _.modules.deferred[namespaceID];
+				var params = deferredModule ? APR.eachElement(deferredModule.dependencies, function (dependencyNS) {
 					return _.getModule(dependencyNS);
-				});
+				}) : [];
 				var thisArg = Object.assign({}, _.modules.defined[namespaceID].details);
 
 				if (params.some(function (isDefined) { return !isDefined; })) {
@@ -987,7 +982,7 @@
 					var definedModule = definedModules[definedNamespace];
 					var deferredModule = deferredModules[definedNamespace];
 
-					if (APR.isEmptyObject(deferredModules)) {
+					if (APR.isEmptyObject(deferredModules) && !_.modules.currentlyLoading.length) {
 						return _.onFinish(), void 0;
 					}
 
@@ -995,7 +990,7 @@
 
 						return APR.eachProperty(deferredModules, function (currentModule, namespaceID) {
 
-							if (APR.areDependencies(_.STATE_CALLED, currentModule)) {
+							if (areDependencies(_.STATE_CALLED, currentModule)) {
 								_.callModule(namespaceID, currentModule.handler);
 							}
 
@@ -1003,7 +998,7 @@
 
 					}
 
-					if (APR.areDependencies(_.STATE_LOADED, deferredModule)) {
+					if (areDependencies(_.STATE_CALLED, deferredModule)) {
 						_.callModule(definedNamespace, deferredModule.handler);
 					}
 
@@ -1032,7 +1027,7 @@
 		function APRDefine (namespace, version, namespaceID) {
 
 			if (!(this instanceof APRDefine)) {
-				return new APRDefine.bind.apply(null, arguments);
+				return new APRDefine(namespace, version, namespaceID);
 			}
 
 			if (typeof namespace !== 'string') {
@@ -1041,7 +1036,9 @@
 
 			if (typeof namespaceID !== 'string') {
 				namespaceID = '';
-				namespaceID = Array.from(arguments).join('-');
+				namespaceID = Array.prototype.filter.call(arguments, function (hasValue) {
+					return hasValue;
+				}).join('-');
 			}
 
 			_(this).namespaceID = namespaceID;
@@ -1111,7 +1108,7 @@
 							throw new Error('There was an error trying to load a script with the next url: ' + this.src);
 						};
 
-						head.appendChild(this);
+						APR.head.appendChild(this);
 
 					};
 
@@ -1197,7 +1194,7 @@
 						}
 
 						deferredModule.dependencies[i] = currentNS;
-						APRDefine.load(setDynamicKeys({}, [currentNS, url]))
+						APRDefine.load(APR.setDynamicKeys({}, [currentNS, url]))
 
 					}, this);
 
@@ -1208,6 +1205,9 @@
 
 				if (!deferredModule.dependencies.length) {
 					_.callModule(namespaceID, handler);
+				}
+				else {
+					_.updateModules(namespaceID);
 				}
 
 			}
