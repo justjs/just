@@ -137,7 +137,7 @@
 
 				var value;
 
-				if (!key || typeof key !== 'object') {
+				if (!(key instanceof Object)) {
 					return;
 				}
 
@@ -188,29 +188,34 @@
 		/**
 		 * Checks if `value` looks like `defaultValue`.
 		 *
+		 * @param {*} value Any value-
+		 * @param {*} defaultValue A value with a desired type for `value`.
+		 *
 		 * @example
 		 * defaults([1, 2], {a: 1}); // {a: 1}
 		 * 
 		 * @example
-		 * defaults(1, NaN); // NaN
+		 * defaults({}, null); // {}: null is an object.
+		 * defaults([], null); // []: null is an object.
+		 * defaults(null, {}); // {}: null is not a key-value object.
+		 * defaults(null, []); // []: null is not an array.
+		 * 
+		 * @example
+		 * defaults(1, NaN); // 1 (NaN is a Number)
 		 *
 		 * @returns `value` if it looks like `defaultValue` or `defaultValue` otherwise.
 		 */
 		'defaults' : function (value, defaultValue) {
 
-			if (APR.isKeyValueObject(defaultValue) && APR.isKeyValueObject(value)) {
-				return value;
-			}
-			
-			if (Array.isArray(value) && Array.isArray(defaultValue)) {
-				return value;
+			if (Array.isArray(defaultValue)) {
+				return Array.isArray(value) ? value : defaultValue;
 			}
 
-			if (typeof value === typeof defaultValue) {
-				return value;
+			if (APR.isKeyValueObject(defaultValue)) {
+				return APR.isKeyValueObject(value) ? value : defaultValue;
 			}
 
-			return defaultValue;
+			return typeof value === typeof defaultValue ? value : defaultValue;
 
 		},
 		/**
@@ -1215,6 +1220,103 @@
 		});
 
 		return APRDefine;
+
+	})();
+
+	APR.LocalStorage = (function () {
+
+		var _ = APR.createPrivateKey();
+
+		function APRLocalStorage (consent) {
+			
+			if (!(this instanceof APRLocalStorage)) {
+				return new APRLocalStorage(consent);
+			}
+
+			_(this).consent = !!consent;
+
+		}
+
+		Object.assign(APRLocalStorage, {
+			'cookieExists' : function (cookie) {
+				return new RegExp('; ' + cookie + '(=|;)').test('; ' + document.cookie + ';');
+			},
+			'getCookie' : function (name) {
+				return ('; ' + document.cookie).split('; ' + name + '=').pop().split('; ').shift().split(/^=/).pop();
+			}
+		});
+
+		Object.assign(APRLocalStorage.prototype, {
+			'setCookie' : function (name, value, options, insecure) {
+			
+				var cookie = '', set = function (k, v) {
+					cookie += k + (typeof v !== 'undefined' ? '=' + v : '') + '; ';
+				};
+
+				if (!_(this).consent) {
+					return false;
+				}
+
+				options = APR.defaults(options, {});
+
+				set(name, value);
+
+				if (!insecure) {
+					set('secure');
+				}
+
+				if (options['max-age']) {
+					options.expires = +new Date() + options['max-age'] * 1e3;
+				}
+
+				if (options.expires) {
+					options.expires = new Date(options.expires).toGMTString();
+				}
+
+				APR.eachProperty(options, function (v, k) {
+					set(k, v);
+				});
+
+				document.cookie = cookie;
+
+				return true;
+
+			},
+			'removeCookie' : function (name, options) {
+				
+				if (!APRLocalStorage.cookieExists(name)) {
+					return true;
+				}
+
+				return this.setCookie(name, '', Object.assign(APR.defaults(options, {}), {
+					'max-age' : 0
+				}));
+
+			},
+			'isStorageAvailable' : function (type) {
+		
+				var _ = 'x';
+				var storage;
+
+				if (!_(this).consent) {
+					return false;
+				}
+
+				try {
+					storage = window[type];
+					storage.setItem(_, _);
+					storage.removeItem(_);
+				}
+				catch (exception) {
+					return false;
+				}
+				
+				return true;
+
+			}
+		});
+
+		return APRLocalStorage;
 
 	})();
 	

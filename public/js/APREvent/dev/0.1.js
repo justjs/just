@@ -12,6 +12,7 @@ APR.Define('APR/Event', 0.1).using(function () {
 		}
 
 		if (this.constructor === APREvent) {
+			console.log(APR.defaults(elements, [elements]));
 			this.length = ArrayProto.push.apply(this, APR.defaults(elements, [elements]));
 		}
 
@@ -116,7 +117,7 @@ APR.Define('APR/Event', 0.1).using(function () {
 					}
 
 				};
-				var type = (options = APR.defaults(options, {})).isCustomEvent ? name.slice(name.lastIndexOf('.') + 1) : name;
+				var type = (options = APR.defaults(options, {})).isCustomEvent ? name : name.slice(name.lastIndexOf('.') + 1);
 				var id = name;
 
 				options = Object.assign(options, DEFAULT_OPTIONS);
@@ -253,7 +254,7 @@ APR.Define('APR/Event', 0.1).using(function () {
 				if (!options.force && APR.inArray(NON_BUBBLING_EVENTS, eventName)) {
 					throw new TypeError(eventName + ' doesn\'t bubble, but you can attach it anyway adding {force: true} (in the options parameter).');
 				}
-
+				
 				this.addEvent(NON_BUBBLING_TO_BUBBLING[eventName] || eventName, function (e, params) {
 
 					var somethingMatched = false;
