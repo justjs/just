@@ -12,7 +12,6 @@ APR.Define('APR/Event', 0.1).using(function () {
 		}
 
 		if (this.constructor === APREvent) {
-			console.log(APR.defaults(elements, [elements]));
 			this.length = ArrayProto.push.apply(this, APR.defaults(elements, [elements]));
 		}
 
