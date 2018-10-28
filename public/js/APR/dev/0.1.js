@@ -613,20 +613,30 @@
 		 * or a non-Node is found.
 		 * 
 		 * @param  {Node} element Some child.
-		 * @param  {APR~getRemoteParent_fn} fn Some custom handler.     
+		 * @param  {APR~getRemoteParent_fn} fn Some custom handler.
+		 * @param  {Node} [container=html] The farthest parent.  
+		 * @param  {boolean} [includeElement=false] If true, it calls `fn` with `element` too.
 		 * @return {?Node} The current Node when `fn` returns true.
 		 * @example
 		 * APR.getRemoteParent(APR.body, function () {
 		 *     return this.tagName === 'HTML';
 		 * }); // returns the html Element.
 		 */
-		'getRemoteParent' : function (element, fn) {
+		'getRemoteParent' : function (element, fn, container, includeElement) {
 
 			var parentNode = null;
 
+			if (!(container instanceof Node)) {
+				container = APR.html;
+			}
+
+			if (includeElement && fn.call(element)) {
+				return element;
+			}
+
 			while (
 				(parentNode = (parentNode || element).parentNode) &&
-				(parentNode.nodeType && parentNode.nodeType !== Node.DOCUMENT_NODE || (parentNode = null)) &&
+				(parentNode !== container || (parentNode = null)) &&
 				!fn.call(parentNode)
 			);
 			
@@ -696,8 +706,20 @@
 				tag = APR.load.SYNOMYMS_FOR_TAGS[tag] || tag;
 				attribute = APR.load.NON_SRC_ATTRIBUTES[tag] || 'src';
 
-				loadedFile = APR.getElements('[' + tag + '="' + url + '"], [' + tag + '="' + APR.parseUrl(url).href + '"]')[0];
+				loadedFile = APR.getElements(tag +'[' + attribute + '="' + url + '"], ' + tag + '[' + attribute + '="' + APR.parseUrl(url).href + '"]')[0];
 				
+				APR.defaults(handler, function (loadedFile) {
+					
+					if (!loadedFile) {
+						APR.head.appendChild(this);
+					}
+
+				});
+
+				if (loadedFile) {
+					return handler.call(element, loadedFile), void 0;
+				}
+
 				element = document.createElement(tag);
 				element[attribute] = url;
 
@@ -707,11 +729,6 @@
 			
 				if (APR.parseUrl(url).origin !== window.location.origin && APR.inArray(['video', 'img', 'script'], tag)) {
 					element.setAttribute('crossorigin', 'anonymous');
-				}
-
-				if (typeof handler !== 'function') {
-					head.appendChild(element);
-					return;
 				}
 
 				handler.call(element, loadedFile);
@@ -974,7 +991,7 @@
 					var definedModules = _.modules.defined;
 
 					return !deferredModule.dependencies.some(function (dependencyNS) {
-						return definedModules[dependencyNS].state !== state;
+						return APR.defaults(definedModules[dependencyNS], {}).state !== state;
 					});
 
 				}
