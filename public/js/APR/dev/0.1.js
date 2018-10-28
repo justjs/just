@@ -812,10 +812,10 @@
 		 * @property {APR~self_setFileUrl} setFileUrl Sets the url of APR's files.
 		 */
 		'self' : Object.create({
-			'originUrl' : 'https://www.apr.com',
-			'staticOriginUrl' : 'https://www.shared.apr.com',
+			'originUrl' : 'https://www.aprservices.com',
+			'staticOriginUrl' : 'https://www.code.aprservices.com',
 			'setFileUrl' : function (name, ext, version) {
-				return this.staticOriginUrl + '/' + ext + '/' + name + '/' + version + '.' + ext
+				return this.staticOriginUrl + '/' + ext + '/' + name + '/dev/' + version + '.' + ext + '?nocache=true'
 			}
 		}),
 		/**
