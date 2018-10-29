@@ -18,6 +18,7 @@
 	function ff(o,f){for(var k in o)Object.prototype.hasOwnProperty.call(o,k)&&f(k,o[k])}
 	function fg(o,p,g){O.defineProperty?O.defineProperty(o,p,{get:g}):o.__defineGetter__(p,g)};
 	function fv(o,p){var v=['moz','webkit','ms','o'],i=v.length,fn;while(--i>=0)if(fn=o[p+v[i]])return fn}
+	function fd(o){fp(o,'dispatchEvent',function(e){return this.fireEvent('on'+e.type,e)})}
 
 	E=!fy(E)||!fy(E).constructor.name?function(t,o){var e,b,c;o=o&&typeof o=='object'?o:{};b=!!o.bubbles;c=!!o.cancelable;if('createEvent' in D)return(e=D.createEvent('Event')).initEvent(t,b,c),e;e=D.createEventObject();e.type=t;e.bubbles=b;e.cancelable=c;return e}:Event;
 	W.CustomEvent=W.CustomEvent&&typeof W.CustomEvent=='object'?function(t,o){var e=D.createEvent('CustomEvent');o=o&&typeof o=='object'?o:{};e.initCustomEvent(t,!!o.bubbles,!!o.cancelable,o.detail);return e}:W.CustomEvent||function(t,o){var e=new Event(t,o);e.detail=(o&&typeof o=='object'?o:{}).detail;return e};
@@ -45,7 +46,7 @@
 	fp(T,'origin',function(){return this.protocol+'//'+this.host});
 	fp(T,'toString',function(){return this.href});
 
-	if (!fy(T).addEventListener) fl(fy(Window)), fl(fy(T)), fl(fy(HTMLDocument));
+	if (!fy(E).addEventListener) fl(fy(Window)), fl(fy(E)), fl(fy(HTMLDocument)), fd(fy(Window)), fd(fy(E)), fd(fy(HTMLDocument));
 
 	ff((function(fs){return{previousElementSibling:function(){return fs(this,'previous')},nextElementSibling:function(){return fs(this,'next')}}})(function fs(e,k){while((e=e[k+'Sibling'])&&e.nodeType!=1);return e}),function(k,v){(v in D.documentElement)||fg(fy(T),k,v)});
 
