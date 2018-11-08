@@ -176,11 +176,11 @@ APR.Define('APR/Request', 0.1).using(function () {
 				}
 
 				if (this.status < 200 || this.status >= 400) {
-					onSuccess.call(this);
+					onError.call(this);
 				}
 
 				if (this.status >= 200 && this.status < 400) {
-					onError.call(this);
+					onSuccess.call(this);
 				}
 
 			};
