@@ -2,10 +2,10 @@ APR.Define('APR/Request', 0.1).using(function () {
 	
 	'use strict';
 
-	var _ = APR.createPrivateKey({
+	var _ = Object.assign(APR.createPrivateKey({
 		'listen' : function (eventName, handler) {
 
-			if (typeof handler === 'function') {
+			if (typeof handler !== 'function') {
 				throw new TypeError(handler + ' must be a function.');
 			}
 
@@ -33,7 +33,7 @@ APR.Define('APR/Request', 0.1).using(function () {
 		'abort' : function () {
 			(this.xhr || this.xdr).abort();
 		}
-	}, {
+	}), {
 		'getResponse' : function getJSONResponse (xhrLike) {
 
 			var response;
@@ -61,11 +61,13 @@ APR.Define('APR/Request', 0.1).using(function () {
 
 		_(this).public = this;
 
+		options = APR.defaults(options, {});
+
 		this.method = String(method).trim();
 		this.url = url;
-		this.options = Object.assign({}, APRRequest.DEFAULT_OPTIONS, APR.defaults(options, {}));
+		this.options = Object.assign({}, APRRequest.DEFAULT_OPTIONS, options);
 		
-		withCredentials = !APR.isObjectEmpty(options.credentials);
+		withCredentials = !APR.isEmptyObject(options.credentials);
 
 		if (withCredentials && 'XDomainRequest' in window) {
 			
@@ -87,7 +89,7 @@ APR.Define('APR/Request', 0.1).using(function () {
 		);
 		_this.xhr.withCredentials = withCredentials;
 
-		this.setHeaders(options.headers);
+		this.setHeaders(this.options.headers);
 
 	}
 
@@ -104,11 +106,11 @@ APR.Define('APR/Request', 0.1).using(function () {
 		'addDataToUrl' : function (url, data) {
 
 			var newUrl = url + (APR.parseUrl(url).search
-				? (url.endsWith('?') ? '' : '?')
-				: (url.endsWith('&') ? '' : '&')
+				? (url.endsWith('&') ? '' : '&')
+				: (url.endsWith('?') ? '' : '?')
 			);
 
-			APR.eachProperty(data, function (key, value) {
+			APR.eachProperty(data, function (value, key) {
 				newUrl += encodeURIComponent(key) + '=' + encodeURIComponent(value) + '&';
 			});
 
@@ -137,7 +139,7 @@ APR.Define('APR/Request', 0.1).using(function () {
 
 			APR.eachProperty(headers, function setHeaders (value, key) {
 				_(this).headers[key] = value;
-				_(this).xhr.setRequestHeaders(key, value);
+				_(this).xhr.setRequestHeader(key, value);
 			}, this);
 
 			return this;
@@ -152,17 +154,17 @@ APR.Define('APR/Request', 0.1).using(function () {
 				_this.getListener('onError').call(this, _.getResponse(this));
 			};
 
-			if (APR.isKeyValueObject(data)) {
-				data = JSON.stringify(data);
-			}
-
 			if (!data) {
 				data = null;
 			}
 			else if (/GET/i.test(this.method)) {
 				_this.abort();
-				_this = _(this.cloneRequest({'url' : APRRequest.addDataToUrl(this.url, data)}));
+				_this = _(_(this).cloneRequest({'url' : APRRequest.addDataToUrl(this.url, data)}));
 				data = null;
+			}
+
+			if (APR.isKeyValueObject(data)) {
+				data = JSON.stringify(data);
 			}
 
 			_this.xhr.onreadystatechange = function () {
