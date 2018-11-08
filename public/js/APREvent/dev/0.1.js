@@ -257,7 +257,7 @@ APR.Define('APR/Event', 0.1).using(function () {
 			};
 			var NON_BUBBLING_EVENTS = ['load', 'unload', 'abort', 'error'];
 
-			return function (eventName, events, options) {
+			return function (eventNames, events, options) {
 
 				if (!APR.isKeyValueObject(events)) {
 					throw new TypeError('"' + events + '" must be a key-value object.');
@@ -265,40 +265,44 @@ APR.Define('APR/Event', 0.1).using(function () {
 
 				options = APR.defaults(options, {});
 
-				if (!options.force && APR.inArray(NON_BUBBLING_EVENTS, eventName)) {
-					throw new TypeError(eventName + ' doesn\'t bubble, but you can attach it anyway adding {force: true} (in the options parameter).');
-				}
-				
-				this.addEvent(NON_BUBBLING_TO_BUBBLING[eventName] || eventName, function (e, params) {
+				APR.defaults(eventNames, [eventNames]).forEach(function (eventName) {
 
-					var somethingMatched = false;
+					if (!options.force && APR.inArray(NON_BUBBLING_EVENTS, eventName)) {
+						throw new TypeError(eventName + ' doesn\'t bubble, but you can attach it anyway adding {force: true} (in the "options" parameter).');
+					}
+					
+					this.addEvent(NON_BUBBLING_TO_BUBBLING[eventName] || eventName, function (e, params) {
 
-					APR.getRemoteParent(this, function () {
+						var somethingMatched = false;
 
-						if (this === e.target) {
-							return true;
-						}
+						APR.getRemoteParent(this, function () {
 
-						APR.eachProperty(events, function (handler, selector) {
-							
-							if (this.matches(selector)) {
-								somethingMatched = true;
-								handler.call(this, e, params);
+							if (this === e.target) {
+								return true;
 							}
 
-						}, this);
+							APR.eachProperty(events, function (handler, selector) {
+								
+								if (this.matches(selector)) {
+									somethingMatched = true;
+									handler.call(this, e, params);
+								}
 
-						return false;
+							}, this);
 
-					});
+							return false;
 
-					if (!somethingMatched && typeof events.elsewhere === 'function') {
-						events.elsewhere.call(this, e, params);
-					}
+						});
 
-				}, Object.assign(options, {
-					'bubbles' : true
-				}));
+						if (!somethingMatched && typeof events.elsewhere === 'function') {
+							events.elsewhere.call(this, e, params);
+						}
+
+					}, Object.assign(options, {
+						'bubbles' : true
+					}));
+
+				}, this);
 
 				return this;
 
