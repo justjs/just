@@ -167,18 +167,6 @@ APR.Define('APR/Element', 0.1).using({
 		},
 		'find' : function (selector, parent) {
 			return APR.getElements(selector, parent)[0];
-		},
-		'autoresizeTextarea' : function (textarea) {
-
-			if (!/^textarea$/i.test(textarea.tagName)) {
-				throw new TypeError('The given element is not a textarea.');
-			}
-
-			textarea.style.height = 'auto';
-			textarea.style.height = textarea.scrollHeight + 'px';
-
-			return textarea;
-
 		}
 	});
 
