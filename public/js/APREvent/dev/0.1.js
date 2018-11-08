@@ -125,7 +125,10 @@ APR.Define('APR/Event', 0.1).using(function () {
 
 				APR.defaults(names, [names]).forEach(function (name) {
 
-					var type = (options = APR.defaults(options, {})).custom ? name : name.slice(name.lastIndexOf('.') + 1);
+					var type = (options.custom === true || APR.inArray(APR.defaults(options.custom, [options.custom]), name)
+						? name
+						: name.slice(name.lastIndexOf('.') + 1)
+					);
 					var id = name;
 
 					ArrayProto.forEach.call(this, function (element) {
@@ -235,7 +238,7 @@ APR.Define('APR/Event', 0.1).using(function () {
 
 				customEvent = new CustomEvent(type, Object.assign({}, handler.options, {'detail' : params}));
 
-				if (handler.hasNamespace) {
+				if (handler.hasNamespace && !handler.options.custom) {
 					handler.listener.call(this, customEvent);
 				}
 				else {
@@ -278,8 +281,8 @@ APR.Define('APR/Event', 0.1).using(function () {
 						APR.getRemoteParent(e.target, function () {
 
 							APR.eachProperty(events, function (handler, selector) {
-								
-								if (this.matches(selector)) {
+
+								if (this.matches && this.matches(selector)) {
 									somethingMatched = true;
 									handler.call(this, e, params);
 								}
