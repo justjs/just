@@ -270,16 +270,12 @@ APR.Define('APR/Event', 0.1).using(function () {
 					if (!options.force && APR.inArray(NON_BUBBLING_EVENTS, eventName)) {
 						throw new TypeError(eventName + ' doesn\'t bubble, but you can attach it anyway adding {force: true} (in the "options" parameter).');
 					}
-					
+
 					this.addEvent(NON_BUBBLING_TO_BUBBLING[eventName] || eventName, function (e, params) {
 
 						var somethingMatched = false;
 
-						APR.getRemoteParent(this, function () {
-
-							if (this === e.target) {
-								return true;
-							}
+						APR.getRemoteParent(e.target, function () {
 
 							APR.eachProperty(events, function (handler, selector) {
 								
@@ -292,7 +288,7 @@ APR.Define('APR/Event', 0.1).using(function () {
 
 							return false;
 
-						});
+						}, this, true);
 
 						if (!somethingMatched && typeof events.elsewhere === 'function') {
 							events.elsewhere.call(this, e, params);
