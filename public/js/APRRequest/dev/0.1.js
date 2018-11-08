@@ -233,4 +233,4 @@ APR.Define('APR/Request', 0.1).using(function () {
 		APR.Request = APRRequest;
 	}
 
-})();
+});

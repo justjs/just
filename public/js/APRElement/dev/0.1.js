@@ -98,8 +98,8 @@ APR.Define('APR/Element', 0.1).using({
 		else if (typeof elements === 'string') {
 			elements = APRElement.findAll(elements);
 		}
-		else if (!Array.isArray(elements)) {
-			throw new TypeError(elements + ' should be either an string or an array.');
+		else if (!Array.isArray(elements) && !(elements instanceof Node) && !APR.isWindow(elements)) {
+			throw new TypeError(elements + ' should be either an string, an array or a Node.');
 		}
 
 		if (this.constructor === APRElement) {
