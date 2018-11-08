@@ -95,11 +95,11 @@ APR.Define('APR/Event', 0.1).using(function () {
 				'detail' : null,
 				'bubbles' : void 0,
 				'throttle' : void 0,
-				'isCloned' : void 0,
-				'isCustomEvent' : void 0
+				'cloned' : void 0,
+				'custom' : void 0
 			};
 
-			return function (name, handler, options) {
+			return function (names, handler, options) {
 
 				var instance = this;
 				var listener = function (e) {
@@ -116,37 +116,42 @@ APR.Define('APR/Event', 0.1).using(function () {
 					}
 
 				};
-				var type = (options = APR.defaults(options, {})).isCustomEvent ? name : name.slice(name.lastIndexOf('.') + 1);
-				var id = name;
+				var type = (options = APR.defaults(options, {})).custom ? name : name.slice(name.lastIndexOf('.') + 1);
 
 				options = Object.assign({}, DEFAULT_OPTIONS, options);
-
+				
 				if (typeof options.bubbles === 'boolean') {
 					options.useCapture = !options.bubbles;
 				}
 
-				ArrayProto.forEach.call(this, function (element) {
+				APR.defaults(names, [names]).forEach(function (name) {
 
-					if (_(handler).id === id && _(element).attachedEvents[id]) {
-						return;
-					}
+					var id = name;
 
-					_(handler).id = id;
+					ArrayProto.forEach.call(this, function (element) {
 
-					element.addEventListener(type, listener, options.useCapture);
+						if (_(handler).id === id && _(element).attachedEvents[id]) {
+							return;
+						}
 
-					_(element).attachedEvents[id] = {
-						'type' : type,
-						'name' : name,
-						'hasNamespace' : type !== name,
-						'originalListener' : handler,
-						'listener' : listener,
-						'options' : options
-					};
+						_(handler).id = id;
 
-					if (options.trigger) {
-						this.triggerEvent(name, options.trigger);
-					}
+						element.addEventListener(type, listener, options.useCapture);
+
+						_(element).attachedEvents[id] = {
+							'type' : type,
+							'name' : name,
+							'hasNamespace' : type !== name,
+							'originalListener' : handler,
+							'listener' : listener,
+							'options' : options
+						};
+
+						if (options.trigger) {
+							this.triggerEvent(name, options.trigger);
+						}
+
+					}, this);
 
 				}, this);
 
@@ -155,10 +160,10 @@ APR.Define('APR/Event', 0.1).using(function () {
 			};
 
 		})(),
-		'addCustomEvent' : function (type, handler, options) {
+		'addCustomEvent' : function (types, handler, options) {
 		
-			this.addEvent(type, handler, Object.assign(APR.defaults(options, {}), {
-				'isCustomEvent' : true
+			this.addEvent(types, handler, Object.assign(APR.defaults(options, {}), {
+				'custom' : true
 			}));
 
 			return this;
@@ -202,7 +207,7 @@ APR.Define('APR/Event', 0.1).using(function () {
 			this.eachEvent(function (handler, id) {
 
 				aprTarget.addEvent(handler.name, handler.originalListener, APR.assign(handler.options, {
-					'isCloned' : true
+					'cloned' : true
 				}));
 
 			});
