@@ -631,6 +631,10 @@
 				container = APR.html;
 			}
 
+			if (!element) {
+				return null;
+			}
+
 			if (includeElement && fn.call(element)) {
 				return element;
 			}
