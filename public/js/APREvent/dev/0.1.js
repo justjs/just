@@ -116,7 +116,6 @@ APR.Define('APR/Event', 0.1).using(function () {
 					}
 
 				};
-				var type = (options = APR.defaults(options, {})).custom ? name : name.slice(name.lastIndexOf('.') + 1);
 
 				options = Object.assign({}, DEFAULT_OPTIONS, options);
 				
@@ -126,6 +125,7 @@ APR.Define('APR/Event', 0.1).using(function () {
 
 				APR.defaults(names, [names]).forEach(function (name) {
 
+					var type = (options = APR.defaults(options, {})).custom ? name : name.slice(name.lastIndexOf('.') + 1);
 					var id = name;
 
 					ArrayProto.forEach.call(this, function (element) {
