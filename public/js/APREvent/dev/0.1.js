@@ -105,7 +105,7 @@ APR.Define('APR/Event', 0.1).using(function () {
 				var listener = function (e) {
 					
 					if (options.once) {
-						instance.removeListener(listener);
+						instance.removeListener(handler);
 					}
 
 					if (!options.throttle) {
@@ -119,7 +119,7 @@ APR.Define('APR/Event', 0.1).using(function () {
 				var type = (options = APR.defaults(options, {})).isCustomEvent ? name : name.slice(name.lastIndexOf('.') + 1);
 				var id = name;
 
-				options = Object.assign(options, DEFAULT_OPTIONS);
+				options = Object.assign({}, DEFAULT_OPTIONS, options);
 
 				if (typeof options.bubbles === 'boolean') {
 					options.useCapture = !options.bubbles;
@@ -138,12 +138,17 @@ APR.Define('APR/Event', 0.1).using(function () {
 					_(element).attachedEvents[id] = {
 						'type' : type,
 						'name' : name,
+						'hasNamespace' : type !== name,
 						'originalListener' : handler,
 						'listener' : listener,
 						'options' : options
 					};
 
-				});
+					if (options.trigger) {
+						this.triggerEvent(name, options.trigger);
+					}
+
+				}, this);
 
 				return this;
 
@@ -205,27 +210,32 @@ APR.Define('APR/Event', 0.1).using(function () {
 			return this;
 
 		},
-		'eachEvent' : function (handler, thisArg) {
+		'eachEvent' : function (handler) {
 			
 			ArrayProto.forEach.call(this, function (element) {
-				APR.eachProperty(APREvent.getAttachedEvents(element), handler, thisArg);
-			}, this);
+				APR.eachProperty(APREvent.getAttachedEvents(element), handler, element);
+			});
 
 			return this;
 		},
 		'triggerEvent' : function (type, params) {
 
-			this.eachEvent(function () {
+			this.eachEvent(function (handler, namespacedType) {
 
-				if (handler.type !== type) {
+				var customEvent;
+
+				if (namespacedType !== type) {
 					return;
 				}
 
-				if (typeof params !== 'undefined') {
-					handler.options = Object.assign(APR.defaults(handler.options, {}), {'detail' : params});
-				}
+				customEvent = new CustomEvent(type, Object.assign({}, handler.options, {'detail' : params}));
 
-				element.dispatchEvent(new CustomEvent(type, handler.options));
+				if (handler.hasNamespace) {
+					handler.listener.call(this, customEvent);
+				}
+				else {
+					this.dispatchEvent(customEvent);
+				}
 
 			});
 
