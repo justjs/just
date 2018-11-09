@@ -3,7 +3,32 @@ APR.Define('APR/Event', 0.1).using(function () {
 	'use strict';
 
 	var ArrayProto = Array.prototype;
-	var _ = APR.createPrivateKey();
+	var _ = Object.assign(APR.createPrivateKey(), {
+		'isEventTypeIncluded' : function (option, eventType) {
+			return option === true || APR.inArray(APR.defaults(option, [option]), eventType);
+		},
+		'getReservedOptions' : function (options) {
+			return APR.defaults(APR.defaults(options, {}).addGlobalEvent, {});
+		},
+		'throttle' : function (ms, callback, store) {
+
+			var handler = function () {
+				callback();
+				store.temp = null;
+			};
+
+			if (typeof ms === 'number') {
+				clearTimeout(store.temp);
+				store.temp = setTimeout(handler, ms);
+			}
+			else {
+				store.temp = true;
+				window.requestAnimationFrame(handler);
+			}
+
+		}
+
+	});
 
 	function APREvent (elements) {
 
@@ -36,59 +61,6 @@ APR.Define('APR/Event', 0.1).using(function () {
 
 		'addEvent' : (function () {
 
-			var throttle = (function () {
-
-				var useTimeout = (function () {
-
-					var timeout;
-
-					return function (fn, ms) {
-
-						clearTimeout(timeout);
-
-						timeout = setTimeout(function () {
-							timeout = fn(), null;
-						}, ms);
-
-					};
-
-				})();
-				var useRAF = (function () { /* source: mozilla */
-
-					var ticking = false;
-
-					return function (fn) {
-						
-						if (ticking) {
-							return;
-						}
-							
-						window.requestAnimationFrame(function () {
-							ticking = fn(), false;
-						});
-
-						ticking = true;
-
-					};
-
-				})();
-
-				return function (ms, fn, args, thisArg) {
-
-					var handler = function () {
-						fn.apply(thisArg, args);
-					};
-
-					if (typeof ms === 'number') {
-						useTimeout(handler, ms);
-					}
-					else {
-						useRAF(handler);
-					}
-
-				};
-
-			})();
 			var DEFAULT_OPTIONS = {
 				'useCapture' : false,
 				'once' : false,
@@ -103,24 +75,45 @@ APR.Define('APR/Event', 0.1).using(function () {
 			return function (names, handler, options) {
 
 				var instance = this;
-				var listener = function (e) {
+				var listener = (function () {
+
+					var throttleStore = {};
+
+					return function (e) {
 					
-					if (typeof options.filter === 'function' && !options.filter.call(this, e)) {
-						return;
-					}
+						var params = options.detail;					
+						var filter = options.filter;
+						var once = options.once;
+						var throttle = options.throttle;
+						var eventType = e.type;
 
-					if (options.once) {
-						instance.removeListener(handler);
-					}
+						if (typeof filter === 'function' && !filter.call(this, e, params)) {
+							return;
+						}
 
-					if (!options.throttle) {
-						handler.call(this, e, options.detail);
-					}
-					else {
-						throttle(options.throttle, handler, [e, options.detail], this);
-					}
+						if (_.isEventTypeIncluded(once, eventType)) {
+							instance.removeListener(handler);
+						}
 
-				};
+						if (typeof throttle !== 'undefined') {
+
+							if (APR.isKeyValueObject(throttle)) {
+								throttle = throttle[eventType];
+							}
+							else if (_.isEventTypeIncluded(throttle, eventType)) {
+								throttle = true;
+							}
+
+							_.throttle(throttle, handler.bind(this, e, params), throttleStore);
+
+						}
+						else {
+							handler.call(this, e, params);
+						}
+						
+					};
+
+				})();
 
 				options = Object.assign({}, DEFAULT_OPTIONS, options);
 				
@@ -130,7 +123,7 @@ APR.Define('APR/Event', 0.1).using(function () {
 
 				APR.defaults(names, [names]).forEach(function (name) {
 
-					var type = (options.custom === true || APR.inArray(APR.defaults(options.custom, [options.custom]), name)
+					var type = (_.isEventTypeIncluded(options.custom, name)
 						? name
 						: name.slice(name.lastIndexOf('.') + 1)
 					);
@@ -264,7 +257,7 @@ APR.Define('APR/Event', 0.1).using(function () {
 				'mouseleave' : 'mouseout'
 			};
 			var NON_BUBBLING_EVENTS = ['load', 'unload', 'abort', 'error'];
-
+			
 			return function (eventNames, events, options) {
 
 				if (!APR.isKeyValueObject(events)) {
@@ -278,14 +271,14 @@ APR.Define('APR/Event', 0.1).using(function () {
 					if (!options.force && APR.inArray(NON_BUBBLING_EVENTS, eventName)) {
 						throw new TypeError(eventName + ' doesn\'t bubble, but you can attach it anyway adding {force: true} (in the "options" parameter).');
 					}
-
-					this.addEvent(eventName = NON_BUBBLING_TO_BUBBLING[eventName] || eventName, function (e, params) {
+					
+					this.addEvent(NON_BUBBLING_TO_BUBBLING[eventName] || eventName, function (e, params) {
 
 						var somethingMatched = false;
-						var triggerOptions = APR.defaults(APR.defaults(options.trigger, {}).addGlobalEvent, {});
-						var targets = triggerOptions[eventName] ? APR.getElements(triggerOptions[eventName]) : [e.target];
+						var triggerOptions = _.getReservedOptions(options.trigger);
+						var triggerTargets = triggerOptions[e.type] ? APR.getElements(triggerOptions[e.type], this) : [e.target];
 
-						targets.forEach(function (target) {
+						triggerTargets.forEach(function (target) {
 
 							APR.getRemoteParent(target, function () {
 
@@ -302,7 +295,7 @@ APR.Define('APR/Event', 0.1).using(function () {
 
 							}, this, true);
 
-						});
+						}, this);
 
 						if (!somethingMatched && typeof events.elsewhere === 'function') {
 							events.elsewhere.call(this, e, params);
