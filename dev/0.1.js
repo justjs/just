@@ -23,7 +23,7 @@ APR.Define('APR/State', 0.1).using({
 		
 		},
 		'getStateName' : function (element, stateKey) {
-			return _.isLiteralKey(stateKey) ? stateKey : _.getStates(element)[stateKey] || '';
+			return _.isLiteralKey(stateKey) ? stateKey.replace(/^("|')|("|')$/g, '') : _.getStates(element)[stateKey] || '';
 		},
 		'addStatesToAttribute' : function (element, states) {
 
@@ -271,7 +271,7 @@ APR.Define('APR/State', 0.1).using({
 					privateHandler.call(this, element, _(eventParamsClon).state);
 				}
 				else if (/^(add|remove|toggle|replace)$/.test(action)) {
-					
+
 					element.classList[action](stateName);
 					
 					Object.assign(_(eventParamsClon).state, {
