@@ -274,24 +274,30 @@ APR.Define('APR/Event', 0.1).using(function () {
 						throw new TypeError(eventName + ' doesn\'t bubble, but you can attach it anyway adding {force: true} (in the "options" parameter).');
 					}
 
-					this.addEvent(NON_BUBBLING_TO_BUBBLING[eventName] || eventName, function (e, params) {
+					this.addEvent(eventName = NON_BUBBLING_TO_BUBBLING[eventName] || eventName, function (e, params) {
 
 						var somethingMatched = false;
+						var triggerOptions = APR.defaults(APR.defaults(options.trigger, {}).addGlobalEvent, {});
+						var targets = triggerOptions[eventName] ? APR.getElements(triggerOptions[eventName]) : [e.target];
 
-						APR.getRemoteParent(e.target, function () {
+						targets.forEach(function (target) {
 
-							APR.eachProperty(events, function (handler, selector) {
+							APR.getRemoteParent(target, function () {
 
-								if (this.matches && this.matches(selector)) {
-									somethingMatched = true;
-									handler.call(this, e, params);
-								}
+								APR.eachProperty(events, function (handler, selector) {
 
-							}, this);
+									if (this.matches && this.matches(selector)) {
+										somethingMatched = true;
+										handler.call(this, e, params);
+									}
 
-							return false;
+								}, this);
 
-						}, this, true);
+								return false;
+
+							}, this, true);
+
+						});
 
 						if (!somethingMatched && typeof events.elsewhere === 'function') {
 							events.elsewhere.call(this, e, params);
