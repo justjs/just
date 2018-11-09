@@ -186,7 +186,7 @@ APR.Define('APR/Element', 0.1).using({
 		},
 		'each' : function (fn) {
 
-			if (typeof fn === 'function') {
+			if (typeof fn !== 'function') {
 				throw new TypeError(fn + ' must be a function.');
 			}
 

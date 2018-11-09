@@ -101,7 +101,6 @@
 		/**
 		 * Implementation of private members in js.
 		 *
-		 * @todo  SOLVE THE FOLLOWING: this.a = 'a'; _(this); // throws [...] got the string "a".
 		 * @see {@link https://github.com/philipwalton/private-parts/blob/master/private-parts.js|source}
 		 * @param {function|object} [factory=Object.prototype] A new object with `factory` as it's prototype...
 		 * @example
@@ -131,7 +130,7 @@
 			var seen = new WeakMap();
 
 			if (typeof factory !== 'function') {
-				factory = Object.create.bind(null, factory || Object.prototype);
+				factory = Object.create.bind(null, factory || Object.prototype, {});
 			}
 
 			return function (key) {
