@@ -96,7 +96,8 @@ APR.Define('APR/Event', 0.1).using(function () {
 				'bubbles' : void 0,
 				'throttle' : void 0,
 				'cloned' : void 0,
-				'custom' : void 0
+				'custom' : void 0,
+				'filter' : null
 			};
 
 			return function (names, handler, options) {
@@ -104,6 +105,10 @@ APR.Define('APR/Event', 0.1).using(function () {
 				var instance = this;
 				var listener = function (e) {
 					
+					if (typeof options.filter === 'function' && !options.filter.call(this, e)) {
+						return;
+					}
+
 					if (options.once) {
 						instance.removeListener(handler);
 					}
