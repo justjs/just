@@ -191,10 +191,11 @@ APR.Define('APR/State', 0.1).using({
 
 	APRState.prototype = Object.assign(Object.create(APREvent.prototype), APRState.prototype, {
 
-		'getStates' : function () {
+		'getStates' : function (fn) {
 
 			var results = APR.eachElement(this, function (element) {
-				return _.getStates(element);
+				var states = _.getStates(element);
+				return typeof fn === 'function' ? fn.call(element, states) : states;
 			});
 
 			return APR.getFirstOrMultiple(results);
@@ -224,7 +225,7 @@ APR.Define('APR/State', 0.1).using({
 				new APREvent(element).addCustomEvent(APRState.getEventName(element, stateKey), function (e, params) {
 
 					var state = APR.defaults(_(APR.defaults(e.detail, {})), {}).state;
-					var cause;
+					var cause = state.cause;
 
 					if (!state) {
 						return handler.call(this, e, params), void 0;
@@ -232,22 +233,20 @@ APR.Define('APR/State', 0.1).using({
 
 					delete _(e.detail);
 
-					if (typeof state.cause === 'undefined') {
+					if (typeof cause === 'undefined') {
 						return;
 					}
 
-					Object.assign(state, {
-						'event' : e
-					});
-
 					if (typeof privateHandler === 'function') {
-						privateHandler.call(this, handler, params, state);
+						privateHandler.call(this, handler, e, params, state);
 					}
 					else {
-						handler.call(this, state.cause, params, state);
+						handler.call(this, e, params, state);
 					}
 
-				}, eventOptions);
+				}, Object.assign(APR.defaults(eventOptions, {}), {
+					'originalListener' : handler
+				}));
 
 			});
 
