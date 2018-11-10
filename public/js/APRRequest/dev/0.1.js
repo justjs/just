@@ -103,6 +103,8 @@ APR.Define('APR/Request', 0.1).using(function () {
 				'Content-Type' : 'application/json; charset=UTF-8'
 			}
 		},
+		'STATE_ERROR' : 'error',
+		'STATE_SUCCESS' : 'success',
 		'addDataToUrl' : function (url, data) {
 
 			var newUrl = url + (APR.parseUrl(url).search
@@ -126,6 +128,9 @@ APR.Define('APR/Request', 0.1).using(function () {
 		'onError' : function (handler) {
 			return _(this).listen('onError', handler), this;
 		},
+		'onFulfillment' : function (handler) {
+			return _(this).listen('onFulfillment', handler), this; 
+		},
 		'modify' : function (handler) {
 			return _(this).listen('beforeSend', handler), this;
 		},
@@ -148,10 +153,23 @@ APR.Define('APR/Request', 0.1).using(function () {
 		'send' : function (data) {
 
 			var _this = _(this);
+			var callListener = function (name, thisArg, args) {
+				
+				var listener = _this.getListener && _this.getListener(name);
+				
+				if (typeof listener === 'function') {
+					listener.apply(thisArg, args);
+				}
+
+			};
 			var onSuccess = function () {
-				_this.getListener('onSuccess').call(this, _.getResponse(this));
+				callListener('onSuccess', this, [_.getResponse(this)]);
+				onFulfillment.call(this, APRRequest.STATE_SUCCESS);
 			}, onError = function () {
-				_this.getListener('onError').call(this, _.getResponse(this));
+				callListener('onError', this, [_.getResponse(this)]);
+				onFulfillment.call(this, APRRequest.STATE_ERROR);
+			}, onFulfillment = function (state) {
+				callListener('onFulfillment', this, [_.getResponse(this), state]);
 			};
 
 			if (!data) {
