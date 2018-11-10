@@ -69,7 +69,8 @@ APR.Define('APR/Event', 0.1).using(function () {
 				'throttle' : void 0,
 				'cloned' : void 0,
 				'custom' : void 0,
-				'filter' : null
+				'filter' : null,
+				'originalListener' : void 0
 			};
 
 			return function (names, handler, options) {
@@ -143,7 +144,7 @@ APR.Define('APR/Event', 0.1).using(function () {
 							'type' : type,
 							'name' : name,
 							'hasNamespace' : type !== name,
-							'originalListener' : handler,
+							'originalListener' : options.originalListener || handler,
 							'listener' : listener,
 							'options' : options
 						};
