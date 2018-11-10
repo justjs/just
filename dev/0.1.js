@@ -8,6 +8,9 @@ APR.Define('APR/Element', 0.1).using({
 	var ArrayProto = Array.prototype;
 	var _ = Object.assign(APR.createPrivateKey(), {
 		
+		'getResults' : function (array, fn) {
+			return APR.getFirstOrMultiple(APR.eachElement(array, fn, array));
+		},
 		'createElement' : function (tagName, namespace) {
 
 			var namespaceURI = APR.ELEMENT_NAMESPACES[namespace] || APR.ELEMENT_NAMESPACES[tagName = tagName.toLowerCase().trim()] || namespace;
@@ -162,8 +165,8 @@ APR.Define('APR/Element', 0.1).using({
 			return element.get();
 
 		},
-		'findAllByState' : function () {
-			return APRState.findElementsByState.apply(null, arguments);
+		'findAllByState' : function (stateKey, parent) {
+			return APRState.findElementsByState(stateKey, parent);
 		},
 		'findAll' : function (selector, parent) {
 			return APR.getElements(selector, parent);
@@ -176,26 +179,14 @@ APR.Define('APR/Element', 0.1).using({
 	APRElement.prototype = Object.assign(Object.create(APRState.prototype), APRElement.prototype, {
 
 		'get' : function (handler) {
-
-			var results = APR.eachElement(this, function (element, i) {
-				return typeof handler === 'function' ? handler.call(element, new APRElement(element), i) : element;
+			
+			return _.getResults(this, function (element, i) {
+				return typeof handler === 'function' ? handler.call(element, new APRElement(element), i, this) : element;
 			});
-
-			return APR.getFirstOrMultiple(results);
 
 		},
 		'each' : function (fn) {
-
-			if (typeof fn === 'function') {
-				throw new TypeError(fn + ' must be a function.');
-			}
-
-			ArrayProto.forEach.call(this, function (element, i) {
-				fn.call(element, new APRElement(element), i, this);
-			}, this);
-
-			return this;
-
+			return this.get(fn), this;
 		},
 		/**
 		 * @example <caption></caption>
@@ -255,11 +246,10 @@ APR.Define('APR/Element', 0.1).using({
 			return function (arg) {
 
 				var args = arguments;
-				var results = APR.eachElement(this, function (element) {
+
+				this.results = _.getResults(this, function (element) {
 					return (fn || APR.access(element, propertyPath)).apply(this, args);
 				});
-
-				this.results = APR.getFirstOrMultiple(results);
 
 				return this;
 
@@ -285,19 +275,13 @@ APR.Define('APR/Element', 0.1).using({
 
 		},
 		'getText' : function () {
-
-			var results = APR.eachElement(this, function (element) {
-
+			return _.getResults(this, function (element) {
 				return (
 					'textContent' in element ? element.textContent :
 					'innerText' in element ? element.innerText :
 					''
 				);
-
 			});
-
-			return APR.getFirstOrMultiple(results);
-
 		},
 		/**
 		 *  
@@ -307,7 +291,7 @@ APR.Define('APR/Element', 0.1).using({
 		 */
 		'getBounds' : function () {
 
-			var results = APR.eachElement(this, function (element) {
+			return _.getResults(this, function (element) {
 
 				var bounds;
 				var elementBounds;
@@ -331,14 +315,12 @@ APR.Define('APR/Element', 0.1).using({
 
 			});
 
-			return APR.getFirstOrMultiple(results);
-
 		},
 		'isInsideBounds' : function (bounds) {
 
-			var results = APR.eachElement(this, function (element) {
+			return _.getResults(this, function (target) {
 
-				var elementBounds = new APRElement(element).getBounds();
+				var elementBounds = new APRElement(target).getBounds();
 
 				return (
 					elementBounds.bottom > 0 &&
@@ -348,8 +330,6 @@ APR.Define('APR/Element', 0.1).using({
 				);
 
 			});
-
-			return APR.getFirstOrMultiple(results);
 
 		},
 		'fitInBounds' : function (bounds) {
@@ -367,31 +347,24 @@ APR.Define('APR/Element', 0.1).using({
 
 		},
 		'isVisible' : function () {
-			
-			var results = APR.eachElement(this, function (element) {
 
+			return _.getResults(this, function (element) {
 				var bounds = element.getBounds();
-
 				return !APRElement(element).isHidden() && !!(bounds.width || bounds.height);
-
 			});
-			
-			return APR.getFirstOrMultiple(results);
 
 		},
 		'isOnScreen' : function () {
 
-			var results = APR.eachElement(this, function (element) {
-				var AprElement = new APRElement(element);
-				return AprElement.isVisible() && AprElement.isInsideBounds(_.getWindowBounds());
+			return _.getResults(this, function (target) {
+				var element = new APRElement(target);
+				return element.isVisible() && element.isInsideBounds(_.getWindowBounds());
 			});
-
-			return APR.getFirstOrMultiple(results);
 
 		},
 		'getAttributes' : function () {
-			
-			var results = APR.eachElement(this, function (element) {
+				
+			return _.getResults(this, function (element) {
 
 				var attributes = {};
 
@@ -402,8 +375,6 @@ APR.Define('APR/Element', 0.1).using({
 				return attributes;
 			
 			});
-
-			return APR.getFirstOrMultiple(results);
 
 		},
 		'setAttributes' : function (attributes) {
@@ -475,43 +446,34 @@ APR.Define('APR/Element', 0.1).using({
 		},
 		'find' : function (selector) {
 
-			var results = APR.eachElement(this, function (parent) {
+			return _.getResults(this, function (parent) {
 				return new APRElement(APRElement.find(selector, parent));
 			});
 
-			return APR.getFirstOrMultiple(results);
-
 		},
 		'findAll' : function (selector) {
-			
-			var results = APR.eachElement(this, function (parent) {
+
+			return _.getResults(this, function (parent) {
 				return new APRElement(APRElement.findAll(selector, parent));
 			});
 
-			return APR.getFirstOrMultiple(results);
-
 		},
-		'findAllByState' : function (state) {
+		'findAllByState' : function (stateKey) {
 
-			var results = APR.eachElement(this, function (parent) {
-				return new APRElement(APRElement.findAllByState(state, parent));
+			return _.getResults(this, function (parent) {
+				return new APRElement(APRElement.findAllByState(stateKey, parent));
 			});
-
-			return APR.getFirstOrMultiple(results);
 
 		},
 		'clone' : function (options) {
 
 			var deep = APR.defaults((options = APR.defaults(options, {})).deep, true);
-			var results = APR.eachElement(this, function (target) {
-				
+			
+			return _.getResults(this, function (target) {
 				return new APRElement(target.cloneNode(deep)).copy({
 					'doNotCloneAttributes' : true
 				});
-
 			});
-
-			return APR.getFirstOrMultiple(results);
 
 		},
 		'remove' : function () {
@@ -537,22 +499,14 @@ APR.Define('APR/Element', 0.1).using({
 
 		},
 		'isHidden' : function () {
-			
-			var results = APR.eachElement(this, function (element) {
+			return _.getResults(this, function (element) {
 				return element.parentNode === null || element.getAttribute('hidden') !== null;
 			});
-			
-			return APR.getFirstOrMultiple(results);
-
 		},
 		'replaceWith' : function (newElement) {
-
-			var results = APR.eachElement(this, function (target) {
+			return _.getResults(this, function (target) {
 				return new APRElement(target.parentNode.replaceChild(newElement, target));
 			});
-
-			return APR.getFirstOrMultiple(results);
-
 		},
 		'copy' : function (options) {
 
@@ -592,12 +546,10 @@ APR.Define('APR/Element', 0.1).using({
 		},
 		'getRemoteParent' : function (fn) {
 			
-			var results = APR.eachElement(this, function (element) {
+			return _.getResults(this, function (element) {
 				return APR.getRemoteParent(element, fn);
 			});
-
-			return APR.getFirstOrMultiple(results);
-		
+	
 		}
 	}, (function () {
 
@@ -643,11 +595,9 @@ APR.Define('APR/Element', 0.1).using({
 			},
 			'getAllProperties' : function () {
 
-				var results = APR.eachElement(this, function (element) {
+				return _.getResults(this, function (element) {
 					return Object.assign({}, properties(element));
 				});
-
-				return APR.getFirstOrMultiple(results);
 
 			},
 			'cloneProperties' : function (target) {
