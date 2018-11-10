@@ -123,24 +123,24 @@ APR.Define('APR/State', 0.1).using({
 			'replaceState' : function (url, cause, eventParams) {
 				return this.changeState('replace', url, cause, eventParams);
 			},
-			'listenState' : function (conditions, handler, options) {
+			'listenState' : function (conditions, listener, options) {
 
 				var instance = new APRState(window);
-				var against = (options = APR.defaults(options, {})).against;
+				var against = APR.defaults((options = APR.defaults(options, {}))['APRState.url'], {}).against;
 
-				_(handler).data = {
-					'against' : APR.defaults(against, [against || 'href']),
+				_(listener).data = {
+					'against' : APR.defaults(against, [against || 'pathname']),
 					'conditions' : APR.defaults(conditions, [conditions])
 				};
 
-				_(instance).customHandler = function checkEachRoute (_, params, state) {
+				_(instance).customHandler = function checkEachRoute (listener, event, params, state) {
 
 					new APREvent(this).eachEvent(function (handler, id) {
 
-						var handlerData = _(handler).data;
-						var match;
+						var _originalListener = _(handler.originalListener);
+						var handlerData, match;
 
-						if (!handlerData) {
+						if (!_originalListener || !(handlerData = _originalListener.data)) {
 							return;
 						}
 
@@ -148,14 +148,14 @@ APR.Define('APR/State', 0.1).using({
 
 							return handlerData.against.some(function (property) {
 
-								var parsedUrl = APR.parsedUrl(state.url);
+								var parsedUrl = APR.parseUrl(state.url);
 								var url = parsedUrl[property];
 
 								return (
 									condition instanceof RegExp && condition.test(url) ||
 									typeof condition === 'function' && condition(url) ||
 									condition === url
-								);
+								) && ((state.matched = condition), true);
 
 							});
 
@@ -165,7 +165,7 @@ APR.Define('APR/State', 0.1).using({
 							return;
 						}
 
-						handler.call(this, state.cause, params, state);
+						listener.call(this, event, params, state);
 
 					});
 
@@ -175,10 +175,15 @@ APR.Define('APR/State', 0.1).using({
 					delete options.against;
 				}
 
-				instance.listenState('"' + this.EVENT_NAME + '"', handler, options);
+				instance.listenState('"' + this.EVENT_NAME + '"', listener, options);
 
 				return instance;
 
+			},
+			'hasState' : function (url) {
+				var parsedUrl = APR.parseUrl(url);
+				var parsedCurrentUrl = APR.parseUrl();
+				return parsedUrl.origin === parsedCurrentUrl.origin && parsedCurrentUrl.pathname === parsedUrl.pathname;
 			}
 
 		})
