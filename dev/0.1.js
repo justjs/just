@@ -8,7 +8,7 @@ APR.Define('APR/Element', 0.1).using({
 	var ArrayProto = Array.prototype;
 	var _ = Object.assign(APR.createPrivateKey(), {
 		
-		'getResults' : function (array, fn) {
+		'getResults' : function (array, fn, CommonConstructor) {
 			return APR.getFirstOrMultiple(APR.eachElement(array, fn, array));
 		},
 		'createElement' : function (tagName, namespace) {
@@ -296,12 +296,12 @@ APR.Define('APR/Element', 0.1).using({
 		},
 		'getAttributes' : function () {
 				
-			return _.getResults(this, function (element) {
+			return _.getResults(this, function (target) {
 
 				var attributes = {};
 
-				APR.eachProperty(element.attributes, function (attribute) {
-					elements[attribute.name || attribute.nodeName] = attribute.value || attribute.nodeValue;
+				APR.eachProperty(target.attributes, function (attribute) {
+					attributes[attribute.name || attribute.nodeName] = attribute.value || attribute.nodeValue;
 				});
 
 				return attributes;
@@ -378,40 +378,43 @@ APR.Define('APR/Element', 0.1).using({
 		},
 		'find' : function (selector) {
 
-			return _.getResults(this, function (parent) {
-				return new APRElement(APRElement.find(selector, parent));
-			});
+			return new APRElement(_.getResults(this, function (parent) {
+				return APRElement.find(selector, parent);
+			}));
 
 		},
 		'findAll' : function (selector) {
 
-			return _.getResults(this, function (parent) {
-				return new APRElement(APRElement.findAll(selector, parent));
-			});
+			return new APRElement(_.getResults(this, function (parent) {
+				return APRElement.findAll(selector, parent);
+			}));
 
 		},
 		'findAllByState' : function (stateKey) {
 
-			return _.getResults(this, function (parent) {
-				return new APRElement(APRElement.findAllByState(stateKey, parent));
-			});
+			return new APRElement(_.getResults(this, function (parent) {
+				return APRElement.findAllByState(stateKey, parent);
+			}));
 
 		},
 		'clone' : function (options) {
 
 			var deep = APR.defaults((options = APR.defaults(options, {})).deep, true);
 			
-			return _.getResults(this, function (target) {
-				return new APRElement(target.cloneNode(deep)).copy({
-					'doNotCloneAttributes' : true
-				});
-			});
+			return new APRElement(_.getResults(this, function (target) {
+
+				return new APRElement(target.cloneNode(deep)).copy(target, {
+					'doNotCopyAttributes' : true,
+					'doNotCopyText' : true
+				}).get();
+
+			}));
 
 		},
 		'remove' : function () {
 			
-			APR.eachElement(this, function (element) {
-				element.parentNode.removeChild(element);
+			ArrayProto.forEach.call(this, function (target) {
+				target.parentNode.removeChild(target);
 			});
 
 			return this;
@@ -419,10 +422,10 @@ APR.Define('APR/Element', 0.1).using({
 		},
 		'removeChildren' : function () {
 
-			APR.eachElement(this, function (element) {
+			ArrayProto.forEach.call(this, function (target) {
 
-				while (element.firstChild) {
-					element.removeChild(element.firstChild);
+				while (target.firstChild) {
+					target.removeChild(target.firstChild);
 				}
 
 			});
@@ -431,35 +434,43 @@ APR.Define('APR/Element', 0.1).using({
 
 		},
 		'isHidden' : function () {
-			return _.getResults(this, function (element) {
-				return element.parentNode === null || element.getAttribute('hidden') !== null;
+			return _.getResults(this, function (target) {
+				return target.parentNode === null || target.getAttribute('hidden') !== null;
 			});
 		},
 		'replaceWith' : function (newElement) {
-			return _.getResults(this, function (target) {
-				return new APRElement(target.parentNode.replaceChild(newElement, target));
-			});
+
+			return new APRElement(_.getResults(this, function (target) {
+				
+				target.parentNode.replaceChild(newElement, target);
+				
+				return newElement;
+
+			}, APRElement));
+
 		},
-		'copy' : function (options) {
+		'copy' : function (target, options) {
 
 			options = APR.defaults(options, {});
 
 			ArrayProto.forEach.call(this, function (element) {
 
-				if (!options.doNotCloneAttributes) {
+				element = APRElement(element);
+
+				if (!options.doNotCopyAttributes) {
 					element.cloneAttributes(target);
 				}
 
-				if (!options.doNotCloneEvents) {
+				if (!options.doNotCopyEvents) {
 					element.cloneEvents(target);
 				}
 
-				if (!options.doNotCloneProperties) {
+				if (!options.doNotCopyProperties) {
 					element.cloneProperties(target);
 				}
 
-				if (!options.doNotCloneStates) {
-					element.cloneStates(target);
+				if (!options.doNotCopyText) {
+					element.setText(APRElement(target).getText());
 				}
 
 			});
@@ -467,20 +478,22 @@ APR.Define('APR/Element', 0.1).using({
 			return this;
 
 		},
-		'replaceTag' : function (tagName) {
+		'replaceTag' : function (tagName, copyOptions) {
 			
-			var newElement = new APRElement(APRElement.createElement(tagName)).copy();
-				
-			this.replaceWith(newElement);
+			return new APRElement(_.getResults(this, function (target) {
 
-			return newElement;
+				var newElement = new APRElement(APRElement.createElement(tagName)).copy(target, copyOptions).get();
+				
+				return new APRElement(target).replaceWith(newElement).get();
+
+			}));
 
 		},
 		'getRemoteParent' : function (fn) {
 			
-			return _.getResults(this, function (element) {
+			return new APRElement(_.getResults(this, function (element) {
 				return APR.getRemoteParent(element, fn);
-			});
+			}));
 	
 		}
 	}, (function () {
