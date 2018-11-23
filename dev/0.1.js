@@ -8,8 +8,9 @@ APR.Define('APR/Element', 0.1).using({
 	var ArrayProto = Array.prototype;
 	var _ = Object.assign(APR.createPrivateKey(), {
 		
-		'getResults' : function (array, fn, CommonConstructor) {
-			return APR.getFirstOrMultiple(APR.eachElement(array, fn, array));
+		'getResults' : function (array, fn) {
+			var results = APR.eachElement(array, fn, array);
+			return results.length === 1 ? results[0] : results;
 		},
 		'createElement' : function (tagName, namespace) {
 
