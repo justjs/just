@@ -16,6 +16,10 @@ APR.Define('APR/State', 0.1).using({
 		},
 		'getStateName' : function (element, stateKey) {
 			return _.isLiteralKey(stateKey) ? stateKey.replace(/^("|')|("|')$/g, '') : _.getStates(element)[stateKey] || '';
+		},
+		'getResults' : function (array, fn) {
+			var results = APR.eachElement(array, fn, array);
+			return results.length === 1 ? results[0] : results;
 		}
 	});
 
@@ -185,21 +189,17 @@ APR.Define('APR/State', 0.1).using({
 
 		'getStates' : function (fn) {
 
-			var results = APR.eachElement(this, function (element) {
+			return _.getResults(this, function (element) {
 				var states = _.getStates(element);
 				return typeof fn === 'function' ? fn.call(element, states) : states;
 			});
 
-			return APR.getFirstOrMultiple(results);
-
 		},
 		'getState' : function (stateKey) {
 
-			var results = APR.eachElement(this, function (element) {
+			return _.getResults(this, function (element) {
 				return _.getStates(element)[stateKey];
 			});
-
-			return APR.getFirstOrMultiple(results);
 
 		},
 		'listenState' : function (stateKey, handler, eventOptions) {
@@ -289,15 +289,13 @@ APR.Define('APR/State', 0.1).using({
 		},
 		'hasState' : function (stateKey) {
 
-			var results = APR.eachElement(this, function (element) {
+			return _.getResults(this, function (element) {
 			
 				var stateName = _.getStateName(element, stateKey);
 			
 				return element.classList.contains(stateName);
 			
 			});
-
-			return APR.getFirstOrMultiple(results);
 
 		},
 		'addState' : function (stateKey, cause, eventParams) {

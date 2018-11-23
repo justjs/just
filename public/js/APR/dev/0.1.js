@@ -593,15 +593,6 @@
 
 		},
 		/**
-		 * Returns the first value if there's only one.
-		 
-		 * @param  {*} [value=[value]] Some value with a `length` property.
-		 * @return {*}
-		 */
-		'getFirstOrMultiple' : function (value) {
-			return value.length === 1 ? value[0] : value;
-		},
-		/**
 		 * A function that checks if `this` is the Node that you're looking for.
 		 * 
 		 * @typedef {function} APR~getRemoteParent_fn
