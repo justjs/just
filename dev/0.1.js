@@ -151,12 +151,12 @@ APR.Define('APR/Element', 0.1).using({
 			});
 
 			attributes = attributes.replace(/\.([\w\-]+)/g, function replaceClass (_, name) {
-				element.chain('classList.add')(name);
+				element.get().classList.add(name);
 				return '';
 			}).trim();
 
 			attributes = attributes.replace(/\#([\w\-]+)/g, function replaceID (_, id) {
-				element.chain('setAttribute')('id', id);
+				element.get().id = id;
 				return '';
 			}).trim();
 
@@ -187,74 +187,6 @@ APR.Define('APR/Element', 0.1).using({
 		},
 		'each' : function (fn) {
 			return this.get(fn), this;
-		},
-		/**
-		 * @example <caption></caption>
-		 * APRElement('body, html')
-		 *     .chain('style', {top: '10px', left: '10px'})
-		 *     .chain('setAttribute')('a', 1)
-		 *     .chain('onload', function newFunction (log) { log(this.onload); })(console.log)
-		 *     .chain('property', {pushed: ['a']})
-		 *     .chain('property.pushed', ['b', 'c'])
-		 *     .chain('property.pushed', [])
-		 *     .chain(function (log, property) { log(this.property[property]); })(console.log, 'pushed')
-		 *     .results;
-		 * 
-		 * @example <caption>If you want the returned values, you can access to the `results` property:</caption>
-		 * APRElement('body, html').chain('classList.contains')('someClass').results;
-		 * // returns [APR.body.classList.contains('someClass'), APR.html.classList.contains('someClass')]
-		 * 
-		 */
-		'chain' : function (property, value, isValueUndefined) {
-
-			var propertyPath, fn;
-
-			if (typeof property === 'function') {
-				fn = property;
-			}
-			else {
-				propertyPath = APR.defaults(property, String(property).split('.'));
-			}
-
-			if (typeof value !== 'undefined' || isValueUndefined && propertyPath) {
-				
-				this.each(function () {
-					
-					APR.access(this, propertyPath, function (element, property) {
-
-						var elementProperty = element[property];
-
-						if (value && elementProperty && typeof value === 'object' && typeof elementProperty === 'object' && !APR.isEmptyObject(value)) {
-							Object.assign(elementProperty, value);
-						}
-						else {
-							elementProperty = value;
-						}
-
-					}, true);
-
-				});
-
-				if (typeof value !== 'function') {
-					return this;
-				}
-				
-				fn = value;
-
-			}
-			
-			return function (arg) {
-
-				var args = arguments;
-
-				this.results = _.getResults(this, function (element) {
-					return (fn || APR.access(element, propertyPath)).apply(this, args);
-				});
-
-				return this;
-
-			}.bind(this);
-
 		},
 		'setText' : function (text) {
 
