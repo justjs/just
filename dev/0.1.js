@@ -12,26 +12,14 @@ APR.Define('APR/State', 0.1).using({
 			return /^("|').+("|')$/.test(stateKey);
 		},
 		'getStates' : function (element) {
-
-			var states = element.getAttribute(APRState.ATTRIBUTE_NAME);
-			
-			if (!states) {
-				throw new TypeError('The element must have a "' + APRState.ATTRIBUTE_NAME + '" attribute.');
-			}
-
-			return APR.stringToJSON(states);
-		
+			return APR.stringToJSON(element.getAttribute(APRState.ATTRIBUTE_NAME));
 		},
 		'getStateName' : function (element, stateKey) {
 			return _.isLiteralKey(stateKey) ? stateKey.replace(/^("|')|("|')$/g, '') : _.getStates(element)[stateKey] || '';
 		},
-		'addStatesToAttribute' : function (element, states) {
-
-			var key = APRState.ATTRIBUTE_NAME;
-			var value = Object.assign(_.getStates(element), states);
-				
-			element.setAttribute(key, JSON.stringify(value));
-
+		'getResults' : function (array, fn) {
+			var results = APR.eachElement(array, fn, array);
+			return results.length === 1 ? results[0] : results;
 		}
 	});
 
@@ -52,6 +40,14 @@ APR.Define('APR/State', 0.1).using({
 	Object.assign(APRState, {
 		'version' : this.version,
 		'ATTRIBUTE_NAME' : 'data-APR-states',
+		'addStatesToAttribute' : function (element, states) {
+
+			var key = APRState.ATTRIBUTE_NAME;
+			var value = Object.assign(_.getStates(element), typeof states === 'string' ? APR.stringToJSON(states) : states);
+				
+			element.setAttribute(key, JSON.stringify(value));
+
+		},
 		'findElementsByState' : function (stateKey, parent) {
 			return APR.getElements('*[' + APRState.ATTRIBUTE_NAME + ']', parent).filter(function (element) {
 				return APR.inArray(Object.keys(_.getStates(element)), stateKey);
@@ -193,21 +189,17 @@ APR.Define('APR/State', 0.1).using({
 
 		'getStates' : function (fn) {
 
-			var results = APR.eachElement(this, function (element) {
+			return _.getResults(this, function (element) {
 				var states = _.getStates(element);
 				return typeof fn === 'function' ? fn.call(element, states) : states;
 			});
 
-			return APR.getFirstOrMultiple(results);
-
 		},
 		'getState' : function (stateKey) {
 
-			var results = APR.eachElement(this, function (element) {
+			return _.getResults(this, function (element) {
 				return _.getStates(element)[stateKey];
 			});
-
-			return APR.getFirstOrMultiple(results);
 
 		},
 		'listenState' : function (stateKey, handler, eventOptions) {
@@ -219,7 +211,7 @@ APR.Define('APR/State', 0.1).using({
 			ArrayProto.forEach.call(this, function (element) {
 
 				if (!privateHandler && isLiteralKey) {
-					_.addStatesToAttribute(element, APR.setDynamicKeys({}, [stateKey, stateKey]));
+					APRState.addStatesToAttribute(element, APR.setDynamicKeys({}, [stateKey, stateKey]));
 				}
 
 				new APREvent(element).addCustomEvent(APRState.getEventName(element, stateKey), function (e, params) {
@@ -297,15 +289,13 @@ APR.Define('APR/State', 0.1).using({
 		},
 		'hasState' : function (stateKey) {
 
-			var results = APR.eachElement(this, function (element) {
+			return _.getResults(this, function (element) {
 			
 				var stateName = _.getStateName(element, stateKey);
 			
 				return element.classList.contains(stateName);
 			
 			});
-
-			return APR.getFirstOrMultiple(results);
 
 		},
 		'addState' : function (stateKey, cause, eventParams) {
