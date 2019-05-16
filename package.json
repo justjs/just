@@ -1,0 +1,55 @@
+{
+  "name": "apr",
+  "title": "APR",
+  "version": "0.1.0",
+  "description": "Heavily-used javascript helpers for APR's developments.",
+  "main": "dist/APR.js",
+  "directories": {
+    "test": "test"
+  },
+  "testling": {
+    "files": "test/browser/tape/**/*.test.js",
+    "browsers": [
+      "ie/6..latest",
+      "chrome/22..latest",
+      "firefox/16..latest",
+      "safari/latest",
+      "opera/11.0..latest",
+      "iphone/6",
+      "ipad/6",
+      "android-browser/latest"
+    ]
+  },
+  "scripts": {
+    "build": "npm install && grunt",
+    "start": "grunt watch",
+    "browser-test": "NODE_PORT=3000 tap test/browser/tape/**/.test.js",
+    "server-test": "tap test/server/**/*.test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": ".git"
+  },
+  "keywords": [
+    "javascript",
+    "library",
+    "APR"
+  ],
+  "author": "Alexis Puga Ruíz",
+  "license": "CC-BY-NC-3.0",
+  "devDependencies": {
+    "amdclean": "^2.7.0",
+    "grunt": "^1.0.4",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-requirejs": "^1.0.0",
+    "grunt-contrib-uglify": "^4.0.1",
+    "module-alias": "^2.2.0",
+    "tape": "^4.10.1"
+  },
+  "_moduleAliases": {
+    "@": "./src",
+    "@lib": "./src/lib",
+    "@browser": "./dist/browser",
+    "@server": "./dist/server"
+  }
+}
