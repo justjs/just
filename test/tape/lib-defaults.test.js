@@ -1,5 +1,5 @@
 var test = require('tape'),
-	defaults = require('@lib/defaults');
+	defaults = require('../../src/lib/defaults');
 
 test('defaults', function (t) {
 

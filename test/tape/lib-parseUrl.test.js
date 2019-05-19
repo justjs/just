@@ -1,5 +1,5 @@
 var test = require('tape'),
-	parseUrl = require('@lib/parseUrl');
+	parseUrl = require('../../src/lib/parseUrl');
 
 test('parseUrl', function (t) {
 	

@@ -1,5 +1,5 @@
 var test = require('tape'),
-	getElements = require('@lib/getElements');
+	getElements = require('../../src/lib/getElements');
 
 test('getElements', function (t) {
 

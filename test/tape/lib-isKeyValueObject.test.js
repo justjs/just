@@ -1,5 +1,5 @@
 var test = require('tape'),
-	isKeyValueObject = require('@lib/isKeyValueObject');
+	isKeyValueObject = require('../../src/lib/isKeyValueObject');
 
 test('isKeyValueObject', function (t) {
 

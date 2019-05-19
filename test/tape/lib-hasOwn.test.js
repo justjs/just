@@ -1,13 +1,13 @@
 var test = require('tape'),
-	hasOwnProperty = require('@lib/hasOwnProperty');
+	hasOwn = require('../../src/lib/hasOwn');
 
-test('hasOwnProperty', function (t) {
+test('hasOwn', function (t) {
 
 	t.test('should call the `Object` method instead of calling a property of an `object`', function (st) {
 	
-		st.isNot(hasOwnProperty({
+		st.isNot(hasOwn({
 
-			'hasOwnProperty': function () {
+			'hasOwn': function () {
 				return 'custom';
 			}
 

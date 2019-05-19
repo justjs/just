@@ -1,5 +1,5 @@
 var test = require('tape'),
-	createPrivateKey = require('@lib/createPrivateKey');
+	createPrivateKey = require('../../src/lib/createPrivateKey');
 
 test('createPrivateKey', function (t) {
 

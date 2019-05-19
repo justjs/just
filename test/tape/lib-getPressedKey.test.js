@@ -1,5 +1,5 @@
 var test = require('tape'),
-	getPressedKey = require('@lib/getPressedKey');
+	getPressedKey = require('../../src/lib/getPressedKey');
 
 test('getPressedKey', function (t) {
 

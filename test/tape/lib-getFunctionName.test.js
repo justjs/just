@@ -1,5 +1,5 @@
 var test = require('tape'),
-	getFunctionName = require('@lib/getFunctionName');
+	getFunctionName = require('../../src/lib/getFunctionName');
 
 test('getFunctionName', function (t) {
 

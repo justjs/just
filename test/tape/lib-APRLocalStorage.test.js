@@ -1,5 +1,5 @@
 var test = require('tape'),
-	APRLocalStorage = require('@lib/APRLocalStorage');
+	APRLocalStorage = require('../../src/lib/APRLocalStorage');
 
 test('APRLocalStorage', function (t) {
 

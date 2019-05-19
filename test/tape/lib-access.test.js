@@ -1,5 +1,5 @@
 var test = require('tape'),
-	access = require('@lib/access');
+	access = require('../../src/lib/access');
 
 test('access', function (t) {
 

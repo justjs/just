@@ -3,12 +3,13 @@
   "title": "APR",
   "version": "0.1.0",
   "description": "Heavily-used javascript helpers for APR's developments.",
-  "main": "dist/APR.js",
+  "main": "./src/server.js",
+  "browser": "./src/browser.js",
   "directories": {
-    "test": "test"
+    "test": "./test"
   },
   "testling": {
-    "files": "test/browser/tape/**/*.test.js",
+    "files": "test/tape/browser.test.js",
     "browsers": [
       "ie/6..latest",
       "chrome/22..latest",
@@ -21,10 +22,9 @@
     ]
   },
   "scripts": {
-    "build": "npm install && grunt",
     "start": "grunt watch",
-    "browser-test": "NODE_PORT=3000 tap test/browser/tape/**/.test.js",
-    "server-test": "tap test/server/**/*.test.js"
+    "build": "npm install && grunt",
+    "test": "grunt test"
   },
   "repository": {
     "type": "git",
@@ -39,17 +39,16 @@
   "license": "CC-BY-NC-3.0",
   "devDependencies": {
     "amdclean": "^2.7.0",
+    "ecstatic": "^4.1.2",
     "grunt": "^1.0.4",
-    "grunt-contrib-concat": "^1.0.1",
+    "grunt-browserify": "^5.3.0",
+    "grunt-compare-size": "^0.4.2",
+    "grunt-contrib-connect": "^2.0.0",
     "grunt-contrib-requirejs": "^1.0.0",
     "grunt-contrib-uglify": "^4.0.1",
-    "module-alias": "^2.2.0",
+    "grunt-tape": "^0.1.0",
+    "grunt-testling": "^1.2.0",
+    "gzip-js": "^0.3.2",
     "tape": "^4.10.1"
-  },
-  "_moduleAliases": {
-    "@": "./src",
-    "@lib": "./src/lib",
-    "@browser": "./dist/browser",
-    "@server": "./dist/server"
   }
 }

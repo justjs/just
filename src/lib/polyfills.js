@@ -2,9 +2,11 @@
  * Some polyfills (for ie8) used in 2 o more APR modules.
  * @ignore
  */
-(function (W, D, O, S, A, F, E, V, L) {
+(function (W) {
 
 	'use strict';
+
+	var D=W.document, O=W.Object, S=W.String, A=W.Array, F=W.Function, E=W.Element, V=W.Event, L=W.Location;
 
 	function fp(c,p,f,n){var o=c[p];o=o||f;o.APRPolyfill=f===o?null:f}
 	function fl(o){/* Based on: mozilla & github/jonathantneal/EventListener */var _=[];fp(o,'addEventListener',function(t,l){var s=this,fa=function(s,t,f){s.attachEvent('on'+t,f);_.push({s:s,t:t,l:l,f:f})},f1=function(e){var h=l.handleEvent,H=D.documentElement;e=e||W.event;fp(e,'target',e.srcElement||s);fp(e,'currentTarget',s);fp(e,'relatedTarget',e.fromElement);fp(e,'timeStamp',+new Date());fp(e,'pageX',e.clientX+H.scrollLeft);fp(e,'pageY',e.clientY+H.scrollTop);h?h(e):l.call(s,e)},f2=function(e){if(D.readyState!='complete'){if(e!=0)return f1(e);e=new Event(t);e.srcElement=W;f2(e)}};t!='DOMContentLoaded'?fa(s,t,f1):fa(D,'readystatechange',f2),f2(0)});fp(o,'removeEventListener',function(t,l){var i=_.length,h;while(--i>=0)if((h=_[i]).s==this&&h.t==t&&h.l==l&&h.s.detachEvent('on'+(t=='DOMContentLoaded'?'readystatechange':t),h.f))break})}
@@ -50,4 +52,4 @@
 	fp(fy(E),'matches',fy(E).matchesSelector||fv(fy(E),'MatchesSelector')||function(s){var t=this,m=(t.document||t.ownerDocument).querySelectorAll(s);while(--i>=0&&m[i]!==t);return i>-1});
 	/* based on: https://gist.github.com/paulirish/1579671 */fp(W,'requestAnimationFrame',fv(W,'RequestAnimationFrame')||(function(l){return function(fn){var n=+new Date,c=Math.max(0,16-n-l),i=W.setTimeout(function(){fn(n+c)},c);l=n+c;return i}})(0));fp(W,'cancelAnimationFrame',fv(W,'CancelAnimationFrame')||fv(W,'CancelRequestAnimationFrame')||function(i){clearTimeout(i)});
 
-})(window, document, Object, String, Array, Function, Element, Event, Location);
+})(typeof window!='undefined'&&window);

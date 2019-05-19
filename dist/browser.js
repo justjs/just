@@ -1,13 +1,15 @@
 ;(function() {
-var APR, src_browser, src_lib_polyfills, src_lib_isKeyValueObject, src_lib_hasOwn, src_lib_eachProperty, src_lib_defaults, src_lib_access, APRDefine, src_lib_APRDefine, APRLocalStorage, src_lib_APRLocalStorage, src_lib_isWindow, src_lib_createPrivateKey, src_lib_getElements, src_lib_getFunctionName, src_lib_getPressedKey, src_lib_var_body, src_lib_var_html, src_lib_getRemoteParent, src_lib_isEmptyObject, src_lib_isJSONLikeObject, src_lib_isTouchDevice, src_lib_var_head, src_lib_parseUrl, src_lib_loadElement, src_lib_setDynamicKeys, src_lib_stringToJSON;
+var APR, core, browser, polyfills, getElements, body, DNT, ELEMENT_NAMESPACES, head, html, self, isKeyValueObject, hasOwn, eachProperty, defaults, access, isWindow, createPrivateKey, getFunctionName, getPressedKey, getRemoteParent, isEmptyObject, isJSONLikeObject, isTouchDevice, parseUrl, loadElement, setDynamicKeys, stringToJSON, APRDefine, APRLocalStorage;
 APR = { 'version': '0.2.0' };
-src_browser = undefined;
+core = undefined;
+browser = Object.assign(APR, {});
 /**
  * Some polyfills (for ie8) used in 2 o more APR modules.
  * @ignore
  */
-(function (W, D, O, S, A, F, E, V, L) {
+(function (W) {
   'use strict';
+  var D = W.document, O = W.Object, S = W.String, A = W.Array, F = W.Function, E = W.Element, V = W.Event, L = W.Location;
   function fp(c, p, f, n) {
     var o = c[p];
     o = o || f;
@@ -334,178 +336,285 @@ src_browser = undefined;
   fp(W, 'cancelAnimationFrame', fv(W, 'CancelAnimationFrame') || fv(W, 'CancelRequestAnimationFrame') || function (i) {
     clearTimeout(i);
   });
-}(window, document, Object, String, Array, Function, Element, Event, Location));
-src_lib_polyfills = undefined;
-APR['isKeyValueObject'] = src_lib_isKeyValueObject = function isKeyValueObject(value) {
+}(typeof window != 'undefined' && window));
+polyfills = undefined;
+APR['getElements'] = getElements = function getElements(selector, parent) {
+  return Array.from((parent || document).querySelectorAll(selector));
+};
+APR['body'] = body = getElements('body')[0];
+APR['DNT'] = DNT = function () {
+  var dnt = [
+    navigator.doNotTrack,
+    navigator.msDoNotTrack,
+    window.doNotTrack
+  ];
+  var consent = ',' + dnt + ',';
+  /**
+  * The DoNotTrack header formatted as 0, 1 or undefined (for "unspecified").
+  * @type {(number|undefined)}
+  * @readOnly
+  */
+  return /,(yes|1),/i.test(consent) ? 1 : /,(no|0),/i.test(consent) ? 0 : void 0;
+}();
+APR['ELEMENT_NAMESPACES'] = ELEMENT_NAMESPACES = {
+  'html': 'http://www.w3.org/1999/xhtml',
+  'mathml': 'http://www.w3.org/1998/Math/MathML',
+  'svg': 'http://www.w3.org/2000/svg',
+  'xlink': 'http://www.w3.org/1999/xlink',
+  'xml': 'http://www.w3.org/XML/1998/namespace',
+  'xmlns': 'http://www.w3.org/2000/xmlns/',
+  'xbl': 'http://www.mozilla.org/xbl',
+  'xul': 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul'
+};
+APR['head'] = head = getElements('head')[0];
+APR['html'] = html = document.documentElement || body.parentNode;
+APR['self'] = self = Object.create({
+  'originUrl': 'https://www.aprservices.com',
+  'staticOriginUrl': 'https://www.code.aprservices.com',
+  'setFileUrl': function (name, ext, version) {
+    return this.staticOriginUrl + '/' + ext + '/' + name + '/dev/' + version + '.' + ext + '?nocache=true';
+  }
+});
+APR['isKeyValueObject'] = isKeyValueObject = function isKeyValueObject(value) {
   return /(^\{|\}$)/.test(JSON.stringify(value));
 };
-APR['hasOwn'] = src_lib_hasOwn = function hasOwn(object, property) {
+APR['hasOwn'] = hasOwn = function hasOwn(object, property) {
   return Object.prototype.hasOwnProperty.call(object, property);
 };
-APR['eachProperty'] = src_lib_eachProperty = function (hasOwn) {
-  /**
-  * A function that will be called in each iteration.
-  * 
-  * @typedef {function} APR~eachProperty_fn
-  * @this {*} `thisArg` of {@link APR.eachProperty}.
-  * @param {*} value The value of the current `key` in `object`.
-  * @param {string} key The current key of `object`.
-  * @param {!Object} object The object that is being iterated.
-  * @return {*} Some value.
-  */
-  /**
-  * Iterates the properties of a JSON-like object.
-  * 
-  * @param  {!Object}  properties A JSON-like object to iterate.
-  * @param  {APR~eachProperty_fn} fn The function that will be called in each iteration.
-  * @param  {*} thisArg `this` for `fn`.
-  * @param  {boolean} [strict=false] false: iterate only the owned properties.
-  *                                  true: iterate the prototype chain too.
-  * @return {!Object} The returned values.
-  */
-  return function eachProperty(properties, fn, thisArg, strict) {
-    var returnedValues = {};
-    var k;
-    for (k in properties) {
-      if (strict || hasOwn(properties, k)) {
-        returnedValues[k] = fn.call(thisArg, properties[k], k, properties);
-      }
+APR['eachProperty'] = eachProperty = function eachProperty(properties, fn, thisArg, strict) {
+  var returnedValues = {};
+  var k;
+  for (k in properties) {
+    if (strict || hasOwn(properties, k)) {
+      returnedValues[k] = fn.call(thisArg, properties[k], k, properties);
     }
-    return returnedValues;
-  };
-}(src_lib_hasOwn);
-APR['defaults'] = src_lib_defaults = function (isKeyValueObject, eachProperty) {
-  /**
-  * Checks if `value` looks like `defaultValue`.
-  *
-  * @param {*} value Any value-
-  * @param {*} defaultValue A value with a desired type for `value`.
-  * 						   If a key-value object is given, all the keys of `value` will `default`
-  * 						   to his corresponding key in this object.
-  * @param {boolean} ignoreDefaultKeys If evaluates to `false` and `defaultValue` is an json-like object,
-  * 									  the default keys will be added to `value` or checked against this
-  * 									  function for each repeated key.
-  *
-  * @example
-  * defaults([1, 2], {a: 1}); // {a: 1}
-  * 
-  * @example
-  * defaults({}, null); // {}: null is an object.
-  * defaults([], null); // []: null is an object.
-  * defaults(null, {}); // {}: null is not a key-value object.
-  * defaults(null, []); // []: null is not an Array.
-  * 
-  * @example
-  * defaults(1, NaN); // 1 (NaN is an instance of a Number)
-  *
-  * @example
-  * defaults({'a': 1, 'b': 2}, {'a': 'some string'}, false); // {'a': 'some string', 'b': 2}
-  *
-  * @example
-  * defaults({'a': 1}, {'b': 2}, false); // {'a': 1, 'b': 2}
-  * defaults({'a': 1}, {'b': 2}, true); // {'a': 1}
-  *
-  * @returns `value` if it looks like `defaultValue` or `defaultValue` otherwise.
-  */
-  return function defaults(value, defaultValue, ignoreDefaultKeys) {
-    if (Array.isArray(defaultValue)) {
-      return Array.isArray(value) ? value : defaultValue;
+  }
+  return returnedValues;
+};
+APR['defaults'] = defaults = function defaults(value, defaultValue, ignoreDefaultKeys) {
+  if (Array.isArray(defaultValue)) {
+    return Array.isArray(value) ? value : defaultValue;
+  }
+  if (isKeyValueObject(defaultValue)) {
+    if (!isKeyValueObject(value)) {
+      return defaultValue;
     }
-    if (isKeyValueObject(defaultValue)) {
-      if (!isKeyValueObject(value)) {
-        return defaultValue;
-      }
-      eachProperty(defaultValue, function (v, k) {
-        if (typeof value[k] !== 'undefined') {
-          value[k] = defaults(value[k], v);
-        } else if (!ignoreDefaultKeys) {
-          value[k] = v;
-        }
-      });
-      return value;
-    }
-    return typeof value === typeof defaultValue ? value : defaultValue;
-  };
-}(src_lib_isKeyValueObject, src_lib_eachProperty);
-APR['access'] = src_lib_access = function (defaults, isKeyValueObject) {
-  /**
-  * A function to call when it reaches the deep property of an object.
-  * 
-  * @typedef {function} APR~access_handler
-  * @this  {Object} A new object with the properties of the base object.
-  * @param {!Object} currentObject The object containing the `currentKey`.
-  * @param {*} currentKey The last value given in `path`.
-  * @param {boolean} propertyExists false if some key of `path` was created, true otherwise.
-  * @param {Array} path The given keys.
-  */
-  /**
-  * Accesses to a deep property in a new `object` (or `object` if `mutate` evals to true).
-  * 
-  * @param  {!Object} object The base object.
-  * @param  {Array} [path=[path]] The ordered keys.
-  * @param  {APR~access_handler} [handler] A custom function.
-  * @param  {boolean} mutate If it evals to true, it will use `object` as the base object,
-  *                          otherwise it will create a new `object` without the prototype chain.
-  * @throws {TypeError} If some property causes access problems.
-  * @example <caption>Accessing to some existent property</caption>
-  *
-  * access({a: {b: {c: {d: 4}}}}, ['a', 'b', 'c', 'd'], function (currentObject, currentKey, propertyExists, path) {
-  *     return propertyExists ? currentObject[currentKey] : null;
-  * }); // returns 4.
-  *
-  * @example <caption>Accessing to some existent property with a non-JSON-like-object as a value</caption>
-  *
-  * access({a: 1}, ['a', 'b', 'c']); // throws TypeError.
-  *
-  * @example <caption>Accessing to some non-existent property</caption>
-  *
-  * var obj = {z: 1, prototype: [...]};
-  * var newObj = access(obj, 'a.b.c'.split('.'), function (currentObject, currentKey, propertyExists, path) {
-  *     
-  *     if (!propertyExists) {
-  *         currentObject[currentKey] = path.length;
-  *     }
-  *     
-  *     // At this point:
-  *     //     `obj` is {z: 1},
-  *     //     `currentObject` has a value in `currentKey`,
-  *     //     and `this` has all the added keys (even the ones modified in `currentObject`).
-  *     return this;
-  * 
-  * }); // returns {z: 1, a: {b: {c: 3}}}
-  *
-  * // if you want the prototype chain of obj, just copy it.
-  * Object.assign(newObj.prototype, obj.prototype);
-  *
-  * @example <caption>Modifying the base object</caption>
-  * 
-  * var obj = {a: {b: false}, b: {b: false}, prototype: [...]};
-  * 
-  * access(obj, 'a.b'.split('.'), function (currentObject, currentKey, propertyExists, path) {
-  *     currentObject[currentKey] = 2;
-  * }, true);
-  *
-  * // now `obj` is {a: {a: true}, b: {b: true}, prototype: [...]}.
-  * 
-  * @return If `handler` is given: the returned value of that function,
-  *         otherwise: the last value of `path` in the cloned object.
-  */
-  return function access(object, path, handler, mutate) {
-    var propertyExists = true;
-    var baseObject = mutate ? object : Object.assign({}, object);
-    var currentObject = baseObject;
-    var lastKey;
-    path = defaults(path, [path]);
-    lastKey = path[path.length - 1];
-    path.slice(0, -1).map(function (key, i) {
-      currentObject = typeof currentObject[key] !== 'undefined' ? currentObject[key] : (propertyExists = false, {});
-      if (currentObject !== null && !isKeyValueObject(currentObject)) {
-        throw new TypeError('The value of "' + key + '" is not a "key-value" object.');
+    eachProperty(defaultValue, function (v, k) {
+      if (typeof value[k] !== 'undefined') {
+        value[k] = defaults(value[k], v);
+      } else if (!ignoreDefaultKeys) {
+        value[k] = v;
       }
     });
-    return handler ? handler.call(baseObject, currentObject, lastKey, propertyExists, path) : currentObject[lastKey];
+    return value;
+  }
+  return typeof value === typeof defaultValue ? value : defaultValue;
+};
+APR['access'] = access = function access(object, path, handler, mutate) {
+  var propertyExists = true;
+  var baseObject = mutate ? object : Object.assign({}, object);
+  var currentObject = baseObject;
+  var lastKey;
+  path = defaults(path, [path]);
+  lastKey = path[path.length - 1];
+  path.slice(0, -1).map(function (key, i) {
+    currentObject = typeof currentObject[key] !== 'undefined' ? currentObject[key] : (propertyExists = false, {});
+    if (currentObject !== null && !isKeyValueObject(currentObject)) {
+      throw new TypeError('The value of "' + key + '" is not a "key-value" object.');
+    }
+  });
+  return handler ? handler.call(baseObject, currentObject, lastKey, propertyExists, path) : currentObject[lastKey];
+};
+APR['isWindow'] = isWindow = function isWindow(object) {
+  return object === window || isKeyValueObject(object) && object.document && object.setInterval;
+};
+APR['createPrivateKey'] = createPrivateKey = function createPrivateKey(factory, parent) {
+  var store = new WeakMap();
+  var seen = new WeakMap();
+  if (typeof factory !== 'function') {
+    if (isKeyValueObject(parent) && parent.prototype) {
+      factory = Object.assign(Object.create(parent.prototype), factory);
+    }
+    factory = Object.create.bind(null, factory || Object.prototype, {});
+  }
+  return function (key) {
+    var value;
+    if (!(key instanceof Object)) {
+      throw new TypeError(key + ' must be an object.');
+    }
+    if (isWindow(key)) {
+      key = Window;
+    }
+    if (value = store.get(key)) {
+      return value;
+    }
+    if (seen.has(key)) {
+      return key;
+    }
+    value = factory(key);
+    store.set(key, value);
+    seen.set(value, true);
+    return value;
   };
-}(src_lib_defaults, src_lib_isKeyValueObject);
+};
+APR['getFunctionName'] = getFunctionName = function getFunctionName(fn) {
+  var matches;
+  if (typeof fn !== 'function') {
+    throw new TypeError(fn + ' is not a function.');
+  }
+  if ('name' in fn) {
+    return fn.name;
+  }
+  matches = fn.toString().match(/function([^\(]+)\(+/i);
+  return matches ? matches[1].trim() : '';
+};
+APR['getPressedKey'] = getPressedKey = function getPressedKey(e) {
+  return e.key || e.code || e.which || e.keyCode;
+};
+APR['getRemoteParent'] = getRemoteParent = function getRemoteParent(childNode, fn, container, includeChild) {
+  var parentNode = null;
+  var deepLevel = 0;
+  if (typeof fn !== 'function') {
+    throw new TypeError(fn + ' is not a function.');
+  }
+  if (!(container instanceof Node)) {
+    container = html;
+  }
+  if (!childNode) {
+    return null;
+  }
+  if (includeChild && fn.call(childNode, deepLevel)) {
+    return childNode;
+  }
+  while ((parentNode = (parentNode || childNode).parentNode) && (parentNode !== container || (parentNode = null)) && !fn.call(parentNode, ++deepLevel));
+  return parentNode;
+};
+APR['isEmptyObject'] = isEmptyObject = function isEmptyObject(object) {
+  var obj = Object(object);
+  var k;
+  for (k in obj) {
+    if (hasOwn(obj, k)) {
+      return false;
+    }
+  }
+  return true;
+};
+APR['isJSONLikeObject'] = isJSONLikeObject = function (isKeyValueObject) {
+  return isKeyValueObject;
+}(isKeyValueObject);
+APR['isTouchDevice'] = isTouchDevice = function isTouchDevice(fn) {
+  var isTouch = 'ontouchstart' in body || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0 || window.DocumentTouch && document instanceof DocumentTouch;
+  if (typeof fn === 'function') {
+    window.addEventListener('touchstart', function listener(e) {
+      fn(e);
+      window.removeEventListener(e.type, listener);
+    });
+  }
+  return isTouch;
+};
+APR['parseUrl'] = parseUrl = function parseUrl(url) {
+  var parts = {}, optionalParts, hrefParts, args, id, uriParts, domainParts, hostParts, userParts, passwordParts;
+  var location = Object.assign({}, window.location);
+  var blob;
+  url = url || location.href;
+  if (/^blob\:/i.test(url)) {
+    blob = parseUrl(url.replace(/^blob\:/i, ''));
+    return Object.assign(blob, {
+      'protocol': 'blob:',
+      'href': 'blob:' + blob.href,
+      'host': '',
+      'hostname': '',
+      'port': '',
+      'pathname': blob.origin + blob.pathname
+    });
+  }
+  if (/^(\:)?\/\//.test(url)) {
+    url = (url = url.replace(/^\:/, '')) === '//' ? location.origin : location.protocol + url;
+  } else if (/^(\?|\#|\/)/.test(url)) {
+    url = location.origin + url;
+  } else if (!/\:\/\//.test(url)) {
+    url = location.protocol + '//' + url;
+  }
+  hrefParts = url.split(/(\?.*#?|#.*\??).*/);
+  optionalParts = (hrefParts[1] || '').split('#');
+  id = optionalParts[1] || '';
+  parts.search = optionalParts[0] || '';
+  parts.hash = id ? '#' + id : id;
+  uriParts = (hrefParts[0] || '').split('://');
+  hostParts = (uriParts[1] || '').split(/(\/.*)/);
+  parts.username = '';
+  parts.password = '';
+  if (/@/.test(hostParts[0])) {
+    userParts = hostParts[0].split('@');
+    passwordParts = userParts[0].split(':');
+    parts.username = passwordParts[0] || '';
+    parts.password = passwordParts[1] || '';
+    hostParts[0] = userParts[1];
+  }
+  parts.host = hostParts[0] || '';
+  parts.pathname = hostParts[1] || '';
+  domainParts = parts.host.split(/:[0-9]+/);
+  parts.hostname = domainParts[0] || '';
+  parts.port = typeof domainParts[1] === 'number' ? domainParts[1] : '';
+  parts.protocol = uriParts[0] + ':';
+  parts.origin = parts.protocol + '//' + parts.host;
+  parts.href = (userParts ? parts.protocol + '//' + parts.username + ':' + parts.password + '@' + parts.host : parts.origin) + parts.pathname + parts.search + parts.hash;
+  return parts;
+};
+APR['loadElement'] = loadElement = Object.assign(function loadElement(tag, url, handler) {
+  var element, loadedFile, attribute;
+  attribute = loadElement.NON_SRC_ATTRIBUTES[tag] || 'src';
+  handler = defaults(handler, function (loadedFile) {
+    if (!loadedFile) {
+      head.appendChild(this);
+    }
+    return this;
+  });
+  loadedFile = getElements(tag + '[' + attribute + '="' + url + '"], ' + tag + '[' + attribute + '="' + parseUrl(url).href + '"]')[0];
+  if (loadedFile) {
+    return handler.call(element, loadedFile);
+  }
+  element = document.createElement(tag);
+  element[attribute] = url;
+  if (tag === 'link') {
+    element.rel = 'stylesheet';
+  }
+  if (parseUrl(url).origin !== window.location.origin && [
+      'video',
+      'img',
+      'script'
+    ].indexOf(tag) >= 0) {
+    element.setAttribute('crossorigin', 'anonymous');
+  }
+  return handler.call(element, loadedFile);
+}, { 'NON_SRC_ATTRIBUTES': { 'link': 'href' } });
+APR['setDynamicKeys'] = setDynamicKeys = function setDynamicKeys(object, properties) {
+  var i, f, key, value;
+  if (!('length' in properties)) {
+    throw new TypeError('The given keys are not an array-like.');
+  }
+  if (!isKeyValueObject(object)) {
+    object = {};
+  }
+  for (i = 0, f = properties.length - 1; i < f; i += 2) {
+    key = properties[i];
+    value = properties[i + 1];
+    object[key] = value;
+  }
+  return object;
+};
+APR['stringToJSON'] = stringToJSON = function stringToJSON(string) {
+  var json;
+  if (typeof string !== 'string') {
+    return {};
+  }
+  try {
+    json = JSON.parse(string) || {};
+  } catch (exception) {
+    return {};
+  }
+  return json;
+};
 APR['Define'] = APRDefine = function (head, access, eachProperty, loadElement, createPrivateKey, getElements) {
   var _ = function () {
     var STATE_DEFINED = 'defined', STATE_CALLED = 'called';
@@ -680,8 +789,8 @@ APR['Define'] = APRDefine = function (head, access, eachProperty, loadElement, c
     }
   });
   return APRDefine;
-}(var_head, access, eachProperty, loadElement, createPrivateKey, getElements);
-APR['Define'] = src_lib_APRDefine = undefined;
+}(head, access, eachProperty, loadElement, createPrivateKey, getElements);
+APRDefine = undefined;
 APR['LocalStorage'] = APRLocalStorage = function (createPrivateKey, defaults, eachProperty) {
   var _ = createPrivateKey();
   function APRLocalStorage(consent) {
@@ -747,365 +856,6 @@ APR['LocalStorage'] = APRLocalStorage = function (createPrivateKey, defaults, ea
   });
   return APRLocalStorage;
 }(createPrivateKey, defaults, eachProperty);
-APR['LocalStorage'] = src_lib_APRLocalStorage = undefined;
-APR['isWindow'] = src_lib_isWindow = function (isKeyValueObject) {
-  /**
-  * Checks if an object is a window by checking `window` or some common properties of `window`.
-  * 
-  * @param  {Object}  object Some object.
-  * @return {boolean} true if `object` is `window` or has the common properties, false otherwise.
-  */
-  return function isWindow(object) {
-    return object === window || isKeyValueObject(object) && object.document && object.setInterval;
-  };
-}(src_lib_isKeyValueObject);
-APR['createPrivateKey'] = src_lib_createPrivateKey = function (isKeyValueObject, isWindow) {
-  /**
-  * An store of private members.
-  * 
-  * @typedef {function} APR~createPrivateKey_privateStore
-  * @param {!Object} key Some object to get/set properties from/to it.
-  */
-  /**
-  * Implementation of private members in js.
-  *
-  * @see {@link https://github.com/philipwalton/private-parts/blob/master/private-parts.js|source}
-  * @param {function|object} [factory=Object.prototype] A new object with `factory` as it's prototype...
-  * @param {object} parent The object to extend from.
-  * @throws {TypeError} If the key given {@link APR~createPrivateKey_privateStore|in the private store} is not an object.
-  * @example
-  *
-  * // Creates an store which extends the public-constructor prototype.
-  * // So you can call the public methods from the private ones.
-  * var _ = createPrivateKey({
-  *     privateMethod: function () {
-  *         console.log(this); // Shows something like: {public: 'public', privateMethod: function(){}, prototype: Public.prototype, [...]}.
-  *     }
-  * }, Public);
-  *
-  * // Some constructor.
-  * function Public () {
-  *     this.public = 'public';
-  *     // Note that `this` is an object.
-  *     _(this).private = 'private';
-  * }
-  *
-  * console.log(new Public()); // Shows [...] {public: 'public'}
-  * 
-  * @return {APR~createPrivateKey_privateStore} An store of the private values.
-  */
-  return function createPrivateKey(factory, parent) {
-    var store = new WeakMap();
-    var seen = new WeakMap();
-    if (typeof factory !== 'function') {
-      if (isKeyValueObject(parent) && parent.prototype) {
-        factory = Object.assign(Object.create(parent.prototype), factory);
-      }
-      factory = Object.create.bind(null, factory || Object.prototype, {});
-    }
-    return function (key) {
-      var value;
-      if (!(key instanceof Object)) {
-        throw new TypeError(key + ' must be an object.');
-      }
-      if (isWindow(key)) {
-        key = Window;
-      }
-      if (value = store.get(key)) {
-        return value;
-      }
-      if (seen.has(key)) {
-        return key;
-      }
-      value = factory(key);
-      store.set(key, value);
-      seen.set(value, true);
-      return value;
-    };
-  };
-}(src_lib_isKeyValueObject, src_lib_isWindow);
-APR['getElements'] = src_lib_getElements = function getElements(selector, parent) {
-  return Array.from((parent || document).querySelectorAll(selector));
-};
-APR['getFunctionName'] = src_lib_getFunctionName = function getFunctionName(fn) {
-  var matches;
-  if (typeof fn !== 'function') {
-    throw new TypeError(fn + ' is not a function.');
-  }
-  if ('name' in fn) {
-    return fn.name;
-  }
-  matches = fn.toString().match(/function([^\(]+)\(+/i);
-  return matches ? matches[1].trim() : '';
-};
-APR['getPressedKey'] = src_lib_getPressedKey = function getPressedKey(e) {
-  return e.key || e.code || e.which || e.keyCode;
-};
-APR['body'] = src_lib_var_body = function (getElements) {
-  /**
-  * The first body element of the current document.
-  * @type {Element}
-  * @readOnly
-  */
-  return getElements('body')[0];
-}(src_lib_getElements);
-APR['html'] = src_lib_var_html = function (body) {
-  /**
-  * The html element of the current document.
-  * @type {Element}
-  * @readOnly
-  */
-  return document.documentElement || body.parentNode;
-}(src_lib_var_body);
-APR['getRemoteParent'] = src_lib_getRemoteParent = function (html) {
-  /**
-  * A function that checks if `this` is the Node that you're looking for.
-  * 
-  * @typedef {function} APR~getRemoteParent_fn
-  * @this {Node}
-  * @param {!Number} deepLevel A counter that indicates how many elements have checked.
-  * @return {boolean}
-  */
-  /**
-  * Goes up through the `childNode` parents, until `fn` returns `true`
-  * or a non-Node is found.
-  * 
-  * @param  {Node} childNode Some child.
-  * @param  {APR~getRemoteParent_fn} fn Some custom handler.
-  * @param  {Node} [container=html] The farthest parent.  
-  * @param  {boolean} [includeChild=false] If true, it calls `fn` with `childNode` too.
-  * @return {?Node} The current Node when `fn` returns true.
-  * @example
-  * APR.getRemoteParent(APR.body, function () {
-  *     return this.tagName === 'HTML';
-  * }); // returns the html Element.
-  */
-  return function getRemoteParent(childNode, fn, container, includeChild) {
-    var parentNode = null;
-    var deepLevel = 0;
-    if (typeof fn !== 'function') {
-      throw new TypeError(fn + ' is not a function.');
-    }
-    if (!(container instanceof Node)) {
-      container = html;
-    }
-    if (!childNode) {
-      return null;
-    }
-    if (includeChild && fn.call(childNode, deepLevel)) {
-      return childNode;
-    }
-    while ((parentNode = (parentNode || childNode).parentNode) && (parentNode !== container || (parentNode = null)) && !fn.call(parentNode, ++deepLevel));
-    return parentNode;
-  };
-}(src_lib_var_html);
-APR['isEmptyObject'] = src_lib_isEmptyObject = function (hasOwn) {
-  /**
-  * Checks if an object has no direct keys.
-  * 
-  * @param  {Object} object Some object.
-  * @return {boolean} true if it's null or not an object.
-  */
-  return function isEmptyObject(object) {
-    var obj = Object(object);
-    var k;
-    for (k in obj) {
-      if (hasOwn(obj, k)) {
-        return false;
-      }
-    }
-    return true;
-  };
-}(src_lib_hasOwn);
-APR['isJSONLikeObject'] = src_lib_isJSONLikeObject = function (isKeyValueObject) {
-  return isKeyValueObject;
-}(src_lib_isKeyValueObject);
-APR['isTouchDevice'] = src_lib_isTouchDevice = function isTouchDevice(fn) {
-  var isTouch = 'ontouchstart' in body || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0 || window.DocumentTouch && document instanceof DocumentTouch;
-  if (typeof fn === 'function') {
-    window.addEventListener('touchstart', function listener(e) {
-      fn(e);
-      window.removeEventListener(e.type, listener);
-    });
-  }
-  return isTouch;
-};
-APR['head'] = src_lib_var_head = function (getElements) {
-  /**
-  * The first head element of the current document.
-  * @type {Element}
-  * @readOnly
-  */
-  return getElements('head')[0];
-}(src_lib_getElements);
-APR['parseUrl'] = src_lib_parseUrl = function parseUrl(url) {
-  var parts = {}, optionalParts, hrefParts, args, id, uriParts, domainParts, hostParts, userParts, passwordParts;
-  var location = Object.assign({}, window.location);
-  var blob;
-  url = url || location.href;
-  if (/^blob\:/i.test(url)) {
-    blob = parseUrl(url.replace(/^blob\:/i, ''));
-    return Object.assign(blob, {
-      'protocol': 'blob:',
-      'href': 'blob:' + blob.href,
-      'host': '',
-      'hostname': '',
-      'port': '',
-      'pathname': blob.origin + blob.pathname
-    });
-  }
-  if (/^(\:)?\/\//.test(url)) {
-    url = (url = url.replace(/^\:/, '')) === '//' ? location.origin : location.protocol + url;
-  } else if (/^(\?|\#|\/)/.test(url)) {
-    url = location.origin + url;
-  } else if (!/\:\/\//.test(url)) {
-    url = location.protocol + '//' + url;
-  }
-  hrefParts = url.split(/(\?.*#?|#.*\??).*/);
-  optionalParts = (hrefParts[1] || '').split('#');
-  id = optionalParts[1] || '';
-  parts.search = optionalParts[0] || '';
-  parts.hash = id ? '#' + id : id;
-  uriParts = (hrefParts[0] || '').split('://');
-  hostParts = (uriParts[1] || '').split(/(\/.*)/);
-  parts.username = '';
-  parts.password = '';
-  if (/@/.test(hostParts[0])) {
-    userParts = hostParts[0].split('@');
-    passwordParts = userParts[0].split(':');
-    parts.username = passwordParts[0] || '';
-    parts.password = passwordParts[1] || '';
-    hostParts[0] = userParts[1];
-  }
-  parts.host = hostParts[0] || '';
-  parts.pathname = hostParts[1] || '';
-  domainParts = parts.host.split(/:[0-9]+/);
-  parts.hostname = domainParts[0] || '';
-  parts.port = typeof domainParts[1] === 'number' ? domainParts[1] : '';
-  parts.protocol = uriParts[0] + ':';
-  parts.origin = parts.protocol + '//' + parts.host;
-  parts.href = (userParts ? parts.protocol + '//' + parts.username + ':' + parts.password + '@' + parts.host : parts.origin) + parts.pathname + parts.search + parts.hash;
-  return parts;
-};
-APR['loadElement'] = src_lib_loadElement = function (head, getElements, defaults, parseUrl) {
-  /**
-  * A custom function to append the created element.
-  * 
-  * @typedef {function} APR~load_handler
-  * @this {!Element} The element that loads the url.
-  * @param {?Element} loadedElement An identical element that has been loaded previously.
-  * @return {*} Some value.
-  */
-  /**
-  * An src-like attribute for an Element.
-  * @typedef {string} APR~load_srcLikeAttribute
-  */
-  /**
-  * A tagName of an Element (such as "link").
-  * @typedef {string} APR~element_tag
-  */
-  /**
-  * Loads an external file.
-  *
-  * @function
-  * @param  {APR~element_tag} tag A tag name.
-  * @param  {string} url The url of the file.
-  * @param  {APR~load_handler} [handler=function () { APR.head.appendChild(element); return this; }] If it's a function: it will be triggered (without appending the element),
-  *                                  otherwise: the element will be appended to {@link APR.head|head}.
-  * @property {Object.<APR~element_tag, APR~load_srcLikeAttribute>} NON_SRC_ATTRIBUTES {@link APR~element_tag|Element-tags} that are known for not using 'src' to fetch an url.
-  * @example
-  * 
-  * load('link', '/css/index.css', function (loadedFile) {
-  *
-  *     if (loadedFile) {
-  *         return;
-  *     }
-  *     
-  *     this.onload = function () {};
-  *     this.onerror = function () {};
-  *     
-  *     APR.head.appendChild(this);
-  *
-  * });
-  *
-  * @return {*} The return of the {@link APR~load_handler|handler}.
-  */
-  return Object.assign(function loadElement(tag, url, handler) {
-    var element, loadedFile, attribute;
-    attribute = loadElement.NON_SRC_ATTRIBUTES[tag] || 'src';
-    handler = defaults(handler, function (loadedFile) {
-      if (!loadedFile) {
-        head.appendChild(this);
-      }
-      return this;
-    });
-    loadedFile = getElements(tag + '[' + attribute + '="' + url + '"], ' + tag + '[' + attribute + '="' + parseUrl(url).href + '"]')[0];
-    if (loadedFile) {
-      return handler.call(element, loadedFile);
-    }
-    element = document.createElement(tag);
-    element[attribute] = url;
-    if (tag === 'link') {
-      element.rel = 'stylesheet';
-    }
-    if (parseUrl(url).origin !== window.location.origin && [
-        'video',
-        'img',
-        'script'
-      ].indexOf(tag) >= 0) {
-      element.setAttribute('crossorigin', 'anonymous');
-    }
-    return handler.call(element, loadedFile);
-  }, { 'NON_SRC_ATTRIBUTES': { 'link': 'href' } });
-}(src_lib_var_head, src_lib_getElements, src_lib_defaults, src_lib_parseUrl);
-APR['setDynamicKeys'] = src_lib_setDynamicKeys = function (isKeyValueObject) {
-  /**
-  * Set keys of `object` as if it were an array. (Same as {[variable]: 'value'} in most recent browsers).
-  * 
-  * @param {*} [object=Object] The base object.
-  * @param {Array} properties A pair of values: 2n being the key, 2n + 1 being the value.
-  * @throws {TypeError} If the given `properties` are not an array-like.
-  * @example
-  *
-  * var obj = {};
-  *
-  * ['a', 'b', 'c'].map(function (key, index, array) {
-  *     
-  *     return setDynamicKeys(this, [
-  *         key, index
-  *     ]);
-  *     
-  * }, obj); // returns [{a: 0}, {a: 0, b: 1}, {a: 0, b: 1, c: 2}]
-  * // now, `obj` is {a: 0, b: 1, c: 2}.
-  * 
-  * @return {!Object} `object` with the given `properties` added.
-  */
-  return function setDynamicKeys(object, properties) {
-    var i, f, key, value;
-    if (!('length' in properties)) {
-      throw new TypeError('The given keys are not an array-like.');
-    }
-    if (!isKeyValueObject(object)) {
-      object = {};
-    }
-    for (i = 0, f = properties.length - 1; i < f; i += 2) {
-      key = properties[i];
-      value = properties[i + 1];
-      object[key] = value;
-    }
-    return object;
-  };
-}(src_lib_isKeyValueObject);
-APR['stringToJSON'] = src_lib_stringToJSON = function stringToJSON(string) {
-  var json;
-  if (typeof string !== 'string') {
-    return {};
-  }
-  try {
-    json = JSON.parse(string) || {};
-  } catch (exception) {
-    return {};
-  }
-  return json;
-};
+APRLocalStorage = undefined;
+window.APR = APR;
 }());

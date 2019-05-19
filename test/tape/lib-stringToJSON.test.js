@@ -1,5 +1,5 @@
 var test = require('tape'),
-	stringToJSON = require('@lib/stringToJSON');
+	stringToJSON = require('../../src/lib/stringToJSON');
 
 test('stringToJSON', function (t) {
 

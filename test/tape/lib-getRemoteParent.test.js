@@ -1,5 +1,5 @@
 var test = require('tape'),
-	getRemoteParent = require('@lib/getRemoteParent');
+	getRemoteParent = require('../../src/lib/getRemoteParent');
 
 var html = document.getElementsByTagName('html')[0],
 	body = document.getElementsByTagName('body')[0];

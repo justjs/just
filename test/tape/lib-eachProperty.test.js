@@ -1,5 +1,5 @@
 var test = require('tape'),
-	eachProperty = require('@lib/eachProperty');
+	eachProperty = require('../../src/lib/eachProperty');
 
 test('eachProperty', function (t) {
 

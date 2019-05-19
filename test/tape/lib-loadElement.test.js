@@ -1,7 +1,7 @@
 var test = require('tape'),
-	loadElement = require('@lib/loadElement');
+	loadElement = require('../../src/lib/loadElement');
 
-var parseUrl = require('@lib/parseUrl'),
+var parseUrl = require('../../src/lib/parseUrl').parseUrl,
 	head = document.getElementsByTagName('head')[0];
 
 test('loadElement', function (t) {

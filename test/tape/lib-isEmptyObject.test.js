@@ -1,5 +1,5 @@
 var test = require('tape'),
-	isEmptyObject = require('@lib/isEmptyObject');
+	isEmptyObject = require('../../src/lib/isEmptyObject');
 
 test('isEmptyObject', function (t) {
 

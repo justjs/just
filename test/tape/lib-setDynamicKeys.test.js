@@ -1,5 +1,5 @@
 var test = require('tape'),
-	setDynamicKeys = require('@lib/setDynamicKeys');
+	setDynamicKeys = require('../../src/lib/setDynamicKeys');
 
 test('setDynamicKeys', function (t) {
 

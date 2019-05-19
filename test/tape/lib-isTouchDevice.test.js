@@ -1,5 +1,5 @@
 var test = require('tape'),
-	isTouchDevice = require('@lib/isTouchDevice');
+	isTouchDevice = require('../../src/lib/isTouchDevice');
 
 test('isTouchDevice', function (t) {
 

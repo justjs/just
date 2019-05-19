@@ -1,5 +1,5 @@
 var test = require('tape'),
-	isWindow = require('@lib/isWindow');
+	isWindow = require('../../src/lib/isWindow');
 
 test('isWindow', function (t) {
 
