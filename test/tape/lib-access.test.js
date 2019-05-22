@@ -1,7 +1,7 @@
 var test = require('tape'),
 	access = require('../../src/lib/access');
 
-test('access', function (t) {
+test('lib/access.js', function (t) {
 
 	t.test('should access to a deep existent property', function (st) {
 
@@ -25,8 +25,12 @@ test('access', function (t) {
 	});
 
 	t.test('should throw when trying to access to a key that doesn\'t hold a key-value object as a value', function (st) {
-		st.throws(access({'a': 1}, ['a', 'b', 'c']), TypeError);
-		st.end();
+		
+		st.plan(1);
+		st.throws(function () {
+			access({'a': 1}, ['a', 'b', 'c']);
+		}, TypeError);
+
 	});
 
 	t.test('should create and access to some non-existent properties', function (st) {
@@ -38,9 +42,9 @@ test('access', function (t) {
 		var mutate = false;
 		var newObject = access(object, keys, function (currentObject, currentKey, propertyExists, path) {
 
-			st.is(this, object);
-			st.deepEquals(currentObject, {'c': void 0});
-			st.is(currentKey, 'c');
+			st.isNot(this, object, '`mutate` is false');
+			st.deepEquals(currentObject, {}, 'Keys with undefined values won\'t be added');
+			st.is(currentKey, 'c', 'The handler is called at the end');
 			st.false(propertyExists);
 			st.deepEquals(path, keys);
 
@@ -52,7 +56,7 @@ test('access', function (t) {
 
 		}, mutate);
 
-		st.deepEquals(newObject, {'z': 1, 'a': {'b': {'c': 3}}});
+		st.deepEquals(newObject, Object.assign(object, {'a': {'b': {'c': 3}}}));
 
 		st.end();
 
@@ -65,10 +69,11 @@ test('access', function (t) {
 		var keys = 'a.b'.split('.');
 		var result = access(object, keys, function (currentObject, currentKey, propertyExists, path) {
 			currentObject[currentKey] = true;
+			return this;
 		}, mutate);
 
 		st.deepEquals(object, {'a': {'b': true}, 'b': {'b': false}});
-		st.deepEquals(result, object);
+		st.is(result, object);
 
 		st.end();
 

@@ -1,7 +1,7 @@
 var test = require('tape'),
 	getElements = require('../../src/lib/getElements');
 
-test('getElements', function (t) {
+test('lib/getElements.js', function (t) {
 
 	t.test('should return an `Array` always', function (st) {
 

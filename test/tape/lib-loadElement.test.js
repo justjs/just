@@ -4,7 +4,7 @@ var test = require('tape'),
 var parseUrl = require('../../src/lib/parseUrl').parseUrl,
 	head = document.getElementsByTagName('head')[0];
 
-test('loadElement', function (t) {
+test('lib/loadElement.js', function (t) {
 
 	t.test('should load files and set some default properties to the element', function (st) {
 

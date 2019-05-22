@@ -1,62 +1,47 @@
 var test = require('tape'),
 	createPrivateKey = require('../../src/lib/createPrivateKey');
 
-test('createPrivateKey', function (t) {
+test('lib/createPrivateKey.js', function (t) {
 
-	t.test('should extend the prototype chain of an `Object`', function (st) {
+	t.test('should create a private store', function (st) {
 
-		var privateStore = createPrivateKey({
-			
-			'getContext': function () {
-				return this;
-			}
-
-		}, String)({});
-
-		st.is(privateStore.getContext(), {
-			'prototype': String.prototype
+		var _ = createPrivateKey();
+		var public = new (function Public () {
+			this.publicProperty = 'public';
+			_(this).privateProperty = 'private';
 		});
+
+		st.is(typeof public.privateProperty, 'undefined');
+		st.is(_(public).privateProperty, 'private');
 
 		st.end();
 
 	});
 
-	t.test('should create a private store', (function () {
-
-		var getContext = function () {
-			return this;
-		};
+	t.test('should extend the prototype chain of an object', (function () {
 
 		function Public () {
 			this.a = 'public';
 		}
 
-		Public.prototype.publicMethod = getContext;
+		Public.prototype.publicMethod = function () {};
 
 		return function (st) {
 
 			var key = {};
-			var privateStore = createPrivateKey({
-				'privateMethod': getContext
-			}, Public)(key);
+			var _ = createPrivateKey({
+				
+				'privateMethod': function () {
+					st.is(typeof this.publicMethod, 'function');
+				}
 
-			privateStore.b = 'private';
-			
-			console.log(privateStore.publicMethod());
+			}, Public);
 
-			st.deepEquals(privateStore.publicMethod(), {
-				'a': 'public',
-				'publicMethod': getContext
-			});
+			st.is(typeof _(key).privateMethod, 'function');
+			st.is(typeof _(key).publicMethod, 'function');
+			st.is(typeof _(key).a, 'undefined');
 
-			console.log(privateStore.privateMethod());
-
-			st.deepEquals(privateStore.privateMethod(), {
-				'a': 'public',
-				'b': 'private',
-				'privateMethod': getContext,
-				'prototype': Public.prototype
-			});
+			_(key).privateMethod();
 
 			st.end();
 
@@ -85,9 +70,11 @@ test('createPrivateKey', function (t) {
 	t.test('should throw if the given key is not an instance of an `Object`', function (st) {
 
 		var notAnInstanceOfObject = null;
-		var privateStore = createPrivateKey()(notAnInstanceOfObject);
+		var _ = createPrivateKey();
 
-		st.throws(privateStore, TypeError);
+		st.throws(function () {
+			_(notAnInstanceOfObject);
+		}, TypeError);
 
 		st.end();
 

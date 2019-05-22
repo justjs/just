@@ -1,7 +1,7 @@
 var test = require('tape'),
 	setDynamicKeys = require('../../src/lib/setDynamicKeys');
 
-test('setDynamicKeys', function (t) {
+test('lib/setDynamicKeys.js', function (t) {
 
 	t.test('should add the given values to a new object and return it', function (st) {
 

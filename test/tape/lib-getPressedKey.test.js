@@ -1,7 +1,7 @@
 var test = require('tape'),
 	getPressedKey = require('../../src/lib/getPressedKey');
 
-test('getPressedKey', function (t) {
+test('lib/getPressedKey.js', function (t) {
 
 	t.test('should get one of the supported variants for a key when a keyboard event is fired.', function (st) {
 

@@ -27,7 +27,7 @@ define(function () {
 			json = JSON.parse(string) || {};
 		}
 		catch (exception) {
-			return {}
+			return {};
 		}
 
 		return json;

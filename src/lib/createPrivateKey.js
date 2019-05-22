@@ -44,13 +44,12 @@ define([
 				
 		var store = new WeakMap();
 		var seen = new WeakMap();
+		
+		if (parent instanceof Object) {
+			factory = Object.assign(Object.create(parent.prototype), factory);
+		}
 
 		if (typeof factory !== 'function') {
-
-			if (isKeyValueObject(parent) && parent.prototype) {
-				factory = Object.assign(Object.create(parent.prototype), factory);
-			}
-
 			factory = Object.create.bind(null, factory || Object.prototype, {});
 		}
 

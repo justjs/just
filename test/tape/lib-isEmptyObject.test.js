@@ -1,7 +1,7 @@
 var test = require('tape'),
 	isEmptyObject = require('../../src/lib/isEmptyObject');
 
-test('isEmptyObject', function (t) {
+test('lib/isEmptyObject.js', function (t) {
 
 	t.test('should return `true` if it\'s an empty object', function (st) {
 

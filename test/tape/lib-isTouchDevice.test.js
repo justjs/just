@@ -1,7 +1,7 @@
 var test = require('tape'),
 	isTouchDevice = require('../../src/lib/isTouchDevice');
 
-test('isTouchDevice', function (t) {
+test('lib/isTouchDevice.js', function (t) {
 
 	t.test('should check for touch support', function (st) {
 

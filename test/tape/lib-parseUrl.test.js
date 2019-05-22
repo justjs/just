@@ -1,7 +1,7 @@
 var test = require('tape'),
 	parseUrl = require('../../src/lib/parseUrl');
 
-test('parseUrl', function (t) {
+test('lib/parseUrl.js', function (t) {
 	
 	var location = window.location;
 

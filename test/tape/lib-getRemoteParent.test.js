@@ -4,7 +4,7 @@ var test = require('tape'),
 var html = document.getElementsByTagName('html')[0],
 	body = document.getElementsByTagName('body')[0];
 
-test('getRemoteParent', function (t) {
+test('lib/getRemoteParent.js', function (t) {
 
 	t.test('should go up through the child parents until the expected parent is found', function (st) {
 

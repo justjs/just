@@ -1,7 +1,7 @@
 var test = require('tape'),
 	defaults = require('../../src/lib/defaults');
 
-test('defaults', function (t) {
+test('lib/defaults.js', function (t) {
 
 	t.test('should return the given value if it looks like the default value or the default value otherwise', function (st) {
 
@@ -42,6 +42,8 @@ test('defaults', function (t) {
 			defaults(mainObject, defaultObject, false),
 			Object.assign({}, mainObject, defaultObject)
 		);
+
+		st.end();
 
 	});
 

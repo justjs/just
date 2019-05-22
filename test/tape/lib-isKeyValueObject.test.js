@@ -1,7 +1,7 @@
 var test = require('tape'),
 	isKeyValueObject = require('../../src/lib/isKeyValueObject');
 
-test('isKeyValueObject', function (t) {
+test('lib/isKeyValueObject.js', function (t) {
 
 	t.test('should return `true` if the given value is in a "JSON format"', function (st) {
 

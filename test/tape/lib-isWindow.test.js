@@ -1,7 +1,7 @@
 var test = require('tape'),
 	isWindow = require('../../src/lib/isWindow');
 
-test('isWindow', function (t) {
+test('lib/isWindow.js', function (t) {
 
 	t.test('should return `true` if the given value is a `window` object', function (st) {
 		st.true(isWindow(window));

@@ -84,3 +84,6 @@ typings/
 .dynamodb/
 
 /dist/*
+
+/build/*
+!/build/config.js

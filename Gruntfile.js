@@ -1,27 +1,53 @@
 'use strict';
 
 const fs = require('fs');
+
 const amdclean = require('amdclean'),
-	gzip = require('gzip-js');
-const {distributions} = require('./config');
-const {'browser': distBrowser, 'server': distServer} = distributions;
-const {
-	'out': distBrowserOut,
-	'out-test': distBrowserOutTest,
-	'main': distBrowserMain,
-	'files': distBrowserFiles
-} = distBrowser;
-const {
-	'out': distServerOut,
-	'out-test': distServerOutTest,
-	'main': distServerMain,
-	'files': distServerFiles
-} = distServer;
+	gzip = require('gzip-js'),
+	matchdep = require('matchdep');
+
+const builds = require('./build/config');
+
+const buildNames = Object.keys(builds);
 
 module.exports = grunt => {
 
 	grunt.initConfig({
 		'pkg': grunt.file.readJSON('package.json'),
+		'copy': {
+			'build-src': {
+				'cwd': './src',
+				'src': ['**'],
+				'dest': './build/src',
+				'expand': true
+			},
+			'build-test': {
+				'cwd': './test',
+				'src': ['**'],
+				'dest': './build/test',
+				'expand': true
+			},
+			'dist': {
+				'cwd': './build/dist',
+				'src': ['**'],
+				'dest': './dist',
+				'expand': true
+			}
+		},
+		'clean': {
+			'builds': {
+				'src': ['./build', '!./build/config.js']
+			},
+			'options': {
+				'no-write': true
+			}
+		},
+		'watch': {
+			'src-copy': {
+				'files': ['./src/**'],
+				'tasks': ['copy']
+			}
+		},
 		'connect': {
 			'test': {
 				'options': {
@@ -32,9 +58,8 @@ module.exports = grunt => {
 		},
 		'requirejs': (() => {
 
-			const options = {
+			const mainOptions = {
 				'findNestedDependencies': true,
-				'baseUrl': __dirname,
 				'optimize': 'none',
 				onModuleBundleComplete (data) {
 					
@@ -49,7 +74,7 @@ module.exports = grunt => {
 						IIFEVariableNameTransform (moduleName, moduleID) {
 
 							const moduleKey = moduleID.replace(/^.*\//, '').replace(/\.js$/, '').replace(/^APR/, '');
-							const reservedKeys = Object.keys(distributions).concat(['polyfills', 'core', '']);
+							const reservedKeys = buildNames.concat(['polyfills', 'core', '']);
 
 							if (/^APR/.test(moduleName) && /\//.test(moduleID)) {
 								return moduleName;
@@ -67,23 +92,70 @@ module.exports = grunt => {
 				}
 
 			};
+			var bundles = {};
 
-			return {
-				'dist-browser': {
-					'options': Object.assign({}, options, {
-						'include': [distBrowserMain].concat(distBrowserFiles),
-						'out': distBrowserOut
-					})
-				},
-				'dist-server': {
-					'options': Object.assign({}, options, {
-						'include': [distServerMain].concat(distServerFiles),
-						'out': distServerOut
-					})
-				}
-			};
+			buildNames.forEach(key => {
+					
+				const build = builds[key];
+				const target = 'bundle-dist-' + key;
+
+				bundles[target] = {
+					'options': {
+						'baseUrl': './build',
+						'include': build.files,
+						'out': './build/dist/' + key + '.js'
+					}
+				};
+
+			});
+
+			return Object.assign({
+				'options': mainOptions
+			}, bundles);
 
 		})(),
+		'browserify': {
+			'bundle-test-tape': {
+				'options': {
+					'transform': ['deamdify'],
+				},
+				'files': (() => {
+
+					const files = {};
+
+					buildNames.forEach(key => {
+
+						const build = builds[key];
+						const destiny = './build/test/tape/' + key + '.build.test.js';
+
+						files[destiny] = build.files.map(file => {
+							return './build/test/tape/' + file
+								.replace(/\.?\/?src\//, '')
+								.replace(/\//g, '-')
+								.replace(/(\.js|$)/, '.test.js');
+						});
+
+					});
+
+					return files;
+
+				})()
+			}
+		},
+		'tape': {
+			'options': {
+				'pretty': true,
+				'output': 'console'
+			},
+			'unit-server': {
+				'src': ['./build/test/tape/*server.build.test.js']
+			}
+		},
+		'testling': {
+			'unit-browser': {
+				'files': ['./build/test/tape/*browser.build.test.js']
+			}
+		},
 		'uglify': {
 			'options': {
 				'preserveComments': false,
@@ -98,100 +170,74 @@ module.exports = grunt => {
 					'loops': false
 				}
 			},
-			'dist-browser': {
-				'files': {
-					[distBrowserOut.replace(/(\.js)?$/, '.min.js')]: distBrowserOut
-				}
-			},
-			'dist-server': {
-				'files': {
-					[distServerOut.replace(/(\.js)?$/, '.min.js')]: distServerOut
-				}
-			}
-		},
-		'browserify': (() => {
+			'dist': {
+				'cwd': './dist',
+				'files': (() => {
 
-			const replaceFilename = filename => {
-				return './test/tape/' + filename
-					.replace(/\.?\/?src\/?/g, '')
-					.replace(/\//g, '-')
-					.replace(/(\.js|$)/, '.test.js');
-			};
+					var files = {};
 
-			return {
-				'bundle-tape-browser': {
-					'files': {
-						[distBrowserOutTest]: distBrowserFiles.map(
-							filename => replaceFilename(filename)
-						)
-					}
-				},
-				'bundle-tape-server': {
-					'files': {
-						[distServerOutTest]: distServerFiles.map(
-							filename => replaceFilename(filename)
-						)
-					}
-				}
-			};
+					buildNames.map(key => {
+						files[key + '.min.js'] = [key + '.js'];
+					});
 
-		})(),
-		'tape': {
-			'options': {
-				'pretty': true,
-				'output': 'console'
-			},
-			'unit-server': {
-				'src': (/\/tape\//.test(distServerOutTest)
-					? [distServerOutTest]
-					: []
-				)
+					return files;
+
+				})()
 			}
-		},
-		'testling': {
-			'unit-browser': {
-				'src': (/\/tape\//.test(distBrowserOutTest)
-					? [distBrowserOutTest]
-					: []
-				)
-			}
-		},
-		'watch': {
-			'files': [],
-			'tasks': []
 		},
 		'compare_size': {
 			'options': {
-				'cache': './dist/.sizecache.json',
 				'compress': {
 					gz (fileContents) {
 						return gzip.zip(fileContents, {}).length;
 					}
 				}
 			},
-			'dist-browser': {
-				'src': ['./dist/**.js']
+			'build': {
+				'options': {
+					'cache': './build/.sizecache.json'
+				},
+				'src': buildNames.map(key => './build/dist/' + key + '.js')
+			},
+			'dist': {
+				'options': {
+					'cache': './dist/.sizecache.json'
+				},
+				'src': buildNames.map(key => './dist/' + key + '.js')
 			}
 		}
 	});
 
-	grunt.loadNpmTasks('grunt-compare-size');
-	grunt.loadNpmTasks('grunt-contrib-connect');
-	grunt.loadNpmTasks('grunt-contrib-requirejs');
-	grunt.loadNpmTasks('grunt-contrib-uglify');
-	grunt.loadNpmTasks('grunt-testling');
-	grunt.loadNpmTasks('grunt-browserify');
-	grunt.loadNpmTasks('grunt-tape');
+	matchdep.filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
-	grunt.registerTask('build', ['requirejs', 'browserify']);
-	grunt.registerTask('minify', ['uglify']);
-	grunt.registerTask('test', ['connect:test', 'testling:unit-browser', 'tape:unit-server']);
+	grunt.registerTask('init', [
+		'clean:builds',
+		'copy:build-src',
+		'copy:build-test'
+	]);
+	grunt.registerTask('bundle', [].concat(buildNames.map(
+		key => 'requirejs:bundle-dist-' + key
+	), [
+		'browserify:bundle-test-tape',
+		'compare_size:build'
+	]));
+	grunt.registerTask('test', [
+		'connect:test',
+		'tape:unit-server',
+		'testling:unit-browser'
+	]);
+	grunt.registerTask('distribute', [
+		'copy:dist',
+		'uglify:dist',
+		'compare_size:dist'
+	]);
 
 	grunt.registerTask('default', [
-		'build',
-		'minify',
-		'compare_size',
-		'test'
+		'init',
+		'bundle',
+		'test',
+		'distribute',
+		'watch'
 	]);
 
 };

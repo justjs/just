@@ -1,7 +1,7 @@
 var test = require('tape'),
 	eachProperty = require('../../src/lib/eachProperty');
 
-test('eachProperty', function (t) {
+test('lib/eachProperty.js', function (t) {
 
 	t.test('should iterate all the owned properties of an object', function (st) {
 
@@ -22,31 +22,38 @@ test('eachProperty', function (t) {
 
 	});
 
-	t.test('should iterate the non-owned properties of an object', function (st) {
+	t.test('should iterate the non-owned properties of an object', (function () {
 
-		var mainObject = Object.assign(function () {}, {
-			'prototype': Object.prototype
-		});
-		var strict = true;
-		var wasNonOwnedPropertyFound;
+		var myObject = {'a': 1};
 
-		eachProperty(mainObject, function (value, key, object) {
+		function TestObject () {}
+		TestObject.prototype = myObject;
 
-			st.is(this, st);
-			st.is(object, mainObject);
+		return function (st) {
 
-			if (!object.hasOwnProperty(key)) {
-				wasNonOwnedPropertyFound = true;
+			var mainObject = new TestObject();
+			var strict = true;
+			var someInheritedPropertyWasFound = false;
+
+			eachProperty(mainObject, function (value, key, object) {
+
+				st.is(this, st);
+				st.is(object, mainObject);
+
+				if (!object.hasOwnProperty(key)) {
+					someInheritedPropertyWasFound = true;
+				}
+
+			}, st, strict);
+
+			if (!someInheritedPropertyWasFound) {
+				return st.fail('No inherited properties were found.');
 			}
 
-		}, st, strict);
+			st.end();
 
-		if (!wasNonOwnedPropertyFound) {
-			return st.fail();
-		}
+		};
 
-		st.pass();
-
-	});
+	})());
 
 });

@@ -1,7 +1,7 @@
 var test = require('tape'),
 	getFunctionName = require('../../src/lib/getFunctionName');
 
-test('getFunctionName', function (t) {
+test('lib/getFunctionName.js', function (t) {
 
 	t.test('should throw if the given value is not a function', function (st) {
 		st.throws(getFunctionName('not a function'), TypeError);
