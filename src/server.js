@@ -1,9 +1,7 @@
-define('APR', function () {
+define(['./lib/core'], function (APR) {
 
 	'use strict';
 
-	return {
-		'version': '0.2.0'
-	};
+	return Object.assign(APR, {});
 	
 });

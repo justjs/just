@@ -22,7 +22,7 @@ define([
 	 * @param  {APR~eachProperty_fn} fn The function that will be called in each iteration.
 	 * @param  {*} thisArg `this` for `fn`.
 	 * @param  {boolean} [strict=false] false: iterate only the owned properties.
-	 *                                  true: iterate the prototype chain too.
+	 *                                  true: iterate the (enumerable) inherited properties too.
 	 * @return {!Object} The returned values.
 	 */
 	return function eachProperty (properties, fn, thisArg, strict) {
@@ -31,7 +31,7 @@ define([
 		var k;
 
 		for (k in properties) {
-			
+
 			if (strict || hasOwn(properties, k)) {
 				returnedValues[k] = fn.call(thisArg, properties[k], k, properties);
 			}

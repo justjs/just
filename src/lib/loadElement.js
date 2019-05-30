@@ -13,6 +13,7 @@ define([
 	 * @typedef {function} APR~load_handler
 	 * @this {!Element} The element that loads the url.
 	 * @param {?Element} loadedElement An identical element that has been loaded previously.
+	 * @param {String} url The given url to load.
 	 * @return {*} Some value.
 	 */
 	
@@ -32,14 +33,15 @@ define([
 	 * @function
 	 * @param  {APR~element_tag} tag A tag name.
 	 * @param  {string} url The url of the file.
-	 * @param  {APR~load_handler} [handler=function () { APR.head.appendChild(element); return this; }] If it's a function: it will be triggered (without appending the element),
+	 * @param  {APR~load_handler} [handler=DEFAULT_HANDLER] If it's a function: it will be triggered (without appending the element),
 	 *                                  otherwise: the element will be appended to {@link APR.head|head}.
 	 * @property {Object.<APR~element_tag, APR~load_srcLikeAttribute>} NON_SRC_ATTRIBUTES {@link APR~element_tag|Element-tags} that are known for not using 'src' to fetch an url.
+	 * @property {APR~load_handler} DEFAULT_HANDLER The handler that will be provided in case that no function is provided.
 	 * @example
 	 * 
-	 * load('link', '/css/index.css', function (loadedFile) {
+	 * loadElement('link', '/css/index.css', function (elementFound, url) {
 	 *
-	 *     if (loadedFile) {
+	 *     if (elementFound) {
 	 *         return;
 	 *     }
 	 *     
@@ -54,26 +56,12 @@ define([
 	 */
 	return Object.assign(function loadElement (tag, url, handler) {
 
-		var element, loadedFile, attribute;
-
-		attribute = loadElement.NON_SRC_ATTRIBUTES[tag] || 'src';
-		handler = defaults(handler, function (loadedFile) {
-			
-			if (!loadedFile) {
-				head.appendChild(this);
-			}
-
-			return this;
-
-		});
-		loadedFile = getElements(tag +'[' + attribute + '="' + url + '"], ' + tag + '[' + attribute + '="' + parseUrl(url).href + '"]')[0];
-
-		if (loadedFile) {
-			return handler.call(element, loadedFile);
-		}
-
-		element = document.createElement(tag);
-		element[attribute] = url;
+		var attribute = loadElement.NON_SRC_ATTRIBUTES[tag] || 'src';
+		var elementFound = getElements(tag +'[' + attribute + '="' + url + '"], ' + tag + '[' + attribute + '="' + parseUrl(url).href + '"]')[0] || null;
+		var element = document.createElement(tag);
+		var container;
+		
+		handler = defaults(handler, loadElement.DEFAULT_HANDLER);
 
 		if (tag === 'link') {
 			element.rel = 'stylesheet';
@@ -82,13 +70,24 @@ define([
 		if (parseUrl(url).origin !== window.location.origin && ['video', 'img', 'script'].indexOf(tag) >= 0) {
 			element.setAttribute('crossorigin', 'anonymous');
 		}
-
-		return handler.call(element, loadedFile);
+		
+		element[attribute] = url;
+		
+		return handler.call(element, elementFound, url);
 
 	}, {
 
 		'NON_SRC_ATTRIBUTES': {
 			'link': 'href'
+		},
+		'DEFAULT_HANDLER': function (elementFound) {
+
+			if (!elementFound) {
+				head.appendChild(this);
+			}
+
+			return this;
+
 		}
 
 	});

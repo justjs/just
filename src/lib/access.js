@@ -71,16 +71,24 @@ define([
 	return function access (object, path, handler, mutate) {
 
 		var propertyExists = true;
-		var baseObject = mutate ? object : Object.assign({}, object);
+		var baseObject = (mutate
+			? object
+			: Object.assign({}, object)
+		);
 		var currentObject = baseObject;
 		var lastKey;
 
 		path = defaults(path, [path]);
 		lastKey = path[path.length - 1];
 
-		path.slice(0, -1).map(function (key, i) {
+		path.slice(0, -1).forEach(function (key, i) {
 
-			currentObject = typeof currentObject[key] !== 'undefined' ? currentObject[key] : ((propertyExists = false), {});
+			if (typeof currentObject[key] === 'undefined') {
+				currentObject[key] = {};
+				propertyExists = false;
+			}
+
+			currentObject = currentObject[key];
 
 			if (currentObject !== null && !isKeyValueObject(currentObject)) {
 				throw new TypeError('The value of "' + key + '" is not a "key-value" object.');
@@ -88,7 +96,10 @@ define([
 
 		});
 
-		return handler ? handler.call(baseObject, currentObject, lastKey, propertyExists, path) : currentObject[lastKey];
+		return (handler
+			? handler.call(baseObject, currentObject, lastKey, propertyExists, path)
+			: currentObject[lastKey]
+		);
 
 	};
 

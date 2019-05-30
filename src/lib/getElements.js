@@ -1,7 +1,7 @@
 define(function () {
 		
 	'use strict';
-	
+
 	/**
 	 * Gets DOM Elements by a CSS Selector. Note: CSS3 `selector`s are not supported by ie8.
 	 * 
