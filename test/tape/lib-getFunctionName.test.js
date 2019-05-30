@@ -3,12 +3,19 @@ var test = require('tape'),
 
 test('lib/getFunctionName.js', function (t) {
 
-	t.test('should throw if the given value is not a function', function (st) {
-		st.throws(getFunctionName('not a function'), TypeError);
+	t.test('Should throw if the given value is not a function.',
+		function (st) {
+		
+		st.throws(function () {
+			getFunctionName('not a function');
+		}, TypeError);
+		
 		st.end();
+
 	});
 
-	t.test('should use the name property if it\'s available', function (st) {
+	t.test('Should use the name property if it\'s available.',
+		function (st) {
 		
 		var fn = function realName () {};
 		
@@ -19,7 +26,8 @@ test('lib/getFunctionName.js', function (t) {
 
 	});
 
-	t.test('should return an empty string if something fails', function (st) {
+	t.test('Should return an empty string if something fails.',
+		function (st) {
 
 		var fn = function () {};
 
@@ -30,6 +38,7 @@ test('lib/getFunctionName.js', function (t) {
 		};
 
 		st.is(getFunctionName(fn), '');
+		st.end();
 
 	});
 

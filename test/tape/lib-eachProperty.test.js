@@ -3,11 +3,13 @@ var test = require('tape'),
 
 test('lib/eachProperty.js', function (t) {
 
-	t.test('should iterate all the owned properties of an object', function (st) {
+	t.test('Should iterate all the owned properties of an object.',
+		function (st) {
 
 		var mainObject = {'a': 1, 'b': 2};
 		var strict = false;
-		var results = eachProperty(mainObject, function (value, key, object) {
+		var results = eachProperty(mainObject,
+			function (value, key, object) {
 
 			st.is(this, st);
 			st.is(object, mainObject);
@@ -22,7 +24,8 @@ test('lib/eachProperty.js', function (t) {
 
 	});
 
-	t.test('should iterate the non-owned properties of an object', (function () {
+	t.test('Should iterate the non-owned properties of an object.',
+		(function () {
 
 		var myObject = {'a': 1};
 
@@ -47,7 +50,8 @@ test('lib/eachProperty.js', function (t) {
 			}, st, strict);
 
 			if (!someInheritedPropertyWasFound) {
-				return st.fail('No inherited properties were found.');
+				return st.fail('No inherited properties were ' +
+					'found.');
 			}
 
 			st.end();

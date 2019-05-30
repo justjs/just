@@ -3,7 +3,7 @@ var test = require('tape'),
 
 test('lib/isTouchDevice.js', function (t) {
 
-	t.test('should check for touch support', function (st) {
+	t.test('Should check for touch support.', function (st) {
 
 		var isTouchSupported = isTouchDevice();
 
@@ -11,18 +11,6 @@ test('lib/isTouchDevice.js', function (t) {
 
 		st.end();
 		
-	});
-
-	t.test('should trigger a function if a touch event is fired', function (st) {
-
-		st.plan(1);
-
-		isTouchDevice(function (event) {
-			st.true(event instanceof Event);
-		});
-
-		document.createEvent('TouchEvent').initTouchEvent();
-
 	});
 
 });

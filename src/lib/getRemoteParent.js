@@ -10,6 +10,7 @@ define([
 	 * @typedef {function} APR~getRemoteParent_fn
 	 * @this {Node}
 	 * @param {!Number} deepLevel A counter that indicates how many elements have checked.
+	 * @param {Node} rootContainer The root container.
 	 * @return {boolean}
 	 */
 	/**
@@ -18,7 +19,7 @@ define([
 	 * 
 	 * @param  {Node} childNode Some child.
 	 * @param  {APR~getRemoteParent_fn} fn Some custom handler.
-	 * @param  {Node} [container=html] The farthest parent.  
+	 * @param  {Node} [rootContainer=html] The farthest parent.  
 	 * @param  {boolean} [includeChild=false] If true, it calls `fn` with `childNode` too.
 	 * @return {?Node} The current Node when `fn` returns true.
 	 * @example
@@ -26,35 +27,41 @@ define([
 	 *     return this.tagName === 'HTML';
 	 * }); // returns the html Element.
 	 */
-	return function getRemoteParent (childNode, fn, container, includeChild) {
+	return function getRemoteParent (childNode, fn, rootContainer, includeChild) {
 
-		var parentNode = null;
+		var currentNode = childNode;
 		var deepLevel = 0;
-
+		
 		if (typeof fn !== 'function') {
 			throw new TypeError(fn + ' is not a function.');
 		}
 
-		if (!(container instanceof Node)) {
-			container = html;
+		if (!(childNode instanceof Node)) {
+			throw new TypeError('The child isn\'t an instance of a Node.');
 		}
 
-		if (!childNode) {
-			return null;
+		if (!(rootContainer instanceof Node)) {
+			rootContainer = html;
 		}
 
-		if (includeChild && fn.call(childNode, deepLevel)) {
-			return childNode;
+		while (currentNode) {
+
+			if ((deepLevel > 0 || includeChild)
+				&& fn.call(currentNode, deepLevel, rootContainer)) {
+				return currentNode;
+			}
+
+			if (currentNode === rootContainer) {
+				return null;
+			}
+
+			currentNode = currentNode.parentNode;
+			deepLevel++;
+
 		}
 
-		while (
-			(parentNode = (parentNode || childNode).parentNode) &&
-			(parentNode !== container || (parentNode = null)) &&
-			!fn.call(parentNode, ++deepLevel)
-		);
-		
-		return parentNode;
-	
+		return null;
+
 	};
 
 });

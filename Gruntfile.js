@@ -4,13 +4,15 @@ const fs = require('fs');
 
 const amdclean = require('amdclean'),
 	gzip = require('gzip-js'),
-	matchdep = require('matchdep');
+	loadGruntTasks = require('load-grunt-tasks');
 
 const builds = require('./build/config');
 
 const buildNames = Object.keys(builds);
 
 module.exports = grunt => {
+
+	loadGruntTasks(grunt);
 
 	grunt.initConfig({
 		'pkg': grunt.file.readJSON('package.json'),
@@ -36,10 +38,7 @@ module.exports = grunt => {
 		},
 		'clean': {
 			'builds': {
-				'src': ['./build', '!./build/config.js']
-			},
-			'options': {
-				'no-write': true
+				'src': ['./build/*', '!./build/config.js']
 			}
 		},
 		'watch': {
@@ -48,17 +47,9 @@ module.exports = grunt => {
 				'tasks': ['copy']
 			}
 		},
-		'connect': {
-			'test': {
-				'options': {
-					'port': 8000,
-					'directory': './test/server/public'
-				}
-			}
-		},
 		'requirejs': (() => {
 
-			const mainOptions = {
+			const distOptions = {
 				'findNestedDependencies': true,
 				'optimize': 'none',
 				onModuleBundleComplete (data) {
@@ -97,39 +88,40 @@ module.exports = grunt => {
 			buildNames.forEach(key => {
 					
 				const build = builds[key];
-				const target = 'bundle-dist-' + key;
+				const {files} = build;
 
-				bundles[target] = {
-					'options': {
+				bundles['bundle-dist-' + key] = {
+					'options': Object.assign({
 						'baseUrl': './build',
-						'include': build.files,
+						'include': files,
 						'out': './build/dist/' + key + '.js'
-					}
+					}, distOptions)
 				};
 
 			});
 
-			return Object.assign({
-				'options': mainOptions
-			}, bundles);
+			return bundles;
 
 		})(),
 		'browserify': {
+			// Convert the amd modules into `require`s,
+			// and bundle them into one single file.
 			'bundle-test-tape': {
 				'options': {
-					'transform': ['deamdify'],
+					'transform': ['deamdify']
 				},
 				'files': (() => {
 
-					const files = {};
+					var files = {};
 
 					buildNames.forEach(key => {
 
 						const build = builds[key];
-						const destiny = './build/test/tape/' + key + '.build.test.js';
+						const path = './build/test/tape/';
+						const destiny = path + key + '.build.test.js';
 
 						files[destiny] = build.files.map(file => {
-							return './build/test/tape/' + file
+							return path + file
 								.replace(/\.?\/?src\//, '')
 								.replace(/\//g, '-')
 								.replace(/(\.js|$)/, '.test.js');
@@ -143,17 +135,32 @@ module.exports = grunt => {
 			}
 		},
 		'tape': {
-			'options': {
-				'pretty': true,
-				'output': 'console'
-			},
+			// TAP won't work with amd modules. Files need
+			// to be converted first in order to be tested. 
 			'unit-server': {
+				'options': {
+					'pretty': true,
+					'output': 'console'
+				},
 				'src': ['./build/test/tape/*server.build.test.js']
 			}
 		},
-		'testling': {
+		'karma': {
 			'unit-browser': {
-				'files': ['./build/test/tape/*browser.build.test.js']
+				'frameworks': ['tape'],
+				'files': [
+					{'src': "/build/test/server/public/*", 'included': false, 'served': true},
+					{'src': 'build/test/tape/*browser.build.test.js'}
+				],
+				'preprocessors': {
+					'./build/src/lib/**/*.js': 'coverage'
+				},
+				'browsers': ['jsdom'],
+				'singleRun': false,
+				'reporters': ['progress', 'coverage'],
+				'proxies': {
+					'/assets/': '/build/test/server/public/'
+				}
 			}
 		},
 		'uglify': {
@@ -171,13 +178,12 @@ module.exports = grunt => {
 				}
 			},
 			'dist': {
-				'cwd': './dist',
 				'files': (() => {
 
 					var files = {};
 
 					buildNames.map(key => {
-						files[key + '.min.js'] = [key + '.js'];
+						files['./dist/' + key + '.min.js'] = ['./build/dist/' + key + '.js'];
 					});
 
 					return files;
@@ -203,28 +209,24 @@ module.exports = grunt => {
 				'options': {
 					'cache': './dist/.sizecache.json'
 				},
-				'src': buildNames.map(key => './dist/' + key + '.js')
+				'src': ['./dist/*.js']
 			}
 		}
 	});
-
-	matchdep.filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
 	grunt.registerTask('init', [
 		'clean:builds',
 		'copy:build-src',
 		'copy:build-test'
 	]);
-	grunt.registerTask('bundle', [].concat(buildNames.map(
-		key => 'requirejs:bundle-dist-' + key
-	), [
-		'browserify:bundle-test-tape',
+	grunt.registerTask('bundle', [
+		'requirejs',
+		'browserify',
 		'compare_size:build'
-	]));
+	]);
 	grunt.registerTask('test', [
-		'connect:test',
 		'tape:unit-server',
-		'testling:unit-browser'
+		'karma:unit-browser'
 	]);
 	grunt.registerTask('distribute', [
 		'copy:dist',

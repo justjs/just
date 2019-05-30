@@ -3,7 +3,7 @@ var test = require('tape'),
 
 test('lib/createPrivateKey.js', function (t) {
 
-	t.test('should create a private store', function (st) {
+	t.test('Should create a private store.', function (st) {
 
 		var _ = createPrivateKey();
 		var public = new (function Public () {
@@ -18,7 +18,8 @@ test('lib/createPrivateKey.js', function (t) {
 
 	});
 
-	t.test('should extend the prototype chain of an object', (function () {
+	t.test('Should extend the prototype chain of an object.',
+		(function () {
 
 		function Public () {
 			this.a = 'public';
@@ -49,7 +50,8 @@ test('lib/createPrivateKey.js', function (t) {
 
 	})());
 
-	t.test('should create a store for each given key', function (st) {
+	t.test('Should create a store for each given key.',
+		function (st) {
 
 		var storeA = createPrivateKey(), keyA = {};
 		var storeB = createPrivateKey(), keyB = {};
@@ -67,7 +69,8 @@ test('lib/createPrivateKey.js', function (t) {
 
 	});
 
-	t.test('should throw if the given key is not an instance of an `Object`', function (st) {
+	t.test('Should throw if the given key is not an instance of ' +
+		'an Object.', function (st) {
 
 		var notAnInstanceOfObject = null;
 		var _ = createPrivateKey();

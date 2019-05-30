@@ -70,7 +70,10 @@ define(function () {
 		}
 
 		if (/^(\:)?\/\//.test(url)) {
-			url = (url = url.replace(/^\:/, '')) === '//' ? location.origin : location.protocol + url;
+			url = ((url = url.replace(/^\:/, '')) === '//'
+				? location.origin
+				: location.protocol + url
+			);
 		}
 		else if (/^(\?|\#|\/)/.test(url)) {
 			url = location.origin + url;
@@ -84,7 +87,7 @@ define(function () {
 		id = optionalParts[1] || '';
 
 		parts.search = optionalParts[0] || '';
-		parts.hash = id ? '#' + id : id;
+		parts.hash = (id ? '#' + id : id);
 
 		uriParts = (hrefParts[0] || '').split('://');
 
@@ -104,10 +107,13 @@ define(function () {
 		parts.host = hostParts[0] || '';
 		parts.pathname = hostParts[1] || '';
 
-		domainParts = parts.host.split(/:[0-9]+/);
+		domainParts = parts.host.split(/:([0-9]+)/);
 		
 		parts.hostname = domainParts[0] || '';
-		parts.port = typeof domainParts[1] === 'number' ? domainParts[1] : '';
+		parts.port = (typeof domainParts[1] !== 'undefined'
+			? domainParts[1]
+			: ''
+		);
 
 		parts.protocol = uriParts[0] + ':';
 		parts.origin = parts.protocol + '//' + parts.host;

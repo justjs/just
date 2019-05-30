@@ -1,42 +1,35 @@
-define(['./defaults'], function (defaults) {
+define([
+	'./flattenKeyValueObject',
+	'./flattenArray',
+	'./isKeyValueObject'
+], function (
+	flattenKeyValueObject,
+	flattenArray,
+	isKeyValueObject
+) {
+
 
 	/**
-	 * Merges an array of arrays.
-	 *
-	 * @param {Array} [value=[array]] The target.
-	 * @param {Number} [maxLevel=-1] Maximum deep-level to flatten.
-	 * @example
-	 * var arrayLike = {'0': [0, [1, [2]]]}; 
-	 * var array = Array.from(arrayLike);
-	 * var maxLevel = 1;
-	 *
-	 * flatten(array, maxLevel) // [0, 1, [2]]
-	 *
-	 * @return [!Array] The flatten array.
-	 */
-	return function flatten (value, maxLevel) {
+	 * A factory for the "flatten..." alternatives.
+	 * 
+	 * @throws {TypeError} If the value couldn't be flattened.
+	 */	
+	return function flatten (value) {
 
-		var array = defaults(value, [value]);
-		var flattenArray = [];
+		var args = Array.from(arguments);
+		var flattened;
 
-		if (typeof maxLevel !== 'number') {
-			maxLevel = -1;
+		if (isKeyValueObject(value)) {
+			flattened = flattenKeyValueObject.apply(this, args);
+		}
+		else if (Array.isArray(value)) {
+			flattened = flattenArray.apply(this, args);
+		}
+		else {
+			throw new TypeError(value + ' couldn\'t be flattened.');
 		}
 
-		if (maxLevel === 0) {
-			return array;
-		}
-
-		array.forEach(function (value) {
-
-			flattenArray = flattenArray.concat(Array.isArray(value) && maxLevel !== 0
-				? flatten(value, maxLevel - 1)
-				: value
-			);
-
-		});
-
-		return flattenArray;
+		return flattened;
 
 	};
 

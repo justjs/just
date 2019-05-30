@@ -3,7 +3,8 @@ var test = require('tape'),
 
 test('lib/hasOwn.js', function (t) {
 
-	t.test('should call the `Object` method instead of calling a property of an object', function (st) {
+	t.test('Should call the `Object` method instead of calling ' +
+		'a property of an object.', function (st) {
 	
 		st.isNot(hasOwn({
 

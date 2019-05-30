@@ -3,48 +3,58 @@ var test = require('tape'),
 
 test('lib/isWindow.js', function (t) {
 
-	t.test('should return `true` if the given value is a `window` object', function (st) {
+	t.test('Should return `true` if the given value is a `window` ' +
+		'object.', function (st) {
+		
 		st.true(isWindow(window));
 		st.end();
+
 	});
 
-	t.test('should return `true` if the given value looks like a `window` object', function (st) {
+	t.test('Should return `true` if the given value looks like ' +
+		'a `window` object.', function (st) {
 		
 		st.true(isWindow({
-			'setInterval': setInterval,
-			'document': document,
+			'setInterval': window.setInterval,
+			'document': window.document,
 			'some other key': true
-		}), 'since `setInterval` and `document` evaluate to true, the value is considered a `window` object');
+		}), 'Since `setInterval` and `document` evaluate to true, ' +
+			'the value is considered a `window` object.');
 
 		st.end();
 
 	});
 
-	t.test('should return `false` if the given value is not an object that looks like a `window` object', function (st) {
+	t.test('Should return `false` if the given value is not ' +
+		'an object that looks like a `window` object.',
+		function (st) {
+
+		var windowClone = Object.assign({}, window);
 		
 		st.false(isWindow({
 			'setInterval': false,
 			'document': true
-		}), '`setInterval` is `false`');
+		}), '`setInterval` is `false`.');
 		
 		st.false(isWindow({
 			'setInterval': true,
 			'document': false
-		}), '`document` is `false`');
+		}), '`document` is `false`.');
 		
 		st.false(isWindow({
 			'setInterval': '',
 			'document': document
-		}), '`setInterval` evaluates to `false`');
+		}), '`setInterval` evaluates to `false`.');
 
 		st.false(isWindow({
-			'setInterval': setInterval,
+			'setInterval': window.setInterval,
 			'document': null
-		}), '`document` evaluates to `false`');
+		}), '`document` evaluates to `false`.');
 
-		delete window.setInterval;
+		delete windowClone.setInterval;
 
-		st.false(isWindow(window), '`window` no longer has `setInterval` so is not a `window` object');
+		st.false(isWindow(windowClone), '`window` no longer has ' +
+			'`setInterval`, so is not a `window` object.');
 
 		st.end();
 

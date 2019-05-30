@@ -4,9 +4,13 @@ var test = require('tape'),
 
 test('lib/isJSONLikeObject.js', function (t) {
 
-	t.test('should be the same as lib/isKeyValueObject', function (st) {
+	t.test('Should be the same as lib/isKeyValueObject.',
+		function (st) {
+		
 		st.is(isJSONLikeObject, isKeyValueObject);
+		
 		st.end();
+
 	});
 
 });

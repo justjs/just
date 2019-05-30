@@ -26,7 +26,11 @@ module.exports = {
 			'parseUrl',
 			'setDynamicKeys',
 			'stringToJSON',
+			'fill',
 			'flatten',
+			'flattenArray',
+			'flattenJSONLikeObject',
+			'flattenKeyValueObject',
 			'APRDefine',
 			'APRLocalStorage'
 		].map(file => './src/lib/' + file + '.js'))
@@ -41,7 +45,11 @@ module.exports = {
 			'isEmptyObject',
 			'isJSONLikeObject',
 			'isKeyValueObject',
+			'fill',
 			'flatten',
+			'flattenArray',
+			'flattenJSONLikeObject',
+			'flattenKeyValueObject',
 			'stringToJSON'
 		].map(file => './src/lib/' + file + '.js'))
 	}

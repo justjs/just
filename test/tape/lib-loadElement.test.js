@@ -1,102 +1,141 @@
 var test = require('tape'),
-	loadElement = require('../../src/lib/loadElement');
+	loadElement = require('../../src/lib/loadElement'),
+	getElements = require('../../src/lib/getElements'),
+	parseUrl = require('../../src/lib/parseUrl');
 
-var parseUrl = require('../../src/lib/parseUrl').parseUrl,
-	head = document.getElementsByTagName('head')[0];
+var head = document.getElementsByTagName('head')[0];
+var assets = {
+	'css': '/assets/load-test.css',
+	'js': '/assets/load-test.js'
+};
 
 test('lib/loadElement.js', function (t) {
 
-	t.test('should load files and set some default properties to the element', function (st) {
+	t.test('Should load files and set some default properties to ' +
+		'the element.', function (st) {
 
-		var handler = function (loadedFile) {
+		var handler = function (loadedFile, url) {
 
 			var isCrossOrigin = parseUrl(url).origin !== window.location.origin;
 
-			st.false(loadedFile);
-			st.is(this instanceof Element);
-			st.is(typeof loadedFile, 'boolean');
-			st.is(this.href, window.location.origin + url);
+			st.true(this instanceof HTMLLinkElement,
+				'`this` is the current node.');
 
-			if (this.tagName === 'LINK') {
-				st.is(this.rel, 'stylesheet');
-			}
-			else if (isCrossOrigin && /^(script|img)$/i.test(this.tagName)) {
-				st.is(this.getAttribute('crossorigin'), 'anonymous');
-			}
+			st.true(loadedFile instanceof HTMLLinkElement ||
+				loadedFile === null, '`loadedFile` is a node that ' +
+				'loaded the same url.');
+		
+			st.is(this.rel, 'stylesheet', 'Some link attributes ' +
+					'were applied by default.');
+
+			st.is(this.getAttribute('crossorigin'), null,
+				'The url is not a cross origin resource, ' +
+				'so the attribute was not added.');
+
+			st.is(this.href, window.location.origin + url,
+				'The url was added to the src-like attribute.');
 
 			if (loadedFile) {
-				st.fail('The file was already loaded');
+				st.pass('The file was already added to the document.');
+				return this;
 			}
 
-			this.onload = function () {
+			this.onload = this.onerror = function () {
 				this.parentNode.removeChild(this);
-				st.pass();
+				st.pass('The element finished loading.');
 			};
 
-			this.onerror = function (error) {
-				st.fail(error);
-			};
+			head.appendChild(this);
+
+			return this;
 
 		};
-		var link = loadElement('link', '/load-test.css', handler);
-		var script = loadElement('script', '/load-test.js', handler);
+		var link = loadElement('link', assets['css'], handler);
 
-		st.true(link instanceof Element);
-		st.true(script instanceof Element);
+		st.true(link instanceof Node, 'The function returned the ' +
+			'current Node.');
 
 		st.end();
 
 	});
 
-	t.test('should avoid to load the same file multiple times', function (st) {
+	t.test('Should avoid to load the same file multiple times.',
+		function (st) {
 		
-		var url = '/load-test.css';
+		st.plan(1);
 
-		loadElement('link', url, function (isAlreadyLoaded) {
+		loadElement('link', assets['css'], function (
+			isAlreadyLoaded, url) {
 			
 			if (isAlreadyLoaded) {
-				st.pass();
-				return this
+				st.pass('A script was found with the same '+
+					'characteristics and didn\'t get loaded.');
+				return this;
 			}
 
-			this.onload = function () {
+			this.onload = this.onerror = function () {
 
 				loadElement('link', url, function (wasLoaded) {
 					
 					if (wasLoaded) {
-						st.pass();
+						st.pass('The file was found and didn\'t ' +
+							'get loaded.');
 					}
 					else {
-						st.fail('The file was already loaded');
+						st.fail('The file was already loaded.');
 					}
 
 				});
 
 			};
 
-			this.onerror = function (error) {
-				st.fail(error);
-			};
+			head.appendChild(this);
 
 		});
 
 	});
 
-	t.test('should append the element to the head if no function is given', function (st) {
+	t.test('Should append the element to the head if no function ' +
+		'is given.', function (st) {
 
-		var script = loadElement('script', '/load-test.js');
+		var script = (function (url) {
 
-		st.is(script.parentNode, head);
+			var scriptsWithTheSameUrl = getElements(
+				'script[src="' + url + '"]'
+			);
+
+			if (scriptsWithTheSameUrl) {
+				scriptsWithTheSameUrl.forEach(function (element) {
+					element.parentNode.removeChild(element);
+				});
+			}
+
+			return loadElement('script', url);
+
+		})(assets['js']);
+
+		st.is(script.parentNode, head, 'The element gets added ' +
+			'by default to the `head` of the document.');
+
 		st.end();
 
 	});
 
-	t.test('should be capable of extend the properties', function (st) {
+	t.test('Should be capable of extend the properties.',
+		function (st) {
 
-		loadElement.NON_SRC_ATTRIBUTES['object'] = 'data';
+		st.plan(1);
+
+		delete loadElement.NON_SRC_ATTRIBUTES['a'];
+
+		loadElement.NON_SRC_ATTRIBUTES['a'] = 'href';
 		
-		st.is(loadElement('object', '/load-test.swf').tagName, 'OBJECT');
-		st.end();
+		loadElement('a', '#', function () {
+			st.true(this instanceof HTMLAnchorElement,
+				'The property was modified and it works ' +
+				'as expected (even though "a" is not a "loadable" ' +
+				'element).');
+		});
 
 	});
 

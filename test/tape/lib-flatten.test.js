@@ -1,39 +1,30 @@
 var test = require('tape'),
-	flatten = require('../../src/lib/flatten');
+	flatten = require('../../src/lib/flatten'),
+	flattenArray = require('../../src/lib/flattenArray'),
+	flattenKeyValueObject = require('../../src/lib/flattenKeyValueObject');
 
 test('lib/flatten.js', function (t) {
 
-	t.test('should flatten an array', function (st) {
-		st.deepEquals(flatten([0, [1, [2]]]), [0, 1, 2]);
-		st.end();
-	});
+	t.test('Should generate a result depending on the type of the ' +
+		'given value.', function (st) {
 
-	t.test('should create an Array with a non-array object as a value and flatten it', function (st) {
-		
-		var arrayLike = {'0': ['a', ['b', ['c']]], 'length': 1};
-		var notAnArray = null;
+		var array = [0, [1, [2]]];
+		var keyValueObject = {'a': {'b': {'c': 'd'}}};
 
-		st.deepEquals(flatten(arrayLike), [arrayLike]);
-		
-		st.deepEquals(
-			flatten(Array.from(arrayLike)),
-			['a', 'b', 'c'],
-			'array-like values need to be converted manually'
-		);
-
-		st.deepEquals(flatten(notAnArray), [notAnArray]);
+		st.deepEquals(flatten(array), flattenArray(array));
+		st.deepEquals(flatten(keyValueObject), flattenKeyValueObject(keyValueObject));
 
 		st.end();
 
 	});
 
-	t.test('should flatten until a certain deep-level', function (st) {
+	t.test('Should throw if the solution is not implemented.',
+		function (st) {
 
-		var array = [0, [1, [2, [3]]]];
-
-		st.deepEquals(flatten(array, -1), [0, 1, 2, 3], 'negative values are ignored');
-		st.deepEquals(flatten(array, 2), [0, 1, 2, [3]], 'values are inclusive');
-		st.deepEquals(flatten(array, 0), array, '0 returns the same');
+		st.throws(function () {
+			flatten('string');
+		}, TypeError, '`flattenString` or something similar is not ' +
+			'implemented yet.');
 
 		st.end();
 
