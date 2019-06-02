@@ -8,60 +8,109 @@ const amdclean = require('amdclean'),
 
 const builds = require('./build/config');
 
-const buildNames = Object.keys(builds);
+const buildNames = Object.keys(builds).filter(
+	key => key !== 'options'
+);
+const buildOptions = builds['options'];
 
 module.exports = grunt => {
+
+	const forEachBuild = fn => {
+
+		var results = {};
+
+		buildNames.map(async key => {
+			fn.call(results, builds[key], key);
+		});
+
+		return results;
+
+	};
 
 	loadGruntTasks(grunt);
 
 	grunt.initConfig({
-		'pkg': grunt.file.readJSON('package.json'),
-		'copy': {
-			'build-src': {
-				'cwd': './src',
-				'src': ['**'],
-				'dest': './build/src',
-				'expand': true
-			},
-			'build-test': {
-				'cwd': './test',
-				'src': ['**'],
-				'dest': './build/test',
-				'expand': true
-			},
-			'dist': {
-				'cwd': './build/dist',
-				'src': ['**'],
-				'dest': './dist',
-				'expand': true
-			}
-		},
-		'clean': {
-			'builds': {
-				'src': ['./build/*', '!./build/config.js']
-			}
-		},
 		'watch': {
 			'src-copy': {
 				'files': ['./src/**'],
 				'tasks': ['copy']
 			}
 		},
+		'copy': {
+			'build-src': {
+				'cwd': './src',
+				'src': ['**'],
+				'dest': buildOptions.getPath('src'),
+				'expand': true
+			},
+			'build-test': {
+				'cwd': './test',
+				'src': ['**'],
+				'dest': buildOptions.getPath('test'),
+				'expand': true
+			},
+			'dist': {
+				'cwd': buildOptions.getPath('mutableProduction'),
+				'src': ['**'],
+				'dest': buildOptions.getPath('production'),
+				'expand': true
+			}
+		},
+		'clean': {
+			'builds': {
+				'src': [
+					buildOptions.getPath() + '/*',
+					'!' + buildOptions.getPath() + '/config.js'
+				]
+			}
+		},
+		// Builds ./src code.
 		'requirejs': (() => {
 
 			const distOptions = {
 				'findNestedDependencies': true,
 				'optimize': 'none',
+				'skipModuleInsertion': true,
+				'skipSemiColonInsertion': true,
+				onBuildRead (moduleName, path, contents) {
+					return buildOptions.replaceVars(contents);
+				},
 				onModuleBundleComplete (data) {
 					
-					const {'path': output} = data;
-
-					fs.writeFileSync(output, amdclean.clean({
-						'filePath': output,
-						'globalModules': ['APR'],
+					const {path} = data;
+					const content = amdclean.clean({
+						'filePath': path,
+						'wrap': {
+							// Adds a banner, and exports
+							// the bundle to AMD, node or `this`.
+							'start': buildOptions.banner +
+							';(function (root, factory) {\n' +
+							'	if (typeof define === "function" && define.amd) { define("APR", factory); }\n' +
+							'	else if (typeof exports === "object") { module.exports = factory(); }\n' +
+							'	else { root.APR = factory(); }\n' +
+							'}(this, function () {\n',
+							'end': '\n\treturn APR;\n}));'
+						},
+						'escodegen': {
+							// Some comments still being removed
+							// in version 2.7.0
+							'comment': true,
+							'format': {
+								'indent': {
+									'base': 1,
+									'style': '  ',
+									'adjustMultilineComment': true
+								}
+							}
+						},
+						// Removes the path and the extension
+						// from all the variables.
+						// src/lib/someModule_js -> someModule
 						prefixTransform (postNormalizedModuleName, preNormalizedModuleName) {
 							return preNormalizedModuleName.replace(/^.*\//, '').replace(/\.js$/, '');
 						},
+						// Merges all module's content into
+						// one variable (APR).
 						IIFEVariableNameTransform (moduleName, moduleID) {
 
 							const moduleKey = moduleID.replace(/^.*\//, '').replace(/\.js$/, '').replace(/^APR/, '');
@@ -75,32 +124,36 @@ module.exports = grunt => {
 								return moduleName;
 							}
 
-							return 'APR[\'' + moduleKey + '\'] = ' + moduleName;
+							if (/\W/.test(moduleKey)) {
+								return 'APR[\'' + moduleKey + '\'] = ' + moduleName;
+							}
+
+							return 'APR.' + moduleKey + ' = ' + moduleName;
 
 						}
-					}));
+					});
+
+					fs.writeFileSync(path, content);
 
 				}
 
 			};
-			var bundles = {};
 
-			buildNames.forEach(key => {
-					
-				const build = builds[key];
-				const {files} = build;
+			// Builds all the code into some mutable bundle.
+			return forEachBuild(function (build, name) {
+			
+				const out = buildOptions
+					.getPath('mutableProduction') + '/' + name + '.js';
 
-				bundles['bundle-dist-' + key] = {
+				this['bundle-dist-' + name] = {
 					'options': Object.assign({
-						'baseUrl': './build',
-						'include': files,
-						'out': './build/dist/' + key + '.js'
+						'baseUrl': buildOptions.getPath(),
+						'include': build.files,
+						'out': out
 					}, distOptions)
 				};
 
 			});
-
-			return bundles;
 
 		})(),
 		'browserify': {
@@ -110,28 +163,17 @@ module.exports = grunt => {
 				'options': {
 					'transform': ['deamdify']
 				},
-				'files': (() => {
+				'files': forEachBuild(function (build, name) {
+						
+					const path = buildOptions.getPath('test-tape');
+					const out = buildOptions
+						.getUnitTestFilename(path + '/' + name, 'build');
 
-					var files = {};
+					this[out] = build.files.map(
+						file => path + '/' + buildOptions.getUnitTestFilename(file)
+					);
 
-					buildNames.forEach(key => {
-
-						const build = builds[key];
-						const path = './build/test/tape/';
-						const destiny = path + key + '.build.test.js';
-
-						files[destiny] = build.files.map(file => {
-							return path + file
-								.replace(/\.?\/?src\//, '')
-								.replace(/\//g, '-')
-								.replace(/(\.js|$)/, '.test.js');
-						});
-
-					});
-
-					return files;
-
-				})()
+				})
 			}
 		},
 		'tape': {
@@ -142,24 +184,33 @@ module.exports = grunt => {
 					'pretty': true,
 					'output': 'console'
 				},
-				'src': ['./build/test/tape/*server.build.test.js']
+				'src': [
+					buildOptions.getPath('test-tape') +
+						'/*' + buildOptions.getUnitTestFilename('server', 'build')
+				]
 			}
 		},
 		'karma': {
 			'unit-browser': {
 				'frameworks': ['tape'],
 				'files': [
-					{'src': "/build/test/server/public/*", 'included': false, 'served': true},
-					{'src': 'build/test/tape/*browser.build.test.js'}
+					{
+						'src': buildOptions.getPath('test-server') + '/public/*',
+						'included': false,
+						'served': true
+					}, {
+						'src': buildOptions.getPath('test-tape') +
+							'/*' + buildOptions.getUnitTestFilename('browser', 'build')
+					}
 				],
 				'preprocessors': {
-					'./build/src/lib/**/*.js': 'coverage'
+					[buildOptions.getPath('src') + '/lib/**/*.js']: 'coverage'
 				},
 				'browsers': ['jsdom'],
 				'singleRun': false,
 				'reporters': ['progress', 'coverage'],
 				'proxies': {
-					'/assets/': '/build/test/server/public/'
+					'/assets/': buildOptions.getPath('test-server') + '/public/'
 				}
 			}
 		},
@@ -170,25 +221,24 @@ module.exports = grunt => {
 				'output': {
 					'ascii_only': true
 				},
-				'banner': '/*! <%= pkg.title %> - v<%= pkg.version %> - ' +
-					'(c) <%= pkg.author %> and contributors */',
+				'banner': buildOptions.banner,
 				'compress': {
 					'hoist_funs': false,
 					'loops': false
 				}
 			},
 			'dist': {
-				'files': (() => {
+				'files': forEachBuild(function (build, name) {
 
-					var files = {};
+					const productionPath = buildOptions.getPath('production');
+					const mutableProductionPath = buildOptions.getPath('mutableProduction');
+					const out = productionPath + '/' + name + '.min.js';
 
-					buildNames.map(key => {
-						files['./dist/' + key + '.min.js'] = ['./build/dist/' + key + '.js'];
-					});
+					this[out] = [
+						mutableProductionPath + '/' + name + '.js'
+					];
 
-					return files;
-
-				})()
+				})
 			}
 		},
 		'compare_size': {
@@ -201,15 +251,23 @@ module.exports = grunt => {
 			},
 			'build': {
 				'options': {
-					'cache': './build/.sizecache.json'
+					'cache': buildOptions.getPath() +
+						'/.sizecache.json'
 				},
-				'src': buildNames.map(key => './build/dist/' + key + '.js')
+				'src': buildNames.map(
+					name => buildOptions.getPath('mutableProduction') +
+						'/' + name + '.js'
+				)
 			},
 			'dist': {
 				'options': {
-					'cache': './dist/.sizecache.json'
+					'cache': buildOptions.getPath('production') +
+						'/.sizecache.json'
 				},
-				'src': ['./dist/*.js']
+				'src': buildNames.map(
+					name => buildOptions.getPath('production') +
+						'/' + name + '*.js'
+				)
 			}
 		}
 	});
@@ -238,8 +296,7 @@ module.exports = grunt => {
 		'init',
 		'bundle',
 		'test',
-		'distribute',
-		'watch'
+		'distribute'
 	]);
 
 };
