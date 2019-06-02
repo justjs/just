@@ -3,9 +3,9 @@
   "title": "APR",
   "version": "0.1.0",
   "description": "Heavily-used javascript helpers for APR's developments.",
-  "main": "./src/server.js",
+  "main": "./dist/server.js",
   "private": true,
-  "browser": "./src/browser.js",
+  "browser": "./dist/browser.js",
   "directories": {
     "test": "./test"
   },
