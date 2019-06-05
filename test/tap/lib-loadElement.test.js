@@ -14,12 +14,15 @@ test('lib/loadElement.js', {'autoend': true}, function (t) {
 
 			var isCrossOrigin = parseUrl(url).origin !== window.location.origin;
 
-			st.true(this instanceof HTMLLinkElement,
+			st.is(this instanceof HTMLLinkElement, true,
 				'`this` is the current node.');
 
-			st.true(loadedFile instanceof HTMLLinkElement ||
-				loadedFile === null, '`loadedFile` is a node that ' +
-				'loaded the same url.');
+			st.is(
+				loadedFile instanceof HTMLLinkElement ||
+				loadedFile === null,
+				true,
+				'`loadedFile` is a node that loaded the same url.'
+			);
 		
 			st.is(this.rel, 'stylesheet', 'Some link attributes ' +
 					'were applied by default.');
@@ -54,8 +57,8 @@ test('lib/loadElement.js', {'autoend': true}, function (t) {
 
 		st.plan(7);
 
-		st.true(link instanceof Node, 'The function returned the ' +
-			'current Node.');
+		st.is(link instanceof Node, true,
+			'The function returned the current Node.');
 
 	});
 

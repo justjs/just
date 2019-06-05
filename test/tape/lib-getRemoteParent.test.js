@@ -18,7 +18,7 @@ test('lib/getRemoteParent.js', function (t) {
 		var parent = getRemoteParent(child,
 			function (deepLevel, rootContainer) {
 
-			st.true(this instanceof Node,
+			st.is(this instanceof Node, true,
 				'`this` is always a Node.');
 			
 			st.is(expectedDeepLevels[this.tagName], deepLevel,

@@ -13,10 +13,10 @@ test('lib/access.js', {'autoend': true}, function (t) {
 		var result = access(baseObject, keys,
 			function (lastObject, lastKey, exists, path) {
 	
-			st.true(/^(a|b|c|d)$/.test(lastKey), '`lastKey` ' +
-				'is one of the deep keys found.');
+			st.is(/^(a|b|c|d)$/.test(lastKey), true, 
+				'`lastKey` is one of the deep keys found.');
 
-			st.true(exists, 'The property exists.');			
+			st.is(exists, true, 'The property exists.');			
 			
 			st.is(path, keys, '`path` includes the given `keys`.');
 
@@ -67,7 +67,7 @@ test('lib/access.js', {'autoend': true}, function (t) {
 			st.is(lastKey, 'c', 'The handler is called one time ' +
 				'(at the end).');
 
-			st.false(exists, 'Some property doesn\'t ' +
+			st.is(exists, false, 'Some property doesn\'t ' +
 				'exist.');
 
 			if (!exists) {

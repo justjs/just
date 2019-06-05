@@ -6,12 +6,12 @@ test('lib/isEmptyObject.js', {'autoend': true}, function (t) {
 	t.test('Should return `true` if it\'s an empty object.',
 		function (st) {
 
-		st.false(isEmptyObject({'a': 1}));
-		st.false(isEmptyObject(['a', 'b']));
+		st.is(isEmptyObject({'a': 1}), false);
+		st.is(isEmptyObject(['a', 'b']), false);
 
-		st.true(isEmptyObject({}));
-		st.true(isEmptyObject(null));
-		st.true(isEmptyObject(1), 'Values get converted into ' +
+		st.is(isEmptyObject({}), true);
+		st.is(isEmptyObject(null), true);
+		st.is(isEmptyObject(1), true, 'Values get converted into ' +
 			'objects using the Object constructor.');
 
 		st.end();

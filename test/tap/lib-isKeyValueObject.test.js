@@ -6,9 +6,9 @@ test('lib/isKeyValueObject.js', {'autoend': true}, function (t) {
 	t.test('Should return `true` if the given value is in a ' +
 		'"JSON format".', function (st) {
 
-		st.false(isKeyValueObject([1, 2]));
-		st.true(isKeyValueObject({'a': 1}));
-		st.false(isKeyValueObject("{'a':1}"));
+		st.is(isKeyValueObject([1, 2]), false);
+		st.is(isKeyValueObject({'a': 1}), true);
+		st.is(isKeyValueObject("{'a':1}"), false);
 
 		st.end();
 
@@ -19,7 +19,7 @@ test('lib/isKeyValueObject.js', {'autoend': true}, function (t) {
 		var reference = {};
 		reference.myself = reference;
 
-		st.true(isKeyValueObject(reference));
+		st.is(isKeyValueObject(reference), true);
 		st.end();
 
 	});
@@ -34,7 +34,7 @@ test('lib/isKeyValueObject.js', {'autoend': true}, function (t) {
 		object.cyclic = object;
 
 		st.doesNotThrow(function () {
-			st.true(isKeyValueObject(object));
+			st.is(isKeyValueObject(object), true);
 		});
 
 	});

@@ -15,15 +15,13 @@ const buildOptions = builds['options'];
 
 module.exports = grunt => {
 
-	const forEachBuild = fn => {
+	const forEachBuild = (fn, thisArg) => {
 
-		var results = {};
-
-		buildNames.map(async key => {
-			fn.call(results, builds[key], key);
+		const fnResults = buildNames.map(async key => {
+			return fn.call(thisArg, builds[key], key);
 		});
 
-		return results;
+		return thisArg || fnResults;
 
 	};
 
@@ -153,7 +151,7 @@ module.exports = grunt => {
 					}, distOptions)
 				};
 
-			});
+			}, {});
 
 		})(),
 		'browserify': {
@@ -173,7 +171,7 @@ module.exports = grunt => {
 						file => path + '/' + buildOptions.getUnitTestFilename(file)
 					);
 
-				})
+				}, {})
 			}
 		},
 		'tape': {
@@ -206,7 +204,7 @@ module.exports = grunt => {
 				'preprocessors': {
 					[buildOptions.getPath('src') + '/lib/**/*.js']: 'coverage'
 				},
-				'browsers': ['jsdom'],
+				'browsers': ['IE'],
 				'singleRun': false,
 				'reporters': ['progress', 'coverage'],
 				'proxies': {
@@ -238,7 +236,7 @@ module.exports = grunt => {
 						mutableProductionPath + '/' + name + '.js'
 					];
 
-				})
+				}, {})
 			}
 		},
 		'compare_size': {
