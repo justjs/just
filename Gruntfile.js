@@ -193,7 +193,7 @@ module.exports = grunt => {
 				'frameworks': ['tape'],
 				'files': [
 					{
-						'src': buildOptions.getPath('test-server') + '/public/*',
+						'src': buildOptions.getPath('test-server').replace('./', '') + '/public/*',
 						'included': false,
 						'served': true
 					}, {
@@ -208,7 +208,10 @@ module.exports = grunt => {
 				'singleRun': false,
 				'reporters': ['progress', 'coverage'],
 				'proxies': {
-					'/assets/': buildOptions.getPath('test-server') + '/public/'
+					'/assets/': buildOptions
+						.getPath('test-server')
+						.replace('./', '/base/') +
+						'/public/'
 				}
 			}
 		},

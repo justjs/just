@@ -35,7 +35,7 @@ test('lib/loadElement.js', function (t) {
 				'The url is not a cross origin resource, ' +
 				'so the attribute was not added.');
 
-			st.is(this.href, window.location.origin + url,
+			st.is(this.href, parseUrl(url).href,
 				'The url was added to the src-like attribute.');
 
 			if (loadedFile) {

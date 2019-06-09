@@ -28,7 +28,8 @@ define([
 	 */
 	
 	/**
-	 * Loads an external file.
+	 * Loads an external file if no other similar element is
+	 * found.
 	 *
 	 * @function
 	 * @param  {APR~element_tag} tag A tag name.
