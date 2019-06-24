@@ -189,7 +189,7 @@ module.exports = grunt => {
 			}
 		},
 		'karma': {
-			'unit-browser': {
+			'unit-browser': Object.assign({
 				'frameworks': ['tape'],
 				'files': [
 					{
@@ -197,15 +197,22 @@ module.exports = grunt => {
 						'included': false,
 						'served': true
 					}, {
-						'src': buildOptions.getPath('test-tape') +
-							'/*' + buildOptions.getUnitTestFilename('browser', 'build')
+						'src': builds['browser'].files.map(
+							file => buildOptions.getPath('test-tape') + '/' + buildOptions.getUnitTestFilename(file)
+						)
 					}
 				],
 				'preprocessors': {
-					[buildOptions.getPath('src') + '/lib/**/*.js']: 'coverage'
+					['./src/lib/**/*.js']: ['coverage'],
+					'./build/test/tape/**/*.test.js': ['webpack']
 				},
-				'browsers': ['IE'],
-				'singleRun': false,
+				'webpack': {
+					'mode': process.env.NODE_ENV || 'production',
+					'node': {
+						'fs': 'empty'
+					}
+				},
+				'browsers': ['jsdom'],
 				'reporters': ['progress', 'coverage'],
 				'proxies': {
 					'/assets/': buildOptions
@@ -213,7 +220,12 @@ module.exports = grunt => {
 						.replace('./', '/base/') +
 						'/public/'
 				}
-			}
+			}, process.env.NODE_ENV === 'development' ? {
+				'autoWatch': true,
+				'singleRun': false
+			} : {
+				'singleRun': true
+			})
 		},
 		'uglify': {
 			'options': {

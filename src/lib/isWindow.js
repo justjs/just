@@ -1,6 +1,4 @@
-define([
-	'./isKeyValueObject'
-], function (isKeyValueObject) {
+define(function () {
 
 	'use strict';
 
@@ -13,7 +11,7 @@ define([
 	return function isWindow (object) {
 		return !!(
 			(typeof window !== 'undefined' && object === window) ||
-			isKeyValueObject(object) &&
+			object instanceof Object &&
 			object.document &&
 			object.setInterval
 		);

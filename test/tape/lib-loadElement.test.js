@@ -1,9 +1,8 @@
 var test = require('tape'),
 	loadElement = require('../../src/lib/loadElement'),
-	getElements = require('../../src/lib/getElements'),
 	parseUrl = require('../../src/lib/parseUrl');
 
-var head = document.getElementsByTagName('head')[0];
+var head = document.head;
 var assets = {
 	'css': '/assets/load-test.css',
 	'js': '/assets/load-test.js'
@@ -14,7 +13,16 @@ test('lib/loadElement.js', function (t) {
 	t.test('Should load files and set some default properties to ' +
 		'the element.', function (st) {
 
-		var handler = function (loadedFile, url) {
+		var link = loadElement('link', assets['css'], function (e) {
+
+			st.is(this instanceof HTMLLinkElement, true);
+			st.is(e instanceof Event, true);
+			
+			this.parentNode.removeChild(this);
+			
+			st.pass('The element finished loading.');
+
+		}, function (loadedFile, url) {
 
 			var isCrossOrigin = parseUrl(url).origin !== window.location.origin;
 
@@ -43,17 +51,11 @@ test('lib/loadElement.js', function (t) {
 				return this;
 			}
 
-			this.onload = this.onerror = function () {
-				this.parentNode.removeChild(this);
-				st.pass('The element finished loading.');
-			};
-
 			head.appendChild(this);
 
 			return this;
 
-		};
-		var link = loadElement('link', assets['css'], handler);
+		});
 
 		st.is(link instanceof Node, true,
 			'The function returned the current Node.');
@@ -67,8 +69,21 @@ test('lib/loadElement.js', function (t) {
 		
 		st.plan(1);
 
-		loadElement('link', assets['css'], function (
-			isAlreadyLoaded, url) {
+		loadElement('link', assets['css'], function () {
+
+			loadElement('link', this.src, null, function (wasLoaded) {
+					
+				if (wasLoaded) {
+					st.pass('The file was found and didn\'t ' +
+						'get loaded.');
+				}
+				else {
+					st.fail('The file was already loaded.');
+				}
+
+			});
+
+		}, function (isAlreadyLoaded, url) {
 			
 			if (isAlreadyLoaded) {
 				st.pass('A script was found with the same '+
@@ -76,51 +91,48 @@ test('lib/loadElement.js', function (t) {
 				return this;
 			}
 
-			this.onload = this.onerror = function () {
-
-				loadElement('link', url, function (wasLoaded) {
-					
-					if (wasLoaded) {
-						st.pass('The file was found and didn\'t ' +
-							'get loaded.');
-					}
-					else {
-						st.fail('The file was already loaded.');
-					}
-
-				});
-
-			};
-
 			head.appendChild(this);
 
 		});
 
 	});
 
-	t.test('Should append the element to the head if no function ' +
-		'is given.', function (st) {
+	t.test('Should use the default function to append the element ' +
+		'if no function is given.', function (st) {
 
 		var script = (function (url) {
 
-			var scriptsWithTheSameUrl = getElements(
+			var scriptsWithTheSameUrl = document.querySelectorAll(
 				'script[src="' + url + '"]'
 			);
+			var originalHandler = Object.assign(function () {}, loadElement.defaultHandler);
 
 			if (scriptsWithTheSameUrl) {
-				scriptsWithTheSameUrl.forEach(function (element) {
+				[].forEach.call(scriptsWithTheSameUrl, function (element) {
 					element.parentNode.removeChild(element);
 				});
 			}
 
-			return loadElement('script', url);
+			loadElement.defaultHandler = function (elementFound,
+				loadedUrl) {
+				st.is(this instanceof HTMLScriptElement, true);
+				st.is(elementFound, null);
+				st.is(loadedUrl, url);
+				head.appendChild(this);
+			};
+
+			return loadElement('script', url, function () {
+				
+				loadElement.defaultHandler = originalHandler;
+				
+				st.pass(this.parentNode, head,
+					'The element was appended to the `head`');
+				
+				st.end();
+
+			}, null);
 
 		})(assets['js']);
-
-		st.is(script.parentNode, head, 'The element gets added ' +
-			'by default to the `head` of the document.');
-
-		st.end();
 
 	});
 
@@ -129,11 +141,11 @@ test('lib/loadElement.js', function (t) {
 
 		st.plan(1);
 
-		delete loadElement.NON_SRC_ATTRIBUTES['a'];
+		delete loadElement.nonSrcAttributes['a'];
 
-		loadElement.NON_SRC_ATTRIBUTES['a'] = 'href';
+		loadElement.nonSrcAttributes['a'] = 'href';
 		
-		loadElement('a', '#', function () {
+		loadElement('a', '#', null, function () {
 			st.is(this instanceof HTMLAnchorElement, true,
 				'The property was modified and it works ' +
 				'as expected (even though "a" is not a "loadable" ' +

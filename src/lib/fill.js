@@ -1,8 +1,14 @@
 define([
 	'./eachProperty',
-	'./isKeyValueObject',
+	'./check',
 	'./isEmptyObject'
-], function (eachProperty, isKeyValueObject, isEmptyObject) {
+], function (
+	eachProperty,
+	check,
+	isEmptyObject
+) {
+
+	'use strict';
 
 	/**
 	 * Fills a key-value object with `data`.
@@ -33,17 +39,14 @@ define([
 
 		var filled = {};
 
-		if (!isKeyValueObject(structure)) {
-			throw new TypeError(structure + ' must be a key-value object.');
-		}
+		check.throwable(structure, {});
 
-		if (typeof data === 'undefined' || typeof data === 'object' && isEmptyObject(data)) {
+		if (typeof data === 'undefined' || typeof data === 'object' &&
+			isEmptyObject(data)) {
 			return Object.assign({}, structure);
 		}
 
-		if (!isKeyValueObject(data)) {
-			throw new TypeError(data + ' must be null or a key-value object.');
-		}
+		check.throwable(data, null, {});
 
 		eachProperty(structure, function (currentValue, currentKey) {
 
@@ -58,7 +61,7 @@ define([
 				return;
 			}
 
-			if (Array.isArray(currentValue)) {
+			if (check(currentValue, [])) {
 				currentValue.push(newValue);
 				newValue = currentValue;
 			}

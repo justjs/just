@@ -1,4 +1,4 @@
-define(['./var/body'], function (body) {
+define(function () {
 	
 	'use strict';
 
@@ -10,13 +10,12 @@ define(['./var/body'], function (body) {
 	 */
 	return function isTouchDevice (fn) {
 
-		var isTouch = 'ontouchstart' in body
-			|| navigator.maxTouchPoints > 0
-			|| navigator.msMaxTouchPoints > 0
-			|| !!(window.DocumentTouch
-				&& document instanceof DocumentTouch);
-
-		return isTouch;
+		return !!('ontouchstart' in document.body ||
+			navigator.maxTouchPoints > 0 ||
+			navigator.msMaxTouchPoints > 0 ||
+			window.DocumentTouch &&
+			document instanceof DocumentTouch
+		);
 
 	};
 

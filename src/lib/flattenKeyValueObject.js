@@ -1,7 +1,12 @@
 define([
-	'./hasOwn',
-	'./isKeyValueObject'
-], function (hasOwn, isKeyValueObject) {
+	'./check',
+	'./eachProperty'
+], function (
+	check,
+	eachProperty
+) {
+
+	'use strict';
 
 	/**
 	 * Recursive function that flattens key-value objects.
@@ -10,31 +15,26 @@ define([
 	 * @param {String} [previousKey] The previous key.
 	 * @return {!Object<key, value>} The flattened object.
 	 */
-	function flatten (object, previousKey) {
+	function flattenObject (object, previousKey) {
 
 		var results = {};
-		var key, value, flattenedKey;
+		var separator = flattenKeyValueObject.separator;
 
-		for (key in object) {
-
-			if (!hasOwn(object, key)) {
-				continue;
-			}
+		eachProperty(object, function (value, key) {
 				
-			value = object[key];
-			flattenedKey = (previousKey
-				? previousKey + flattenKeyValueObject.PROPERTY_SEPARATOR + key
+			var flattenedKey = (previousKey
+				? previousKey + separator + key
 				: key
 			);
 
-			if (isKeyValueObject(value)) {
-				Object.assign(results, flatten(value, flattenedKey));
+			if (check(value, {})) {
+				Object.assign(results, flattenObject(value, flattenedKey));
 			}
 			else {
 				results[flattenedKey] = value;
 			}
 
-		}
+		});
 
 		return results;
 
@@ -44,23 +44,20 @@ define([
 	 * Flattens an object of objects.
 	 *
 	 * @param {Object<key, value>} object Some object.
-	 * @property {String} [PROPERTY_SEPARATOR='.'] The separator used to join the deep keys.
+	 * @property {String} [separator='.'] The separator used to join the deep keys.
 	 * @throws {TypeError} If `object` is not a key-value object.
 	 * @example
 	 * flattenKeyValueObject({'a': {'b': {'c': {'d': 1}}}}); // {'a.b.c.d' : 1}
 	 */
 	function flattenKeyValueObject (object) {
-
-		if (!isKeyValueObject(object)) {
-			throw new TypeError(object + ' must be a key-value object.');
-		}
-
-		return flatten(object);
-
+		return flattenObject(check.throwable(object, {}));
 	}
 
-	return Object.assign(flattenKeyValueObject, {
-		'PROPERTY_SEPARATOR': '.'
+	return Object.defineProperties(flattenKeyValueObject, {
+		'separator': {
+			'value': '.',
+			'writable': true
+		}
 	});
 
 });

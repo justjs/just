@@ -1,6 +1,4 @@
-define([
-	'./var/html'
-], function (html) {
+define(function () {
 	
 	'use strict';
 
@@ -25,7 +23,7 @@ define([
 	 * @example
 	 * APR.getRemoteParent(APR.body, function () {
 	 *     return this.tagName === 'HTML';
-	 * }); // returns the html Element.
+	 * }); // returns the <html> Element.
 	 */
 	return function getRemoteParent (childNode, fn, rootContainer, includeChild) {
 
@@ -41,7 +39,7 @@ define([
 		}
 
 		if (!(rootContainer instanceof Node)) {
-			rootContainer = html;
+			rootContainer = document.documentElement;
 		}
 
 		while (currentNode) {

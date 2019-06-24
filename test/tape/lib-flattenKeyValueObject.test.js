@@ -1,7 +1,7 @@
 var test = require('tape'),
 	flattenKeyValueObject = require('../../src/lib/flattenKeyValueObject');
 
-test('lib/flattenKeyValueObject', function (t) {
+test('lib/flattenKeyValueObject.js', function (t) {
 
 	t.test('Should flatten a key-value object.', function (st) {
 
@@ -30,7 +30,7 @@ test('lib/flattenKeyValueObject', function (t) {
 
 	t.test('Should change the default property separator.', function (st) {
 
-		flattenKeyValueObject.PROPERTY_SEPARATOR = '/';
+		flattenKeyValueObject.separator = '/';
 	
 		st.deepEquals(flattenKeyValueObject({
 			'a': {

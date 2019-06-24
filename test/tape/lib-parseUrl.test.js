@@ -5,24 +5,34 @@ var test = require('tape'),
 test('lib/parseUrl.js', function (t) {
 
 	var location = Object.assign({}, window.location);
+	var nonOriginParts = {
+		'pathname': '',
+		'search': '',
+		'hash': '',
+	};
 
 	t.test('Should parse absolute urls.', function (st) {
 
-		var url = 'http://localhost/';
-
-		st.deepEquals(parseUrl(url), {
-			'search': '',
-			'hash': '',
-			'username': '',
-			'password': '',
-			'host': 'localhost',
-			'pathname': '/',
-			'hostname': 'localhost',
-			'port': '',
+		var parts = {
 			'protocol': 'http:',
-			'origin': 'http://localhost',
-			'href': url
-		});
+			'username': 'user',
+			'password': 'pass',
+			'hostname': 'localhost',
+			'port': '8080',
+			'pathname': '/test',
+			'search': '?tape=1',
+			'hash': '#testing-with-tape'
+		};
+		var url = parts.protocol + '//' +
+			parts.username + ':' + parts.password + '@' +
+			parts.hostname + ':' + parts.port +
+			parts.pathname + parts.search + parts.hash;
+
+		parts.host = parts.hostname + ':' + parts.port;
+		parts.origin = parts.protocol + '//' + parts.host;
+		parts.href = url;
+
+		st.deepEquals(parseUrl(url), parts);
 
 		st.end();
 
@@ -84,22 +94,20 @@ test('lib/parseUrl.js', function (t) {
 		var parsedUrl;
 
 		parsedUrl = parseUrl('a');
-		st.deepEquals(parsedUrl, Object.assign(fill(parsedUrl, location), {
+		st.deepEquals(parsedUrl, Object.assign(fill(parsedUrl, location), nonOriginParts, {
 			'href': location.protocol + '//a',
 			'host': 'a',
 			'hostname': 'a',
-			'pathname': '',
 			'port': '',
 			'origin': location.protocol + '//a'
 		}), 'The url is treated as a host and filled with ' +
 			'`window.location` values.');
 
 		parsedUrl = parseUrl('a:b');
-		st.deepEquals(parsedUrl, Object.assign(fill(parsedUrl, location), {
+		st.deepEquals(parsedUrl, Object.assign(fill(parsedUrl, location), nonOriginParts, {
 			'href': location.protocol + '//a:b',
 			'host': 'a:b',
 			'hostname': 'a:b',
-			'pathname': '',
 			'port': '',
 			'origin': location.protocol + '//a:b'
 		}), 'The whole url is treated as a host since `b` is not ' + 
@@ -115,23 +123,20 @@ test('lib/parseUrl.js', function (t) {
 		var parsedUrl;
 
 		parsedUrl = parseUrl('//');
-		st.deepEquals(parsedUrl, Object.assign(fill(parsedUrl, location), {
-			'pathname': '',
-			'search': '',
-			'hash': '',
-			'username': '',
-			'password': '',
+		st.deepEquals(parsedUrl, Object.assign(fill(parsedUrl, location), nonOriginParts, {
+			'username': location.username || '',
+			'password': location.password || '',
 			'href': location.origin
 		}));
 
 		parsedUrl = parseUrl('blob://');
-		st.deepEquals(parsedUrl, Object.assign(fill(parsedUrl, location), {
-			'protocol' : 'blob:',
-			'href' : 'blob:' + location.origin,
-			'host' : '',
-			'hostname' : '',
-			'port' : '',
-			'pathname' : location.origin
+		st.deepEquals(parsedUrl, Object.assign(fill(parsedUrl, nonOriginParts, location), {
+			'protocol': 'blob:',
+			'href': 'blob:' + location.origin,
+			'host': '',
+			'hostname': '',
+			'port': '',
+			'pathname': location.origin
 		}));
 
 		st.end();

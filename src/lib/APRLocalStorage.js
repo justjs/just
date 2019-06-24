@@ -1,12 +1,12 @@
 define('APRLocalStorage', [
-	'./createPrivateKey',
 	'./defaults',
 	'./eachProperty',
-], function (createPrivateKey, defaults, eachProperty) {
+], function (
+	defaults,
+	eachProperty
+) {
 
 	'use strict';
-
-	var _ = createPrivateKey();
 
 	function APRLocalStorage (consent) {
 		
@@ -14,86 +14,100 @@ define('APRLocalStorage', [
 			return new APRLocalStorage(consent);
 		}
 
-		_(this).consent = !!consent;
+		Object.defineProperties(this, {
+			'consent': {
+				'value': !!consent
+			}
+		});
 
 	}
 
-	Object.assign(APRLocalStorage, {
-		'cookieExists': function (cookie) {
-			return new RegExp('; ' + cookie + '(=|;)').test('; ' + document.cookie + ';');
+	Object.defineProperties(APRLocalStorage, {
+		'cookieExists': {
+			'value': function (cookie) {
+				return new RegExp('; ' + cookie + '(=|;)').test('; ' + document.cookie + ';');
+			}
 		},
-		'getCookie': function (name) {
-			return ('; ' + document.cookie).split('; ' + name + '=').pop().split('; ').shift().split(/^=/).pop();
+		'getCookie': {
+			'value': function (name) {
+				return ('; ' + document.cookie).split('; ' + name + '=').pop().split('; ').shift().split(/^=/).pop();
+			}
 		}
 	});
 
-	Object.assign(APRLocalStorage.prototype, {
-		'setCookie': function (name, value, options, insecure) {
+	Object.defineProperties(APRLocalStorage.prototype, {
+		'setCookie': {
+			'value': function (name, value, options, insecure) {
 		
-			var cookie = '', set = function (k, v) {
-				cookie += k + (typeof v !== 'undefined' ? '=' + v : '') + '; ';
-			};
+				var cookie = '', set = function (k, v) {
+					cookie += k + (typeof v !== 'undefined' ? '=' + v : '') + '; ';
+				};
 
-			if (!_(this).consent) {
-				return false;
-			}
+				if (!this.consent) {
+					return false;
+				}
 
-			options = defaults(options, {});
+				options = defaults(options, {});
 
-			set(name, value);
+				set(name, value);
 
-			if (!insecure) {
-				set('secure');
-			}
+				if (!insecure) {
+					set('secure');
+				}
 
-			if (options['max-age']) {
-				options.expires = +new Date() + options['max-age'] * 1e3;
-			}
+				if (options['max-age']) {
+					options.expires = +new Date() + options['max-age'] * 1e3;
+				}
 
-			if (options.expires) {
-				options.expires = new Date(options.expires).toGMTString();
-			}
+				if (options.expires) {
+					options.expires = new Date(options.expires).toGMTString();
+				}
 
-			eachProperty(options, function (v, k) {
-				set(k, v);
-			});
+				eachProperty(options, function (v, k) {
+					set(k, v);
+				});
 
-			document.cookie = cookie;
+				document.cookie = cookie;
 
-			return true;
-
-		},
-		'removeCookie': function (name, options) {
-			
-			if (!APRLocalStorage.cookieExists(name)) {
 				return true;
+
 			}
-
-			return this.setCookie(name, '', Object.assign(defaults(options, {}), {
-				'max-age': 0
-			}));
-
 		},
-		'isStorageAvailable': function (type) {
-	
-			var _ = 'x';
-			var storage;
-
-			if (!_(this).consent) {
-				return false;
-			}
-
-			try {
-				storage = window[type];
-				storage.setItem(_, _);
-				storage.removeItem(_);
-			}
-			catch (exception) {
-				return false;
-			}
+		'removeCookie': {
+			'value': function (name, options) {
 			
-			return true;
+				if (!APRLocalStorage.cookieExists(name)) {
+					return true;
+				}
 
+				return this.setCookie(name, '', Object.assign(defaults(options, {}), {
+					'max-age': 0
+				}));
+
+			}
+		},
+		'isStorageAvailable': {
+			'value': function (type) {
+	
+				var _ = 'x';
+				var storage;
+
+				if (!this.consent) {
+					return false;
+				}
+
+				try {
+					storage = window[type];
+					storage.setItem(_, _);
+					storage.removeItem(_);
+				}
+				catch (exception) {
+					return false;
+				}
+				
+				return true;
+
+			}
 		}
 	});
 

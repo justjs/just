@@ -1,25 +1,38 @@
 define([
-	'./var/head',
 	'./getElements',
 	'./defaults',
 	'./parseUrl'
-], function (head, getElements, defaults, parseUrl) {
+], function (
+	getElements,
+	defaults,
+	parseUrl
+) {
 		
 	'use strict';
 
 	/**
 	 * A custom function to append the created element.
 	 * 
-	 * @typedef {function} APR~load_handler
+	 * @typedef {function} APR~loadElement_handler
 	 * @this {!Element} The element that loads the url.
-	 * @param {?Element} loadedElement An identical element that has been loaded previously.
+	 * @param {?Element} loadedElement
+	 *     An identical element that has been loaded previously.
 	 * @param {String} url The given url to load.
 	 * @return {*} Some value.
 	 */
 	
 	/**
+	 * A listener for the "onload" or "onerror" events.
+	 *
+	 * @typedef {function} APR~loadElement_listener
+	 * @this {!Element} The target element.
+	 * @param {!Event} The triggered event.
+	 *
+	 */
+
+	/**
 	 * An src-like attribute for an Element.
-	 * @typedef {string} APR~load_srcLikeAttribute
+	 * @typedef {string} APR~loadElement_srcLikeAttribute
 	 */
 
 	/**
@@ -34,60 +47,86 @@ define([
 	 * @function
 	 * @param  {APR~element_tag} tag A tag name.
 	 * @param  {string} url The url of the file.
-	 * @param  {APR~load_handler} [handler=DEFAULT_HANDLER] If it's a function: it will be triggered (without appending the element),
-	 *                                  otherwise: the element will be appended to {@link APR.head|head}.
-	 * @property {Object.<APR~element_tag, APR~load_srcLikeAttribute>} NON_SRC_ATTRIBUTES {@link APR~element_tag|Element-tags} that are known for not using 'src' to fetch an url.
-	 * @property {APR~load_handler} DEFAULT_HANDLER The handler that will be provided in case that no function is provided.
-	 * @example
-	 * 
-	 * loadElement('link', '/css/index.css', function (elementFound, url) {
+	 * @param  {APR~loadElement_handler} [handler=defaultHandler]
+	 *     If it's a function: it will be triggered
+	 *     (without appending the element),
+	 *     otherwise: the element will be appended to
+	 *     {@link APR.head|head}.
+	 * @param  {APR~loadElement_listener} [listener]
+	 *     A function to trigger after the element is appended.
+	 * @property {Object.<
+	 *     APR~element_tag,
+	 *     APR~loadElement_srcLikeAttribute
+	 * >} nonSrcAttributes {@link APR~element_tag|Element-tags}
+	 *     that are known for not using 'src' to fetch an url.
+	 * @property {APR~loadElement_handler} defaultHandler
+	 *     The handler that will be provided in case that no
+	 *     function is provided.
 	 *
-	 *     if (elementFound) {
-	 *         return;
-	 *     }
-	 *     
-	 *     this.onload = function () {};
-	 *     this.onerror = function () {};
-	 *     
-	 *     APR.head.appendChild(this);
-	 *
-	 * });
-	 *
-	 * @return {*} The return of the {@link APR~load_handler|handler}.
+	 * @return {*} The return of the {@link APR~loadElement_handler|handler}.
 	 */
-	return Object.assign(function loadElement (tag, url, handler) {
+	return Object.defineProperties(function loadElement (tag, url,
+		listener, handler) {
 
-		var attribute = loadElement.NON_SRC_ATTRIBUTES[tag] || 'src';
-		var elementFound = getElements(tag +'[' + attribute + '="' + url + '"], ' + tag + '[' + attribute + '="' + parseUrl(url).href + '"]')[0] || null;
+		var attribute = loadElement.nonSrcAttributes[tag] || 'src';
 		var element = document.createElement(tag);
-		var container;
-		
-		handler = defaults(handler, loadElement.DEFAULT_HANDLER);
+		var parsedUrl = parseUrl(url);
+		var selectors = [
+			tag +'[' + attribute + '="' + url + '"]',
+			tag + '[' + attribute + '="' + parsedUrl.href + '"]'
+		];
+		var elementFound = getElements(selectors.join(','))[0] || null;
+		var intercept = defaults(handler, loadElement.defaultHandler);
+		var container, isLoaded;
 
 		if (tag === 'link') {
 			element.rel = 'stylesheet';
 		}
 	
-		if (parseUrl(url).origin !== window.location.origin && ['video', 'img', 'script'].indexOf(tag) >= 0) {
+		if (parsedUrl.origin !== window.location.origin &&
+			['video', 'img', 'script'].indexOf(tag) >= 0) {
+			
 			element.setAttribute('crossorigin', 'anonymous');
+
+		}
+
+		if (typeof listener === 'function') {
+
+			element.onload = element.onerror = function (e) {
+
+				this.onload = this.onerror = null;
+
+				return listener.call(this, e);
+
+			};
+
 		}
 		
 		element[attribute] = url;
 		
-		return handler.call(element, elementFound, url);
+		return intercept.call(element, elementFound, url);
 
 	}, {
+		'nonSrcAttributes': {
 
-		'NON_SRC_ATTRIBUTES': {
-			'link': 'href'
+			'value': {
+				'link': 'href'
+			},
+			'writable': true
+
 		},
-		'DEFAULT_HANDLER': function (elementFound) {
+		'defaultHandler': {
 
-			if (!elementFound) {
-				head.appendChild(this);
-			}
+			'value': function (elementFound, url) {
 
-			return this;
+				if (!elementFound) {
+					document.head.appendChild(this);
+				}
+
+				return this;
+
+			},
+			'writable': true
 
 		}
 

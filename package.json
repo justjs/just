@@ -46,10 +46,14 @@
     "jsdom": "^15.1.1",
     "karma": "^4.1.0",
     "karma-coverage": "^1.1.2",
+    "karma-firefox-launcher": "^1.1.0",
     "karma-ie-launcher": "^1.0.0",
     "karma-jsdom-launcher": "^7.1.0",
     "karma-tape": "0.0.1",
+    "karma-webpack": "^4.0.2",
     "load-grunt-tasks": "^5.0.0",
-    "tape": "^4.10.2"
-  }
+    "tape": "^4.10.2",
+    "webpack": "^4.33.0"
+  },
+  "dependencies": {}
 }

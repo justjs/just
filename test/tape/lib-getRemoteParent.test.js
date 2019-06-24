@@ -1,8 +1,8 @@
 var test = require('tape'),
 	getRemoteParent = require('../../src/lib/getRemoteParent');
 
-var html = document.getElementsByTagName('html')[0],
-	body = document.getElementsByTagName('body')[0];
+var html = document.documentElement,
+	body = document.body;
 
 test('lib/getRemoteParent.js', function (t) {
 

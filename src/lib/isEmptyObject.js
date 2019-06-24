@@ -1,6 +1,4 @@
-define([
-	'./hasOwn'
-], function (hasOwn) {
+define(function () {
 	
 	'use strict';
 
@@ -16,9 +14,11 @@ define([
 		var k;
 
 		for (k in obj) {
-			if (hasOwn(obj, k)) {
+			
+			if (({}).hasOwnProperty.call(obj, k)) {
 				return false;
 			}
+
 		}
 
 		return true;

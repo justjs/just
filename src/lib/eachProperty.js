@@ -1,45 +1,73 @@
-define([
-	'./hasOwn'
-], function (hasOwn) {
+define(['./defaults'], function (defaults) {
 	
 	'use strict';
 
 	/**
-	 * A function that will be called in each iteration.
-	 * 
-	 * @typedef {function} APR~eachProperty_fn
-	 * @this {*} `thisArg` of {@link APR.eachProperty}.
-	 * @param {*} value The value of the current `key` in `object`.
-	 * @param {string} key The current key of `object`.
-	 * @param {!Object} object The object that is being iterated.
-	 * @return {*} Some value.
+	 * @typedef {!Object} APR~eachProperty_options
+	 * @property {boolean} [addNonOwned=false] Include non-owned properties
+	 *     false: iterate only the owned properties.
+	 *     true: iterate the (enumerable) inherited properties too.
+	 * @property {APR~each_fn~store} [store=null] Some object.
 	 */
 	
 	/**
-	 * Iterates the properties of a JSON-like object.
+	 * Iterates over a key-value object, calls a function on
+	 * each iteration and if truthy value is returned, the loop
+	 * will stop.
 	 * 
-	 * @param  {!Object}  properties A JSON-like object to iterate.
-	 * @param  {APR~eachProperty_fn} fn The function that will be called in each iteration.
-	 * @param  {*} thisArg `this` for `fn`.
-	 * @param  {boolean} [strict=false] false: iterate only the owned properties.
-	 *                                  true: iterate the (enumerable) inherited properties too.
-	 * @return {!Object} The returned values.
+	 * @param  {Object} [object=Object(object)] Some value.
+	 * @param  {APR~eachProperty_fn} fn The function that will be
+	 *     called on each iteration.
+	 * @param  {*} [thisArg] `this` for `fn`.
+	 * @param  {APR~eachProperty_options} [
+	 *     opts=APR~eachProperty.DEFAULT_OPTIONS
+	 * ] Some options.
+	 * @property {APR~eachProperty_options} DEFAULT_OPTIONS
+	 * @throws TypeError If `fn` is not a function.
+	 * @return {APR~eachProperty~store} The stored values.
 	 */
-	return function eachProperty (properties, fn, thisArg, strict) {
+	return Object.defineProperties(function eachProperty (object,
+		fn, thisArg, opts) {
 
-		var returnedValues = {};
+		var properties = Object(object);
+		var options = defaults(opts, eachProperty.DEFAULT_OPTIONS, {
+			'checkDeepLooks': false
+		});
+		var store = options.store;
+		var terminate = false;
 		var k;
+
+		if (typeof fn !== 'function') {
+			throw new TypeError(fn + ' is not a function.');
+		}
 
 		for (k in properties) {
 
-			if (strict || hasOwn(properties, k)) {
-				returnedValues[k] = fn.call(thisArg, properties[k], k, properties);
+			if (terminate) {
+				break;
+			}
+
+			if (options.addNonOwned ||
+				({}).hasOwnProperty.call(properties, k)) {
+				
+				terminate = fn.call(thisArg, properties[k], k,
+					properties, store);
+
 			}
 
 		}
 
-		return returnedValues;
+		return store;
 
-	};
+	}, {
+		'DEFAULT_OPTIONS': {
+			'get': function () {
+				return {
+					'addNonOwned': false,
+					'store': {}
+				};
+			}
+		}
+	});
 
 });

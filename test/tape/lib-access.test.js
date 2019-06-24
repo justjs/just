@@ -9,7 +9,6 @@ test('lib/access.js', function (t) {
 		var expectedValue = 'expected';
 		var baseObject = {'a': {'b': {'c': {'d': expectedValue}}}};
 		var keys = ['a', 'b', 'c', 'd'];
-		var mutate = false;
 		var result = access(baseObject, keys,
 			function (lastObject, lastKey, exists, path) {
 	
@@ -25,25 +24,43 @@ test('lib/access.js', function (t) {
 				: null
 			);
 
-		}, false);
+		}, {'mutate': false});
 
-		st.is(result, expectedValue, 'The function accessed ' +
+		st.is(result, expectedValue, 'The function accessed to ' +
 			'a deep property and returned his value.');
 
 		st.end();
 
 	});
 
-	t.test('Should throw if some property doesn\'t hold a key-' +
-		'value object as a value and you try to access to it.',
-		function (st) {
-		
-		st.throws(function () {
-			access({'a': 1}, ['a', 'b', 'c']);
-		}, TypeError, 'The object contains a property ("a") that ' +
-			'doesn\'t have a key-value object as a value (1).');
+	t.test('Should return the accessed value if no handler ' +
+		'is given.', function (st) {
+
+		var expectedValue = 'expected';
+		var object = {'a': {'b': expectedValue}};
+		var keys = ['a', 'b'];
+
+		st.is(access(object, keys), expectedValue, 'The last ' +
+			'property value was returned.');
 
 		st.end();
+
+	});
+
+	t.test('Should throw (or not) if some property doesn\'t hold ' +
+		'an object as a value.', function (st) {
+		
+		st.plan(2);
+
+		st.throws(function () {
+			access({'a': 1}, ['a', 'b', 'c'], null, {'override': false});
+		}, TypeError, 'The object contains a property ("a") that ' +
+			'doesn\'t have an object as a value (1).');
+
+		st.doesNotThrow(function () {
+			access({'a': 1}, ['a', 'b', 'c'], null, {'override': true});
+		}, TypeError, 'The property ("a") was overriden by an ' +
+			'empty object.');
 
 	});
 
@@ -54,7 +71,6 @@ test('lib/access.js', function (t) {
 			'prototype': Function.prototype
 		});
 		var keys = ['a', 'b', 'c'];
-		var mutate = false;
 		var newObject = access(object, keys,
 			function (lastObject, lastKey, exists, path) {
 
@@ -76,9 +92,9 @@ test('lib/access.js', function (t) {
 
 			return this;
 
-		}, mutate);
+		}, {'mutate': false});
 
-		st.deepEquals(newObject, Object.assign(object, {
+		st.deepEquals(newObject, Object.assign({}, object, {
 			'a': {'b': {'c': 3}}
 		}), 'The result contains the new keys.');
 
@@ -88,7 +104,6 @@ test('lib/access.js', function (t) {
 
 	t.test('Should modify the base object.', function (st) {
 
-		var mutate = true;
 		var object = {'a': {'b': false}, 'b': {'b': false}};
 		var keys = 'a.b'.split('.');
 		var result = access(object, keys,
@@ -98,27 +113,13 @@ test('lib/access.js', function (t) {
 		
 			return this;
 		
-		}, mutate);
+		}, {'mutate': true});
 
 		st.deepEquals(object, {'a': {'b': true}, 'b': {'b': false}},
 			'The base object was modified since `mutate` ' +
-			'was a truthy value.');
+			'was `true`.');
 
 		st.is(result, object, 'It used the same object.');
-
-		st.end();
-
-	});
-
-	t.test('Should return the accessed value if no handler ' +
-		'is given.', function (st) {
-
-		var expectedValue = 'expected';
-		var object = {'a': {'b': expectedValue}};
-		var keys = ['a', 'b'];
-
-		st.is(access(object, keys), expectedValue, 'The last ' +
-			'property value was returned.');
 
 		st.end();
 
