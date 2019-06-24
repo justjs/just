@@ -89,6 +89,7 @@ module.exports = grunt => {
 							'}(this, function () {\n',
 							'end': '\n\treturn APR;\n}));'
 						},
+						'aggressiveOptimizations': true,
 						'escodegen': {
 							// Some comments still being removed
 							// in version 2.7.0
@@ -106,28 +107,6 @@ module.exports = grunt => {
 						// src/lib/someModule_js -> someModule
 						prefixTransform (postNormalizedModuleName, preNormalizedModuleName) {
 							return preNormalizedModuleName.replace(/^.*\//, '').replace(/\.js$/, '');
-						},
-						// Merges all module's content into
-						// one variable (APR).
-						IIFEVariableNameTransform (moduleName, moduleID) {
-
-							const moduleKey = moduleID.replace(/^.*\//, '').replace(/\.js$/, '').replace(/^APR/, '');
-							const reservedKeys = buildNames.concat(['polyfills', 'core', '']);
-
-							if (/^APR/.test(moduleName) && /\//.test(moduleID)) {
-								return moduleName;
-							}
-
-							if (reservedKeys.indexOf(moduleKey) >= 0) {
-								return moduleName;
-							}
-
-							if (/\W/.test(moduleKey)) {
-								return 'APR[\'' + moduleKey + '\'] = ' + moduleName;
-							}
-
-							return 'APR.' + moduleKey + ' = ' + moduleName;
-
 						}
 					});
 

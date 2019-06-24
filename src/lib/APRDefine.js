@@ -1,4 +1,5 @@
 define('APRDefine', [
+	'./core',
 	'./access',
 	'./eachProperty',
 	'./loadElement',
@@ -6,6 +7,7 @@ define('APRDefine', [
 	'./stringToJSON',
 	'./check'
 ], function (
+	APR,
 	access,
 	eachProperty,
 	loadElement,
@@ -47,7 +49,7 @@ define('APRDefine', [
 	}
 
 	function getModule (id) {
-		return modules.defined[id] || access(root, id.split(APRDefine.idSeparator));
+		return modules.defined[id] || access(root, id.split(APR.Define.idSeparator));
 	}
 
 	function callModule (someModule) {
@@ -112,14 +114,14 @@ define('APRDefine', [
 		});
 
 		if (nonDefinedModules.length) {
-			return APRDefine.errorHandler(
-				APRDefine.ERROR_NON_DEFINED_MODULES,
+			return APR.Define.errorHandler(
+				APR.Define.ERROR_NON_DEFINED_MODULES,
 				'The following modules weren\'t defined: ' + nonDefinedModules
 			);
 		}
 		else {
-			return APRDefine.errorHandler(
-				APRDefine.ERROR_NON_LOADED_MODULES,
+			return APR.Define.errorHandler(
+				APR.Define.ERROR_NON_LOADED_MODULES,
 				'Something went wrong. The following modules ' +
 				'weren\'t loaded: ' + calledModuleIDs
 			);
@@ -129,7 +131,8 @@ define('APRDefine', [
 
 	}
 
-	function APRDefine (id, dependencies, handler) {
+	return APR.setModule('Define', function APRDefine (id,
+		dependencies, handler) {
 
 		if (!(this instanceof APRDefine)) {
 			return new APRDefine(id, dependencies, handler);
@@ -174,9 +177,7 @@ define('APRDefine', [
 		
 		updateModules();
 
-	}
-
-	Object.defineProperties(APRDefine, {
+	}, /** @lends APR.Define */{
 		'ERROR_LOADING_URL': {
 			'value': 'Bad url'
 		},
@@ -209,8 +210,8 @@ define('APRDefine', [
 					loadElement('script', url, function (e) {
 
 						if (e.type === 'error') {
-							return APRDefine.errorHandler(
-								APRDefine.ERROR_LOADING_URL,
+							return APR.Define.errorHandler(
+								APR.Define.ERROR_LOADING_URL,
 								'Error loading the following url: ' + url
 							);
 						}
@@ -253,20 +254,18 @@ define('APRDefine', [
 		'findScriptsToDefine': {
 			'value': function () {
 			
-				getElements('*[' + APRDefine.attributeName + ']').forEach(function (element) {
+				getElements('*[' + APR.Define.attributeName + ']').forEach(function (element) {
 
-					var url = stringToJSON((element.getAttribute(APRDefine.attributeName) || '').replace(/\[([^\]]+)\]/ig, function (_, attributeName) {
+					var url = stringToJSON((element.getAttribute(APR.Define.attributeName) || '').replace(/\[([^\]]+)\]/ig, function (_, attributeName) {
 						return element.getAttribute(attributeName);
 					}));
 
-					APRDefine.load(url);
+					APR.Define.load(url);
 
 				});
 
 			}
 		}
 	});
-
-	return APRDefine;
 
 });

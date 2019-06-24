@@ -1,4 +1,4 @@
-define(['./check'], function (check) {
+define(['./core', './check'], function (APR, check) {
 
 	'use strict';
 
@@ -7,9 +7,11 @@ define(['./check'], function (check) {
 	 *
 	 * @param [Array] array An array containing sub-arrays
 	 *     with key-value pairs: [[k, v], ...].
+	 *
 	 * @return {!Object<key, value>}
 	 */
-	return function toKeyValueObject (array) {
+	return APR.setFn('toKeyValueObject',
+		function toKeyValueObject (array) {
 
 		var keyValueObject = {};
 
@@ -25,6 +27,6 @@ define(['./check'], function (check) {
 
 		return keyValueObject;
 
-	};
+	});
 
 });

@@ -8,7 +8,7 @@ test('lib/inheritFrom.js', function (t) {
 		function Animal () {}
 		function Dog () {}
 		
-		st.is(inheritFrom(Animal, Dog), void 0);
+		st.is(inheritFrom(Animal, Dog), Animal);
 		st.is(new Dog() instanceof Animal, true);
 		st.end();
 

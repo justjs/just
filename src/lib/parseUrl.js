@@ -1,4 +1,4 @@
-define(function () {
+define(['./core'], function (APR) {
 
 	'use strict';
 
@@ -46,7 +46,7 @@ define(function () {
 	 * 
 	 * @return {APR~urlParts} 
 	 */
-	return function parseUrl (url) {
+	return APR.setFn('parseUrl', function parseUrl (url) {
 		
 		var parts = {}, optionalParts, hrefParts, args, id, uriParts, domainParts, hostParts, userParts, passwordParts;
 		var location = Object.assign({}, window.location);
@@ -125,6 +125,6 @@ define(function () {
 
 		return parts;
 
-	};
+	});
 
 });

@@ -1,14 +1,17 @@
 define('APRLocalStorage', [
+	'./core',
 	'./defaults',
 	'./eachProperty',
 ], function (
+	APR,
 	defaults,
 	eachProperty
 ) {
 
 	'use strict';
 
-	function APRLocalStorage (consent) {
+	return APR.setModule('LocalStorage', function APRLocalStorage (
+		consent) {
 		
 		if (!(this instanceof APRLocalStorage)) {
 			return new APRLocalStorage(consent);
@@ -20,9 +23,7 @@ define('APRLocalStorage', [
 			}
 		});
 
-	}
-
-	Object.defineProperties(APRLocalStorage, {
+	}, /** @lends APR.LocalStorage */{
 		'cookieExists': {
 			'value': function (cookie) {
 				return new RegExp('; ' + cookie + '(=|;)').test('; ' + document.cookie + ';');
@@ -33,9 +34,7 @@ define('APRLocalStorage', [
 				return ('; ' + document.cookie).split('; ' + name + '=').pop().split('; ').shift().split(/^=/).pop();
 			}
 		}
-	});
-
-	Object.defineProperties(APRLocalStorage.prototype, {
+	}, /** @lends APR.LocalStorage.prototype */{
 		'setCookie': {
 			'value': function (name, value, options, insecure) {
 		
@@ -110,7 +109,5 @@ define('APRLocalStorage', [
 			}
 		}
 	});
-
-	return APRLocalStorage;
 
 });

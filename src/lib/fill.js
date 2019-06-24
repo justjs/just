@@ -1,8 +1,10 @@
 define([
+	'./core',
 	'./eachProperty',
 	'./check',
 	'./isEmptyObject'
 ], function (
+	APR,
 	eachProperty,
 	check,
 	isEmptyObject
@@ -15,13 +17,15 @@ define([
 	 *
 	 * @param {Object<key, value>} structure The structured data to be filled.
 	 * 										If the value of some property is an array,
-	 										the value gets pushed to the array.
+	 *										the value gets pushed to the array.
+	 *
 	 * @param {Object} data The new contents added to the structure.
+	 *
 	 * @param {Boolean} preserveUndefined If it's a truthy value, `undefined` values in
 	 * 										-the structure- will become an optional key
 	 * 										that will be present only if `data` contains
 	 * 										that property (even if it's `undefined`).
-	 * @return {!Object<key, value>} A new object preserving the given structure.
+	 *
 	 * @example <caption>`undefined` values get removed by default.</caption>
 	 * fill({
 	 *     'a': void 0,
@@ -34,8 +38,11 @@ define([
 	 *
 	 * @example <caption>Passing a third argument preserves `undefined` values.</caption>
 	 * fill({'a': void 0}, null, true); // {'a': void 0}
+	 *
+	 * @return {!Object<key, value>} A new object preserving the given structure.
 	 */
-	return function fill (structure, data, preserveUndefined) {
+	return APR.setFn('fill', function fill (structure, data,
+		preserveUndefined) {
 
 		var filled = {};
 
@@ -72,6 +79,6 @@ define([
 
 		return filled;
 
-	};
+	});
 
 });

@@ -1,4 +1,4 @@
-define(function () {
+define(['./core'], function (APR) {
 
 	'use strict';
 
@@ -15,7 +15,7 @@ define(function () {
 	 * 
 	 * @return {!Object} A JSON-like object.
 	 */
-	return function stringToJSON (string) {
+	return APR.setFn('stringToJSON', function stringToJSON (string) {
 		
 		var json;
 
@@ -32,6 +32,6 @@ define(function () {
 
 		return json;
 
-	};
+	});
 
 });

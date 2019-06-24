@@ -1,4 +1,4 @@
-define(function () {
+define(['./core'], function (APR) {
 	
 	'use strict';
 
@@ -6,9 +6,10 @@ define(function () {
 	 * Checks if an object has no direct keys.
 	 * 
 	 * @param  {Object} object Some object.
+	 *
 	 * @return {boolean} true if it's null or not an object.
 	 */
-	return function isEmptyObject (object) {
+	return APR.setFn('isEmptyObject', function isEmptyObject (object) {
 		
 		var obj = Object(object);
 		var k;
@@ -22,6 +23,7 @@ define(function () {
 		}
 
 		return true;
-	};
+
+	});
 
 });

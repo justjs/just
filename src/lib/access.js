@@ -1,12 +1,14 @@
-define(['./defaults'], function (defaults) {
+define(['./core', './defaults'], function (APR, defaults) {
 	
 	'use strict';
 
 	/**
 	 * @typedef {!Object} APR~access_options 
+	 *
 	 * @param  {boolean} [mutate=false] If `true`, it will use
 	 *     the given object as the base object, otherwise it will
 	 *     copy all the owned properties to a new object.
+	 *
 	 * @param {boolean} [override=true] If `true`, and the
 	 *     current value is different to `null` or `undefined`,
 	 *     the function will throw a TypeError.
@@ -19,7 +21,9 @@ define(['./defaults'], function (defaults) {
 	 * A function to call when it reaches the deep property of an object.
 	 * 
 	 * @typedef {function} APR~access_handler
+	 *
 	 * @this  {Object} A new object with the properties of the base object.
+	 *
 	 * @param {!Object} currentObject The object containing the `currentKey`.
 	 * @param {*} currentKey The last value given in `path`.
 	 * @param {boolean} hasProperty false if some key of `path` was created, true otherwise.
@@ -33,8 +37,9 @@ define(['./defaults'], function (defaults) {
 	 * @param  {Array} [path=[path]] The ordered keys.
 	 * @param  {APR~access_handler} [handler] A custom function.
 	 * @param  {APR~access_options} [opts=DEFAULT_OPTIONS] Some options.
-	 * @property {APR~access_options} DEFAULT_OPTIONS
+	 *
 	 * @throws {TypeError} If some property causes access problems.
+	 *
 	 * @example <caption>Accessing to some existent property</caption>
 	 *
 	 * access({a: {b: {c: {d: 4}}}}, ['a', 'b', 'c', 'd'], function (currentObject, currentKey, hasProperty, path) {
@@ -83,7 +88,7 @@ define(['./defaults'], function (defaults) {
 	 * @return If `handler` is given: the returned value of that function,
 	 *         otherwise: the last value of `path` in the copied object.
 	 */
-	return Object.defineProperties(function access (object, path,
+	return APR.setFn('access', function access (object, path,
 		handler, opts) {
 
 		var options = defaults(opts, access.DEFAULT_OPTIONS);
@@ -130,7 +135,11 @@ define(['./defaults'], function (defaults) {
 
 		return currentObject;
 
-	}, {
+	}, /** @lends APR.access */{
+		/**
+		 * @property {APR~access_options} DEFAULT_OPTIONS
+		 * @readOnly
+		 */
 		'DEFAULT_OPTIONS': {
 			'get': function () {
 				return {

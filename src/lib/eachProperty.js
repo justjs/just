@@ -1,12 +1,14 @@
-define(['./defaults'], function (defaults) {
+define(['./core', './defaults'], function (APR, defaults) {
 	
 	'use strict';
 
 	/**
 	 * @typedef {!Object} APR~eachProperty_options
+	 *
 	 * @property {boolean} [addNonOwned=false] Include non-owned properties
 	 *     false: iterate only the owned properties.
 	 *     true: iterate the (enumerable) inherited properties too.
+	 *
 	 * @property {APR~each_fn~store} [store=null] Some object.
 	 */
 	
@@ -22,11 +24,12 @@ define(['./defaults'], function (defaults) {
 	 * @param  {APR~eachProperty_options} [
 	 *     opts=APR~eachProperty.DEFAULT_OPTIONS
 	 * ] Some options.
-	 * @property {APR~eachProperty_options} DEFAULT_OPTIONS
+	 *
 	 * @throws TypeError If `fn` is not a function.
+	 *
 	 * @return {APR~eachProperty~store} The stored values.
 	 */
-	return Object.defineProperties(function eachProperty (object,
+	return APR.setFn('eachProperty', function eachProperty (object,
 		fn, thisArg, opts) {
 
 		var properties = Object(object);
@@ -59,7 +62,11 @@ define(['./defaults'], function (defaults) {
 
 		return store;
 
-	}, {
+	}, /** @lends APR.eachProperty */{
+		/**
+		 * @property {APR~eachProperty_options} DEFAULT_OPTIONS
+		 * @readOnly
+		 */
 		'DEFAULT_OPTIONS': {
 			'get': function () {
 				return {
@@ -68,6 +75,7 @@ define(['./defaults'], function (defaults) {
 				};
 			}
 		}
+
 	});
 
 });

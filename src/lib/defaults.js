@@ -1,18 +1,21 @@
-define(['./check'], function (check) {
+define(['./core', './check'], function (APR, check) {
 	
 	'use strict';
 
 	/**
 	 * @typedef {!Object.<key, value>} APR~defaults_options
+	 *
 	 * @param {boolean} [includeDefaultKeys=false] If `false` and `defaultValue`
 	 *     is a key-value object, the default keys will be added to `value`
 	 *     or checked against this function for each repeated key.
+	 *
 	 * @param {boolean} [checkLooks=true]
 	 *     If `true`:
 	 *         `[]` will match ONLY with another Array.
 	 *         `{}` will match ONLY with another "key-value" object.
 	 *     If `false`
 	 *         `[]` and `{}` will match with any other object.
+	 *
 	 * @param {boolean} [checkDeepLooks=true]
 	 *     Same as `checkLooks` but it works with the inner values
 	 *     of the objects.
@@ -48,7 +51,7 @@ define(['./check'], function (check) {
 	 *
 	 * @returns `value` if it looks like `defaultValue` or `defaultValue` otherwise.
 	 */
-	return Object.defineProperties(function defaults (value,
+	return APR.setFn('defaults', function defaults (value,
 		defaultValue, opts) {
 
 		var options = Object.assign({}, defaults.DEFAULT_OPTIONS,
@@ -90,7 +93,11 @@ define(['./check'], function (check) {
 			: defaultValue
 		);
 
-	}, {
+	}, /** @lends APR.defaults */{
+		/**
+		 * @property {APR~defaults_options} DEFAULT_OPTIONS
+		 * @readOnly
+		 */
 		'DEFAULT_OPTIONS': {
 			'get': function () {
 				return {
@@ -100,6 +107,7 @@ define(['./check'], function (check) {
 				};
 			}
 		}
+
 	});
 
 });

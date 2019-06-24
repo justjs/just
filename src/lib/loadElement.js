@@ -1,8 +1,10 @@
 define([
+	'./core',
 	'./getElements',
 	'./defaults',
 	'./parseUrl'
 ], function (
+	APR,
 	getElements,
 	defaults,
 	parseUrl
@@ -14,10 +16,14 @@ define([
 	 * A custom function to append the created element.
 	 * 
 	 * @typedef {function} APR~loadElement_handler
+	 *
 	 * @this {!Element} The element that loads the url.
+	 *
 	 * @param {?Element} loadedElement
 	 *     An identical element that has been loaded previously.
+	 *
 	 * @param {String} url The given url to load.
+	 *
 	 * @return {*} Some value.
 	 */
 	
@@ -25,18 +31,22 @@ define([
 	 * A listener for the "onload" or "onerror" events.
 	 *
 	 * @typedef {function} APR~loadElement_listener
+	 *
 	 * @this {!Element} The target element.
+	 *
 	 * @param {!Event} The triggered event.
 	 *
 	 */
 
 	/**
 	 * An src-like attribute for an Element.
+	 *
 	 * @typedef {string} APR~loadElement_srcLikeAttribute
 	 */
 
 	/**
 	 * A tagName of an Element (such as "link").
+	 *
 	 * @typedef {string} APR~element_tag
 	 */
 	
@@ -45,27 +55,23 @@ define([
 	 * found.
 	 *
 	 * @function
+	 *
 	 * @param  {APR~element_tag} tag A tag name.
+	 *
 	 * @param  {string} url The url of the file.
+	 *
 	 * @param  {APR~loadElement_handler} [handler=defaultHandler]
 	 *     If it's a function: it will be triggered
 	 *     (without appending the element),
 	 *     otherwise: the element will be appended to
 	 *     {@link APR.head|head}.
+	 *
 	 * @param  {APR~loadElement_listener} [listener]
 	 *     A function to trigger after the element is appended.
-	 * @property {Object.<
-	 *     APR~element_tag,
-	 *     APR~loadElement_srcLikeAttribute
-	 * >} nonSrcAttributes {@link APR~element_tag|Element-tags}
-	 *     that are known for not using 'src' to fetch an url.
-	 * @property {APR~loadElement_handler} defaultHandler
-	 *     The handler that will be provided in case that no
-	 *     function is provided.
 	 *
 	 * @return {*} The return of the {@link APR~loadElement_handler|handler}.
 	 */
-	return Object.defineProperties(function loadElement (tag, url,
+	return APR.setFn('loadElement', function loadElement (tag, url,
 		listener, handler) {
 
 		var attribute = loadElement.nonSrcAttributes[tag] || 'src';
@@ -91,22 +97,24 @@ define([
 		}
 
 		if (typeof listener === 'function') {
-
 			element.onload = element.onerror = function (e) {
-
 				this.onload = this.onerror = null;
-
 				return listener.call(this, e);
-
 			};
-
 		}
 		
 		element[attribute] = url;
 		
 		return intercept.call(element, elementFound, url);
 
-	}, {
+	}, /** @lends APR.loadElement */{
+		/**
+		 * @property {Object.<
+		 *     APR~element_tag,
+		 *     APR~loadElement_srcLikeAttribute
+		 * >} nonSrcAttributes {@link APR~element_tag|Element-tags}
+		 *     that are known for not using 'src' to fetch an url.
+		 */
 		'nonSrcAttributes': {
 
 			'value': {
@@ -115,6 +123,11 @@ define([
 			'writable': true
 
 		},
+		/**
+		 * @property {APR~loadElement_handler} defaultHandler
+		 *     The handler that will be provided in case that no
+		 *     function is provided.
+		 */
 		'defaultHandler': {
 
 			'value': function (elementFound, url) {

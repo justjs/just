@@ -1,4 +1,4 @@
-define(['./defaults'], function (defaults) {
+define(['./core', './defaults'], function (APR, defaults) {
 
 	'use strict';
 
@@ -7,6 +7,7 @@ define(['./defaults'], function (defaults) {
 	 *
 	 * @param {Array} [value=[value]] The target.
 	 * @param {Number} [maxLevel=-1] Maximum deep-level to flatten.
+	 *
 	 * @example
 	 * var arrayLike = {'0': [0, [1, [2]]]}; 
 	 * var array = Array.from(arrayLike);
@@ -16,7 +17,8 @@ define(['./defaults'], function (defaults) {
 	 *
 	 * @return {!Array} The flatten array.
 	 */
-	return function flattenArray (value, maxLevel) {
+	return APR.setFn('flattenArray', function flattenArray (value,
+		maxLevel) {
 
 		var array = defaults(value, [value]);
 		var flattened = [];
@@ -38,6 +40,6 @@ define(['./defaults'], function (defaults) {
 
 		return flattened;
 
-	};
+	});
 
 });

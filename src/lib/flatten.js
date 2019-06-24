@@ -1,8 +1,10 @@
 define([
+	'./core',
 	'./flattenKeyValueObject',
 	'./flattenArray',
 	'./check'
 ], function (
+	APR,
 	flattenKeyValueObject,
 	flattenArray,
 	check
@@ -15,7 +17,7 @@ define([
 	 * 
 	 * @throws {TypeError} If the value couldn't be flattened.
 	 */	
-	return function flatten (value) {
+	return APR.setFn('flatten', function flatten (value) {
 
 		var args = Array.from(arguments);
 		var flattened;
@@ -32,6 +34,6 @@ define([
 
 		return flattened;
 
-	};
+	});
 
 });
