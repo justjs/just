@@ -104,4 +104,6 @@ test('lib/eachProperty.js', function (t) {
 
 	});
 
+	t.end();
+
 });

@@ -114,4 +114,6 @@ test('lib/getRemoteParent.js', function (t) {
 
 	});
 
+	t.end();
+
 });

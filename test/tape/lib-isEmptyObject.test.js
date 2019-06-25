@@ -18,4 +18,6 @@ test('lib/isEmptyObject.js', function (t) {
 
 	});
 
+	t.end();
+
 });

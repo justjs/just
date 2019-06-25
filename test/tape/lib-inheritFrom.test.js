@@ -14,4 +14,6 @@ test('lib/inheritFrom.js', function (t) {
 
 	});
 
+	t.end();
+
 });

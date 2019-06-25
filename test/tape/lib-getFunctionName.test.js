@@ -42,4 +42,6 @@ test('lib/getFunctionName.js', function (t) {
 
 	});
 
+	t.end();
+
 });

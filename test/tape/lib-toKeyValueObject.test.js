@@ -40,4 +40,6 @@ test('lib/toKeyValueObject.js', function (t) {
 
 	});
 
+	t.end();
+
 });

@@ -127,4 +127,6 @@ test('lib/fill.js', function (t) {
 
 	});
 
+	t.end();
+
 });

@@ -44,4 +44,6 @@ test('lib/flattenArray.js', function (t) {
 
 	});
 
+	t.end();
+
 });

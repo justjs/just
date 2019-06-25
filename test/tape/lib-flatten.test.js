@@ -30,4 +30,6 @@ test('lib/flatten.js', function (t) {
 
 	});
 
+	t.end();
+
 });

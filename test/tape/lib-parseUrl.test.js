@@ -143,4 +143,6 @@ test('lib/parseUrl.js', function (t) {
 
 	});
 
+	t.end();
+
 });

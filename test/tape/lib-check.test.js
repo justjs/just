@@ -69,4 +69,6 @@ test('lib/check.js', function (t) {
 
 	});
 
+	t.end();
+
 });

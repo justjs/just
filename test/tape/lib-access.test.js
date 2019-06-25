@@ -125,4 +125,6 @@ test('lib/access.js', function (t) {
 
 	});
 
+	t.end();
+
 });

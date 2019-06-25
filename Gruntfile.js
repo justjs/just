@@ -140,7 +140,15 @@ module.exports = grunt => {
 			// and bundle them into one single file.
 			'bundle-test-tape': {
 				'options': {
-					'transform': ['deamdify']
+					'transform': ['deamdify', [
+						// Fixes karma error 0 of 0. 
+                    	'browserify-replace', {
+							'replace': [{
+								'from': /require\((\"|\')tape(\"|\')\)/g,
+								'to': 'typeof tape !== "undefined" ? tape : require("tape")'
+							}]
+						}
+					]]
 				},
 				'files': forEachBuild(function (build, name) {
 						
@@ -170,28 +178,20 @@ module.exports = grunt => {
 			}
 		},
 		'karma': {
-			'unit-browser': Object.assign({
-				'frameworks': ['tape'],
+			'unit-browser': {
+				'failOnEmptyTestSuite': false,
+				'frameworks': ['tap'],
 				'files': [
 					{
 						'src': buildOptions.getPath('test-server').replace('./', '') + '/public/*',
 						'included': false,
 						'served': true
 					}, {
-						'src': builds['browser'].files.map(
-							file => buildOptions.getPath('test-tape') + '/' + buildOptions.getUnitTestFilename(file)
-						)
+						'src': './build/test/tape/browser.build.test.js'
 					}
 				],
 				'preprocessors': {
-					['./src/lib/**/*.js']: ['coverage'],
-					'./build/test/tape/**/*.test.js': ['webpack']
-				},
-				'webpack': {
-					'mode': process.env.NODE_ENV || 'production',
-					'node': {
-						'fs': 'empty'
-					}
+					['./src/lib/**/*.js']: ['coverage']
 				},
 				'browsers': ['jsdom'],
 				'reporters': ['progress', 'coverage'],
@@ -200,13 +200,10 @@ module.exports = grunt => {
 						.getPath('test-server')
 						.replace('./', '/base/') +
 						'/public/'
-				}
-			}, process.env.NODE_ENV === 'development' ? {
-				'autoWatch': true,
-				'singleRun': false
-			} : {
+				},
+				'sourcemap': false,
 				'singleRun': true
-			})
+			}
 		},
 		'uglify': {
 			'options': {

@@ -21,4 +21,6 @@ test('lib/getPressedKey.js', function (t) {
 
 	});
 
+	t.end();
+
 });

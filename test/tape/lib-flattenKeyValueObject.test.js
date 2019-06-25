@@ -42,4 +42,6 @@ test('lib/flattenKeyValueObject.js', function (t) {
 
 	});
 
+	t.end();
+
 });

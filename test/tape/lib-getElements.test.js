@@ -12,4 +12,6 @@ test('lib/getElements.js', function (t) {
 
 	});
 
+	t.end();
+
 });

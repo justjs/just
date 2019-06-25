@@ -154,4 +154,6 @@ test('lib/loadElement.js', function (t) {
 
 	});
 
+	t.end();
+
 });

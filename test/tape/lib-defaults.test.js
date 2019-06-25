@@ -109,4 +109,6 @@ test('lib/defaults.js', function (t) {
 
 	});
 
+	t.end();
+
 });
