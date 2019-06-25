@@ -2,6 +2,7 @@ define(['./core'], function (APR) {
 
 	'use strict';
 
+	return APR.setFn('inheritFrom', /** @lends APR */
 	/**
 	 * "Inherits" properties from `target` into `base`.
 	 *
@@ -10,7 +11,7 @@ define(['./core'], function (APR) {
 	 *
 	 * @return `target`
 	 */
-	return APR.setFn('inheritFrom', function inheritFrom (target, base) {
+	function inheritFrom (target, base) {
 
 		base.prototype = Object.assign(Object.create(
 			target.prototype), {

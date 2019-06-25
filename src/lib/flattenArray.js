@@ -2,6 +2,7 @@ define(['./core', './defaults'], function (APR, defaults) {
 
 	'use strict';
 
+	return APR.setFn('flattenArray', /** @lends APR */
 	/**
 	 * Flattens an array of arrays.
 	 *
@@ -17,8 +18,7 @@ define(['./core', './defaults'], function (APR, defaults) {
 	 *
 	 * @return {!Array} The flatten array.
 	 */
-	return APR.setFn('flattenArray', function flattenArray (value,
-		maxLevel) {
+	function flattenArray (value, maxLevel) {
 
 		var array = defaults(value, [value]);
 		var flattened = [];

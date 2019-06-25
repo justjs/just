@@ -2,6 +2,7 @@ define(['./core', './defaults'], function (APR, defaults) {
 	
 	'use strict';
 
+	return APR.setFn('eachProperty', /** @lends APR */
 	/**
 	 * @typedef {!Object} APR~eachProperty_options
 	 *
@@ -29,8 +30,7 @@ define(['./core', './defaults'], function (APR, defaults) {
 	 *
 	 * @return {APR~eachProperty~store} The stored values.
 	 */
-	return APR.setFn('eachProperty', function eachProperty (object,
-		fn, thisArg, opts) {
+	function eachProperty (object, fn, thisArg, opts) {
 
 		var properties = Object(object);
 		var options = defaults(opts, eachProperty.DEFAULT_OPTIONS, {

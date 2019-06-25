@@ -2,6 +2,7 @@ define(['../core'], function (APR) {
 
 	'use strict';
 
+	return APR.setProperty('self', /** @lends APR */
 	/**
 	 * Returns a ready-to-load URL for an APR file.
 	 * 
@@ -23,7 +24,7 @@ define(['../core'], function (APR) {
 	 *
 	 * @readOnly
 	 */
-	return APR.setProperty('self', {
+	{
 
 		'get': function () {
 

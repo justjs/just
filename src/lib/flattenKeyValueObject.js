@@ -43,11 +43,11 @@ define([
 
 	}
 
+	return APR.setFn('flattenKeyValueObject', /** @lends APR */
 	/**
 	 * Flattens an object of objects.
 	 *
 	 * @param {Object.<key, value>} object Some object.
-	 *
 	 * @throws {TypeError} If `object` is not a key-value object.
 	 *
 	 * @example
@@ -55,11 +55,8 @@ define([
 	 *
 	 * @return {Object.<key, value>} The flattened object.
 	 */
-	return APR.setFn('flattenKeyValueObject',
-		function flattenKeyValueObject (object) {
-
+	function flattenKeyValueObject (object) {
 		return flattenObject(check.throwable(object, {}));
-	
 	}, /** @lends APR.flattenKeyValueObject */{
 		/**
 		 * @property {String} [separator='.'] The separator used to join the deep keys.

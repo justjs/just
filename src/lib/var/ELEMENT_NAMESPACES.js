@@ -2,12 +2,13 @@ define(['../core'], function (APR) {
 
 	'use strict';
 
+	return APR.setProperty('ELEMENT_NAMESPACES', /** @lends APR */
 	/**
 	 * Namespace uris for known tags.
 	 *
 	 * @type {Object.<APR~element_tag, string>} A tag with a namespace URI.
 	 */
-	return APR.setProperty('ELEMENT_NAMESPACES', {
+	{
 		'value': {
 			'html': 'http://www.w3.org/1999/xhtml',
 			'mathml': 'http://www.w3.org/1998/Math/MathML',

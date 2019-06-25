@@ -2,6 +2,7 @@ define(['./core'], function (APR) {
 
 	'use strict';
 
+	return APR.setFn('stringToJSON', /** @lends APR */
 	/**
 	 * Parses a JSON string into a JSON-like.
 	 * 
@@ -15,7 +16,7 @@ define(['./core'], function (APR) {
 	 * 
 	 * @return {!Object} A JSON-like object.
 	 */
-	return APR.setFn('stringToJSON', function stringToJSON (string) {
+	function stringToJSON (string) {
 		
 		var json;
 

@@ -2,6 +2,7 @@ define(['./core'], function (APR) {
 	
 	'use strict';
 
+	return APR.setFn('getRemoteParent', /** @lends APR */
 	/**
 	 * A function that checks if `this` is the Node that you're looking for.
 	 * 
@@ -31,8 +32,7 @@ define(['./core'], function (APR) {
 	 *
 	 * @return {?Node} The current Node when `fn` returns true.
 	 */
-	return APR.setFn('getRemoteParent', function getRemoteParent (
-		childNode, fn, rootContainer, includeChild) {
+	function getRemoteParent (childNode, fn, rootContainer, includeChild) {
 
 		var currentNode = childNode;
 		var deepLevel = 0;

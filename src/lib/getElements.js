@@ -2,6 +2,7 @@ define(['./core'], function (APR) {
 		
 	'use strict';
 
+	return APR.setFn('getElements', /** @lends APR */
 	/**
 	 * Gets DOM Elements by a CSS Selector.
 	 * 
@@ -10,7 +11,7 @@ define(['./core'], function (APR) {
 	 *
 	 * @return {Array} 
 	 */
-	return APR.setFn('getElements', function getElements (selector,
+	function getElements (selector,
 		parent) {
 
 		return Array.from((parent || document).querySelectorAll(selector));

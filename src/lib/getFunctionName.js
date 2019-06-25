@@ -2,16 +2,15 @@ define(['./core'], function (APR) {
 	
 	'use strict';
 
+	return APR.setFn('getFunctionName', /** @lends APR */
 	/**
 	 * Gets the name of `fn` using fn.name (if supported) or a regexp.
 	 * 
 	 * @param  {function} fn Any function.
-	 *
 	 * @throws {TypeError} If `fn` is not a function.
-	 *
 	 * @return {string} The function name or an empty string if something fails.
 	 */
-	return APR.setFn('getFunctionName', function getFunctionName (fn) {
+	function getFunctionName (fn) {
 
 		var matches;
 

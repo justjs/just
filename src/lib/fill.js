@@ -12,6 +12,7 @@ define([
 
 	'use strict';
 
+	return APR.setFn('fill', /** @lends APR */
 	/**
 	 * Fills a key-value object with `data`.
 	 *
@@ -41,8 +42,7 @@ define([
 	 *
 	 * @return {!Object<key, value>} A new object preserving the given structure.
 	 */
-	return APR.setFn('fill', function fill (structure, data,
-		preserveUndefined) {
+	function fill (structure, data, preserveUndefined) {
 
 		var filled = {};
 

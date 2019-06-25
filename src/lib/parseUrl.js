@@ -2,6 +2,7 @@ define(['./core'], function (APR) {
 
 	'use strict';
 
+	return APR.setFn('parseUrl', /** @lends APR */
 	/**
 	 * The full parts of an url.
 	 * 
@@ -46,7 +47,7 @@ define(['./core'], function (APR) {
 	 * 
 	 * @return {APR~urlParts} 
 	 */
-	return APR.setFn('parseUrl', function parseUrl (url) {
+	function parseUrl (url) {
 		
 		var parts = {}, optionalParts, hrefParts, args, id, uriParts, domainParts, hostParts, userParts, passwordParts;
 		var location = Object.assign({}, window.location);

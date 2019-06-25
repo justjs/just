@@ -2,6 +2,7 @@ define(['./core', './defaults'], function (APR, defaults) {
 	
 	'use strict';
 
+	return APR.setFn('access', /** @lends APR */
 	/**
 	 * @typedef {!Object} APR~access_options 
 	 *
@@ -88,8 +89,7 @@ define(['./core', './defaults'], function (APR, defaults) {
 	 * @return If `handler` is given: the returned value of that function,
 	 *         otherwise: the last value of `path` in the copied object.
 	 */
-	return APR.setFn('access', function access (object, path,
-		handler, opts) {
+	function access (object, path, handler, opts) {
 
 		var options = defaults(opts, access.DEFAULT_OPTIONS);
 		var properties = defaults(path, [path]);

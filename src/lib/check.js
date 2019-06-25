@@ -2,6 +2,7 @@ define(['./core'], function (APR) {
 
 	'use strict';
 
+	return APR.setFn('check', /** @lends APR */
 	/**
 	 * A function that `check`s a value against others and
 	 * throws if the result is `false`.
@@ -31,7 +32,7 @@ define(['./core'], function (APR) {
 	 *
 	 * @return {boolean} `true` if some `otherValue` looks like `value`.
 	 */
-	return APR.setFn('check', function check (value, otherValues) {
+	function check (value, otherValues) {
 
 		var toString = ({}).toString;
 

@@ -12,6 +12,7 @@ define([
 		
 	'use strict';
 
+	return APR.setFn('loadElement', /** @lends APR */
 	/**
 	 * A custom function to append the created element.
 	 * 
@@ -71,8 +72,7 @@ define([
 	 *
 	 * @return {*} The return of the {@link APR~loadElement_handler|handler}.
 	 */
-	return APR.setFn('loadElement', function loadElement (tag, url,
-		listener, handler) {
+	function loadElement (tag, url, listener, handler) {
 
 		var attribute = loadElement.nonSrcAttributes[tag] || 'src';
 		var element = document.createElement(tag);

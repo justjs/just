@@ -2,6 +2,7 @@ define(['./core', './check'], function (APR, check) {
 	
 	'use strict';
 
+	return APR.setFn('defaults', /** @lends APR */
 	/**
 	 * @typedef {!Object.<key, value>} APR~defaults_options
 	 *
@@ -51,8 +52,7 @@ define(['./core', './check'], function (APR, check) {
 	 *
 	 * @returns `value` if it looks like `defaultValue` or `defaultValue` otherwise.
 	 */
-	return APR.setFn('defaults', function defaults (value,
-		defaultValue, opts) {
+	function defaults (value, defaultValue, opts) {
 
 		var options = Object.assign({}, defaults.DEFAULT_OPTIONS,
 			opts);

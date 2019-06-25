@@ -62,9 +62,9 @@ module.exports = grunt => {
 				]
 			}
 		},
-		// Builds ./src code.
-		'requirejs': (() => {
-
+		// Builds all the code into some mutable bundle.
+		'requirejs': forEachBuild(function (build, name) {
+			
 			const distOptions = {
 				'findNestedDependencies': true,
 				'optimize': 'none',
@@ -81,8 +81,7 @@ module.exports = grunt => {
 						'wrap': {
 							// Adds a banner, and exports
 							// the bundle to AMD, node or `this`.
-							'start': buildOptions.banner +
-							';(function (root, factory) {\n' +
+							'start': '(function (root, factory) {\n' +
 							'	if (typeof define === "function" && define.amd) { define("APR", factory); }\n' +
 							'	else if (typeof exports === "object") { module.exports = factory(); }\n' +
 							'	else { root.APR = factory(); }\n' +
@@ -97,8 +96,8 @@ module.exports = grunt => {
 							'format': {
 								'indent': {
 									'base': 1,
-									'style': '  ',
-									'adjustMultilineComment': true
+									'style': '\t',
+									'adjustMultilineComment': false
 								}
 							}
 						},
@@ -109,30 +108,33 @@ module.exports = grunt => {
 							return preNormalizedModuleName.replace(/^.*\//, '').replace(/\.js$/, '');
 						}
 					});
+					var header = buildOptions.banner;
 
-					fs.writeFileSync(path, content);
+					if (build.loadPolyfills) {
+						header += fs.readFileSync(
+							'./src/lib/polyfills.js',
+							'utf8'
+						);
+					}
+
+					fs.writeFileSync(path, header + content);
 
 				}
 
 			};
 
-			// Builds all the code into some mutable bundle.
-			return forEachBuild(function (build, name) {
-			
-				const out = buildOptions
-					.getPath('mutableProduction') + '/' + name + '.js';
+			const out = buildOptions
+				.getPath('mutableProduction') + '/' + name + '.js';
 
-				this['bundle-dist-' + name] = {
-					'options': Object.assign({
-						'baseUrl': buildOptions.getPath(),
-						'include': build.files,
-						'out': out
-					}, distOptions)
-				};
+			this['bundle-dist-' + name] = {
+				'options': Object.assign({
+					'baseUrl': buildOptions.getPath(),
+					'include': build.files,
+					'out': out
+				}, distOptions)
+			};
 
-			}, {});
-
-		})(),
+		}, {}),
 		'browserify': {
 			// Convert the amd modules into `require`s,
 			// and bundle them into one single file.
@@ -217,7 +219,8 @@ module.exports = grunt => {
 				'compress': {
 					'hoist_funs': false,
 					'loops': false
-				}
+				},
+				'mangle': true
 			},
 			'dist': {
 				'files': forEachBuild(function (build, name) {

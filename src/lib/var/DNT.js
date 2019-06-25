@@ -2,6 +2,7 @@ define(['../core'], function (APR) {
 
 	'use strict';
 
+	return APR.setProperty('DNT', /** @lends APR */
 	/**
 	 * The DoNotTrack header formatted as 0, 1 or undefined
 	 * (for "unspecified").
@@ -9,7 +10,7 @@ define(['../core'], function (APR) {
 	 * @type {(number|undefined)}
 	 * @readOnly
 	 */
-	return APR.setProperty('DNT', {
+	{
 
 		'get': function DNT () {
 

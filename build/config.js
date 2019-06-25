@@ -81,8 +81,8 @@ const options = {
 module.exports = {
 	'options': options,
 	'browser': {
+		'loadPolyfills': true,
 		'files': [
-			'./src/lib/polyfills.js',
 			'./src/browser.js'
 		].concat([
 			'var/DNT',
@@ -113,6 +113,7 @@ module.exports = {
 		].map(file => './src/lib/' + file + '.js'))
 	},
 	'server': {
+		'loadPolyfills': false,
 		'files': ['./src/server.js'].concat([
 			'access',
 			'defaults',

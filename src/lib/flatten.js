@@ -12,12 +12,13 @@ define([
 
 	'use strict';
 
+	return APR.setFn('flatten', /** @lends APR */
 	/**
 	 * A factory for the "flatten..." alternatives.
 	 * 
 	 * @throws {TypeError} If the value couldn't be flattened.
-	 */	
-	return APR.setFn('flatten', function flatten (value) {
+	 */
+	function flatten (value) {
 
 		var args = Array.from(arguments);
 		var flattened;

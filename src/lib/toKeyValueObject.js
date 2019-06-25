@@ -2,6 +2,7 @@ define(['./core', './check'], function (APR, check) {
 
 	'use strict';
 
+	return APR.setFn('toKeyValueObject', /** @lends APR */
 	/**
 	 * Converts [[k0, v0], [k1, v1]] to {k0: v0, k1: v1}.
 	 *
@@ -10,8 +11,7 @@ define(['./core', './check'], function (APR, check) {
 	 *
 	 * @return {!Object<key, value>}
 	 */
-	return APR.setFn('toKeyValueObject',
-		function toKeyValueObject (array) {
+	function toKeyValueObject (array) {
 
 		var keyValueObject = {};
 
