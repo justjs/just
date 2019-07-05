@@ -18,24 +18,20 @@ test('lib/flattenKeyValueObject.js', function (t) {
 	t.test('Should throw if the passed value is not a key-value ' +
 		'object.', function (st) {
 
+		st.plan(1);
+
 		st.throws(function () {
 
 			flattenKeyValueObject([]);
 
 		}, TypeError, '`[]` is not a key-value object.');
 
-		st.end();
-
 	});
 
 	t.test('Should change the default property separator.', function (st) {
-
-		flattenKeyValueObject.separator = '/';
 	
-		st.deepEquals(flattenKeyValueObject({
-			'a': {
-				'b': 1
-			}
+		st.deepEquals(flattenKeyValueObject({'a': {'b': 1}}, {
+			'separator': '/'
 		}), {'a/b': 1}, 'The separator changed.');
 
 		st.end();

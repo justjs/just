@@ -99,12 +99,10 @@ define(['./core', './check'], function (APR, check) {
 		 * @readOnly
 		 */
 		'DEFAULT_OPTIONS': {
-			'get': function () {
-				return {
-					'ignoreDefaultKeys': false,
-					'checkLooks': true,
-					'checkDeepLooks': true
-				};
+			'value': {
+				'ignoreDefaultKeys': false,
+				'checkLooks': true,
+				'checkDeepLooks': true
 			}
 		}
 

@@ -1,11 +1,11 @@
 define([
 	'./core',
-	'./getElements',
+	'./findElements',
 	'./defaults',
 	'./parseUrl'
 ], function (
 	APR,
-	getElements,
+	findElements,
 	defaults,
 	parseUrl
 ) {
@@ -61,7 +61,7 @@ define([
 	 *
 	 * @param  {string} url The url of the file.
 	 *
-	 * @param  {APR~loadElement_handler} [handler=defaultHandler]
+	 * @param  {APR~loadElement_handler} [handler=DEFAULT_HANDLER]
 	 *     If it's a function: it will be triggered
 	 *     (without appending the element),
 	 *     otherwise: the element will be appended to
@@ -81,9 +81,8 @@ define([
 			tag +'[' + attribute + '="' + url + '"]',
 			tag + '[' + attribute + '="' + parsedUrl.href + '"]'
 		];
-		var elementFound = getElements(selectors.join(','))[0] || null;
-		var intercept = defaults(handler, loadElement.defaultHandler);
-		var container, isLoaded;
+		var elementFound = findElements(selectors.join(','))[0] || null;
+		var intercept = defaults(handler, loadElement.DEFAULT_HANDLER);
 
 		if (tag === 'link') {
 			element.rel = 'stylesheet';
@@ -97,17 +96,35 @@ define([
 		}
 
 		if (typeof listener === 'function') {
-			element.onload = element.onerror = function (e) {
+			element.onerror = element.onload = function (e) {
 				this.onload = this.onerror = null;
 				return listener.call(this, e);
 			};
 		}
-		
+
 		element[attribute] = url;
 		
 		return intercept.call(element, elementFound, url);
 
 	}, /** @lends APR.loadElement */{
+		/**
+		 * @property {APR~loadElement_handler} DEFAULT_HANDLER
+		 *     The handler that will be provided in case that no
+		 *     function is provided.
+		 */
+		'DEFAULT_HANDLER': {
+
+			'value': function (elementFound, url) {
+
+				if (!elementFound) {
+					document.head.appendChild(this);
+				}
+
+				return this;
+
+			}
+
+		},
 		/**
 		 * @property {Object.<
 		 *     APR~element_tag,
@@ -119,27 +136,7 @@ define([
 
 			'value': {
 				'link': 'href'
-			},
-			'writable': true
-
-		},
-		/**
-		 * @property {APR~loadElement_handler} defaultHandler
-		 *     The handler that will be provided in case that no
-		 *     function is provided.
-		 */
-		'defaultHandler': {
-
-			'value': function (elementFound, url) {
-
-				if (!elementFound) {
-					document.head.appendChild(this);
-				}
-
-				return this;
-
-			},
-			'writable': true
+			}
 
 		}
 

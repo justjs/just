@@ -4,10 +4,10 @@ define(['./core', './check'], function (APR, check) {
 
 	return APR.setFn('toKeyValueObject', /** @lends APR */
 	/**
-	 * Converts [[k0, v0], [k1, v1]] to {k0: v0, k1: v1}.
+	 * Converts [[k0, v0], {k1: v1}] to {k0: v0, k1: v1}.
 	 *
-	 * @param [Array] array An array containing sub-arrays
-	 *     with key-value pairs: [[k, v], ...].
+	 * @param [Array|Object.<key, value>] array An array containing sub-arrays
+	 *     with key-value pairs, or key-value objects: [[k, v], {k: v}].
 	 *
 	 * @return {!Object<key, value>}
 	 */
@@ -15,13 +15,32 @@ define(['./core', './check'], function (APR, check) {
 
 		var keyValueObject = {};
 
-		check.throwable(array, []).forEach(function (v) {
+		if (check(array, {}, null)) {
+			return Object.assign({}, array);
+		}
 
-			var subArray = check.throwable(v, []);
-			var key = subArray[0];
-			var value = subArray[1];
+		if (!check(array, [])) {
+			throw new TypeError(array + ' must be either ' +
+				'null, a key-value object or an Array.');
+		}
 
-			this[key] = value;
+		array.forEach(function (subArray) {
+
+			var key, value;
+
+			if (check(subArray, [])) {
+				key = subArray[0];
+				value = subArray[1];
+				this[key] = value;
+			}
+			else if (check(subArray, {})) {
+				Object.assign(this, subArray);
+			}
+			else {
+				throw new TypeError(subArray + ' must be either ' +
+					'a key-value object or an Array.');
+			}
+			
 
 		}, keyValueObject);
 

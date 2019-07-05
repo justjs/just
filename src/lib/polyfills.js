@@ -7,25 +7,28 @@
 	 * @ignore
 	 */
 
-	var D=W.document, O=W.Object, S=W.String, A=W.Array, F=W.Function, E=W.Element, V=W.Event, L=W.location;
+	var D=W.document, O=W.Object, S=W.String, A=W.Array, F=W.Function, E=W.Element, V=W.Event, L=W.Location;
 
-	function fp(c,p,f,n){var o=c[p]=c[p]||f;o.APRPolyfill=f===o?null:f}
+	function fp(c,p,f){var o=c[p]=c[p]||f;o.APRPolyfill=f===o?null:f}
 	function fy(o){return o.prototype}
 	function ff(o,f){for(var k in o)fy(O).hasOwnProperty.call(o,k)&&f(k,o[k])}
 	function fg(o,p,g){O.defineProperty?O.defineProperty(o,p,{get:g}):o.__defineGetter__(p,g)};
 	function fv(o,p){var v=['moz','webkit','ms','o'],i=v.length,fn;while(--i>=0)if(fn=o[p+v[i]])return fn}
 
+	fp(W,'console',{log:function(){}});
+
 	fp(W,'Event',!fy(V).constructor?function(t,o){var e=document.createEvent('Event'),O=Object(o);e.initEvent(t,O.bubbles,O.cancelable);return e}:V);
 	fp(W,'CustomEvent',!fy(CustomEvent).constructor?function(t,o){var e=document.createEvent('CustomEvent'),O=Object(o);e.initCustomEvent(t,O.bubbles,O.cancelable,O.detail);return e}:V);
 
+	fp(W,'WeakMap',function shim(){var s={},i=0,K='__WeakMapID';return {'set':function(k,v){s[k[K]=i++]=v},'get':function(k){return s[k[K]]},'has':function(k){return k[K] in s},'delete':function(k){delete s[k[K]]}}});
 	fp(Number,'isNaN',function(v){/* source: mozilla */return v!==v});
 
-	fp(O,'assign',function(o){var a=arguments,i=a.length,k,v;o=Object(o);while(--i>=1)for(k in a[i])if(({}).hasOwnProperty.call(v=a[i][k],k))o[k]=v;return o});
+	fp(O,'assign',function(o){var a=arguments,i=a.length,k,v;o=Object(o);while(--i>=1){v=a[i];for(k in v){if(({}).hasOwnProperty.call(v,k))o[k]=v[k];}}return o});
 	fp(O,'values',function(o){var r=[],k;for(k in o)({}).hasOwnProperty.call(o,k)&&r.push(o[k]);return r});
 	fp(A,'from',function(a,fn,t){var s=this,l=Object(a),f=l.length>>>0,r=typeof s=='function'?O(new s(f)):new Array(f),i=-1;while(++i<f)r[i]=fn?fn.call(t,l[i],i):l[i];r.length=f;return r});
 
-	if (!L.origin) fg(L,'origin',function(){return this.protocol+'//'+this.host});
-	if (!L.toString) fp(L,'toString',function(){return this.href});
+	if (!fy(L).origin) fg(fy(L),'origin',function(){return this.protocol+'//'+this.host});
+	fp(fy(L),'toString',function(){return this.href});
 
 	ff((function(fs){return{previousElementSibling:function(){return fs(this,'previous')},nextElementSibling:function(){return fs(this,'next')}}})(function fs(e,k){while((e=e[k+'Sibling'])&&e.nodeType!=1);return e}),function(k,v){(v in D.documentElement)||fg(fy(E),k,v)});
 

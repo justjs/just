@@ -7,6 +7,8 @@ const amdclean = require('amdclean'),
 	loadGruntTasks = require('load-grunt-tasks');
 
 const builds = require('./build/config');
+const browserBuild = builds['browser'];
+const serverBuild = builds['server'];
 
 const buildNames = Object.keys(builds).filter(
 	key => key !== 'options'
@@ -28,12 +30,6 @@ module.exports = grunt => {
 	loadGruntTasks(grunt);
 
 	grunt.initConfig({
-		'watch': {
-			'src-copy': {
-				'files': ['./src/**'],
-				'tasks': ['copy']
-			}
-		},
 		'copy': {
 			'build-src': {
 				'cwd': './src',
@@ -110,9 +106,9 @@ module.exports = grunt => {
 					});
 					var header = buildOptions.banner;
 
-					if (build.loadPolyfills) {
+					if (build.polyfillsSrc) {
 						header += fs.readFileSync(
-							'./src/lib/polyfills.js',
+							build.polyfillsSrc,
 							'utf8'
 						);
 					}
@@ -127,11 +123,12 @@ module.exports = grunt => {
 				.getPath('mutableProduction') + '/' + name + '.js';
 
 			this['bundle-dist-' + name] = {
-				'options': Object.assign({
+				'options': {
 					'baseUrl': buildOptions.getPath(),
 					'include': build.files,
-					'out': out
-				}, distOptions)
+					'out': out,
+					...distOptions
+				}
 			};
 
 		}, {}),
@@ -172,39 +169,62 @@ module.exports = grunt => {
 					'output': 'console'
 				},
 				'src': [
+					serverBuild.polyfillsSrc,
 					buildOptions.getPath('test-tape') +
-						'/*' + buildOptions.getUnitTestFilename('server', 'build')
-				]
+						'/' + buildOptions.getUnitTestFilename('server', 'build')
+				].filter(v => v)
 			}
 		},
-		'karma': {
-			'unit-browser': {
-				'failOnEmptyTestSuite': false,
-				'frameworks': ['tap'],
+		'karma': (() => {
+
+			const publicDir = buildOptions
+				.getPath('test-server')
+				.replace('./', '') +
+				'/public';
+
+			const commonConfigurations = {
 				'files': [
 					{
-						'src': buildOptions.getPath('test-server').replace('./', '') + '/public/*',
+						'src': publicDir + '/*',
 						'included': false,
 						'served': true
 					}, {
-						'src': './build/test/tape/browser.build.test.js'
+						'src': [
+							browserBuild.polyfillsSrc,
+							buildOptions.getPath('test-tape') + '/' +
+								buildOptions.getUnitTestFilename('browser', 'build')
+						].filter(v => v)
 					}
-				],
-				'preprocessors': {
-					['./src/lib/**/*.js']: ['coverage']
+				]
+			};
+
+			return {
+				'options': {
+					'failOnEmptyTestSuite': false,
+					'frameworks': ['tap'],
+					'reporters': ['progress', 'coverage'],
+					'preprocessors': {
+						'./src/lib/**/*.js': ['coverage']
+					},
+					'proxies': {
+						'/assets/': '/base/' + publicDir + '/'
+					},
+					'browsers': ['jsdom'],
+					'background': true,
+					'singleRun': true
 				},
-				'browsers': ['jsdom'],
-				'reporters': ['progress', 'coverage'],
-				'proxies': {
-					'/assets/': buildOptions
-						.getPath('test-server')
-						.replace('./', '/base/') +
-						'/public/'
+				'unit-browser': {
+					...commonConfigurations
 				},
-				'sourcemap': false,
-				'singleRun': true
-			}
-		},
+				'unit-browser-dev': {
+					'singleRun': false,
+					'background': false,
+					'browsers': ['Firefox', 'IE'],
+					...commonConfigurations
+				}
+			};
+
+		})(),
 		'uglify': {
 			'options': {
 				'preserveComments': false,
@@ -275,8 +295,8 @@ module.exports = grunt => {
 		'compare_size:build'
 	]);
 	grunt.registerTask('test', [
-		'tape:unit-server',
-		'karma:unit-browser'
+		serverBuild.testSuite + ':unit-server',
+		browserBuild.testSuite + ':unit-browser'
 	]);
 	grunt.registerTask('distribute', [
 		'copy:dist',
@@ -289,6 +309,10 @@ module.exports = grunt => {
 		'bundle',
 		'test',
 		'distribute'
+	]);
+	grunt.registerTask('dev', [
+		'default',
+		'karma:unit-browser-dev'
 	]);
 
 };

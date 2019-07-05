@@ -44,6 +44,8 @@ test('lib/check.js', function (t) {
 
 		var customMessage = 'The given value didn\'t matched.';
 	
+		st.plan(4);
+
 		st.throws(function () {
 
 			check.throwable.call(customMessage, [], 0, {}, null);
@@ -64,8 +66,6 @@ test('lib/check.js', function (t) {
 
 		}, TypeError, 'The function returned the base value ' +
 			'instead of throw.');
-
-		st.end();
 
 	});
 

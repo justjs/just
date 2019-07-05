@@ -49,7 +49,7 @@ test('lib/access.js', function (t) {
 
 	t.test('Should throw (or not) if some property doesn\'t hold ' +
 		'an object as a value.', function (st) {
-		
+
 		st.plan(2);
 
 		st.throws(function () {
@@ -64,8 +64,8 @@ test('lib/access.js', function (t) {
 
 	});
 
-	t.test('Should create and access to some non-existent ' +
-		'properties.', function (st) {
+	t.test('Should create and access to some non-existent properties.',
+		function (st) {
 		
 		var object = Object.assign({'z': 1}, {
 			'prototype': Function.prototype
@@ -94,9 +94,8 @@ test('lib/access.js', function (t) {
 
 		}, {'mutate': false});
 
-		st.deepEquals(newObject, Object.assign({}, object, {
-			'a': {'b': {'c': 3}}
-		}), 'The result contains the new keys.');
+		st.deepEquals(newObject, Object.assign({'a': {'b': {'c': 3}}},
+			object), 'The result contains the new keys.');
 
 		st.end();
 

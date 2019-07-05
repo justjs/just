@@ -4,13 +4,23 @@ define(['./core', './defaults'], function (APR, defaults) {
 
 	return APR.setFn('eachProperty', /** @lends APR */
 	/**
+	 * @typedef {function} APR~eachProperty_fn
+	 *
+	 * @this thisArg from {@link APR~eachProperty|the main function}.
+	 *
+	 * @param {*} value The current value.
+	 * @param {*} key The current key.
+	 * @param {!Object} object The current object being iterated.
+	 *
+	 * @return {boolean} If true, the current loop will stop.
+ 	 */
+
+	/**
 	 * @typedef {!Object} APR~eachProperty_options
 	 *
 	 * @property {boolean} [addNonOwned=false] Include non-owned properties
 	 *     false: iterate only the owned properties.
 	 *     true: iterate the (enumerable) inherited properties too.
-	 *
-	 * @property {APR~each_fn~store} [store=null] Some object.
 	 */
 	
 	/**
@@ -28,16 +38,13 @@ define(['./core', './defaults'], function (APR, defaults) {
 	 *
 	 * @throws TypeError If `fn` is not a function.
 	 *
-	 * @return {APR~eachProperty~store} The stored values.
+	 * @return {boolean} True if the function was interrupted.
 	 */
 	function eachProperty (object, fn, thisArg, opts) {
 
 		var properties = Object(object);
-		var options = defaults(opts, eachProperty.DEFAULT_OPTIONS, {
-			'checkDeepLooks': false
-		});
-		var store = options.store;
-		var terminate = false;
+		var options = defaults(opts, eachProperty.DEFAULT_OPTIONS);
+		var wasInterrupted = false;
 		var k;
 
 		if (typeof fn !== 'function') {
@@ -46,21 +53,21 @@ define(['./core', './defaults'], function (APR, defaults) {
 
 		for (k in properties) {
 
-			if (terminate) {
+			if (wasInterrupted) {
 				break;
 			}
 
 			if (options.addNonOwned ||
 				({}).hasOwnProperty.call(properties, k)) {
 				
-				terminate = fn.call(thisArg, properties[k], k,
-					properties, store);
+				wasInterrupted = !!fn.call(thisArg, properties[k], k,
+					properties);
 
 			}
 
 		}
 
-		return store;
+		return wasInterrupted;
 
 	}, /** @lends APR.eachProperty */{
 		/**
@@ -68,11 +75,8 @@ define(['./core', './defaults'], function (APR, defaults) {
 		 * @readOnly
 		 */
 		'DEFAULT_OPTIONS': {
-			'get': function () {
-				return {
-					'addNonOwned': false,
-					'store': {}
-				};
+			'value': {
+				'addNonOwned': false
 			}
 		}
 

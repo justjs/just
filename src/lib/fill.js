@@ -53,7 +53,9 @@ define([
 			return Object.assign({}, structure);
 		}
 
-		check.throwable(data, null, {});
+		if (!check(data, null, {})) {
+			throw new TypeError(data + ' must be null or a key-value object.');
+		}
 
 		eachProperty(structure, function (currentValue, currentKey) {
 

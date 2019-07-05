@@ -105,25 +105,14 @@ test('lib/loadElement.js', function (t) {
 			var scriptsWithTheSameUrl = document.querySelectorAll(
 				'script[src="' + url + '"]'
 			);
-			var originalHandler = Object.assign(function () {}, loadElement.defaultHandler);
-
+			
 			if (scriptsWithTheSameUrl) {
 				[].forEach.call(scriptsWithTheSameUrl, function (element) {
 					element.parentNode.removeChild(element);
 				});
 			}
 
-			loadElement.defaultHandler = function (elementFound,
-				loadedUrl) {
-				st.is(this instanceof HTMLScriptElement, true);
-				st.is(elementFound, null);
-				st.is(loadedUrl, url);
-				head.appendChild(this);
-			};
-
 			return loadElement('script', url, function () {
-				
-				loadElement.defaultHandler = originalHandler;
 				
 				st.pass(this.parentNode, head,
 					'The element was appended to the `head`');

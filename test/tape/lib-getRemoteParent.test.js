@@ -71,6 +71,8 @@ test('lib/getRemoteParent.js', function (t) {
 
 	t.test('Should throw if something is invalid.', function (st) {
 		
+		st.plan(2);
+
 		st.throws(function () {
 			var child = window;
 			getRemoteParent(child, function () {});
@@ -79,8 +81,6 @@ test('lib/getRemoteParent.js', function (t) {
 		st.throws(function () {
 			getRemoteParent(body);
 		}, TypeError, 'No function was given.');
-
-		st.end();
 
 	});
 

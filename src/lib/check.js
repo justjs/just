@@ -34,13 +34,22 @@ define(['./core'], function (APR) {
 	 */
 	function check (value, otherValues) {
 
-		var toString = ({}).toString;
-
 		return [].some.call(arguments, function (otherValue, i) {
-		
-			return i && this === toString.call(otherValue);
+
+			// Ignore `value`.
+			if (i === 0) {
+				return;
+			}
+
+			if ([value, otherValue].some(function (v) {
+				return v === null || v === void 0;
+			})) {
+				return otherValue === value;
+			}
+
+			return value.constructor === otherValue.constructor;
 	
-		}, toString.call(value));
+		});
 
 	}, /** @lends APR.check */{
 		/**
@@ -50,12 +59,12 @@ define(['./core'], function (APR) {
 			'value': function (value, otherValues) {
 
 				var args = Array.from(arguments);
-				var throwableMessage = this || (value +
+				var throwableMessage = (!(Object(this) instanceof String) ? (value +
 					' must be like one of the following values: ' +
-					args.splice(1)
-				);
+					args.slice(1).map(function (v) { return v + ''; }).join(', ')
+				) : this);
 
-				if (!APR.check.apply(null, args)) {
+				if (!APR.check.apply(this, args)) {
 					throw new TypeError(throwableMessage);
 				}
 

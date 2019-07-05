@@ -32,19 +32,17 @@ test('lib/eachProperty.js', function (t) {
 		function (st) {
 
 		var mainObject = {'a': 1, 'b': 2};
-		var defaultStore = defaultOptions.store;
-		var results = eachProperty(mainObject,
-			function (value, key, object, store) {
+		var interrupted = eachProperty(mainObject,
+			function (value, key, object) {
 
 			st.is(this, st);
 			st.is(/^1|2$/.test(value), true);
 			st.is(/^a|b$/.test(key), true);
 			st.deepEquals(object, Object(mainObject));
-			st.deepEquals(store, defaultStore);
 
 		}, st);
 
-		st.deepEquals(results, defaultStore);
+		st.is(interrupted, false);
 
 		st.end();
 
@@ -75,7 +73,7 @@ test('lib/eachProperty.js', function (t) {
 
 		var object = {'a': null, 'b': 1, 'c': null};
 		var hasReturnedOnTime;
-		var results = eachProperty(object, function (v, k, o, s) {
+		var interrupted = eachProperty(object, function (v, k, o, s) {
 
 			if (hasReturnedOnTime) {
 				hasReturnedOnTime = false;
@@ -90,6 +88,7 @@ test('lib/eachProperty.js', function (t) {
 		});
 
 		st.is(hasReturnedOnTime, true);
+		st.is(interrupted, true);
 		st.end();
 
 	});

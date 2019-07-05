@@ -10,7 +10,7 @@
     "test": "./test"
   },
   "scripts": {
-    "start": "grunt watch",
+    "start": "grunt dev",
     "build": "npm install && grunt",
     "test": "grunt test",
     "test-server": "grunt init && grunt bundle && tap ./build/test/tap/server.build.test.js",

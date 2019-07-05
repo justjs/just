@@ -21,12 +21,12 @@ test('lib/flatten.js', function (t) {
 	t.test('Should throw if the solution is not implemented.',
 		function (st) {
 
+		st.plan(1);
+
 		st.throws(function () {
 			flatten('string');
 		}, TypeError, '`flattenString` or something similar is not ' +
 			'implemented yet.');
-
-		st.end();
 
 	});
 

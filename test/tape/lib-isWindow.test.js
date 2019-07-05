@@ -62,5 +62,5 @@ test('lib/isWindow.js', function (t) {
 	});
 
 	t.end();
-
+	
 });

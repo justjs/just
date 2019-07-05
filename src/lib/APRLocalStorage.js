@@ -73,15 +73,17 @@ define('APRLocalStorage', [
 			}
 		},
 		'removeCookie': {
-			'value': function (name, options) {
-			
+			'value': function (name, opts) {
+				
+				var options = defaults(opts, {
+					'max-age': 0
+				});
+
 				if (!APRLocalStorage.cookieExists(name)) {
 					return true;
 				}
 
-				return this.setCookie(name, '', Object.assign(defaults(options, {}), {
-					'max-age': 0
-				}));
+				return this.setCookie(name, '', options);
 
 			}
 		},

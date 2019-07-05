@@ -4,8 +4,21 @@ define('APR', function () {
 
 	var APR = {};
 
+	if (typeof window !== 'undefined') {
+		window.APR = APR;
+	}
+
 	return Object.defineProperties(APR, /** @lends APR */{
 		// 'version': '%{CORE_VERSION}%',
+		/**
+		 * @property {Function} setFn Sets a function in APR.
+		 *
+		 * @param {String} name The name of the APR property.
+		 * @param {Function} fn Some function.
+		 * @param {} [propertiesDescriptor] Some properties to attach to fn.
+		 * @return {!Function} fn. 
+		 * @readOnly
+		 */
 		'setFn': {
 			'value': function setFn (name, fn, propertiesDescriptor) {
 
@@ -17,10 +30,22 @@ define('APR', function () {
 					'value': fn
 				});
 
-				return fn;
+				return APR[name];
 
 			}
 		},
+		/**
+		 * @property {Function} setModule Sets a module in APR.
+		 *
+		 * @param {String} name The name of the APR property.
+		 * @param {Function} fn Some constructor.
+		 * @param {} [propertiesDescriptor] Some properties to attach to fn.
+		 * @param {} [prototypeDescriptor] Some properties to attach
+		 *     to fn.prototype.
+		 *
+		 * @returns {!Function} fn. 
+		 * @readOnly
+		 */
 		'setModule': {
 			'value': function setModule (name, fn, propertiesDescriptor,
 			prototypeDescriptor) {
@@ -33,10 +58,20 @@ define('APR', function () {
 				}
 
 
-				return fn;
+				return APR[name];
 
 			}
 		},
+		/**
+		 * @property {Function} setProperty Sets a property in APR.
+		 *
+		 * @param {String} name The name of the APR property.
+		 * @param {} [descriptor] Some properties to attach to the property.
+		 *
+		 * @return {*} The added property.
+		 *
+		 * @readOnly
+		 */
 		'setProperty': {
 			'value': function setProperty (name, descriptor) {
 			

@@ -2,7 +2,7 @@ define(['../core'], function (APR) {
 
 	'use strict';
 
-	return APR.setProperty('ELEMENT_NAMESPACES', /** @lends APR */
+	return APR.setProperty('elementNamespaces', /** @lends APR */
 	/**
 	 * Namespace uris for known tags.
 	 *
@@ -18,8 +18,7 @@ define(['../core'], function (APR) {
 			'xmlns': 'http://www.w3.org/2000/xmlns/',
 			'xbl': 'http://www.mozilla.org/xbl',
 			'xul': 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul'
-		},
-		'writable': true
+		}
 	});
 
 });

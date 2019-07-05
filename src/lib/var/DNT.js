@@ -4,10 +4,10 @@ define(['../core'], function (APR) {
 
 	return APR.setProperty('DNT', /** @lends APR */
 	/**
-	 * The DoNotTrack header formatted as 0, 1 or undefined
+	 * The DoNotTrack header formatted as true, false or undefined
 	 * (for "unspecified").
 	 *
-	 * @type {(number|undefined)}
+	 * @type {(boolean|undefined)}
 	 * @readOnly
 	 */
 	{
@@ -22,9 +22,9 @@ define(['../core'], function (APR) {
 			var consent = ',' + dnt + ',';
 
 			return (/,(yes|1),/i.test(consent)
-				? 1
+				? true
 				: /,(no|0),/i.test(consent)
-				? 0
+				? false
 				: void 0
 			);
 

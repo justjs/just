@@ -50,7 +50,6 @@ define(['./core'], function (APR) {
 	function parseUrl (url) {
 		
 		var parts = {}, optionalParts, hrefParts, args, id, uriParts, domainParts, hostParts, userParts, passwordParts;
-		var location = Object.assign({}, window.location);
 		var blob;
 
 		url = url || location.href;

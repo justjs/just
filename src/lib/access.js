@@ -29,6 +29,7 @@ define(['./core', './defaults'], function (APR, defaults) {
 	 * @param {*} currentKey The last value given in `path`.
 	 * @param {boolean} hasProperty false if some key of `path` was created, true otherwise.
 	 * @param {Array} path The given keys.
+	 * @return {*} The return of {@link APR~access|the main function}.
 	 */
 
 	/**
@@ -141,11 +142,9 @@ define(['./core', './defaults'], function (APR, defaults) {
 		 * @readOnly
 		 */
 		'DEFAULT_OPTIONS': {
-			'get': function () {
-				return {
-					'override': true,
-					'mutate': false
-				};
+			'value': {
+				'override': true,
+				'mutate': false
 			}
 		}
 	});

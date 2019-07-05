@@ -6,9 +6,8 @@ test('lib/getPressedKey.js', function (t) {
 	t.test('Should get one of the supported variants for a key ' +
 		'when a keyboard event is fired.', function (st) {
 
-		var simulatedEvent = new KeyboardEvent('keypress', {
-			'key': 'Enter'
-		});
+		// Doesn't matter if it's not an Event.
+		var simulatedEvent = {'key': 'Enter'};
 		var key = getPressedKey(simulatedEvent);
 
 		st.is(/^(Enter|13)$/.test(key), true, 'It can be checked ' +

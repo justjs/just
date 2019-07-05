@@ -81,18 +81,19 @@ const options = {
 module.exports = {
 	'options': options,
 	'browser': {
-		'loadPolyfills': true,
+		'polyfillsSrc': './src/lib/polyfills.js',
+		'testSuite': 'karma',
 		'files': [
 			'./src/browser.js'
 		].concat([
 			'var/DNT',
-			'var/ELEMENT_NAMESPACES',
+			'var/elementNamespaces',
 			'var/self',
 			'access',
 			'check',
 			'defaults',
 			'eachProperty',
-			'getElements',
+			'findElements',
 			'getFunctionName',
 			'getPressedKey',
 			'getRemoteParent',
@@ -101,6 +102,7 @@ module.exports = {
 			'isTouchDevice',
 			'toKeyValueObject',
 			'isWindow',
+			'createPrivateKey',
 			'loadElement',
 			'parseUrl',
 			'stringToJSON',
@@ -113,13 +115,14 @@ module.exports = {
 		].map(file => './src/lib/' + file + '.js'))
 	},
 	'server': {
-		'loadPolyfills': false,
+		'testSuite': 'tape',
 		'files': ['./src/server.js'].concat([
 			'access',
 			'defaults',
 			'check',
 			'eachProperty',
 			'isEmptyObject',
+			'createPrivateKey',
 			'fill',
 			'flatten',
 			'flattenArray',
