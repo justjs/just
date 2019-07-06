@@ -142,9 +142,11 @@ define(['./core', './defaults'], function (APR, defaults) {
 		 * @readOnly
 		 */
 		'DEFAULT_OPTIONS': {
-			'value': {
-				'override': true,
-				'mutate': false
+			'get': function () {
+				return {
+					'override': true,
+					'mutate': false
+				};
 			}
 		}
 	});

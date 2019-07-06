@@ -208,12 +208,12 @@ module.exports = grunt => {
 					},
 					'proxies': {
 						'/assets/': '/base/' + publicDir + '/'
-					},
-					'browsers': ['jsdom'],
-					'background': true,
-					'singleRun': true
+					}
 				},
 				'unit-browser': {
+					'browsers': ['jsdom'],
+					'background': true,
+					'singleRun': true,
 					...commonConfigurations
 				},
 				'unit-browser-dev': {

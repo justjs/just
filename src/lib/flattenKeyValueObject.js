@@ -66,8 +66,10 @@ define([
 		);
 	}, /** @lends APR.flattenKeyValueObject */{
 		'DEFAULT_OPTIONS': {
-			'value': {
-				'separator': '.'
+			'get': function () {
+				return {
+					'separator': '.'
+				};
 			}
 		}
 	});

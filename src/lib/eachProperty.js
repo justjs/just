@@ -75,8 +75,10 @@ define(['./core', './defaults'], function (APR, defaults) {
 		 * @readOnly
 		 */
 		'DEFAULT_OPTIONS': {
-			'value': {
-				'addNonOwned': false
+			'get': function () {
+				return {
+					'addNonOwned': false
+				};
 			}
 		}
 

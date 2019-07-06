@@ -28,8 +28,6 @@ test('lib/isWindow.js', function (t) {
 	t.test('Should return `false` if the given value is not ' +
 		'an object that looks like a `window` object.',
 		function (st) {
-
-		var windowClone = Object.assign({}, window);
 		
 		st.is(isWindow({
 			'setInterval': false,
@@ -50,12 +48,6 @@ test('lib/isWindow.js', function (t) {
 			'setInterval': window.setInterval,
 			'document': null
 		}), false, '`document` evaluates to `false`.');
-
-		delete windowClone.setInterval;
-
-		st.is(isWindow(windowClone), false,
-			'`window` no longer has `setInterval`, ' +
-			'so is not a `window` object.');
 
 		st.end();
 
