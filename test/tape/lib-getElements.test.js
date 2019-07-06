@@ -5,11 +5,13 @@ test('lib/getElements.js', function (t) {
 
 	t.test('Should always return an Array.', function (st) {
 
-		st.true(Array.isArray(getElements('body')));
-		st.true(Array.isArray(getElements('notFound')));
+		st.is(Array.isArray(getElements('body')), true);
+		st.is(Array.isArray(getElements('notFound')), true);
 
 		st.end();
 
 	});
+
+	t.end();
 
 });

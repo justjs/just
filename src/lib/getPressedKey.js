@@ -1,13 +1,13 @@
-define(function () {
+define(['./core'], function (APR) {
 
 	'use strict';
 
+	return APR.setFn('getPressedKey', /** @lends APR */
 	/**
 	 * A cross-browser solution to get the pressed key on a keyboard
 	 * event.
 	 * 
-	 * @param Event e Some event.
-	 * @return {number|string} Any of e.key, e.code, e.which or w.keyCode
+	 * @param {!Event} e Some event.
 	 *
 	 * @example
 	 * document.addEventListener('keypress', function (e) {
@@ -15,9 +15,11 @@ define(function () {
 	 *         console.log('Enter');
 	 *     }
 	 * });
+	 *
+	 * @return {number|string} Any of e.key, e.code, e.which or w.keyCode
 	 */
-	return function getPressedKey (e) {
+	function getPressedKey (e) {
 		return e.key || e.code || e.which || e.keyCode;
-	};
+	});
 
 });

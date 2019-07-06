@@ -13,4 +13,6 @@ test('lib/isTouchDevice.js', function (t) {
 		
 	});
 
+	t.end();
+
 });

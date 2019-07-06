@@ -1,10 +1,8 @@
-define([
-	'./isKeyValueObject',
-	'./isWindow'
-], function (isKeyValueObject, isWindow) {
+define(['./core', './isWindow'], function (APR, isWindow) {
 
 	'use strict';
 	
+	return APR.setFn('createPrivateKey', /** @lends APR */
 	/**
 	 * An store of private members.
 	 * 
@@ -40,7 +38,7 @@ define([
 	 * 
 	 * @return {APR~createPrivateKey_privateStore} An store of the private values.
 	 */
-	return function createPrivateKey (factory, parent) {
+	function createPrivateKey (factory, parent) {
 				
 		var store = new WeakMap();
 		var seen = new WeakMap();
@@ -81,6 +79,6 @@ define([
 
 		};
 
-	};
+	});
 
 });

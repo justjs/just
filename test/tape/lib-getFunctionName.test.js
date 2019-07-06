@@ -6,11 +6,11 @@ test('lib/getFunctionName.js', function (t) {
 	t.test('Should throw if the given value is not a function.',
 		function (st) {
 		
+		st.plan(1);
+
 		st.throws(function () {
 			getFunctionName('not a function');
 		}, TypeError);
-		
-		st.end();
 
 	});
 
@@ -41,5 +41,7 @@ test('lib/getFunctionName.js', function (t) {
 		st.end();
 
 	});
+
+	t.end();
 
 });

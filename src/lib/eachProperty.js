@@ -1,45 +1,87 @@
-define([
-	'./hasOwn'
-], function (hasOwn) {
+define(['./core', './defaults'], function (APR, defaults) {
 	
 	'use strict';
 
+	return APR.setFn('eachProperty', /** @lends APR */
 	/**
-	 * A function that will be called in each iteration.
-	 * 
 	 * @typedef {function} APR~eachProperty_fn
-	 * @this {*} `thisArg` of {@link APR.eachProperty}.
-	 * @param {*} value The value of the current `key` in `object`.
-	 * @param {string} key The current key of `object`.
-	 * @param {!Object} object The object that is being iterated.
-	 * @return {*} Some value.
+	 *
+	 * @this thisArg from {@link APR~eachProperty|the main function}.
+	 *
+	 * @param {*} value The current value.
+	 * @param {*} key The current key.
+	 * @param {!Object} object The current object being iterated.
+	 *
+	 * @return {boolean} If true, the current loop will stop.
+ 	 */
+
+	/**
+	 * @typedef {!Object} APR~eachProperty_options
+	 *
+	 * @property {boolean} [addNonOwned=false] Include non-owned properties
+	 *     false: iterate only the owned properties.
+	 *     true: iterate the (enumerable) inherited properties too.
 	 */
 	
 	/**
-	 * Iterates the properties of a JSON-like object.
+	 * Iterates over a key-value object, calls a function on
+	 * each iteration and if truthy value is returned, the loop
+	 * will stop.
 	 * 
-	 * @param  {!Object}  properties A JSON-like object to iterate.
-	 * @param  {APR~eachProperty_fn} fn The function that will be called in each iteration.
-	 * @param  {*} thisArg `this` for `fn`.
-	 * @param  {boolean} [strict=false] false: iterate only the owned properties.
-	 *                                  true: iterate the (enumerable) inherited properties too.
-	 * @return {!Object} The returned values.
+	 * @param  {Object} [object=Object(object)] Some value.
+	 * @param  {APR~eachProperty_fn} fn The function that will be
+	 *     called on each iteration.
+	 * @param  {*} [thisArg] `this` for `fn`.
+	 * @param  {APR~eachProperty_options} [
+	 *     opts=APR~eachProperty.DEFAULT_OPTIONS
+	 * ] Some options.
+	 *
+	 * @throws TypeError If `fn` is not a function.
+	 *
+	 * @return {boolean} True if the function was interrupted.
 	 */
-	return function eachProperty (properties, fn, thisArg, strict) {
+	function eachProperty (object, fn, thisArg, opts) {
 
-		var returnedValues = {};
+		var properties = Object(object);
+		var options = defaults(opts, eachProperty.DEFAULT_OPTIONS);
+		var wasInterrupted = false;
 		var k;
+
+		if (typeof fn !== 'function') {
+			throw new TypeError(fn + ' is not a function.');
+		}
 
 		for (k in properties) {
 
-			if (strict || hasOwn(properties, k)) {
-				returnedValues[k] = fn.call(thisArg, properties[k], k, properties);
+			if (wasInterrupted) {
+				break;
+			}
+
+			if (options.addNonOwned ||
+				({}).hasOwnProperty.call(properties, k)) {
+				
+				wasInterrupted = !!fn.call(thisArg, properties[k], k,
+					properties);
+
 			}
 
 		}
 
-		return returnedValues;
+		return wasInterrupted;
 
-	};
+	}, /** @lends APR.eachProperty */{
+		/**
+		 * @property {APR~eachProperty_options} DEFAULT_OPTIONS
+		 * @readOnly
+		 */
+		'DEFAULT_OPTIONS': {
+			'get': function () {
+				return {
+					'addNonOwned': false
+				};
+			}
+		}
+
+	});
 
 });

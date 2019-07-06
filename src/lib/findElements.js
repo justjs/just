@@ -1,16 +1,21 @@
-define(function () {
+define(['./core'], function (APR) {
 		
 	'use strict';
 
+	return APR.setFn('findElements', /** @lends APR */
 	/**
-	 * Gets DOM Elements by a CSS Selector. Note: CSS3 `selector`s are not supported by ie8.
+	 * Gets DOM Elements by a CSS Selector.
 	 * 
 	 * @param  {DOMString} selector A CSS selector.
 	 * @param  {Node} [parent=document] The parent node.
-	 * @return {Array} 
+	 *
+	 * @return {!Array} 
 	 */
-	return function getElements (selector, parent) {
+	function findElements (selector,
+		parent) {
+
 		return Array.from((parent || document).querySelectorAll(selector));
-	};
+		
+	});
 
 });

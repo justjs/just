@@ -1,21 +1,32 @@
 define([
+	'./core',
 	'./eachProperty',
-	'./isKeyValueObject',
+	'./check',
 	'./isEmptyObject'
-], function (eachProperty, isKeyValueObject, isEmptyObject) {
+], function (
+	APR,
+	eachProperty,
+	check,
+	isEmptyObject
+) {
 
+	'use strict';
+
+	return APR.setFn('fill', /** @lends APR */
 	/**
 	 * Fills a key-value object with `data`.
 	 *
 	 * @param {Object<key, value>} structure The structured data to be filled.
 	 * 										If the value of some property is an array,
-	 										the value gets pushed to the array.
+	 *										the value gets pushed to the array.
+	 *
 	 * @param {Object} data The new contents added to the structure.
+	 *
 	 * @param {Boolean} preserveUndefined If it's a truthy value, `undefined` values in
 	 * 										-the structure- will become an optional key
 	 * 										that will be present only if `data` contains
 	 * 										that property (even if it's `undefined`).
-	 * @return {!Object<key, value>} A new object preserving the given structure.
+	 *
 	 * @example <caption>`undefined` values get removed by default.</caption>
 	 * fill({
 	 *     'a': void 0,
@@ -28,20 +39,21 @@ define([
 	 *
 	 * @example <caption>Passing a third argument preserves `undefined` values.</caption>
 	 * fill({'a': void 0}, null, true); // {'a': void 0}
+	 *
+	 * @return {!Object<key, value>} A new object preserving the given structure.
 	 */
-	return function fill (structure, data, preserveUndefined) {
+	function fill (structure, data, preserveUndefined) {
 
 		var filled = {};
 
-		if (!isKeyValueObject(structure)) {
-			throw new TypeError(structure + ' must be a key-value object.');
-		}
+		check.throwable(structure, {});
 
-		if (typeof data === 'undefined' || typeof data === 'object' && isEmptyObject(data)) {
+		if (typeof data === 'undefined' || typeof data === 'object' &&
+			isEmptyObject(data)) {
 			return Object.assign({}, structure);
 		}
 
-		if (!isKeyValueObject(data)) {
+		if (!check(data, null, {})) {
 			throw new TypeError(data + ' must be null or a key-value object.');
 		}
 
@@ -58,7 +70,7 @@ define([
 				return;
 			}
 
-			if (Array.isArray(currentValue)) {
+			if (check(currentValue, [])) {
 				currentValue.push(newValue);
 				newValue = currentValue;
 			}
@@ -69,6 +81,6 @@ define([
 
 		return filled;
 
-	};
+	});
 
 });

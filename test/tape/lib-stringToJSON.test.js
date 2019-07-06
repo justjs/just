@@ -15,4 +15,6 @@ test('lib/stringToJSON.js', function (t) {
 		st.end();
 	});
 
+	t.end();
+
 });

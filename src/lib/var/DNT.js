@@ -1,20 +1,35 @@
-define(function () {
+define(['../core'], function (APR) {
 
 	'use strict';
 
-	var dnt = [navigator.doNotTrack, navigator.msDoNotTrack, window.doNotTrack];
-	var consent = ',' + dnt + ',';
-
+	return APR.setProperty('DNT', /** @lends APR */
 	/**
-	 * The DoNotTrack header formatted as 0, 1 or undefined (for "unspecified").
-	 * @type {(number|undefined)}
+	 * The DoNotTrack header formatted as true, false or undefined
+	 * (for "unspecified").
+	 *
+	 * @type {(boolean|undefined)}
 	 * @readOnly
 	 */
-	return (/,(yes|1),/i.test(consent)
-		? 1
-		: /,(no|0),/i.test(consent)
-		? 0
-		: void 0
-	);
+	{
+
+		'get': function DNT () {
+
+			var dnt = [
+				navigator.doNotTrack,
+				navigator.msDoNotTrack,
+				window.doNotTrack
+			];
+			var consent = ',' + dnt + ',';
+
+			return (/,(yes|1),/i.test(consent)
+				? true
+				: /,(no|0),/i.test(consent)
+				? false
+				: void 0
+			);
+
+		}
+
+	});
 
 });

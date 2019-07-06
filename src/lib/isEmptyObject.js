@@ -1,27 +1,29 @@
-define([
-	'./hasOwn'
-], function (hasOwn) {
+define(['./core'], function (APR) {
 	
 	'use strict';
 
+	return APR.setFn('isEmptyObject', /** @lends APR */
 	/**
 	 * Checks if an object has no direct keys.
 	 * 
 	 * @param  {Object} object Some object.
 	 * @return {boolean} true if it's null or not an object.
 	 */
-	return function isEmptyObject (object) {
+	function isEmptyObject (object) {
 		
 		var obj = Object(object);
 		var k;
 
 		for (k in obj) {
-			if (hasOwn(obj, k)) {
+			
+			if (({}).hasOwnProperty.call(obj, k)) {
 				return false;
 			}
+
 		}
 
 		return true;
-	};
+
+	});
 
 });

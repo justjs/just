@@ -1,8 +1,8 @@
 var test = require('tape'),
 	getRemoteParent = require('../../src/lib/getRemoteParent');
 
-var html = document.getElementsByTagName('html')[0],
-	body = document.getElementsByTagName('body')[0];
+var html = document.documentElement,
+	body = document.body;
 
 test('lib/getRemoteParent.js', function (t) {
 
@@ -18,7 +18,7 @@ test('lib/getRemoteParent.js', function (t) {
 		var parent = getRemoteParent(child,
 			function (deepLevel, rootContainer) {
 
-			st.true(this instanceof Node,
+			st.is(this instanceof Node, true,
 				'`this` is always a Node.');
 			
 			st.is(expectedDeepLevels[this.tagName], deepLevel,
@@ -71,6 +71,8 @@ test('lib/getRemoteParent.js', function (t) {
 
 	t.test('Should throw if something is invalid.', function (st) {
 		
+		st.plan(2);
+
 		st.throws(function () {
 			var child = window;
 			getRemoteParent(child, function () {});
@@ -79,8 +81,6 @@ test('lib/getRemoteParent.js', function (t) {
 		st.throws(function () {
 			getRemoteParent(body);
 		}, TypeError, 'No function was given.');
-
-		st.end();
 
 	});
 
@@ -113,5 +113,7 @@ test('lib/getRemoteParent.js', function (t) {
 		st.end();
 
 	});
+
+	t.end();
 
 });

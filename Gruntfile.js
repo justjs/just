@@ -7,6 +7,8 @@ const amdclean = require('amdclean'),
 	loadGruntTasks = require('load-grunt-tasks');
 
 const builds = require('./build/config');
+const browserBuild = builds['browser'];
+const serverBuild = builds['server'];
 
 const buildNames = Object.keys(builds).filter(
 	key => key !== 'options'
@@ -15,27 +17,19 @@ const buildOptions = builds['options'];
 
 module.exports = grunt => {
 
-	const forEachBuild = fn => {
+	const forEachBuild = (fn, thisArg) => {
 
-		var results = {};
-
-		buildNames.map(async key => {
-			fn.call(results, builds[key], key);
+		const fnResults = buildNames.map(async key => {
+			return fn.call(thisArg, builds[key], key);
 		});
 
-		return results;
+		return thisArg || fnResults;
 
 	};
 
 	loadGruntTasks(grunt);
 
 	grunt.initConfig({
-		'watch': {
-			'src-copy': {
-				'files': ['./src/**'],
-				'tasks': ['copy']
-			}
-		},
 		'copy': {
 			'build-src': {
 				'cwd': './src',
@@ -64,9 +58,9 @@ module.exports = grunt => {
 				]
 			}
 		},
-		// Builds ./src code.
-		'requirejs': (() => {
-
+		// Builds all the code into some mutable bundle.
+		'requirejs': forEachBuild(function (build, name) {
+			
 			const distOptions = {
 				'findNestedDependencies': true,
 				'optimize': 'none',
@@ -83,14 +77,14 @@ module.exports = grunt => {
 						'wrap': {
 							// Adds a banner, and exports
 							// the bundle to AMD, node or `this`.
-							'start': buildOptions.banner +
-							';(function (root, factory) {\n' +
+							'start': '(function (root, factory) {\n' +
 							'	if (typeof define === "function" && define.amd) { define("APR", factory); }\n' +
 							'	else if (typeof exports === "object") { module.exports = factory(); }\n' +
 							'	else { root.APR = factory(); }\n' +
 							'}(this, function () {\n',
 							'end': '\n\treturn APR;\n}));'
 						},
+						'aggressiveOptimizations': true,
 						'escodegen': {
 							// Some comments still being removed
 							// in version 2.7.0
@@ -98,8 +92,8 @@ module.exports = grunt => {
 							'format': {
 								'indent': {
 									'base': 1,
-									'style': '  ',
-									'adjustMultilineComment': true
+									'style': '\t',
+									'adjustMultilineComment': false
 								}
 							}
 						},
@@ -108,60 +102,50 @@ module.exports = grunt => {
 						// src/lib/someModule_js -> someModule
 						prefixTransform (postNormalizedModuleName, preNormalizedModuleName) {
 							return preNormalizedModuleName.replace(/^.*\//, '').replace(/\.js$/, '');
-						},
-						// Merges all module's content into
-						// one variable (APR).
-						IIFEVariableNameTransform (moduleName, moduleID) {
-
-							const moduleKey = moduleID.replace(/^.*\//, '').replace(/\.js$/, '').replace(/^APR/, '');
-							const reservedKeys = buildNames.concat(['polyfills', 'core', '']);
-
-							if (/^APR/.test(moduleName) && /\//.test(moduleID)) {
-								return moduleName;
-							}
-
-							if (reservedKeys.indexOf(moduleKey) >= 0) {
-								return moduleName;
-							}
-
-							if (/\W/.test(moduleKey)) {
-								return 'APR[\'' + moduleKey + '\'] = ' + moduleName;
-							}
-
-							return 'APR.' + moduleKey + ' = ' + moduleName;
-
 						}
 					});
+					var header = buildOptions.banner;
 
-					fs.writeFileSync(path, content);
+					if (build.polyfillsSrc) {
+						header += fs.readFileSync(
+							build.polyfillsSrc,
+							'utf8'
+						);
+					}
+
+					fs.writeFileSync(path, header + content);
 
 				}
 
 			};
 
-			// Builds all the code into some mutable bundle.
-			return forEachBuild(function (build, name) {
-			
-				const out = buildOptions
-					.getPath('mutableProduction') + '/' + name + '.js';
+			const out = buildOptions
+				.getPath('mutableProduction') + '/' + name + '.js';
 
-				this['bundle-dist-' + name] = {
-					'options': Object.assign({
-						'baseUrl': buildOptions.getPath(),
-						'include': build.files,
-						'out': out
-					}, distOptions)
-				};
+			this['bundle-dist-' + name] = {
+				'options': {
+					'baseUrl': buildOptions.getPath(),
+					'include': build.files,
+					'out': out,
+					...distOptions
+				}
+			};
 
-			});
-
-		})(),
+		}, {}),
 		'browserify': {
 			// Convert the amd modules into `require`s,
 			// and bundle them into one single file.
 			'bundle-test-tape': {
 				'options': {
-					'transform': ['deamdify']
+					'transform': ['deamdify', [
+						// Fixes karma error 0 of 0. 
+                    	'browserify-replace', {
+							'replace': [{
+								'from': /require\((\"|\')tape(\"|\')\)/g,
+								'to': 'typeof tape !== "undefined" ? tape : require("tape")'
+							}]
+						}
+					]]
 				},
 				'files': forEachBuild(function (build, name) {
 						
@@ -173,7 +157,7 @@ module.exports = grunt => {
 						file => path + '/' + buildOptions.getUnitTestFilename(file)
 					);
 
-				})
+				}, {})
 			}
 		},
 		'tape': {
@@ -185,35 +169,62 @@ module.exports = grunt => {
 					'output': 'console'
 				},
 				'src': [
+					serverBuild.polyfillsSrc,
 					buildOptions.getPath('test-tape') +
-						'/*' + buildOptions.getUnitTestFilename('server', 'build')
-				]
+						'/' + buildOptions.getUnitTestFilename('server', 'build')
+				].filter(v => v)
 			}
 		},
-		'karma': {
-			'unit-browser': {
-				'frameworks': ['tape'],
+		'karma': (() => {
+
+			const publicDir = buildOptions
+				.getPath('test-server')
+				.replace('./', '') +
+				'/public';
+
+			const commonConfigurations = {
 				'files': [
 					{
-						'src': buildOptions.getPath('test-server') + '/public/*',
+						'src': publicDir + '/*',
 						'included': false,
 						'served': true
 					}, {
-						'src': buildOptions.getPath('test-tape') +
-							'/*' + buildOptions.getUnitTestFilename('browser', 'build')
+						'src': [
+							browserBuild.polyfillsSrc,
+							buildOptions.getPath('test-tape') + '/' +
+								buildOptions.getUnitTestFilename('browser', 'build')
+						].filter(v => v)
 					}
-				],
-				'preprocessors': {
-					[buildOptions.getPath('src') + '/lib/**/*.js']: 'coverage'
+				]
+			};
+
+			return {
+				'options': {
+					'failOnEmptyTestSuite': false,
+					'frameworks': ['tap'],
+					'reporters': ['progress', 'coverage'],
+					'preprocessors': {
+						'./src/lib/**/*.js': ['coverage']
+					},
+					'proxies': {
+						'/assets/': '/base/' + publicDir + '/'
+					}
 				},
-				'browsers': ['jsdom'],
-				'singleRun': false,
-				'reporters': ['progress', 'coverage'],
-				'proxies': {
-					'/assets/': buildOptions.getPath('test-server') + '/public/'
+				'unit-browser': {
+					'browsers': ['jsdom'],
+					'background': true,
+					'singleRun': true,
+					...commonConfigurations
+				},
+				'unit-browser-dev': {
+					'singleRun': false,
+					'background': false,
+					'browsers': ['Firefox', 'IE'],
+					...commonConfigurations
 				}
-			}
-		},
+			};
+
+		})(),
 		'uglify': {
 			'options': {
 				'preserveComments': false,
@@ -225,7 +236,8 @@ module.exports = grunt => {
 				'compress': {
 					'hoist_funs': false,
 					'loops': false
-				}
+				},
+				'mangle': true
 			},
 			'dist': {
 				'files': forEachBuild(function (build, name) {
@@ -238,7 +250,7 @@ module.exports = grunt => {
 						mutableProductionPath + '/' + name + '.js'
 					];
 
-				})
+				}, {})
 			}
 		},
 		'compare_size': {
@@ -283,8 +295,8 @@ module.exports = grunt => {
 		'compare_size:build'
 	]);
 	grunt.registerTask('test', [
-		'tape:unit-server',
-		'karma:unit-browser'
+		serverBuild.testSuite + ':unit-server',
+		browserBuild.testSuite + ':unit-browser'
 	]);
 	grunt.registerTask('distribute', [
 		'copy:dist',
@@ -297,6 +309,10 @@ module.exports = grunt => {
 		'bundle',
 		'test',
 		'distribute'
+	]);
+	grunt.registerTask('dev', [
+		'default',
+		'karma:unit-browser-dev'
 	]);
 
 };

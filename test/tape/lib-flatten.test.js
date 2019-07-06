@@ -8,11 +8,11 @@ test('lib/flatten.js', function (t) {
 	t.test('Should generate a result depending on the type of the ' +
 		'given value.', function (st) {
 
-		var array = [0, [1, [2]]];
-		var keyValueObject = {'a': {'b': {'c': 'd'}}};
-
-		st.deepEquals(flatten(array), flattenArray(array));
-		st.deepEquals(flatten(keyValueObject), flattenKeyValueObject(keyValueObject));
+		st.deepEquals(flatten([]), [],
+			'flattenArray returns an Array.');
+		
+		st.deepEquals(flatten({}), {},
+			'flattenKeyValueObject returns a key-value object.');
 
 		st.end();
 
@@ -21,13 +21,15 @@ test('lib/flatten.js', function (t) {
 	t.test('Should throw if the solution is not implemented.',
 		function (st) {
 
+		st.plan(1);
+
 		st.throws(function () {
 			flatten('string');
 		}, TypeError, '`flattenString` or something similar is not ' +
 			'implemented yet.');
 
-		st.end();
-
 	});
+
+	t.end();
 
 });

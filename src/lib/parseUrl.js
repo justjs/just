@@ -1,7 +1,8 @@
-define(function () {
+define(['./core'], function (APR) {
 
 	'use strict';
 
+	return APR.setFn('parseUrl', /** @lends APR */
 	/**
 	 * The full parts of an url.
 	 * 
@@ -46,10 +47,9 @@ define(function () {
 	 * 
 	 * @return {APR~urlParts} 
 	 */
-	return function parseUrl (url) {
+	function parseUrl (url) {
 		
 		var parts = {}, optionalParts, hrefParts, args, id, uriParts, domainParts, hostParts, userParts, passwordParts;
-		var location = Object.assign({}, window.location);
 		var blob;
 
 		url = url || location.href;
@@ -125,6 +125,6 @@ define(function () {
 
 		return parts;
 
-	};
+	});
 
 });
