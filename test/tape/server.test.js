@@ -1,5 +1,9 @@
-var test = require('tape');
+var test = require('tape'),
+	server = require('../../src/server');
 
-test.skip('/server.js', function (t) {
+test('/server.js', function (t) {
+
+	t.deepEquals(server, {});
+	t.end();
 
 });

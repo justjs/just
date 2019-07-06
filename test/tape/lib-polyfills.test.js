@@ -1,5 +1,5 @@
 var test = require('tape');
 
-test.skip('/lib/polyfills.js', function (t) {
+test('/lib/polyfills.js', {'todo': true}, function (t) {
 
 });

@@ -4,10 +4,6 @@ define('APR', function () {
 
 	var APR = {};
 
-	if (typeof window !== 'undefined') {
-		window.APR = APR;
-	}
-
 	return Object.defineProperties(APR, /** @lends APR */{
 		// 'version': '%{CORE_VERSION}%',
 		/**
