@@ -4,7 +4,8 @@ const fs = require('fs');
 
 const amdclean = require('amdclean'),
 	gzip = require('gzip-js'),
-	loadGruntTasks = require('load-grunt-tasks');
+	loadGruntTasks = require('load-grunt-tasks'),
+	tapSpec = require('tap-spec');
 
 const builds = require('./build/config');
 const browserBuild = builds['browser'];
@@ -202,12 +203,20 @@ module.exports = grunt => {
 				'options': {
 					'failOnEmptyTestSuite': false,
 					'frameworks': ['tap'],
-					'reporters': ['progress', 'coverage'],
+					'reporters': ['coverage', 'tap-pretty'],
 					'preprocessors': {
 						'./src/lib/**/*.js': ['coverage']
 					},
 					'proxies': {
 						'/assets/': '/base/' + publicDir + '/'
+					},
+					'tapReporter': {
+						'prettify': tapSpec,
+						'separator': '****************************'
+					},
+					'coverageReporter': {
+						'type': 'html',
+						'dir': './coverage/'
 					}
 				},
 				'unit-browser': {
@@ -219,7 +228,8 @@ module.exports = grunt => {
 				'unit-browser-dev': {
 					'singleRun': false,
 					'background': false,
-					'browsers': ['Firefox', 'IE'],
+					'browsers': ['Firefox'],
+					'logLevel': 'DEBUG',
 					...commonConfigurations
 				}
 			};

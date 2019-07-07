@@ -10,7 +10,8 @@
     "test": "./test"
   },
   "scripts": {
-    "start": "grunt dev",
+    "start": "grunt",
+    "development": "grunt dev",
     "build": "npm install && grunt",
     "test": "grunt test",
     "test-server": "grunt init && grunt bundle && tap ./build/test/tap/server.build.test.js",
@@ -48,10 +49,11 @@
     "karma": "^4.1.0",
     "karma-coverage": "^1.1.2",
     "karma-firefox-launcher": "^1.1.0",
-    "karma-ie-launcher": "^1.0.0",
     "karma-jsdom-launcher": "^7.1.0",
     "karma-tap": "^4.1.4",
+    "karma-tap-pretty-reporter": "^4.1.0",
     "load-grunt-tasks": "^5.0.0",
+    "tap-spec": "^5.0.0",
     "tape": "^4.10.2"
   },
   "dependencies": {}

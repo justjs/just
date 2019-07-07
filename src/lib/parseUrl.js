@@ -82,7 +82,7 @@ define(['./core'], function (APR) {
 			url = location.protocol + '//' + url;
 		}
 
-		hrefParts = url.split(/(\?.*#?|#.*\??).*/);
+		hrefParts = (url || '').split(/(\?.*#?|#.*\??).*/);
 		optionalParts = (hrefParts[1] || '').split('#');
 		id = optionalParts[1] || '';
 
