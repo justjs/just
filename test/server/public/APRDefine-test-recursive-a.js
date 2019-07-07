@@ -1,3 +1,3 @@
-APR.Define('recursive-a', ['recursive-b'], function (b) {
+APRDefine('recursive-a', ['recursive-b'], function (b) {
 	return b;
 });

@@ -1,3 +1,3 @@
-APR.Define('not-a-function', {
+APRDefine('not-a-function', {
 	'an': 'object'
 });

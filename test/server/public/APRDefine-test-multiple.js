@@ -1,3 +1,3 @@
-APR.Define('object', [], {});
-APR.Define('null', [], null);
-APR.Define('undefined', [], void 0);
+APRDefine('object', [], {});
+APRDefine('null', [], null);
+APRDefine('undefined', [], void 0);

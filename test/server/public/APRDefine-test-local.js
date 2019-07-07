@@ -1,3 +1,3 @@
-APR.Define('theLocal', function () {
+APRDefine('theLocal', function () {
 	return 'local';
 });

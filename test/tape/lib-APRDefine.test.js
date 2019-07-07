@@ -1,6 +1,9 @@
 var test = require('tape'),
 	APRDefine = require('../../src/lib/APRDefine');
 
+// Use in loaded files.
+window.APRDefine = APRDefine;
+
 test('/lib/APRDefine.js', function (t) {
 
 	function removeScripts (selector) {
@@ -197,7 +200,11 @@ test('/lib/APRDefine.js', function (t) {
 		});
 
 	}, TypeError);
-
+	
 	t.end();
 
+});
+
+test.onFinish(function () {
+	delete window.APRDefine;
 });
