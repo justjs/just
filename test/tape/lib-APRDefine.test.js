@@ -199,6 +199,32 @@ test('/lib/APRDefine.js', function (t) {
 
 		});
 
+		t.test('Should load anything (not just scripts).', function (st) {
+
+			var url = '/assets/APRDefine-test-non-script.css';
+			var tagName = 'link';
+
+			APRDefine.addFiles({
+				// Tag names are passed in the urls this way:
+				'css': tagName + ' ' + url
+			}).load({
+				/*
+				 * Since this file does not contain any definitions,
+				 * you must intercept the load and define the id
+				 * by yourself.
+				 */
+				'css': function (error, data) {
+					APRDefine(data.id);
+				}
+			});
+
+			APRDefine('load-any-file', ['css'], function (css) {
+				st.is(css, void 0);
+				st.end();
+			});
+
+		});
+
 	}, TypeError);
 	
 	t.end();
