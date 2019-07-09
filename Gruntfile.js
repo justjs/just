@@ -1,145 +1,46 @@
-'use strict';
-
 const fs = require('fs');
 
-const amdclean = require('amdclean'),
-	gzip = require('gzip-js'),
-	loadGruntTasks = require('load-grunt-tasks'),
-	tapSpec = require('tap-spec');
+const gzip = require('gzip-js'),
+	loadGruntTasks = require('load-grunt-tasks');
 
-const builds = require('./build/config');
-const browserBuild = builds['browser'];
-const serverBuild = builds['server'];
+const builds = require('./build/config'),
+	browserBuild = builds['browser'],
+	serverBuild = builds['server'];
 
-const buildNames = Object.keys(builds).filter(
-	key => key !== 'options'
-);
 const buildOptions = builds['options'];
 
 module.exports = grunt => {
 
-	const forEachBuild = (fn, thisArg) => {
-
-		const fnResults = buildNames.map(async key => {
-			return fn.call(thisArg, builds[key], key);
-		});
-
-		return thisArg || fnResults;
-
-	};
-
-	loadGruntTasks(grunt);
-
 	grunt.initConfig({
-		'copy': {
-			'build-src': {
-				'cwd': './src',
-				'src': ['**'],
-				'dest': buildOptions.getPath('src'),
-				'expand': true
-			},
-			'build-test': {
-				'cwd': './test',
-				'src': ['**'],
-				'dest': buildOptions.getPath('test'),
-				'expand': true
-			},
-			'dist': {
-				'cwd': buildOptions.getPath('mutableProduction'),
-				'src': ['**'],
-				'dest': buildOptions.getPath('production'),
-				'expand': true
-			}
-		},
+
+		// Remove previous builds.
 		'clean': {
 			'builds': {
 				'src': [
-					buildOptions.getPath() + '/*',
-					'!' + buildOptions.getPath() + '/config.js'
+					buildOptions.getPath('build') + '/*',
+					'!' + buildOptions.getPath('build') + '/config.js'
 				]
 			}
 		},
-		// Builds all the code into some mutable bundle.
-		'requirejs': forEachBuild(function (build, name) {
-			
-			const distOptions = {
-				'findNestedDependencies': true,
-				'optimize': 'none',
-				'skipModuleInsertion': true,
-				'skipSemiColonInsertion': true,
-				onBuildRead (moduleName, path, contents) {
-					return buildOptions.replaceVars(contents);
-				},
-				onModuleBundleComplete (data) {
-					
-					const {path} = data;
-					const content = amdclean.clean({
-						'filePath': path,
-						'wrap': {
-							// Adds a banner, and exports
-							// the bundle to AMD, node or `this`.
-							'start': '(function (root, factory) {\n' +
-							'	if (typeof define === "function" && define.amd) { define("APR", factory); }\n' +
-							'	else if (typeof exports === "object") { module.exports = factory(); }\n' +
-							'	else { root.APR = factory(); }\n' +
-							'}(this, function () {\n',
-							'end': '\n\treturn APR;\n}));'
-						},
-						'aggressiveOptimizations': true,
-						'escodegen': {
-							// Some comments still being removed
-							// in version 2.7.0
-							'comment': true,
-							'format': {
-								'indent': {
-									'base': 1,
-									'style': '\t',
-									'adjustMultilineComment': false
-								}
-							}
-						},
-						// Removes the path and the extension
-						// from all the variables.
-						// src/lib/someModule_js -> someModule
-						prefixTransform (postNormalizedModuleName, preNormalizedModuleName) {
-							return preNormalizedModuleName.replace(/^.*\//, '').replace(/\.js$/, '');
-						}
-					});
-					var header = buildOptions.banner;
 
-					if (build.polyfillsSrc) {
-						header += fs.readFileSync(
-							build.polyfillsSrc,
-							'utf8'
-						);
-					}
+		// Copy code.
+		'copy': {
+			'all': {
+				'cwd': '.',
+				'src': ['./src/**', './test/**'],
+				'dest': buildOptions.getPath('build'),
+				'expand': true
+			}
+		},
 
-					fs.writeFileSync(path, header + content);
-
-				}
-
-			};
-
-			const out = buildOptions
-				.getPath('mutableProduction') + '/' + name + '.js';
-
-			this['bundle-dist-' + name] = {
-				'options': {
-					'baseUrl': buildOptions.getPath(),
-					'include': build.files,
-					'out': out,
-					...distOptions
-				}
-			};
-
-		}, {}),
+		// Bundle tests replacing amd modules with cjs ones.
 		'browserify': {
-			// Convert the amd modules into `require`s,
-			// and bundle them into one single file.
-			'bundle-test-tape': {
+			'tests': {
 				'options': {
 					'transform': ['deamdify', [
-						// Fixes karma error 0 of 0. 
+						// Fixes karma error 0 of 0 by using
+						// the karma-framework instead of a new
+						// import.
                     	'browserify-replace', {
 							'replace': [{
 								'from': /require\((\"|\')tape(\"|\')\)/g,
@@ -148,181 +49,176 @@ module.exports = grunt => {
 						}
 					]]
 				},
-				'files': forEachBuild(function (build, name) {
-						
-					const path = buildOptions.getPath('test-tape');
-					const out = buildOptions
-						.getUnitTestFilename(path + '/' + name, 'build');
-
-					this[out] = build.files.map(
-						file => path + '/' + buildOptions.getUnitTestFilename(file)
-					);
-
-				}, {})
+				'files': {
+					[browserBuild.getBuildSrc('test-tape')]:
+						browserBuild.getTestFiles('test-tape'),
+					[serverBuild.getBuildSrc('test-tape')]:
+						serverBuild.getTestFiles('test-tape')
+				}
 			}
 		},
+
+		// Test server code.
 		'tape': {
-			// TAP won't work with amd modules. Files need
-			// to be converted first in order to be tested. 
-			'unit-server': {
-				'options': {
-					'pretty': true,
-					'output': 'console'
-				},
+			'options': {
+				'pretty': true,
+				'output': 'console'
+			},
+			'unit': {
 				'src': [
-					serverBuild.polyfillsSrc,
-					buildOptions.getPath('test-tape') +
-						'/' + buildOptions.getUnitTestFilename('server', 'build')
+					serverBuild.polyfills,
+					serverBuild.getBuildSrc('test-tape')
 				].filter(v => v)
 			}
 		},
-		'karma': (() => {
 
-			const publicDir = buildOptions
-				.getPath('test-server')
-				.replace('./', '') +
-				'/public';
-
-			const commonConfigurations = {
-				'files': [
-					{
-						'src': publicDir + '/*',
-						'included': false,
-						'served': true
-					}, {
-						'src': [
-							browserBuild.polyfillsSrc,
-							buildOptions.getPath('test-tape') + '/' +
-								buildOptions.getUnitTestFilename('browser', 'build')
-						].filter(v => v)
-					}
-				]
-			};
-
-			return {
-				'options': {
-					'failOnEmptyTestSuite': false,
-					'frameworks': ['tap'],
-					'reporters': ['coverage', 'tap-pretty'],
-					'preprocessors': {
-						'./src/lib/**/*.js': ['coverage']
-					},
-					'proxies': {
-						'/assets/': '/base/' + publicDir + '/'
-					},
-					'tapReporter': {
-						'prettify': tapSpec,
-						'separator': '****************************'
-					},
-					'coverageReporter': {
-						'type': 'html',
-						'dir': './coverage/'
-					}
-				},
-				'unit-browser': {
-					'browsers': ['jsdom'],
-					'background': true,
-					'singleRun': true,
-					...commonConfigurations
-				},
-				'unit-browser-dev': {
-					'singleRun': false,
-					'background': false,
-					'browsers': ['Firefox'],
-					'logLevel': 'DEBUG',
-					...commonConfigurations
-				}
-			};
-
-		})(),
-		'uglify': {
-			'options': {
-				'preserveComments': false,
-				'report': 'min',
-				'output': {
-					'ascii_only': true
-				},
-				'banner': buildOptions.banner,
-				'compress': {
-					'hoist_funs': false,
-					'loops': false
-				},
-				'mangle': true
+		// Test client code.
+		'karma': {
+			'unit': {
+				'configFile': 'karma.conf.js',
+				'browsers': ['jsdom'],
+				'singleRun': true,
+				'logLevel': 'INFO'
 			},
-			'dist': {
-				'files': forEachBuild(function (build, name) {
-
-					const productionPath = buildOptions.getPath('production');
-					const mutableProductionPath = buildOptions.getPath('mutableProduction');
-					const out = productionPath + '/' + name + '.min.js';
-
-					this[out] = [
-						mutableProductionPath + '/' + name + '.js'
-					];
-
-				}, {})
+			'unit-dev': {
+				'configFile': 'karma.conf.js',
+				'singleRun': false,
+				'background': true
 			}
 		},
-		'compare_size': {
+
+		// Build distributions
+		'requirejs': {
+
 			'options': {
-				'compress': {
-					gz (fileContents) {
-						return gzip.zip(fileContents, {}).length;
+				'optimize': 'none',
+				'baseUrl': buildOptions.getPath('build'),
+				'findNestedDependencies': true,
+				'skipModuleInsertion': true,
+				'skipSemiColonInsertion': true,
+				onBuildRead (moduleName, path, contents) {
+					return buildOptions.replaceVars(contents);
+				}
+			},
+
+			'browser-build': {
+				'options': {
+					'include': browserBuild.files,
+					'out': browserBuild.getBuildSrc('distribution'),
+					onModuleBundleComplete (data) {
+						browserBuild.replaceAMDModules(data.path);
 					}
 				}
 			},
-			'build': {
+
+			'server-build': {
 				'options': {
-					'cache': buildOptions.getPath() +
-						'/.sizecache.json'
-				},
-				'src': buildNames.map(
-					name => buildOptions.getPath('mutableProduction') +
-						'/' + name + '.js'
-				)
-			},
-			'dist': {
-				'options': {
-					'cache': buildOptions.getPath('production') +
-						'/.sizecache.json'
-				},
-				'src': buildNames.map(
-					name => buildOptions.getPath('production') +
-						'/' + name + '*.js'
-				)
+					'include': serverBuild.files,
+					'out': serverBuild.getBuildSrc('distribution'),
+					onModuleBundleComplete (data) {
+						serverBuild.replaceAMDModules(data.path);
+					}
+				}
 			}
-		}
+
+		},
+
+		// Minify distributions
+		'uglify': {
+			'options': {
+				'mangle': true,
+				'report': 'min',
+				'banner': buildOptions.banner,
+				'preserveComments': false,
+				'output': {
+					'ascii_only': true
+				}
+			},
+			'browser-build': {
+				'files': {
+					[browserBuild.getBuildSrc('distribution-minified')]: [
+						browserBuild.getBuildSrc('distribution')
+					]
+				}
+			},
+			'server-build': {
+				'files': {
+					[serverBuild.getBuildSrc('distribution-minified')]: [
+						serverBuild.getBuildSrc('distribution')
+					]
+				}
+			}
+		},
+
+		'compare_size': {
+			'distributions': {
+				'options': {
+					'cache': buildOptions.getPath('production') + '/.sizecache.json',
+					'compress': {
+						gz (fileContents) {
+							return gzip.zip(fileContents, {}).length;
+						}
+					}
+				},
+				'src': [buildOptions.getPath('production') + '/**']
+			}
+		
+		},
+
+		'watch': {
+			'options': {
+				/*'spawn': false,
+				'interrupt': true*/
+			},
+			'all': {
+				'files': ['./src/**', './test/**'],
+				'tasks': ['init', 'browserify:tests']
+			},
+			'browserify': {
+				'files': [
+					buildOptions.getBuildSrc('browser', 'test-tape'),
+					buildOptions.getBuildSrc('server', 'test-tape')
+				],
+				'tasks': [
+					'karma:unit-dev:run',
+					'tape:unit'
+				]
+			}
+		},
+
 	});
+
+	loadGruntTasks(grunt);
 
 	grunt.registerTask('init', [
 		'clean:builds',
-		'copy:build-src',
-		'copy:build-test'
+		'copy:all'
 	]);
-	grunt.registerTask('bundle', [
-		'requirejs',
-		'browserify',
-		'compare_size:build'
-	]);
+
 	grunt.registerTask('test', [
-		serverBuild.testSuite + ':unit-server',
-		browserBuild.testSuite + ':unit-browser'
+		'browserify:tests',
+		'karma:unit',
+		'tape:unit'
 	]);
+
 	grunt.registerTask('distribute', [
-		'copy:dist',
-		'uglify:dist',
-		'compare_size:dist'
+		'requirejs',
+		'uglify',
+		'compare_size'
 	]);
 
 	grunt.registerTask('default', [
 		'init',
-		'bundle',
-		'test',
+		'test'
+	]);
+
+	grunt.registerTask('build', [
+		'default',
 		'distribute'
 	]);
-	grunt.registerTask('dev', [
-		'default',
-		'karma:unit-browser-dev'
+
+	grunt.registerTask('development', [
+		'watch'
 	]);
 
 };

@@ -6,16 +6,11 @@
   "main": "./dist/server.js",
   "private": true,
   "browser": "./dist/browser.js",
-  "directories": {
-    "test": "./test"
-  },
   "scripts": {
     "start": "grunt",
-    "development": "grunt dev",
-    "build": "npm install && grunt",
-    "test": "grunt test",
-    "test-server": "grunt init && grunt bundle && tap ./build/test/tap/server.build.test.js",
-    "test-browser": "grunt init && grunt bundle && grunt karma:unit-browser"
+    "development": "grunt karma:unit-dev:start watch",
+    "build": "npm install && grunt build",
+    "test": "grunt init test"
   },
   "repository": {
     "type": "git",
@@ -24,7 +19,8 @@
   "keywords": [
     "javascript",
     "library",
-    "APR"
+    "APR",
+    "helpers"
   ],
   "author": "Alexis Puga Ruíz",
   "license": "CC-BY-NC-3.0",

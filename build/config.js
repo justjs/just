@@ -1,26 +1,37 @@
 // Note: All files are relative to the Gruntfile location.
+const fs = require('fs');
 
-const pkg = require('../package.json');
+const amdclean = require('amdclean');
+
+const pkg = require('../package.json'),
+	license = fs.readFileSync('./LICENSE', 'utf8');
 
 const options = {
-	// Banner for build files.
-	'banner': '/*! ' + pkg.title + ' v' + pkg.version +
-	' - (c) ' + pkg.author + '.' +
-	' - license: ' + pkg.license +
-	' */\n',
+	// Banner for built files.
+	'banner': (
+   `/*!
+	 * ${license.trim().replace(/\n/g, '\n * ')}
+	 */
+	/*
+	 * ${pkg.title}: ${pkg.description}
+	 * v${pkg.version}
+	 */`).replace(/\t/g, ''),
+
+	get publicDir () {
+		return this.getPath('test-server') + '/public';
+	},
 	// Paths for the builds.
 	getPath (key) {
 		
 		const path = './build';
 		const pathTest = path + '/test';
 		const paths = {
-			'base': path,
+			'build': path,
 			'src': path + '/src',
 			'test': pathTest,
 			'test-tap': pathTest + '/tap',
 			'test-tape': pathTest + '/tape',
 			'test-server': pathTest + '/server',
-			'mutableProduction': path + '/dist',
 			// Path for finished files.
 			'production': './dist'
 		};
@@ -74,6 +85,72 @@ const options = {
 			.replace(/\//g, '-')
 			.replace(/(\.js|$)/, '.test.js');
 	
+	},
+
+	getTestFiles (files, path) {
+
+		return files.map(file => {
+			return path + '/' + options.getUnitTestFilename(file)
+		});
+
+	},
+
+	getBuildSrc (buildKey, key) {
+
+		const keys = {
+			
+			'test-tape': options.getPath('test-tape') + '/' +
+				options.getUnitTestFilename(buildKey, 'build'),
+			
+			'distribution': options.getPath('production') + '/' +
+				buildKey + '.js',
+			
+			'distribution-minified': options.getPath('production') + '/' +
+				buildKey + '.min.js'
+
+		};
+
+		return keys[key];
+
+	},
+
+	convertAMDModulesToCJS (path) {
+
+		return amdclean.clean({
+
+			'filePath': path,
+			'aggressiveOptimizations': true,
+			'wrap': {
+				'start': ('\n' +
+					'(function (fn) {\n' +
+					"	if (typeof define === 'function' && define.amd) { define('APR', fn); }\n" +
+					"	else if (module instanceof Object) { module.exports = fn(); }\n" +
+					'	else { this.APR = fn(); }\n' +
+					'}(this, function () {\n'
+				),
+				'end': '\n\treturn APR;\n}));'
+			},
+			'escodegen': {
+				// Some comments still being removed
+				// in version 2.7.0
+				'comment': true,
+				'format': {
+					'indent': {
+						'base': 1,
+						'style': '\t',
+						'adjustMultilineComment': false
+					}
+				}
+			},
+			// Removes the path and the extension
+			// from all the variables.
+			// src/lib/someModule_js -> someModule
+			prefixTransform (postNormalizedModuleName, preNormalizedModuleName) {
+				return preNormalizedModuleName.replace(/^.*\//, '').replace(/\.js$/, '');
+			}
+
+		});
+
 	}
 
 };
@@ -81,54 +158,92 @@ const options = {
 module.exports = {
 	'options': options,
 	'browser': {
-		'polyfillsSrc': './src/lib/polyfills.js',
-		'testSuite': 'karma',
+
 		'files': [
-			'./src/browser.js'
-		].concat([
-			'var/DNT',
-			'var/elementNamespaces',
-			'var/self',
-			'access',
-			'check',
-			'defaults',
-			'eachProperty',
-			'findElements',
-			'getFunctionName',
-			'getPressedKey',
-			'getRemoteParent',
-			'inheritFrom',
-			'isEmptyObject',
-			'isTouchDevice',
-			'toKeyValueObject',
-			'isWindow',
-			'createPrivateKey',
-			'loadElement',
-			'parseUrl',
-			'stringToJSON',
-			'fill',
-			'flatten',
-			'flattenArray',
-			'flattenKeyValueObject',
-			'APRDefine',
-			'APRLocalStorage'
-		].map(file => './src/lib/' + file + '.js'))
+			'browser',
+			'lib/var/DNT',
+			'lib/var/elementNamespaces',
+			'lib/access',
+			'lib/check',
+			'lib/defaults',
+			'lib/eachProperty',
+			'lib/findElements',
+			'lib/getFunctionName',
+			'lib/getPressedKey',
+			'lib/getRemoteParent',
+			'lib/inheritFrom',
+			'lib/isEmptyObject',
+			'lib/isTouchDevice',
+			'lib/toKeyValueObject',
+			'lib/isWindow',
+			'lib/createPrivateKey',
+			'lib/loadElement',
+			'lib/parseUrl',
+			'lib/stringToJSON',
+			'lib/fill',
+			'lib/flatten',
+			'lib/flattenArray',
+			'lib/flattenKeyValueObject',
+			'lib/APRDefine',
+			'lib/APRLocalStorage'
+		].map(file => file.replace(/\.?\/?/, './src/') + '.js'),
+		
+		get polyfills () {
+			return '\n' + fs.readFileSync('./src/lib/polyfills.js', 'utf8');
+		},
+		getBuildSrc (key) {
+			return options.getBuildSrc('browser', key);
+		},
+		getTestFiles (pathKey) {
+			return options.getTestFiles(
+				this.files,
+				options.getPath(pathKey)
+			);
+		},
+		replaceAMDModules (path) {
+			fs.writeFileSync(path,
+				options.banner +
+				this.polyfills +
+				options.convertAMDModulesToCJS(path)
+			);
+		}
+
 	},
 	'server': {
-		'testSuite': 'tape',
-		'files': ['./src/server.js'].concat([
-			'access',
-			'defaults',
-			'check',
-			'eachProperty',
-			'isEmptyObject',
-			'createPrivateKey',
-			'fill',
-			'flatten',
-			'flattenArray',
-			'flattenKeyValueObject',
-			'toKeyValueObject',
-			'stringToJSON'
-		].map(file => './src/lib/' + file + '.js'))
+
+		'files': [
+			'server',
+			'lib/access',
+			'lib/defaults',
+			'lib/check',
+			'lib/eachProperty',
+			'lib/isEmptyObject',
+			'lib/createPrivateKey',
+			'lib/fill',
+			'lib/flatten',
+			'lib/flattenArray',
+			'lib/flattenKeyValueObject',
+			'lib/toKeyValueObject',
+			'lib/stringToJSON'
+		].map(file => file.replace(/\.?\/?/, './src/') + '.js'),
+		
+		get polyfills () {
+			return '';
+		},
+		getBuildSrc (key) {
+			return options.getBuildSrc('server', key);
+		},
+		getTestFiles (pathKey) {
+			return options.getTestFiles(this.files,
+				options.getPath(pathKey));
+		},
+		replaceAMDModules (path) {
+			fs.writeFileSync(path,
+				options.banner +
+				this.polyfills +
+				options.convertAMDModulesToCJS(path)
+			);
+		}
+
 	}
 }
