@@ -1,7 +1,5 @@
 (function (W) {
 
-	'use strict';
-
 	/**
 	 * Some commonly used polyfills (for ie9+).
 	 * @ignore

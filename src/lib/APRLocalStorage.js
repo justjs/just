@@ -66,7 +66,10 @@ define('APRLocalStorage', [
 		 */
 		'getCookie': {
 			'value': function getCookie (name) {
-				return ('; ' + document.cookie).split('; ' + name + '=').pop().split('; ').shift().split(/^=/).pop() || null;
+				return (!/=/.test(name) && APR.LocalStorage.cookieExists(name)
+					? ('; ' + document.cookie).split('; ' + name + '=').pop().split(';')[0]
+					: null
+				);
 			}
 		}
 	}, /** @lends APR.LocalStorage.prototype */{

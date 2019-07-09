@@ -11,11 +11,8 @@ define(['./core'], function (APR) {
 	 *
 	 * @return {!Array} 
 	 */
-	function findElements (selector,
-		parent) {
-
+	function findElements (selector, parent) {
 		return Array.from((parent || document).querySelectorAll(selector));
-		
 	});
 
 });

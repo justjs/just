@@ -4,22 +4,6 @@ define(['./core'], function (APR) {
 
 	return APR.setFn('check', /** @lends APR */
 	/**
-	 * A function that `check`s a value against others and
-	 * throws if the result is `false`.
-	 *
-	 * @typedef {function} APR~check_throwable 
-	 *
-	 * @this {string} A custom message to throw.
-	 *
-	 * @param {*} value Comparison value.
-	 * @param {*} [...otherValues] Values to check against.
-	 *
-	 * @throws {TypeError} If `check` returns `false`.
-	 *
-	 * @returns `value` if `check` returns `true`.
-	 */
-
-	/**
 	 * Checks if `value` looks like the other values.
 	 *
 	 * @param {*} value Comparison value.
@@ -52,6 +36,21 @@ define(['./core'], function (APR) {
 		});
 
 	}, /** @lends APR.check */{
+		/**
+		 * A function that `check`s a value against others and
+		 * throws if the result is `false`.
+		 *
+		 * @typedef {function} APR~check_throwable 
+		 *
+		 * @this {string} A custom message to throw.
+		 *
+		 * @param {*} value Comparison value.
+		 * @param {*} [...otherValues] Values to check against.
+		 *
+		 * @throws {TypeError} If `check` returns `false`.
+		 *
+		 * @returns `value` if `check` returns `true`.
+		 */
 		/**
 		 * @property {APR~check_throwable} throwable
 		 */
