@@ -87,3 +87,5 @@ typings/
 
 /build/*
 !/build/config.js
+
+/docs/*

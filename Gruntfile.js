@@ -20,6 +20,9 @@ module.exports = grunt => {
 					buildOptions.getPath('build') + '/*',
 					'!' + buildOptions.getPath('build') + '/config.js'
 				]
+			},
+			'docs': {
+				'src': ['./docs']
 			}
 		},
 
@@ -162,7 +165,7 @@ module.exports = grunt => {
 				},
 				'src': [buildOptions.getPath('production') + '/**']
 			}
-		
+
 		},
 
 		'watch': {
@@ -183,8 +186,44 @@ module.exports = grunt => {
 					'karma:unit-dev:run',
 					'tape:unit'
 				]
+			},
+			'jsdoc': {
+				'options': {
+					'atBegin': true
+				},
+				'files': ['./src/**'],
+				'tasks': ['init', 'distribute', 'connect:jsdoc']
 			}
 		},
+
+		/* Generate documentation */
+		'jsdoc': {
+			'browser': {
+				'src': [browserBuild.getBuildSrc('distribution')],
+				'dest': './docs/browser',
+				'options': {
+					'template': './node_modules/@apr/jsdoc-template',
+					'configure': './jsdoc.conf.json'
+				}
+			},
+			'server': {
+				'src': [serverBuild.getBuildSrc('distribution')],
+				'dest': './docs/server',
+				'options': {
+					'template': './node_modules/@apr/jsdoc-template',
+					'configure': './jsdoc.conf.json'
+				}
+			}
+		},
+
+		'connect': {
+			'jsdoc': {
+				'options': {
+					'keepalive': true,
+					'base': './docs'
+				}
+			}
+		}
 
 	});
 
@@ -204,7 +243,8 @@ module.exports = grunt => {
 	grunt.registerTask('distribute', [
 		'requirejs',
 		'uglify',
-		'compare_size'
+		'clean:docs',
+		'jsdoc'
 	]);
 
 	grunt.registerTask('default', [
@@ -214,11 +254,8 @@ module.exports = grunt => {
 
 	grunt.registerTask('build', [
 		'default',
-		'distribute'
-	]);
-
-	grunt.registerTask('development', [
-		'watch'
+		'distribute',
+		'compare_size'
 	]);
 
 };

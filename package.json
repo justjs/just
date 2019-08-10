@@ -8,9 +8,10 @@
   "browser": "./dist/browser.js",
   "scripts": {
     "start": "grunt",
-    "development": "grunt karma:unit-dev:start watch",
+    "development": "grunt karma:unit-dev:start watch:all watch:browserify",
     "build": "npm install && grunt build",
-    "test": "grunt init test"
+    "test": "grunt init test",
+    "document": "grunt watch:jsdoc"
   },
   "repository": {
     "type": "git",
@@ -25,6 +26,7 @@
   "author": "Alexis Puga Ruíz",
   "license": "CC-BY-NC-3.0",
   "devDependencies": {
+    "@apr/jsdoc-template": "file://var/www/@apr/jsdoc-template",
     "amdclean": "^2.7.0",
     "browserify": "^16.2.3",
     "browserify-replace": "^1.0.1",
@@ -34,13 +36,16 @@
     "grunt-cli": "^1.3.2",
     "grunt-compare-size": "^0.4.2",
     "grunt-contrib-clean": "^2.0.0",
+    "grunt-contrib-connect": "^2.0.0",
     "grunt-contrib-copy": "^1.0.0",
     "grunt-contrib-requirejs": "^1.0.0",
     "grunt-contrib-uglify": "^4.0.1",
     "grunt-contrib-watch": "^1.1.0",
+    "grunt-jsdoc": "^2.4.0",
     "grunt-karma": "^3.0.2",
     "grunt-tape": "^0.1.0",
     "gzip-js": "^0.3.2",
+    "jsdoc": "^3.6.3",
     "jsdom": "^15.1.1",
     "karma": "^4.1.0",
     "karma-coverage": "^1.1.2",
