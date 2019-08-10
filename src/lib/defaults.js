@@ -2,22 +2,24 @@ define(['./core', './check'], function (APR, check) {
 	
 	'use strict';
 
-	return APR.setFn('defaults', /** @lends APR */
+	return APR.setFn('defaults',
 	/**
+	 * Default options for {@link APR.defaults}.
+	 * 
 	 * @typedef {!Object.<key, value>} APR~defaults_options
 	 *
-	 * @param {boolean} [includeDefaultKeys=false] If `false` and `defaultValue`
+	 * @property {boolean} [includeDefaultKeys=false] If `false` and `defaultValue`
 	 *     is a key-value object, the default keys will be added to `value`
 	 *     or checked against this function for each repeated key.
 	 *
-	 * @param {boolean} [checkLooks=true]
+	 * @property {boolean} [checkLooks=true]
 	 *     If `true`:
 	 *         `[]` will match ONLY with another Array.
 	 *         `{}` will match ONLY with another "key-value" object.
 	 *     If `false`
 	 *         `[]` and `{}` will match with any other object.
 	 *
-	 * @param {boolean} [checkDeepLooks=true]
+	 * @property {boolean} [checkDeepLooks=true]
 	 *     Same as `checkLooks` but it works with the inner values
 	 *     of the objects.
 	 */
@@ -25,11 +27,12 @@ define(['./core', './check'], function (APR, check) {
 	/**
 	 * Checks if `value` looks like `defaultValue`.
 	 *
-	 * @param {*} value Any value-
-	 * @param {*} defaultValue A value with a desired type for `value`.
+	 * @function APR.defaults
+	 * @param {*} value Any value.
+	 * @param {*} [defaultValue] A value with a desired type for `value`.
 	 * 						   If a key-value object is given, all the keys of `value` will `default`
 	 * 						   to his corresponding key in this object.
-	 * @param {APR~defaults_options} opts Some options.
+	 * @param {APR~defaults_options} [opts={@link APR~defaults_options|APR.defaults.DEFAULT_OPTIONS}] Some options.
 	 *
 	 * @example
 	 * defaults([1, 2], {a: 1}); // {a: 1}
@@ -50,7 +53,7 @@ define(['./core', './check'], function (APR, check) {
 	 * defaults({'a': 1}, {'b': 2}, {'ignoreDefaultKeys': false}); // {'a': 1, 'b': 2}
 	 * defaults({'a': 1}, {'b': 2}, {'ignoreDefaultKeys': true}); // {'a': 1}
 	 *
-	 * @returns `value` if it looks like `defaultValue` or `defaultValue` otherwise.
+	 * @returns {value} `value` if it looks like `defaultValue` or `defaultValue` otherwise.
 	 */
 	function defaults (value, defaultValue, opts) {
 
@@ -95,7 +98,7 @@ define(['./core', './check'], function (APR, check) {
 
 	}, /** @lends APR.defaults */{
 		/**
-		 * @property {APR~defaults_options} DEFAULT_OPTIONS
+		 * @type {APR~defaults_options}
 		 * @readOnly
 		 */
 		'DEFAULT_OPTIONS': {

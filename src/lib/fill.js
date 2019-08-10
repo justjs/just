@@ -12,11 +12,12 @@ define([
 
 	'use strict';
 
-	return APR.setFn('fill', /** @lends APR */
+	return APR.setFn('fill',
 	/**
-	 * Fills a key-value object with `data`.
+	 * Fills a {@link key-value-object} with `data`.
 	 *
-	 * @param {Object<key, value>} structure The structured data to be filled.
+	 * @function APR.fill
+	 * @param {key-value-object} structure The structured data to be filled.
 	 * 										If the value of some property is an array,
 	 *										the value gets pushed to the array.
 	 *
@@ -40,7 +41,7 @@ define([
 	 * @example <caption>Passing a third argument preserves `undefined` values.</caption>
 	 * fill({'a': void 0}, null, true); // {'a': void 0}
 	 *
-	 * @return {!Object<key, value>} A new object preserving the given structure.
+	 * @return {!key-value-object} A new object preserving the given structure.
 	 */
 	function fill (structure, data, preserveUndefined) {
 

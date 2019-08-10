@@ -1,21 +1,25 @@
-define(['./core', './isWindow'], function (APR, isWindow) {
+define([
+	'./core'
+], function (APR) {
 
 	'use strict';
-	
-	return APR.setFn('createPrivateKey', /** @lends APR */
+
+	return APR.setFn('createPrivateKey',
 	/**
 	 * An store of private members.
-	 * 
+	 *
 	 * @typedef {function} APR~createPrivateKey_privateStore
 	 * @param {!Object} key Some object to get/set properties from/to it.
+	 * @return {function} A private store.
 	 */
-	
+
 	/**
 	 * Implementation of private members in js.
 	 *
-	 * @see {@link https://github.com/philipwalton/private-parts/blob/master/private-parts.js|source}
+	 * @function APR.createPrivateKey
+	 * @see {@url https://github.com/philipwalton/private-parts/blob/master/private-parts.js|Source}.
 	 * @param {function|object} [factory=Object.prototype] A new object with `factory` as it's prototype...
-	 * @param {object} parent The object to extend from.
+	 * @param {object} [parent] The object to {@link APR.inheritFrom|inherit from}.
 	 * @throws {TypeError} If the key given {@link APR~createPrivateKey_privateStore|in the private store} is not an object.
 	 * @example
 	 *
@@ -35,14 +39,14 @@ define(['./core', './isWindow'], function (APR, isWindow) {
 	 * }
 	 *
 	 * console.log(new Public()); // Shows [...] {public: 'public'}
-	 * 
+	 *
 	 * @return {APR~createPrivateKey_privateStore} An store of the private values.
 	 */
 	function createPrivateKey (factory, parent) {
-				
+
 		var store = new WeakMap();
 		var seen = new WeakMap();
-		
+
 		if (parent instanceof Object) {
 			factory = Object.assign(Object.create(parent.prototype), factory);
 		}
@@ -59,10 +63,6 @@ define(['./core', './isWindow'], function (APR, isWindow) {
 				throw new TypeError(key + ' must be an object.');
 			}
 
-			if (isWindow(key)) {
-				key = Window;
-			}
-
 			if (value = store.get(key)) {
 				return value;
 			}
@@ -70,7 +70,7 @@ define(['./core', './isWindow'], function (APR, isWindow) {
 			if (seen.has(key)) {
 				return key;
 			}
-			
+
 			value = factory(key);
 			store.set(key, value);
 			seen.set(value, true);

@@ -2,11 +2,12 @@ define(['./core'], function (APR) {
 
 	'use strict';
 
-	return APR.setFn('getPressedKey', /** @lends APR */
+	return APR.setFn('getPressedKey',
 	/**
 	 * A cross-browser solution to get the pressed key on a keyboard
 	 * event.
 	 * 
+	 * @function APR.getPressedKey
 	 * @param {!Event} e Some event.
 	 *
 	 * @example

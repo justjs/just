@@ -11,15 +11,22 @@ define([
 ) {
 
 	'use strict';
+	/**
+	 * Default options for {@link APR.flattenKeyValueObject}.
+	 *
+	 * @typedef {key-value-object} APR~flattenKeyValueObject_options
+	 * 
+	 * @property {String} [separator=""] A string to join the keys.
+	 */
 
 	/**
-	 * Recursive function that flattens key-value objects.
+	 * Recursive function that flattens {@link key-value-object}s.
 	 *
-	 * @param {Object.<key, value>} object The key-value object to flat.
-	 * @param {!Object.<key, value>} [opts=DEFAULT_OPTIONS]
+	 * @param {!key-value-object} object The {@link key-value-object} to flat.
+	 * @param {!APR~flattenKeyValueObject_options} options The options.
 	 * @param {String} [previousKey] The previous key.
 	 *
-	 * @return {!Object.<key, value>} The flattened object.
+	 * @return {!key-value-object} The flattened object.
 	 */
 	function flattenObject (object, options, previousKey) {
 
@@ -46,17 +53,20 @@ define([
 
 	}
 
-	return APR.setFn('flattenKeyValueObject', /** @lends APR */
+	return APR.setFn('flattenKeyValueObject',
 	/**
 	 * Flattens an object of objects.
 	 *
-	 * @param {Object.<key, value>} object Some object.
-	 * @param {Object.<key, value>} [opts=DEFAULT_OPTIONS]
-	 * @throws {TypeError} If `object` is not a key-value object.
+	 * @function APR.flattenKeyValueObject
+	 * @param {key-value-object} object Some object.
+	 * @param {key-value-object} [
+	 *     opts={@link APR~flattenKeyValueObject_options|APR.flattenKeyValueObject.DEFAULT_OPTIONS}
+	 * ]
+	 * @throws {TypeError} If `object` is not a {@link key-value-object}.
 	 *
 	 * @example
 	 * flattenKeyValueObject({'a': {'b': {'c': {'d': 1}}}}); // {'a.b.c.d' : 1}
-	 * @return {Object.<key, value>} The flattened object.
+	 * @return {key-value-object} The flattened object.
 	 */
 	function flattenKeyValueObject (object, opts) {
 		return flattenObject(
@@ -65,6 +75,10 @@ define([
 			null
 		);
 	}, /** @lends APR.flattenKeyValueObject */{
+		/**
+		 * @type {APR~flattenKeyValueObject_options}
+		 * @readOnly
+		 */
 		'DEFAULT_OPTIONS': {
 			'get': function () {
 				return {

@@ -2,21 +2,25 @@ define(['./core', './defaults'], function (APR, defaults) {
 
 	'use strict';
 
-	return APR.setFn('flattenArray', /** @lends APR */
+	return APR.setFn('flattenArray',
 	/**
 	 * Flattens an array of arrays.
 	 *
-	 * @param {Array} [value=[value]] The target.
+	 * @function APR.flattenArray
+	 * @param {*} [value=[value]] The target.
 	 * @param {Number} [maxLevel=-1] Maximum deep-level to flatten.
 	 *
 	 * @example
+	 * flattenArray([0, [1, [2]]]); // [0, 1, 2]
+	 *
+	 * @example <caption>Using `maxLevel`</caption>
 	 * var arrayLike = {'0': [0, [1, [2]]]}; 
 	 * var array = Array.from(arrayLike);
 	 * var maxLevel = 1;
 	 *
 	 * flattenArray(array, maxLevel) // [0, 1, [2]]
 	 *
-	 * @return {!Array} The flatten array.
+	 * @return {!Array} The flattened array.
 	 */
 	function flattenArray (value, maxLevel) {
 

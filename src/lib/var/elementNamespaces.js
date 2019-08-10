@@ -6,7 +6,7 @@ define(['../core'], function (APR) {
 	/**
 	 * Namespace uris for known tags.
 	 *
-	 * @type {Object.<APR~element_tag, string>} A tag with a namespace URI.
+	 * @property {Object.<APR~element_tag, string>} A tag with a namespace URI.
 	 */
 	{
 		'value': {

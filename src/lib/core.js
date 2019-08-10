@@ -1,19 +1,35 @@
 define('APR', function () {
 
 	'use strict';
-
+	/**
+	 * Something like: {}
+	 * 
+	 * @typedef {!Object} key-value-object
+	 */
+	/**
+	 * An absolute, relative or blob url.
+	 *
+	 * @typedef {string} url
+	 */
+	/**
+	 * @namespace APR
+	 */
 	var APR = {};
 
-	return Object.defineProperties(APR, /** @lends APR */{
+	return Object.defineProperties(APR, {
 		// 'version': '%{CORE_VERSION}%',
 		/**
-		 * @property {Function} setFn Sets a function in APR.
+		 * Sets a function in APR.
+		 *
+		 * @package
+		 * @readOnly
+		 * @function APR.setFn
 		 *
 		 * @param {String} name The name of the APR property.
 		 * @param {Function} fn Some function.
 		 * @param {} [propertiesDescriptor] Some properties to attach to fn.
+		 *
 		 * @return {!Function} fn. 
-		 * @readOnly
 		 */
 		'setFn': {
 			'value': function setFn (name, fn, propertiesDescriptor) {
@@ -31,7 +47,11 @@ define('APR', function () {
 			}
 		},
 		/**
-		 * @property {Function} setModule Sets a module in APR.
+		 * Sets a module in APR.
+		 *
+		 * @package
+		 * @readOnly
+		 * @function APR.setModule
 		 *
 		 * @param {String} name The name of the APR property.
 		 * @param {Function} fn Some constructor.
@@ -40,7 +60,6 @@ define('APR', function () {
 		 *     to fn.prototype.
 		 *
 		 * @returns {!Function} fn. 
-		 * @readOnly
 		 */
 		'setModule': {
 			'value': function setModule (name, fn, propertiesDescriptor,
@@ -59,14 +78,16 @@ define('APR', function () {
 			}
 		},
 		/**
-		 * @property {Function} setProperty Sets a property in APR.
+		 * Sets a property in APR.
+		 *
+		 * @package
+		 * @readOnly
+		 * @function APR.setProperty
 		 *
 		 * @param {String} name The name of the APR property.
 		 * @param {} [descriptor] Some properties to attach to the property.
 		 *
 		 * @return {*} The added property.
-		 *
-		 * @readOnly
 		 */
 		'setProperty': {
 			'value': function setProperty (name, descriptor) {

@@ -2,7 +2,7 @@ define(['./core'], function (APR) {
 	
 	'use strict';
 
-	return APR.setFn('getRemoteParent', /** @lends APR */
+	return APR.setFn('getRemoteParent',
 	/**
 	 * A function that checks if `this` is the Node that you're looking for.
 	 * 
@@ -20,6 +20,7 @@ define(['./core'], function (APR) {
 	 * Goes up through the `childNode` parents, until `fn` returns `true`
 	 * or a non-Node is found.
 	 * 
+	 * @function APR.getRemoteParent
 	 * @param  {Node} childNode Some child.
 	 * @param  {APR~getRemoteParent_fn} fn Some custom handler.
 	 * @param  {Node} [rootContainer=html] The farthest parent.  

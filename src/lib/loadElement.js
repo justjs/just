@@ -12,7 +12,7 @@ define([
 		
 	'use strict';
 
-	return APR.setFn('loadElement', /** @lends APR */
+	return APR.setFn('loadElement',
 	/**
 	 * A custom function to append the created element.
 	 * 
@@ -29,13 +29,13 @@ define([
 	 */
 	
 	/**
-	 * A listener for the "onload" or "onerror" events.
-	 *
-	 * @typedef {function} APR~loadElement_listener
+	 * @typedef {function} APR~loadElement_listener A listener for
+	 * the "onload" or "onerror" events.
 	 *
 	 * @this {!Element} The target element.
 	 *
-	 * @param {!Event} The triggered event.
+	 * @param {!Event} event The triggered event.
+	 * @return {undefined}
 	 *
 	 */
 
@@ -55,7 +55,7 @@ define([
 	 * Loads an external file if no other similar element is
 	 * found.
 	 *
-	 * @function
+	 * @function APR.loadElement
 	 *
 	 * @param  {APR~element_tag} tag A tag name.
 	 *

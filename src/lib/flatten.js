@@ -12,11 +12,16 @@ define([
 
 	'use strict';
 
-	return APR.setFn('flatten', /** @lends APR */
+	return APR.setFn('flatten',
 	/**
 	 * A factory for the "flatten..." alternatives.
 	 * 
+	 * @function APR.flatten
+	 * @param {...*} value Arguments for {@link APR.flattenArray}
+	 *     if the first argument is an Array, or arguments for
+	 *     {@link APR.flattenKeyValueObject}.
 	 * @throws {TypeError} If the value couldn't be flattened.
+	 * @return {Array|key-value-object} The flattened value.
 	 */
 	function flatten (value) {
 

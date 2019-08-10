@@ -2,7 +2,7 @@ define(['./core'], function (APR) {
 
 	'use strict';
 
-	return APR.setFn('parseUrl', /** @lends APR */
+	return APR.setFn('parseUrl',
 	/**
 	 * The full parts of an url.
 	 * 
@@ -26,6 +26,8 @@ define(['./core'], function (APR) {
 	 * Note that this function uses `window.location` to make relative urls, so
 	 * weird values in there will give weird results.
 	 * 
+	 * @function APR.parseUrl 
+	 *
 	 * @param {string} [url=window.location.href] A relative, an absolute or a blob url.
 	 * 
 	 * @example <caption>An absolute url:</caption>

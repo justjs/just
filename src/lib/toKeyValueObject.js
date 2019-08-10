@@ -2,11 +2,12 @@ define(['./core', './check'], function (APR, check) {
 
 	'use strict';
 
-	return APR.setFn('toKeyValueObject', /** @lends APR */
+	return APR.setFn('toKeyValueObject',
 	/**
 	 * Converts [[k0, v0], {k1: v1}] to {k0: v0, k1: v1}.
 	 *
-	 * @param [Array|Object.<key, value>] array An array containing sub-arrays
+	 * @function APR.toKeyValueObject
+	 * @param {?Array|Object.<key, value>} array An array containing sub-arrays
 	 *     with key-value pairs, or key-value objects: [[k, v], {k: v}].
 	 *
 	 * @return {!Object<key, value>}
