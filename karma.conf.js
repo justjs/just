@@ -15,7 +15,7 @@ module.exports = config => {
 		'browsers': ['Firefox'],
 		'reporters': ['coverage', 'tap-pretty'],
 		'preprocessors': {
-			'./src/lib/**/*.js': ['coverage']
+			[browserBuild.getBuildSrc('test-tape')]: ['coverage']
 		},
 		'tapReporter': {
 			'prettify': tapSpec,
