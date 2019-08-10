@@ -9,12 +9,13 @@ const pkg = require('../package.json'),
 const options = {
 	// Banner for built files.
 	'banner': (
-   `/*!
-	 * ${license.trim().replace(/\n/g, '\n * ')}
+   `/*
+	 * @file ${pkg.title}: ${pkg.description}
+	 * @author ${pkg.author} (APR)
+	 * @version ${pkg.version}
 	 */
-	/*
-	 * ${pkg.title}: ${pkg.description}
-	 * v${pkg.version}
+	/*!
+	 * ${license.trim().replace(/\n/g, '\n * ')}
 	 */`).replace(/\t/g, ''),
 
 	get publicDir () {
@@ -124,7 +125,7 @@ const options = {
 				'start': ('\n' +
 					'(function (fn) {\n' +
 					"	if (typeof define === 'function' && define.amd) { define('APR', fn); }\n" +
-					"	else if (module instanceof Object) { module.exports = fn(); }\n" +
+					"	else if (typeof module === 'object' && module) { module.exports = fn(); }\n" +
 					'	else { this.APR = fn(); }\n' +
 					'}(this, function () {\n'
 				),
