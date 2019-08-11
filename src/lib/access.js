@@ -2,43 +2,26 @@ define(['./core', './defaults'], function (APR, defaults) {
 
 	'use strict';
 
-	return APR.setFn('access',
-	/**
-	 * Default options for {@link APR.access}.
-	 *
-	 * @typedef {!key-value-object} APR~access_options
-	 *
-	 * @property  {boolean} [mutate=false] If `true`, it will use
-	 *     the given object as the base object, otherwise it will
-	 *     copy all the owned properties to a new object.
-	 *
-	 * @property {boolean} [override=true] If `true`, and the
-	 *     current value is different to `null` or `undefined`,
-	 *     the function will throw a TypeError.
-	 *     If `false`, the current value will be overriden by
-	 *     an empty object if it's not an object nor `undefined`.
-	 *
-	 */
-
+	return APR.setFn('access', /** @lends APR */
 	/**
 	 * A function to call when it reaches the deep property of an object.
 	 *
 	 * @typedef {function} APR~access_handler
 	 *
-	 * @this {!Object} A new object with the properties of the base object.
+	 * @this {?object} - A new object with the properties of the base object.
 	 *
-	 * @param {!Object} lastObject The object containing the `lastKey`.
-	 * @param {string} lastKey The last value given in `path`.
-	 * @param {boolean} hasProperty false if some key of `path` was created, true otherwise.
-	 * @param {string[]} path The given keys.
-	 * @return {*} The return value for {@link APR~access|the main function}.
+	 * @param {?object} lastObject - The object containing the `lastKey`.
+	 * @param {string} lastKey - The last value given in `path`.
+	 * @param {boolean} hasProperty - `false` if some key of `path` was created, `true` otherwise.
+	 * @param {string[]} path - The given keys.
+	 * @return {*} - The return value for {@link APR~access|the main function}.
 	 */
 
 	/**
 	 * Accesses to a deep property in a new `object` (or `object` if `mutate` evals to `true`).
 	 *
-	 * @function APR.access
-	 * @param  {!Object} object The base object.
+	 * @function
+	 * @param  {?object} object The base object.
 	 * @param  {string[]} [path=[path]] The ordered keys.
 	 * @param  {APR~access_handler} [handler] A custom function.
 	 * @param  {APR~access_options} [opts={@link APR~access_options|APR.access.DEFAULT_OPTIONS}] Some options.
@@ -90,7 +73,7 @@ define(['./core', './defaults'], function (APR, defaults) {
 	 *
 	 * // now `obj` is {a: {a: true}, b: {b: true}, prototype: [...]}.
 	 *
-	 * @return {*} If `handler` is given: the returned value of that function,
+	 * @return {*} - If `handler` is given: the returned value of that function,
 	 *         otherwise: the last value of `path` in the copied object.
 	 */
 	function access (object, path, handler, opts) {
@@ -141,8 +124,19 @@ define(['./core', './defaults'], function (APR, defaults) {
 
 	}, /** @lends APR.access */{
 		/**
-		 * @type {APR~access_options}
-		 * @readOnly
+		 * Default options for {@link APR.access}.
+		 *
+		 * @type {object}
+		 * @property {boolean} [mutate=false] - If `true`, it will use
+		 *     the given object as the base object, otherwise it will
+		 *     copy all the owned properties to a new object.
+		 *
+		 * @property {boolean} [override=true] - If `true`, and the
+		 *     current value is different to `null` or `undefined`,
+		 *     the function will throw a TypeError.
+		 *     If `false`, the current value will be overriden by
+		 *     an empty object if it's not an object nor `undefined`.
+		 *
 		 */
 		'DEFAULT_OPTIONS': {
 			'get': function () {

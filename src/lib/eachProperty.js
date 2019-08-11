@@ -2,45 +2,36 @@ define(['./core', './defaults'], function (APR, defaults) {
 	
 	'use strict';
 
-	return APR.setFn('eachProperty', 
+	return APR.setFn('eachProperty', /** @lends APR */
 	/**
 	 * @typedef {function} APR~eachProperty_fn
 	 *
 	 * @this thisArg from {@link APR~eachProperty|the main function}.
 	 *
-	 * @param {*} value The current value.
-	 * @param {*} key The current key.
-	 * @param {!Object} object The current object being iterated.
+	 * @param {*} value - The current value.
+	 * @param {*} key - The current key.
+	 * @param {?object} object - The current object being iterated.
 	 *
-	 * @return {boolean} If true, the current loop will stop.
+	 * @return {boolean} - If true, the current loop will stop.
  	 */
-
-	/**
-	 * @typedef {!Object} APR~eachProperty_options
-	 *
-	 * @property {boolean} [addNonOwned=false] Include non-owned properties.
-	 *     `false`: iterate only the owned properties.
-	 *     `true`: iterate the (enumerable) inherited properties too.
-	 */
 	
 	/**
 	 * Converts `object` to an Object, iterates over it,
 	 * calls a function on each iteration, and if a truthy value
 	 * is returned from that function, the loop will stop.
 	 * 
-	 * @function APR.eachProperty
-	 * @param  {*} object Some value.
-	 * @param  {APR~eachProperty_fn} fn The function that will be
+	 * @function
+	 * @param {*} object - Some value.
+	 * @param {APR~eachProperty_fn} fn - The function that will be
 	 *     called on each iteration.
-	 * @param  {*} [thisArg] `this` for `fn`.
-	 * @param  {APR~eachProperty_options} [
-	 *     opts={@link APR~eachProperty_options|APR.eachProperty.DEFAULT_OPTIONS}
-	 * ] Some options.
+	 * @param {*} [thisArg] - `this` for `fn`.
+	 * @param {object} [
+	 *     opts={@link APR.eachProperty.DEFAULT_OPTIONS}
+	 * ] - Some options.
 	 *
-	 * @throws {TypeError} If `fn` is not a function.
+	 * @throws {TypeError} - If `fn` is not a function.
 	 *
-	 * @return {boolean} `true` if the function was interrupted, `false`
-	 * otherwise.
+	 * @return {boolean} - `true` if the function was interrupted, `false` otherwise.
 	 */
 	function eachProperty (object, fn, thisArg, opts) {
 
@@ -73,8 +64,11 @@ define(['./core', './defaults'], function (APR, defaults) {
 
 	}, /** @lends APR.eachProperty */{
 		/**
-		 * @property {APR~eachProperty_options} DEFAULT_OPTIONS
-		 * @readOnly
+		 * @type {function}
+		 * @readonly
+		 * @property {boolean} [addNonOwned=false] - Include non-owned properties.
+		 *     `false`: iterate only the owned properties.
+		 *     `true`: iterate the (enumerable) inherited properties too.
 		 */
 		'DEFAULT_OPTIONS': {
 			'get': function () {

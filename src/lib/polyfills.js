@@ -1,7 +1,3 @@
-/**
- * Some commonly used polyfills (for ie9+).
- * @ignore
- */
 (function (W) {
 
 	/**

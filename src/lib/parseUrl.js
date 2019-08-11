@@ -2,22 +2,22 @@ define(['./core'], function (APR) {
 
 	'use strict';
 
-	return APR.setFn('parseUrl',
+	return APR.setFn('parseUrl', /** @lends APR */
 	/**
 	 * The full parts of an url.
 	 * 
 	 * @typedef {Object} APR~urlParts
-	 * @property {string} protocol A protocol (including ":", like "ftp:") or ":".
-	 * @property {string} href An absolute url (like "ftp://username:password@www.example.com:80/a?b=1#c").
-	 * @property {string} host The host (like "www.example.com:80") or an empty string.
-	 * @property {string} hostname A hostname (like "www.example.com").
-	 * @property {string} port The GIVEN port as a number (like "80") or an empty string.
-	 * @property {string} pathname A pathname (like "/a").
-	 * @property {string} origin The origin (like "ftp://www.example.com").
-	 * @property {string} search The query arguments (including "?", like "?b=1") or an empty string.
-	 * @property {string} hash The hash (including '#', like "#c") or an empty string.
-	 * @property {string} username The given username or an empty string.
-	 * @property {string} password The given password or an empty string.
+	 * @property {string} protocol - A protocol (including ":", like "ftp:") or ":".
+	 * @property {string} href - An absolute url (like "ftp://username:password@www.example.com:80/a?b=1#c").
+	 * @property {string} host - The host (like "www.example.com:80") or an empty string.
+	 * @property {string} hostname - A hostname (like "www.example.com").
+	 * @property {string} port - The GIVEN port as a number (like "80") or an empty string.
+	 * @property {string} pathname - A pathname (like "/a").
+	 * @property {string} origin - The origin (like "ftp://www.example.com").
+	 * @property {string} search - The query arguments (including "?", like "?b=1") or an empty string.
+	 * @property {string} hash - The hash (including '#', like "#c") or an empty string.
+	 * @property {string} username - The given username or an empty string.
+	 * @property {string} password - The given password or an empty string.
 	 */
 
 	/**
@@ -26,9 +26,8 @@ define(['./core'], function (APR) {
 	 * Note that this function uses `window.location` to make relative urls, so
 	 * weird values in there will give weird results.
 	 * 
-	 * @function APR.parseUrl 
-	 *
-	 * @param {string} [url=window.location.href] A relative, an absolute or a blob url.
+	 * @function
+	 * @param {url} [url=window.location.href] - A relative, an absolute or a blob url.
 	 * 
 	 * @example <caption>An absolute url:</caption>
 	 * parseUrl(window.location.href);

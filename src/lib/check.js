@@ -2,20 +2,19 @@ define(['./core'], function (APR) {
 
 	'use strict';
 
-	return APR.setFn('check',
+	return APR.setFn('check', /** @lends APR */
 	/**
 	 * Checks if `value` looks like the other values.
 	 *
-	 * @function APR.check
-	 * @param {*} value Comparison value.
-	 * @param {...*} [otherValues] Values to check against.
+	 * @function
+	 * @param {*} value - Comparison value.
+	 * @param {...*} [otherValues] - Values to check against.
 	 *
 	 * @example
-	 *
 	 * check(null, {}, "null", []); // false. Neither is `null`.
 	 * check({}, [], {}); // true. {} is {}.
 	 *
-	 * @return {boolean} `true` if some other value looks like `value`.
+	 * @return {boolean} - `true` if some other value looks like `value`.
 	 */
 	function check (value, otherValues) {
 
@@ -41,19 +40,15 @@ define(['./core'], function (APR) {
 		 * A function that `check`s a value against others and
 		 * throws if the result is `false`.
 		 *
-		 * @typedef {function} APR.check.throwable
+		 * @function
+		 * @this {string} - A custom message to throw.
 		 *
-		 * @this {string} A custom message to throw.
+		 * @param {*} value - Comparison value.
+		 * @param {...*} [otherValues] - Values to check against.
 		 *
-		 * @param {*} value Comparison value.
-		 * @param {...*} [otherValues] Values to check against.
+		 * @throws {TypeError} - If `check` returns `false`.
 		 *
-		 * @throws {TypeError} If `check` returns `false`.
-		 *
-		 * @returns {value} `value` if `check` returns `true`.
-		 */
-		/**
-		 * @property {APR~check.throwable} throwable
+		 * @returns {value} - `value` if `check` returns `true`.
 		 */
 		'throwable': {
 			'value': function (value, otherValues) {

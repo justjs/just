@@ -2,13 +2,14 @@ define(['./core'], function (APR) {
 	
 	'use strict';
 
-	return APR.setFn('isEmptyObject',
+	return APR.setFn('isEmptyObject', /** @lends APR */
 	/**
 	 * Checks if an object has no direct keys.
 	 * 
-	 * @function APR.isEmptyObject
-	 * @param  {Object} object Some object.
-	 * @return {boolean} true if it's null or not an object.
+	 * @function
+	 * @param {*} [object=Object(object)] - Some object.
+	 * @return {boolean} - `true` if the object doesn't contain owned properties,
+	 *     `false` otherwise.
 	 */
 	function isEmptyObject (object) {
 		

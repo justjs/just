@@ -1,27 +1,27 @@
 define([
 	'./core',
-	'./flattenKeyValueObject',
+	'./flattenObjectLiteral',
 	'./flattenArray',
 	'./check'
 ], function (
 	APR,
-	flattenKeyValueObject,
+	flattenObjectLiteral,
 	flattenArray,
 	check
 ) {
 
 	'use strict';
 
-	return APR.setFn('flatten',
+	return APR.setFn('flatten', /** @lends APR */
 	/**
 	 * A factory for the "flatten..." alternatives.
 	 * 
-	 * @function APR.flatten
-	 * @param {...*} value Arguments for {@link APR.flattenArray}
+	 * @function
+	 * @param {...*} value - Arguments for {@link APR.flattenArray}
 	 *     if the first argument is an Array, or arguments for
-	 *     {@link APR.flattenKeyValueObject}.
-	 * @throws {TypeError} If the value couldn't be flattened.
-	 * @return {Array|key-value-object} The flattened value.
+	 *     {@link APR.flattenObjectLiteral}.
+	 * @throws {TypeError} - If the value couldn't be flattened.
+	 * @return {Array|?object} - The flattened value.
 	 */
 	function flatten (value) {
 
@@ -29,7 +29,7 @@ define([
 		var flattened;
 
 		if (check(value, {})) {
-			flattened = flattenKeyValueObject.apply(this, args);
+			flattened = flattenObjectLiteral.apply(this, args);
 		}
 		else if (check(value, [])) {
 			flattened = flattenArray.apply(this, args);

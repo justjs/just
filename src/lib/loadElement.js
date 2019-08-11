@@ -12,31 +12,24 @@ define([
 		
 	'use strict';
 
-	return APR.setFn('loadElement',
+	return APR.setFn('loadElement', /** @lends APR */
 	/**
 	 * A custom function to append the created element.
 	 * 
 	 * @typedef {function} APR~loadElement_handler
+	 * @this {!Element} - The element that loads the url.
+	 * @param {?Element} loadedElement - An identical element that has been loaded previously.
+	 * @param {String} url - The given url to load.
 	 *
-	 * @this {!Element} The element that loads the url.
-	 *
-	 * @param {?Element} loadedElement
-	 *     An identical element that has been loaded previously.
-	 *
-	 * @param {String} url The given url to load.
-	 *
-	 * @return {*} Some value.
+	 * @return {*} - Some value.
 	 */
 	
 	/**
-	 * @typedef {function} APR~loadElement_listener A listener for
+	 * @typedef {function} APR~loadElement_listener - A listener for
 	 * the "onload" or "onerror" events.
 	 *
-	 * @this {!Element} The target element.
-	 *
-	 * @param {!Event} event The triggered event.
-	 * @return {undefined}
-	 *
+	 * @this {!Element} - The target element.
+	 * @param {!Event} event - The triggered event.
 	 */
 
 	/**
@@ -55,22 +48,18 @@ define([
 	 * Loads an external file if no other similar element is
 	 * found.
 	 *
-	 * @function APR.loadElement
-	 *
-	 * @param  {APR~element_tag} tag A tag name.
-	 *
-	 * @param  {string} url The url of the file.
-	 *
-	 * @param  {APR~loadElement_handler} [handler=DEFAULT_HANDLER]
+	 * @function
+	 * @param  {APR~element_tag} tag - A tag name.
+	 * @param  {string} url - The url of the file.
+	 * @param  {APR~loadElement_handler} [handler=DEFAULT_HANDLER] - 
 	 *     If it's a function: it will be triggered
 	 *     (without appending the element),
 	 *     otherwise: the element will be appended to
 	 *     {@link APR.head|head}.
+	 * @param  {APR~loadElement_listener} [listener] - A function to trigger after
+	 *     the element is appended.
 	 *
-	 * @param  {APR~loadElement_listener} [listener]
-	 *     A function to trigger after the element is appended.
-	 *
-	 * @return {*} The return of the {@link APR~loadElement_handler|handler}.
+	 * @return {*} - The return of the {@link APR~loadElement_handler|handler}.
 	 */
 	function loadElement (tag, url, listener, handler) {
 
@@ -108,9 +97,10 @@ define([
 
 	}, /** @lends APR.loadElement */{
 		/**
-		 * @property {APR~loadElement_handler} DEFAULT_HANDLER
-		 *     The handler that will be provided in case that no
-		 *     function is provided.
+		 * The handler that will be provided in case that no function is provided.
+		 *
+		 * @function
+		 * @chainable    
 		 */
 		'DEFAULT_HANDLER': {
 
@@ -126,11 +116,13 @@ define([
 
 		},
 		/**
-		 * @property {Object.<
+		 * {@link APR~element_tag|Element-tags} that are known
+		 * for not using 'src' to fetch a url.
+		 *
+		 * @type {{
 		 *     APR~element_tag,
 		 *     APR~loadElement_srcLikeAttribute
-		 * >} nonSrcAttributes {@link APR~element_tag|Element-tags}
-		 *     that are known for not using 'src' to fetch an url.
+		 * }}
 		 */
 		'nonSrcAttributes': {
 

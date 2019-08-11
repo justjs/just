@@ -184,7 +184,7 @@ define('APRDefine', [
 
 	}
 
-	APR.setModule('Define',
+	APR.setModule('Define', /** @lends APR */
 	/**
 	 * A module loader: it loads files in order (when needed) and
 	 * execute them when all his dependencies became available.
@@ -207,11 +207,11 @@ define('APRDefine', [
 	 *     </ul>
 	 * </footer>
 	 *
-	 * @class APR.Define
+	 * @class
 	 *
-	 * @param {string} id The module id.
-	 * @param {!string[]|string} dependencyIDs Required module ids.
-	 * @param {*} value The module value.
+	 * @param {string} id - The module id.
+	 * @param {!string[]|string} dependencyIDs - Required module ids.
+	 * @param {*} value - The module value.
 	 *
 	 */
 	function APRDefine (id, dependencyIDs, value) {
@@ -264,24 +264,15 @@ define('APRDefine', [
 
 	}, /** @lends APR.Define */{
 		/**
-		 * @typedef {Object.<key, value>} APR.Define~load_data
-		 *
-		 * @property {Event} event The triggered event: load or error.
-		 * @property {APR.Define~id} moduleID The module id.
-		 * @property {string} url The loaded url. 
-		 */
-		/**
 		 * A function to be called when the element loads.
 		 * 
-		 * @typedef {function} APR.Define~load_listener
-		 * @param {?Error} error An error if the url is not being loaded.
-		 * @param {APR.Define~load_data} data Some metadata.
-		 */
-		/**
-		 * Same as {@link APR.Define~load_listener}.
-		 * 
 		 * @function
-		 * @readOnly
+		 * @param {?Error} error - An error if the url is not being loaded.
+		 * @param {?object} data - Some metadata.
+		 * @param {Event} data.event - The triggered event: "load" or "error".
+		 * @param {APR.Define~id} data.moduleID - The module id.
+		 * @param {string} data.url - The loaded url.
+		 * @param {APR.Define~load_data} data - Some metadata.
 		 */
 		'DEFAULT_LOAD_LISTENER': {
 			'value': function (error, data) {
@@ -303,10 +294,10 @@ define('APRDefine', [
 		 * A function to load files by ids.
 		 *
 		 * @function
-		 * @param {APR.Define~files_fileID|APR.Define~files_fileID[]|Object.<
+		 * @param {APR.Define~files_fileID|APR.Define~files_fileID[]|{
 		 *     APR.Define~files_fileID,
 		 *     ?APR.Define~load_listener
-		 * >} value File ids.
+		 * }} value - File ids.
 		 * @chainable
 		 */
 		'load': {
@@ -353,10 +344,10 @@ define('APRDefine', [
 		/**
 		 * Aliases for urls.
 		 * 
-		 * @type {Object.<
+		 * @type {{
 		 *     APR.Define~files_fileID,
 		 *     APR.Define~files_expression
-		 * >}
+		 * }}
 		 */
 		'files': {
 			'value': {},
@@ -379,10 +370,10 @@ define('APRDefine', [
 		/**
 		 * Aliases for ids.
 		 *
-		 * @type {Object.<
+		 * @type {{
 		 *     APR.Define~id,
 		 *     APR.Define~globals_expression
-		 * >}
+		 * }}
 		 */
 		'globals': {
 			'value': {},
@@ -392,10 +383,8 @@ define('APRDefine', [
 		 * Assigns values to {@link APR.globals}.
 		 * 
 		 * @function
-		 *
-		 * @param {APR.Define~globals} value Globals.
-		 *
 		 * @chainable
+		 * @param {APR.Define~globals} value - Globals.
 		 */
 		'addGlobals': {
 			'value': function (value) {
@@ -408,9 +397,8 @@ define('APRDefine', [
 		 * Assigns values to {@link APR.files}.
 		 *
 		 * @function
-		 * @param {Object.<key, value>} value Files.
-		 *
 		 * @chainable
+		 * @param {APR.Define~files} value - Files.
 		 */
 		'addFiles': {
 			'value': function (value) {
@@ -423,8 +411,8 @@ define('APRDefine', [
 		 * Checks if module has been defined.
 		 *
 		 * @function
-		 * @param {APR.Define~id} id
-		 * @return {boolean} `true` if defined, `false` otherwise.
+		 * @param {APR.Define~id} id - The module id.
+		 * @return {boolean} - `true` if defined, `false` otherwise.
 		 */
 		'isDefined': {
 			'value': hasModule
@@ -452,8 +440,8 @@ define('APRDefine', [
 		 * will become: {123456: '123456'}
 		 *
 		 * @function
-		 * @param {string} attributeName Some attribute.
-		 * @param {Element} container Some container.
+		 * @param {string} attributeName - Some attribute.
+		 * @param {Element} container - Some container.
 		 *
 		 * @example
 		 * // Considering the following document:

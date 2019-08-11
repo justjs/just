@@ -7,12 +7,12 @@ define(['../core'], function (APR) {
 	 * The DoNotTrack header formatted as true, false or undefined
 	 * (for "unspecified").
 	 *
-	 * @type {(boolean|undefined)}
+	 * @type {boolean|undefined}
 	 * @readOnly
 	 */
 	{
 
-		'get': function DNT () {
+		'get': function () {
 
 			var dnt = [
 				navigator.doNotTrack,

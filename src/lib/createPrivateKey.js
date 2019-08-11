@@ -4,25 +4,25 @@ define([
 
 	'use strict';
 
-	return APR.setFn('createPrivateKey',
+	return APR.setFn('createPrivateKey', /** @lends APR */
 	/**
 	 * An store of private members.
 	 *
 	 * @typedef {function} APR~createPrivateKey_privateStore
-	 * @param {!Object} key Some object to get/set properties from/to it.
-	 * @return {function} A private store.
+	 * @param {!Object} key - Some object to get/set properties from/to it.
+	 * @return {function} - A private store.
 	 */
 
 	/**
 	 * Implementation of private members in js.
-	 *
-	 * @function APR.createPrivateKey
 	 * @see {@url https://github.com/philipwalton/private-parts/blob/master/private-parts.js|Source}.
-	 * @param {function|object} [factory=Object.prototype] A new object with `factory` as it's prototype...
-	 * @param {object} [parent] The object to {@link APR.inheritFrom|inherit from}.
-	 * @throws {TypeError} If the key given {@link APR~createPrivateKey_privateStore|in the private store} is not an object.
-	 * @example
 	 *
+	 * @function
+	 * @param {function|?object} [factory=Object.prototype] - A new object with `factory` as it's prototype...
+	 * @param {?object} [parent] - The object to {@link APR.inheritFrom|inherit from}.
+	 * @throws {TypeError} - If the key given {@link APR~createPrivateKey_privateStore|in the private store}
+	 *                       is not an object.
+	 * @example
 	 * // Creates an store which extends the public-constructor prototype.
 	 * // So you can call the public methods from the private ones.
 	 * var _ = createPrivateKey({
@@ -40,7 +40,7 @@ define([
 	 *
 	 * console.log(new Public()); // Shows [...] {public: 'public'}
 	 *
-	 * @return {APR~createPrivateKey_privateStore} An store of the private values.
+	 * @return {APR~createPrivateKey_privateStore} - An store of the private values.
 	 */
 	function createPrivateKey (factory, parent) {
 

@@ -14,11 +14,11 @@ define([
 	/**
 	 * Recursive function that flattens object literals.
 	 *
-	 * @param {!?object} object - The object literal to flat.
+	 * @param {!object} object - The object literal to flat.
 	 * @param {!object} options - The options.
-	 * @param {String} [previousKey] The previous key.
+	 * @param {String} [previousKey] - The previous key.
 	 *
-	 * @return {!?object} The flattened object.
+	 * @return {!object} - The flattened object.
 	 */
 	function flattenObject (object, options, previousKey) {
 
