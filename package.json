@@ -7,9 +7,9 @@
   "private": true,
   "browser": "./dist/browser.js",
   "scripts": {
-    "start": "grunt",
+    "start": "npm install && grunt",
     "development": "grunt karma:unit-dev:start watch:all watch:browserify",
-    "build": "npm install && grunt build",
+    "build": "grunt build",
     "test": "grunt init test",
     "document": "grunt watch:jsdoc"
   },

@@ -89,3 +89,5 @@ typings/
 !/build/config.js
 
 /docs/*
+
+.sizecache.json
