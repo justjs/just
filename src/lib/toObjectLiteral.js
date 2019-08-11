@@ -2,19 +2,19 @@ define(['./core', './check'], function (APR, check) {
 
 	'use strict';
 
-	return APR.setFn('toKeyValueObject',
+	return APR.setFn('toObjectLiteral', /** @lends APR */
 	/**
 	 * Converts [[k0, v0], {k1: v1}] to {k0: v0, k1: v1}.
 	 *
-	 * @function APR.toKeyValueObject
-	 * @param {?Array|Object.<key, value>} array An array containing sub-arrays
-	 *     with key-value pairs, or key-value objects: [[k, v], {k: v}].
+	 * @function
+	 * @param {?object[]|?object} array - An array containing sub-arrays
+	 *     with object literal pairs, or object literals: [[k, v], {k: v}].
 	 *
-	 * @return {!Object<key, value>}
+	 * @return {?object} - An object literal.
 	 */
-	function toKeyValueObject (array) {
+	function toObjectLiteral (array) {
 
-		var keyValueObject = {};
+		var objectLiteral = {};
 
 		if (check(array, {}, null)) {
 			return Object.assign({}, array);
@@ -22,7 +22,7 @@ define(['./core', './check'], function (APR, check) {
 
 		if (!check(array, [])) {
 			throw new TypeError(array + ' must be either ' +
-				'null, a key-value object or an Array.');
+				'null, an object literal or an Array.');
 		}
 
 		array.forEach(function (subArray) {
@@ -39,13 +39,12 @@ define(['./core', './check'], function (APR, check) {
 			}
 			else {
 				throw new TypeError(subArray + ' must be either ' +
-					'a key-value object or an Array.');
+					'an object literal or an Array.');
 			}
-			
 
-		}, keyValueObject);
+		}, objectLiteral);
 
-		return keyValueObject;
+		return objectLiteral;
 
 	});
 

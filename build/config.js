@@ -175,7 +175,7 @@ module.exports = {
 			'lib/inheritFrom',
 			'lib/isEmptyObject',
 			'lib/isTouchDevice',
-			'lib/toKeyValueObject',
+			'lib/toObjectLiteral',
 			'lib/isWindow',
 			'lib/createPrivateKey',
 			'lib/loadElement',
@@ -184,7 +184,7 @@ module.exports = {
 			'lib/fill',
 			'lib/flatten',
 			'lib/flattenArray',
-			'lib/flattenKeyValueObject',
+			'lib/flattenObjectLiteral',
 			'lib/APRDefine',
 			'lib/APRLocalStorage'
 		].map(file => file.replace(/\.?\/?/, './src/') + '.js'),
@@ -223,8 +223,8 @@ module.exports = {
 			'lib/fill',
 			'lib/flatten',
 			'lib/flattenArray',
-			'lib/flattenKeyValueObject',
-			'lib/toKeyValueObject',
+			'lib/flattenObjectLiteral',
+			'lib/toObjectLiteral',
 			'lib/stringToJSON'
 		].map(file => file.replace(/\.?\/?/, './src/') + '.js'),
 		
