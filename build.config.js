@@ -3,19 +3,29 @@ const fs = require('fs');
 
 const amdclean = require('amdclean');
 
-const pkg = require('../package.json'),
+const pkg = JSON.parse(fs.readFileSync('./package.json', 'utf8')),
 	license = fs.readFileSync('./LICENSE', 'utf8');
 
 const options = {
 	// Banner for built files.
 	'banner': (
-   `/*
-	 * @file ${pkg.title}: ${pkg.description}
-	 * @author ${pkg.author} (APR)
-	 * @version ${pkg.version}
-	 */
-	/*!
-	 * ${license.trim().replace(/\n/g, '\n * ')}
+   `/*!
+	 * ${pkg.title} (${pkg.version}): ${pkg.description}
+	 * Copyright (C) 2018, 2019 Alexis Puga Ruíz
+	 *
+	 *
+	 * This program is free software: you can redistribute it and/or modify
+	 * it under the terms of the GNU General Public License as published by
+	 * the Free Software Foundation, either version 3 of the License, or
+	 * (at your option) any later version.
+	 *
+	 * This program is distributed in the hope that it will be useful,
+	 * but WITHOUT ANY WARRANTY; without even the implied warranty of
+	 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	 * GNU General Public License for more details.
+	 *
+	 * You should have received a copy of the GNU General Public License
+	 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 	 */`).replace(/\t/g, ''),
 
 	get publicDir () {
@@ -29,9 +39,11 @@ const options = {
 		const paths = {
 			'build': path,
 			'src': path + '/src',
+			'docs': path + '/docs',
+			'distribution': path + '/dist',
 			'test': pathTest,
-			'test-tap': pathTest + '/tap',
 			'test-tape': pathTest + '/tape',
+			'test-tap': pathTest + '/tap',
 			'test-server': pathTest + '/server',
 			// Path for finished files.
 			'production': './dist'
@@ -50,17 +62,33 @@ const options = {
 
 		// Data for variables.
 		const vars = {
-			'CORE_VERSION': pkg.version
+			'CORE_VERSION': pkg.version,
+			getModuleNote (moduleID) {
+				return "<aside class='note'><p>To use this module, see {@link " +
+					moduleID + "}.</p></aside>";
+			}
 		};
 
-		// Matches: // content %{key}%.
-		const regexp = /\/\/(.+)\%\{(.+)\}\%/g;
+		/* Matches any of the following:
+		 // %{key}%
+		 // %{getKey}["a", "b"]%
+		 %{key}%
+		 %{getKey}["a", "b"]%
+		*/
+		const regexp = /(?:\/\/(.+))?\%\{(.+)\}(\[.+\])?\%/g;
 
-		// Replaces `regexp` with vars[key] if vars[key] exists,
-		// otherwise it replaces `regexp` with an empty string.
-		const handler = ($0, content, key) => {
+		// Replaces `regexp` with
+		// vars[key] if vars[key] exists,
+		// vars[key].apply(null, args) if args is a JSON-STRINGIFIED Array,
+		// or with an empty string otherwise.
+		const handler = ($0, content, key, args) => {
+			const value = vars[key];
+
 			return (key in vars
-				? content + vars[key]
+				? (content || '') + (args
+					? value.apply(null, JSON.parse(args))
+					: value
+				)
 				: ''
 			);
 		};
@@ -68,8 +96,8 @@ const options = {
 		return code.replace(regexp, handler);
 
 	},
-	// Modifies a filename to match the unit-test one.
-	getUnitTestFilename (filename, type) {
+	// Modifies a filename to match the test one.
+	getTestFilename (filename, type) {
 
 		// Renames:
 		// ./someModule.js -> ./someModule.build.test.js
@@ -91,7 +119,7 @@ const options = {
 	getTestFiles (files, path) {
 
 		return files.map(file => {
-			return path + '/' + options.getUnitTestFilename(file)
+			return path + '/' + options.getTestFilename(file)
 		});
 
 	},
@@ -101,12 +129,15 @@ const options = {
 		const keys = {
 			
 			'test-tape': options.getPath('test-tape') + '/' +
-				options.getUnitTestFilename(buildKey, 'build'),
+				options.getTestFilename(buildKey, 'build'),
 			
-			'distribution': options.getPath('production') + '/' +
+			'bundle': options.getPath('distribution') + '/' +
+				buildKey + '.bundle.js',
+
+			'compact': options.getPath('distribution') + '/' +
 				buildKey + '.js',
 			
-			'distribution-minified': options.getPath('production') + '/' +
+			'minified': options.getPath('distribution') + '/' +
 				buildKey + '.min.js'
 
 		};
@@ -127,7 +158,7 @@ const options = {
 					"	if (typeof define === 'function' && define.amd) { define('APR', fn); }\n" +
 					"	else if (typeof module === 'object' && module) { module.exports = fn(); }\n" +
 					'	else { this.APR = fn(); }\n' +
-					'}(this, function () {\n'
+					'}.call(this, function () {\n'
 				),
 				'end': '\n\treturn APR;\n}));'
 			},
@@ -135,6 +166,7 @@ const options = {
 				// Some comments still being removed
 				// in version 2.7.0
 				'comment': true,
+				'removeAllRequires': true,
 				'format': {
 					'indent': {
 						'base': 1,
@@ -198,7 +230,7 @@ module.exports = {
 		getTestFiles (pathKey) {
 			return options.getTestFiles(
 				this.files,
-				options.getPath(pathKey)
+				(pathKey ? options.getPath(pathKey) : '.')
 			);
 		},
 		replaceAMDModules (path) {

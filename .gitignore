@@ -84,10 +84,7 @@ typings/
 .dynamodb/
 
 /dist/*
-
 /build/*
-!/build/config.js
-
 /docs/*
 
 .sizecache.json

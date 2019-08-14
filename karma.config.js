@@ -1,6 +1,9 @@
 const tapSpec = require('tap-spec');
 
-const builds = require('./build/config'),
+const builds = (file => {
+		delete require.cache[file];
+		return require(file);
+	})('./build.config.js'),
 	browserBuild = builds['browser'];
 
 const buildOptions = builds['options'];
