@@ -190,7 +190,10 @@ module.exports = grunt => {
 			'browser-bundle': {
 				'options': {
 					'include': browserBuild.files,
-					'out': browserBuild.getBuildSrc('bundle')
+					'out': browserBuild.getBuildSrc('bundle'),
+					'wrap': {
+						'start': buildOptions.banner
+					}
 				}
 			},
 
@@ -207,7 +210,10 @@ module.exports = grunt => {
 			'server-bundle': {
 				'options': {
 					'include': serverBuild.files,
-					'out': serverBuild.getBuildSrc('bundle')
+					'out': serverBuild.getBuildSrc('bundle'),
+					'wrap': {
+						'start': buildOptions.banner
+					}
 				}
 			}
 
@@ -218,10 +224,11 @@ module.exports = grunt => {
 			'options': {
 				'mangle': true,
 				'report': 'min',
-				'banner': buildOptions.banner,
-				'preserveComments': /\/\*\!/g,
 				'output': {
-					'ascii_only': true
+					'ascii_only': true,
+					comments (node, comment) {
+						return /(^\*?\!|@(?:preserve|license))/g.test(comment.value);
+					}
 				}
 			},
 			'browser-build': {
@@ -360,6 +367,7 @@ module.exports = grunt => {
 	]);
 
 	grunt.registerTask('distribute', [
+		'init',
 		'test:unit',
 		'build',
 		'test:integration',

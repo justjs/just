@@ -9,11 +9,11 @@ const pkg = JSON.parse(fs.readFileSync('./package.json', 'utf8')),
 const options = {
 	// Banner for built files.
 	'banner': (
-   `/*!
+   `/**
 	 * @license
 	 * ${license.replace(/\n/g, '\n * ')}
 	 */
-	/*!
+	/**!
 	 * @file ${pkg.title}: ${pkg.description}
 	 * @author ${pkg.author}
 	 * @version ${pkg.version}
