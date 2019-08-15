@@ -18,9 +18,9 @@ define([
 	 * @param {!object} options - The options.
 	 * @param {String} [previousKey] - The previous key.
 	 *
-	 * @return {!object} - The flattened object.
+	 * @return {!object} The flattened object.
 	 */
-	function flattenObject (object, options, previousKey) {
+	var flattenObject = function flattenObject (object, options, previousKey) {
 
 		var results = {};
 
@@ -43,36 +43,44 @@ define([
 
 		return results;
 
-	}
+	};
 
-	return APR.setFn('flattenObjectLiteral', /** @lends APR */
 	/**
 	 * Flattens an object of objects.
 	 *
-	 * @function
-	 * @param {?object} object - Some object.
+	 * @namespace
+	 * @memberof APR
+	 * @param {!object} object - Some object literal.
 	 * @param {?object} [
-	 *     opts={@link APR~flattenObjectLiteral.DEFAULT_OPTIONS}
+	 *     opts={@link APR.flattenObjectLiteral.DEFAULT_OPTIONS}
 	 * ]
-	 * @throws {TypeError} - If `object` is not a an object literal.
+	 * @throws {TypeError} If `object` is not a an object literal.
 	 *
 	 * @example
 	 * flattenObjectLiteral({'a': {'b': {'c': {'d': 1}}}}); // {'a.b.c.d' : 1}
 	 *
-	 * @return {?object} - The flattened object.
+	 * @return {!object} The flattened object.
 	 */
-	function flattenObjectLiteral (object, opts) {
+	var flattenObjectLiteral = function flattenObjectLiteral (object, opts) {
 		return flattenObject(
 			check.throwable(object, {}),
 			defaults(opts, flattenObjectLiteral.DEFAULT_OPTIONS),
 			null
 		);
-	}, /** @lends APR.flattenObjectLiteral */{
+	};
+
+	Object.defineProperties(flattenObjectLiteral, /** @lends APR.flattenObjectLiteral */{
+		/**
+		 * Options for {@link APR.flattenObjectLiteral}.
+		 *
+		 * @typedef {object} APR.flattenObjectLiteral~options
+		 * @property {String} [separator=""] - A string to join the keys.
+ 		 */
+
 		/**
 		 * Default options for {@link APR.flattenObjectLiteral}.
 		 *
-		 * @type {object}
-		 * @property {String} [separator=""] - A string to join the keys.
+		 * @type {APR.flattenObjectLiteral~options} 
 		 */
 		'DEFAULT_OPTIONS': {
 			'get': function () {
@@ -82,5 +90,7 @@ define([
 			}
 		}
 	});
+
+	return APR.fn.flattenObjectLiteral = flattenObjectLiteral;
 
 });

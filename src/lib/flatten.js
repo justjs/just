@@ -12,18 +12,18 @@ define([
 
 	'use strict';
 
-	return APR.setFn('flatten', /** @lends APR */
 	/**
 	 * A factory for the "flatten..." alternatives.
 	 * 
-	 * @function
+	 * @namespace
+	 * @memberof APR
 	 * @param {...*} value - Arguments for {@link APR.flattenArray}
 	 *     if the first argument is an Array, or arguments for
 	 *     {@link APR.flattenObjectLiteral}.
-	 * @throws {TypeError} - If the value couldn't be flattened.
-	 * @return {Array|?object} - The flattened value.
+	 * @throws {TypeError} If the value couldn't be flattened.
+	 * @return {Array|!object} The flattened value.
 	 */
-	function flatten (value) {
+	var flatten = function flatten (value) {
 
 		var args = Array.from(arguments);
 		var flattened;
@@ -40,6 +40,8 @@ define([
 
 		return flattened;
 
-	});
+	};
+
+	return APR.fn.flatten = flatten;
 
 });

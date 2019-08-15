@@ -1,110 +1,115 @@
-define('APR', function () {
+define(function () {
 
 	'use strict';
+
 	/**
 	 * An absolute, relative or blob url.
 	 *
 	 * @typedef {string} url
+	 * @global
 	 */
-	 /**
+
+	/**
+	 * The full parts of an url.
+	 * 
+	 * @typedef {Object} url_parts
+	 * @property {string} protocol - A protocol (including ":", like "ftp:") or ":".
+	 * @property {string} href - An absolute url (like "ftp://username:password@www.example.com:80/a?b=1#c").
+	 * @property {string} host - The host (like "www.example.com:80") or an empty string.
+	 * @property {string} hostname - A hostname (like "www.example.com").
+	 * @property {string} port - The GIVEN port as a number (like "80") or an empty string.
+	 * @property {string} pathname - A pathname (like "/a").
+	 * @property {string} origin - The origin (like "ftp://www.example.com").
+	 * @property {string} search - The query arguments (including "?", like "?b=1") or an empty string.
+	 * @property {string} hash - The hash (including '#', like "#c") or an empty string.
+	 * @property {string} username - The given username or an empty string.
+	 * @property {string} password - The given password or an empty string.
+	 */
+	
+	/**
 	 * Same as the second param for `Object.defineProperties`
 	 * 
-	 * @typedef {?object} propertiesDescriptor
+	 * @typedef {!object} propertiesDescriptor
+	 * @global
 	 */
+	
 	/**
 	 * Same as the third param for `Object.defineProperty`
 	 *
-	 * @typedef {?object} propertyDescriptor
+	 * @typedef {!object} propertyDescriptor
+	 * @global
 	 */
+
 	/**
-	 * @namespace APR
+	 * A tagName of an Element (such as "link").
+	 *
+	 * @typedef {string} element_tag
+	 */
+
+	/**
+	 * @mixin APR
+	 * @global
 	 */
 	var APR = {};
 
-	return Object.defineProperties(APR, /** @lends APR */{
+	return Object.defineProperties(APR, /** @lends module:APR */{
 		// 'version': '%{CORE_VERSION}%',
 		/**
-		 * Sets a function in APR.
-		 *
-		 * @function
-		 * @package
-		 * @readOnly
-		 *
-		 * @param {String} name - The name of the APR property.
-		 * @param {Function} fn - Some function.
-		 * @param {propertiesDescriptor} [propertiesDescriptor]
-		 *     - Some properties to attach to fn.
-		 *
-		 * @return {!Function} fn. 
-		 */
-		'setFn': {
-			'value': function setFn (name, fn, propertiesDescriptor) {
-
-				if (propertiesDescriptor) {
-					Object.defineProperties(fn, propertiesDescriptor);
-				}
-
-				Object.defineProperty(APR, name, {
-					'value': fn
-				});
-
-				return APR[name];
-
-			}
-		},
-		/**
-		 * Sets a module in APR.
-		 *
-		 * @package
-		 * @readOnly
-		 * @function
-		 * @param {String} name - The name of the APR property.
-		 * @param {Function} fn - Some constructor.
-		 * @param {propertiesDescriptor} [propertiesDescriptor]
-		 *     - Some properties to attach to fn.
-		 * @param {propertiesDescriptor} [prototypeDescriptor]
-		 *     - Some properties to attach to fn.prototype.
-		 *
-		 * @returns {!Function} fn. 
-		 */
-		'setModule': {
-			'value': function setModule (name, fn, propertiesDescriptor,
-			prototypeDescriptor) {
-			
-				APR.setFn(name, fn, propertiesDescriptor);
-				
-				if (prototypeDescriptor) {
-					Object.defineProperties(APR[name].prototype,
-						prototypeDescriptor);
-				}
-
-
-				return APR[name];
-
-			}
-		},
-		/**
-		 * Sets a property in APR.
+		 * Defines or modifies a property in {@link APR}.
 		 *
 		 * @package
 		 * @readOnly
 		 * @function
 		 *
-		 * @param {String} name - The name of the APR property.
-		 * @param {propertyDescriptor} [descriptor] - Some properties to attach to the property.
-		 *
+		 * @param {!string} name - The name of the APR property.
+		 * @param {!propertyDescriptor|*} descriptor - The value of the
+		 *     property or a {@link propertyDescriptor}.
 		 * @return {*} The added property.
 		 */
-		'setProperty': {
-			'value': function setProperty (name, descriptor) {
-			
-				Object.defineProperty(APR, name, descriptor);
+		'property': {
+			'set': function setProperty (name, descriptor) {
+				if (!('value' in Object(descriptor))) {
+					descriptor = {
+						'value': descriptor
+					};
+				}
 
-				return APR[name];
-
+				return Object.defineProperty(APR, name, descriptor);
+			}
+		},
+		/**
+		 * Sets a function in {@link APR}.
+		 *
+		 * @function
+		 * @package
+		 * @readOnly
+		 *
+		 * @param {!string} name - The name of the APR property.
+		 * @param {!function} fn - Some function.
+		 *
+		 * @return {!function} fn. 
+		 */
+		'fn': {
+			'set': function setFn (name, fn) {
+				return APR.property.name = fn;
+			}
+		},
+		/**
+		 * Sets a module in {@link APR}.
+		 *
+		 * @package
+		 * @readOnly
+		 * @function
+		 * @param {!string} name - The name of the APR property.
+		 * @param {!function} fn - Some constructor.
+		 *
+		 * @returns {!function} fn. 
+		 */
+		'module': {
+			'set': function setModule (name, fn) {
+				return APR.fn.name = fn;
 			}
 		}
-
 	});
 	
 });

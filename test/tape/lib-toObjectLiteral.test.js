@@ -63,6 +63,13 @@ test('lib/toObjectLiteral.js', function (t) {
 
 	});
 
+	t.test('Should throw if an invalid object is passed.', function (st) {
+		st.plan(1);
+		st.throws(function () {
+			toObjectLiteral();
+		}, TypeError);
+	});
+
 	t.end();
 
 });

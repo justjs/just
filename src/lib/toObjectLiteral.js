@@ -2,17 +2,17 @@ define(['./core', './check'], function (APR, check) {
 
 	'use strict';
 
-	return APR.setFn('toObjectLiteral', /** @lends APR */
 	/**
 	 * Converts [[k0, v0], {k1: v1}] to {k0: v0, k1: v1}.
 	 *
-	 * @function
-	 * @param {?object[]|?object} array - An array containing sub-arrays
+	 * @namespace
+	 * @memberof APR
+	 * @param {!object[]|!object} array - An array containing sub-arrays
 	 *     with object literal pairs, or object literals: [[k, v], {k: v}].
 	 *
-	 * @return {?object} - An object literal.
+	 * @return {!object} An object literal.
 	 */
-	function toObjectLiteral (array) {
+	var toObjectLiteral = function toObjectLiteral (array) {
 
 		var objectLiteral = {};
 
@@ -46,6 +46,8 @@ define(['./core', './check'], function (APR, check) {
 
 		return objectLiteral;
 
-	});
+	};
+
+	return APR.fn.toObjectLiteral = toObjectLiteral;
 
 });

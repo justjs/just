@@ -2,14 +2,12 @@ define(['./core'], function (APR) {
 	
 	'use strict';
 
-	return APR.setFn('getRemoteParent', /** @lends APR */
 	/**
 	 * A function that checks if `this` is the Node that you're looking for.
 	 * 
-	 * @typedef {function} APR~getRemoteParent_fn
+	 * @typedef {function} APR.getRemoteParent~fn
 	 *
-	 * @this {Node}
-	 *
+	 * @this Node
 	 * @param {!Number} deepLevel - A counter that indicates how many elements have checked.
 	 * @param {Node} rootContainer - The root container.
 	 *
@@ -20,9 +18,10 @@ define(['./core'], function (APR) {
 	 * Goes up through the `childNode` parents, until `fn` returns `true`
 	 * or a non-Node is found.
 	 * 
-	 * @function
+	 * @namespace
+	 * @memberof APR
 	 * @param {Node} childNode - Some child.
-	 * @param {APR~getRemoteParent_fn} fn - Some custom handler.
+	 * @param {APR.getRemoteParent~fn} fn - Some custom handler.
 	 * @param {Node} [rootContainer=html] - The farthest parent.  
 	 * @param {boolean} [includeChild=false] - If `true`, it calls `fn` with `childNode` too.
 	 *
@@ -33,7 +32,7 @@ define(['./core'], function (APR) {
 	 *
 	 * @return {Node|null} - The current Node when `fn` returns true.
 	 */
-	function getRemoteParent (childNode, fn, rootContainer, includeChild) {
+	var getRemoteParent = function getRemoteParent (childNode, fn, rootContainer, includeChild) {
 
 		var currentNode = childNode;
 		var deepLevel = 0;
@@ -68,6 +67,8 @@ define(['./core'], function (APR) {
 
 		return null;
 
-	});
+	};
+
+	return APR.fn.getRemoteParent = getRemoteParent;
 
 });

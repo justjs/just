@@ -83,4 +83,17 @@ test('lib/createPrivateKey.js', function (t) {
 
 	});
 
+	t.test('Should not privatize an object twice.', function (st) {
+		
+		var _ = createPrivateKey();
+		var object = {};
+
+		st.is(_(_(object)), _(object));
+
+		st.end();
+
+	});
+
+	t.end();
+
 });

@@ -2,17 +2,18 @@ define(['../core'], function (APR) {
 
 	'use strict';
 
-	return APR.setProperty('DNT', /** @lends APR */
 	/**
 	 * The DoNotTrack header formatted as true, false or undefined
 	 * (for "unspecified").
 	 *
+	 * @namespace
+	 * @memberof APR
 	 * @type {boolean|undefined}
 	 * @readOnly
 	 */
-	{
+	var DNT = {
 
-		'get': function () {
+		'get': function DNT () {
 
 			var dnt = [
 				navigator.doNotTrack,
@@ -30,6 +31,8 @@ define(['../core'], function (APR) {
 
 		}
 
-	});
+	};
+
+	return APR.property.DNT = DNT;
 
 });

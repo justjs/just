@@ -2,11 +2,11 @@ define(['./core'], function (APR) {
 
 	'use strict';
 
-	return APR.setFn('check', /** @lends APR */
 	/**
 	 * Checks if `value` looks like the other values.
 	 *
-	 * @function
+	 * @namespace
+	 * @memberof APR
 	 * @param {*} value - Comparison value.
 	 * @param {...*} [otherValues] - Values to check against.
 	 *
@@ -14,9 +14,9 @@ define(['./core'], function (APR) {
 	 * check(null, {}, "null", []); // false. Neither is `null`.
 	 * check({}, [], {}); // true. {} is {}.
 	 *
-	 * @return {boolean} - `true` if some other value looks like `value`.
+	 * @return {boolean} `true` if some other value looks like `value`.
 	 */
-	function check (value, otherValues) {
+	var check = function check (value, otherValues) {
 
 		return [].some.call(arguments, function (otherValue, i) {
 
@@ -35,20 +35,26 @@ define(['./core'], function (APR) {
 	
 		});
 
-	}, /** @lends APR.check */{
+	};
+
+	Object.defineProperties(check, /** @lends APR.check */{
+		/**
+		 *  A custom message to throw.
+		 *
+		 * @typedef {string} APR.check~throwable_message
+		 */
+
 		/**
 		 * A function that `check`s a value against others and
 		 * throws if the result is `false`.
 		 *
 		 * @function
-		 * @this {string} - A custom message to throw.
-		 *
+		 * @this APR.check~throwable_message
 		 * @param {*} value - Comparison value.
 		 * @param {...*} [otherValues] - Values to check against.
 		 *
-		 * @throws {TypeError} - If `check` returns `false`.
-		 *
-		 * @returns {value} - `value` if `check` returns `true`.
+		 * @throws {TypeError} If `check` returns `false`.
+		 * @returns {value} `value` if `check` returns `true`.
 		 */
 		'throwable': {
 			'value': function (value, otherValues) {
@@ -69,5 +75,7 @@ define(['./core'], function (APR) {
 		}
 
 	});
+
+	return APR.fn.check = check;
 
 });

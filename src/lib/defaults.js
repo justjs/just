@@ -2,16 +2,17 @@ define(['./core', './check'], function (APR, check) {
 	
 	'use strict';
 
-	return APR.setFn('defaults', /** @lends APR */
 	/**
 	 * Checks if `value` looks like `defaultValue`.
 	 *
-	 * @function
+	 * @namespace
+	 * @memberof APR
 	 * @param {*} value - Any value.
 	 * @param {*} [defaultValue] - A value with a desired type for `value`.
 	 *     If an object literal is given, all the keys of `value` will `default`
 	 * 	   to his corresponding key in this object.
-	 * @param {object} [opts={@link APR.defaults.DEFAULT_OPTIONS}] Some options.
+	 * @param {APR.defaults~options} [opts={@link APR.defaults.DEFAULT_OPTIONS}]
+	 *     Some options.
 	 *
 	 * @example
 	 * defaults([1, 2], {a: 1}); // {a: 1}
@@ -32,9 +33,9 @@ define(['./core', './check'], function (APR, check) {
 	 * defaults({'a': 1}, {'b': 2}, {'ignoreDefaultKeys': false}); // {'a': 1, 'b': 2}
 	 * defaults({'a': 1}, {'b': 2}, {'ignoreDefaultKeys': true}); // {'a': 1}
 	 *
-	 * @returns {value} - `value` if it looks like `defaultValue` or `defaultValue` otherwise.
+	 * @returns {value} `value` if it looks like `defaultValue` or `defaultValue` otherwise.
 	 */
-	function defaults (value, defaultValue, opts) {
+	var defaults = function defaults (value, defaultValue, opts) {
 
 		var options = Object.assign({}, defaults.DEFAULT_OPTIONS,
 			opts);
@@ -75,12 +76,14 @@ define(['./core', './check'], function (APR, check) {
 			: defaultValue
 		);
 
-	}, /** @lends APR.defaults */{
+	};
+
+	Object.defineProperties(defaults, /** @lends APR.defaults */{
 		/**
-		 * Default options for {@link APR.defaults}.
+		 * Options for {@link APR.defaults}.
 		 * 
-		 * @readonly
-		 * @type {object}
+		 * @typedef {object} APR.defaults~options
+		 *
 		 * @property {boolean} [includeDefaultKeys=false] - If `false` and `defaultValue`
 		 *     is an object literal, the default keys will be added to `value`
 		 *     or checked against this function for each repeated key.
@@ -94,6 +97,13 @@ define(['./core', './check'], function (APR, check) {
 		 *     Same as `checkLooks` but it works with the inner values
 		 *     of the objects.
 		 */
+
+		/**
+		 * Default options for {@link APR.defaults}.
+		 *
+		 * @type {APR.defaults~options}
+		 * @readonly
+		 */
 		'DEFAULT_OPTIONS': {
 			'get': function () {
 				return {
@@ -105,5 +115,7 @@ define(['./core', './check'], function (APR, check) {
 		}
 
 	});
+
+	return APR.fn.defaults = defaults;
 
 });

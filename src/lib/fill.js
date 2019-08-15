@@ -12,17 +12,17 @@ define([
 
 	'use strict';
 
-	return APR.setFn('fill', /** @lends APR */
 	/**
 	 * Fills an object literal with `data`.
 	 *
-	 * @function
-	 * @param {?object} structure - The structured data to be filled.
+	 * @namespace
+	 * @memberof APR
+	 * @param {!object} structure - The structured data to be filled.
 	 *     If the value of some property is an array, the value gets
 	 *     pushed to the array.
 	 *
-	 * @param {Object} data - The new contents added to the structure.
-	 * @param {Boolean} preserveUndefined - If it's a truthy value, `undefined` values in
+	 * @param {?object} data - The new contents added to the structure.
+	 * @param {boolean} preserveUndefined - If it's a truthy value, `undefined` values in
 	 *     -the structure- will become an optional key that will be present only
 	 *     if `data` contains that property (even if it's `undefined`).
 	 *
@@ -39,9 +39,9 @@ define([
 	 * @example <caption>Passing a third argument preserves `undefined` values.</caption>
 	 * fill({'a': void 0}, null, true); // {'a': void 0}
 	 *
-	 * @return {?object} - A new object preserving the given structure.
+	 * @return {!object} A new object preserving the given structure.
 	 */
-	function fill (structure, data, preserveUndefined) {
+	var fill = function fill (structure, data, preserveUndefined) {
 
 		var filled = {};
 
@@ -80,6 +80,8 @@ define([
 
 		return filled;
 
-	});
+	};
+
+	return APR.fn.fill = fill;
 
 });

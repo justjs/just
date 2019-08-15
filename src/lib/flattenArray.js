@@ -2,11 +2,11 @@ define(['./core', './defaults'], function (APR, defaults) {
 
 	'use strict';
 
-	return APR.setFn('flattenArray', /** @lends APR */
 	/**
 	 * Flattens an array of arrays.
 	 *
-	 * @function
+	 * @namespace
+	 * @memberof APR
 	 * @param {*} [value=[value]] - The target.
 	 * @param {Number} [maxLevel=-1] - Maximum deep-level to flatten.
 	 *
@@ -20,9 +20,9 @@ define(['./core', './defaults'], function (APR, defaults) {
 	 *
 	 * flattenArray(array, maxLevel) // [0, 1, [2]]
 	 *
-	 * @return {!Array} - The flattened array.
+	 * @return {!Array} The flattened array.
 	 */
-	function flattenArray (value, maxLevel) {
+	var flattenArray = function flattenArray (value, maxLevel) {
 
 		var array = defaults(value, [value]);
 		var flattened = [];
@@ -44,6 +44,8 @@ define(['./core', './defaults'], function (APR, defaults) {
 
 		return flattened;
 
-	});
+	};
+
+	return APR.fn.flattenArray = flattenArray;
 
 });
