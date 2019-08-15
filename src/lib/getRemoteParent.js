@@ -69,6 +69,6 @@ define(['./core'], function (APR) {
 
 	};
 
-	return APR.fn.getRemoteParent = getRemoteParent;
+	return APR.setFn('getRemoteParent', getRemoteParent);
 
 });

@@ -17,6 +17,6 @@ define(['./core'], function (APR) {
 		return Array.from((parent || document).querySelectorAll(selector));
 	};
 
-	return APR.fn.findElements = findElements;
+	return APR.setFn('findElements', findElements);
 
 });

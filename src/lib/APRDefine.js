@@ -529,6 +529,6 @@ define([
 
 	})();
 
-	return APR.module.Define = Define;
+	return APR.setModule('Define', Define);
 
 });

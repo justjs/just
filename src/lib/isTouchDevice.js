@@ -20,6 +20,6 @@ define(['./core'], function (APR) {
 
 	};
 
-	return APR.fn.isTouchDevice = isTouchDevice;
+	return APR.setFn('isTouchDevice', isTouchDevice);
 
 });

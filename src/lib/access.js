@@ -156,6 +156,6 @@ define(['./core', './defaults'], function (APR, defaults) {
 		}
 	});
 
-	return APR.fn.access = access;
+	return APR.setFn('access', access);
 
 });

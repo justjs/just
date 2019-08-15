@@ -249,27 +249,15 @@ module.exports = grunt => {
 
 		'watch': {
 			'options': {
+				'atBegin': true
 				/*'spawn': false,
 				'interrupt': true*/
 			},
 			'all': {
 				'files': ['./src/**', './test/**'],
-				'tasks': ['init', 'browserify:unit-tests']
-			},
-			'browserify': {
-				'files': [
-					browserBuild.getBuildSrc('test-tape'),
-					serverBuild.getBuildSrc('test-tape')
-				],
-				'tasks': [
-					'karma:unit-dev:run',
-					'tape:unit'
-				]
+				'tasks': ['build', 'test', 'document']
 			},
 			'jsdoc': {
-				'options': {
-					'atBegin': true
-				},
 				'files': ['./src/**'],
 				'tasks': ['build', 'document']
 			}
@@ -342,15 +330,33 @@ module.exports = grunt => {
 		'karma:unit'
 	]);
 
+	grunt.registerTask('test:unit-dev', [
+		'clean:test',
+		'copy:test',
+		'copy:server-tape-to-tap',
+		'browserify:unit-tests',
+		'tape:tap-unit',
+		'karma:unit-dev'
+	]);
+
 	grunt.registerTask('test:integration', [
 		'clean:test',
 		'copy:test',
 		/** @TODO Implement tests */
 	]);
 
+	grunt.registerTask('test:integration-dev', [
+		/** @TODO Implement tests */
+	]);
+
 	grunt.registerTask('test', [
 		'test:unit',
 		'test:integration'
+	]);
+
+	grunt.registerTask('test-dev', [
+		'test:unit-dev',
+		'test:integration-dev'
 	]);
 
 	grunt.registerTask('document', [
@@ -379,7 +385,7 @@ module.exports = grunt => {
 	]);
 
 	grunt.registerTask('default', [
-		// 'watch'
+		'watch:all'
 	]);
 
 };

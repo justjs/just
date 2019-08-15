@@ -87,6 +87,6 @@ define(['./core', './defaults'], function (APR, defaults) {
 
 	});
 
-	return APR.fn.eachProperty = eachProperty;
+	return APR.setFn('eachProperty', eachProperty);
 
 });

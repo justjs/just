@@ -42,6 +42,6 @@ define([
 
 	};
 
-	return APR.fn.flatten = flatten;
+	return APR.setFn('flatten', flatten);
 
 });

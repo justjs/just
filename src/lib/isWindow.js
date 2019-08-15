@@ -20,6 +20,6 @@ define(['./core'], function (APR) {
 		);
 	};
 
-	return APR.fn.isWindow = isWindow;
+	return APR.setFn('isWindow', isWindow);
 
 });

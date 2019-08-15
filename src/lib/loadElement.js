@@ -133,6 +133,6 @@ define([
 
 	});
 
-	return APR.fn.loadElement = loadElement;
+	return APR.setFn('loadElement', loadElement);
 
 });

@@ -112,6 +112,6 @@ define(['./core'], function (APR) {
 
 	};
 
-	return APR.fn.parseUrl = parseUrl;
+	return APR.setFn('parseUrl', parseUrl);
 
 });

@@ -81,6 +81,6 @@ define([
 
 	};
 
-	return APR.fn.createPrivateKey = createPrivateKey;
+	return APR.setFn('createPrivateKey', createPrivateKey);
 
 });

@@ -7,7 +7,7 @@
   "private": true,
   "browser": "./dist/browser.js",
   "scripts": {
-    "start": "karma:unit-dev:start && grunt",
+    "start": "grunt karma:unit-dev:start default",
     "build": "grunt build",
     "test": "grunt build test",
     "document": "grunt build document",

@@ -36,6 +36,6 @@ define(['./core'], function (APR) {
 
 	};
 
-	return APR.fn.stringToJSON = stringToJSON;
+	return APR.setFn('stringToJSON', stringToJSON);
 
 });

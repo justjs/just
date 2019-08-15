@@ -46,6 +46,6 @@ define(['./core', './defaults'], function (APR, defaults) {
 
 	};
 
-	return APR.fn.flattenArray = flattenArray;
+	return APR.setFn('flattenArray', flattenArray);
 
 });

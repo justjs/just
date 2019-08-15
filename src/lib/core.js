@@ -62,19 +62,25 @@ define(function () {
 		 * @function
 		 *
 		 * @param {!string} name - The name of the APR property.
-		 * @param {!propertyDescriptor|*} descriptor - The value of the
+		 * @param {!propertyDescriptor|*} value - The value of the
 		 *     property or a {@link propertyDescriptor}.
 		 * @return {*} The added property.
 		 */
-		'property': {
-			'set': function setProperty (name, descriptor) {
-				if (!('value' in Object(descriptor))) {
+		'setProperty': {
+			'value': function setProperty (name, value) {
+				var descriptor = value;
+
+				if (!(value instanceof Object) || !['configurable', 'enumerable',
+					'value', 'writable', 'get', 'set'].some(function (key) {
+					return key in value;
+				})) {
 					descriptor = {
-						'value': descriptor
+						'value': value
 					};
 				}
 
-				return Object.defineProperty(APR, name, descriptor);
+				Object.defineProperty(APR, name, descriptor);
+				return APR[name];
 			}
 		},
 		/**
@@ -89,9 +95,9 @@ define(function () {
 		 *
 		 * @return {!function} fn. 
 		 */
-		'fn': {
-			'set': function setFn (name, fn) {
-				return APR.property.name = fn;
+		'setFn': {
+			'value': function setFn (name, fn) {
+				return APR.setProperty(name, fn);
 			}
 		},
 		/**
@@ -105,9 +111,9 @@ define(function () {
 		 *
 		 * @returns {!function} fn. 
 		 */
-		'module': {
-			'set': function setModule (name, fn) {
-				return APR.fn.name = fn;
+		'setModule': {
+			'value': function setModule (name, fn) {
+				return APR.setFn(name, fn);
 			}
 		}
 	});

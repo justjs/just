@@ -91,6 +91,6 @@ define([
 		}
 	});
 
-	return APR.fn.flattenObjectLiteral = flattenObjectLiteral;
+	return APR.setFn('flattenObjectLiteral', flattenObjectLiteral);
 
 });

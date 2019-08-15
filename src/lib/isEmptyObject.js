@@ -28,6 +28,6 @@ define(['./core'], function (APR) {
 
 	};
 
-	return APR.fn.isEmptyObject = isEmptyObject;
+	return APR.setFn('isEmptyObject', isEmptyObject);
 
 });

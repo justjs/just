@@ -116,6 +116,6 @@ define(['./core', './check'], function (APR, check) {
 
 	});
 
-	return APR.fn.defaults = defaults;
+	return APR.setFn('defaults', defaults);
 
 });

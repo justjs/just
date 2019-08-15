@@ -230,6 +230,6 @@ define([
 		}
 	});
 
-	return APR.module.LocalStorage = LocalStorage;
+	return APR.setModule('LocalStorage', LocalStorage);
 
 });

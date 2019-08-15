@@ -82,6 +82,6 @@ define([
 
 	};
 
-	return APR.fn.fill = fill;
+	return APR.setFn('fill', fill);
 
 });

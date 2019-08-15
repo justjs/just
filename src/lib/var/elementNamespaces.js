@@ -20,6 +20,6 @@ define(['../core'], function (APR) {
 		'xul': 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul'
 	};
 
-	return APR.property.elementNamespaces = elementNamespaces;
+	return APR.setProperty('elementNamespaces', elementNamespaces);
 
 });

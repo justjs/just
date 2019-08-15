@@ -23,6 +23,6 @@ define(['./core'], function (APR) {
 		return e.key || e.code || e.which || e.keyCode;
 	};
 
-	return APR.fn.getPressedKey = getPressedKey;
+	return APR.setFn('getPressedKey', getPressedKey);
 
 });

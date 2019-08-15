@@ -76,6 +76,6 @@ define(['./core'], function (APR) {
 
 	});
 
-	return APR.fn.check = check;
+	return APR.setFn('check', check);
 
 });

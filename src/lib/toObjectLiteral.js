@@ -48,6 +48,6 @@ define(['./core', './check'], function (APR, check) {
 
 	};
 
-	return APR.fn.toObjectLiteral = toObjectLiteral;
+	return APR.setFn('toObjectLiteral', toObjectLiteral);
 
 });

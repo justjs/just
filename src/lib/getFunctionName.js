@@ -29,6 +29,6 @@ define(['./core'], function (APR) {
 
 	};
 
-	return APR.fn.getFunctionName = getFunctionName;
+	return APR.setFn('getFunctionName', getFunctionName);
 
 });
