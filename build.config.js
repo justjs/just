@@ -195,7 +195,6 @@ module.exports = {
 			'lib/getFunctionName',
 			'lib/getPressedKey',
 			'lib/getRemoteParent',
-			'lib/inheritFrom',
 			'lib/isEmptyObject',
 			'lib/isTouchDevice',
 			'lib/toObjectLiteral',
