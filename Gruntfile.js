@@ -134,16 +134,14 @@ module.exports = grunt => {
 				'output': 'console'
 			},
 			'unit': {
-				'src': [
-					serverBuild.polyfills,
+				'src': serverBuild.polyfillsSrc.concat(
 					serverBuild.getBuildSrc('test-tape')
-				].filter(v => v)
+				)
 			},
 			'tap-unit': {
-				'src': [
-					serverBuild.polyfills,
+				'src': serverBuild.polyfillsSrc.concat(
 					serverBuild.getTestFiles('test-tap')
-				].filter(v => v)
+				)
 			}
 		},
 
@@ -158,7 +156,7 @@ module.exports = grunt => {
 			'unit-dev': {
 				'configFile': 'karma.config.js',
 				'singleRun': false,
-				'background': true
+				'background': false
 			}
 		},
 

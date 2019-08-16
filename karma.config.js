@@ -31,15 +31,14 @@ module.exports = config => {
 		'proxies': {
 			'/assets/': '/base/' + buildOptions.publicDir.replace('./', '') + '/'
 		},
-		'files': [
+		'files': browserBuild.polyfillsSrc.concat([
 			{
 				'pattern': buildOptions.publicDir + '/*',
 				'included': false,
 				'served': true
 			},
-			browserBuild.polyfillsSrc,
 			browserBuild.getBuildSrc('test-tape')
-		].filter(v => v)
+		])
 	});
 
 };

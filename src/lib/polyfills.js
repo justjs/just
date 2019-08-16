@@ -25,6 +25,7 @@
 	fp(O,'assign',function(o){var a=arguments,i=a.length,k,v;o=Object(o);while(--i>=1){v=a[i];for(k in v){if(({}).hasOwnProperty.call(v,k))o[k]=v[k];}}return o});
 	fp(O,'values',function(o){var r=[],k;for(k in o)({}).hasOwnProperty.call(o,k)&&r.push(o[k]);return r});
 	fp(A,'from',function(a,fn,t){var s=this,l=Object(a),f=l.length>>>0,r=typeof s=='function'?O(new s(f)):new Array(f),i=-1;while(++i<f)r[i]=fn?fn.call(t,l[i],i):l[i];r.length=f;return r});
+	fp(O,'setPrototypeOf',function(o,p){'__proto__'in o?(o.__proto__=p):ff(p,function(k,v){o[k]=v})});
 
 	if (!fy(L).origin) fg(fy(L),'origin',function(){return this.protocol+'//'+this.host});
 	fp(fy(L),'toString',function(){return this.href});

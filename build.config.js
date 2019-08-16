@@ -176,7 +176,8 @@ const options = {
 module.exports = {
 	'options': options,
 	'browser': {
-
+		/** @type {!Array} */
+		'polyfillsSrc': ['./src/lib/polyfills.js'],
 		'files': [
 			'browser',
 			'lib/var/DNT',
@@ -204,9 +205,11 @@ module.exports = {
 			'lib/APRDefine',
 			'lib/APRLocalStorage'
 		].map(file => file.replace(/\.?\/?/, './src/') + '.js'),
-		
+		/** @type {string} */
 		get polyfills () {
-			return '\n' + fs.readFileSync('./src/lib/polyfills.js', 'utf8');
+			return this.polyfillsSrc.forEach(src => {
+				return '\n' + fs.readFileSync(src, 'utf8');
+			}).join('');
 		},
 		getBuildSrc (key) {
 			return options.getBuildSrc('browser', key);
@@ -227,7 +230,8 @@ module.exports = {
 
 	},
 	'server': {
-
+		/** @type {!Array} */
+		'polyfillsSrc': [],
 		'files': [
 			'server',
 			'lib/access',
@@ -243,9 +247,11 @@ module.exports = {
 			'lib/toObjectLiteral',
 			'lib/stringToJSON'
 		].map(file => file.replace(/\.?\/?/, './src/') + '.js'),
-		
+		/** @type {string} */
 		get polyfills () {
-			return '';
+			return this.polyfillsSrc.map(src => {
+				return '\n' + fs.readFileSync(src, 'utf8');
+			}).join('');
 		},
 		getBuildSrc (key) {
 			return options.getBuildSrc('server', key);
