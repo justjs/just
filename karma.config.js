@@ -1,6 +1,9 @@
 const tapSpec = require('tap-spec');
 
-const builds = require('./build/config'),
+const builds = (file => {
+		delete require.cache[file];
+		return require(file);
+	})('./build.config.js'),
 	browserBuild = builds['browser'];
 
 const buildOptions = builds['options'];
@@ -15,7 +18,7 @@ module.exports = config => {
 		'browsers': ['Firefox'],
 		'reporters': ['coverage', 'tap-pretty'],
 		'preprocessors': {
-			'./src/lib/**/*.js': ['coverage']
+			[browserBuild.getBuildSrc('test-tape')]: ['coverage']
 		},
 		'tapReporter': {
 			'prettify': tapSpec,
@@ -28,15 +31,14 @@ module.exports = config => {
 		'proxies': {
 			'/assets/': '/base/' + buildOptions.publicDir.replace('./', '') + '/'
 		},
-		'files': [
+		'files': browserBuild.polyfillsSrc.concat([
 			{
 				'pattern': buildOptions.publicDir + '/*',
 				'included': false,
 				'served': true
 			},
-			browserBuild.polyfillsSrc,
 			browserBuild.getBuildSrc('test-tape')
-		].filter(v => v)
+		])
 	});
 
 };

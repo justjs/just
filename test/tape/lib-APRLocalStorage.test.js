@@ -75,6 +75,21 @@ test('/lib/APRLocalStorage.js', function (t) {
 		
 	});
 
+	t.test('Should return an empty value instead of a null one',
+		function (st) {
+
+		if (passIfCookiesAreDisabled(st)) {
+			return;
+		}
+
+		document.cookie = 'a=;';
+
+		st.is(APRLocalStorage.getCookie('a'), '');
+
+		st.end();
+
+	});
+
 	t.test('Should NOT use the local storage.', function (st) {
 
 		var aprLocalStorage = APRLocalStorage(false);

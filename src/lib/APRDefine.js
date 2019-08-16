@@ -1,4 +1,4 @@
-define('APRDefine', [
+define([
 	'./core',
 	'./access',
 	'./eachProperty',
@@ -22,6 +22,8 @@ define('APRDefine', [
 
 	'use strict';
 
+	var root = window;
+
 	var STATE_NON_CALLED = 0,
 		STATE_CALLING = 1,
 		STATE_CALLED = 2;
@@ -29,6 +31,94 @@ define('APRDefine', [
 	var definedModules = {};
 
 	var privateStore = createPrivateKey();
+
+	/**
+	 * A module loader: it loads {@link APR.Define~file|files} in order (when needed) and
+	 * execute them when all his dependencies became available.
+	 *
+	 * <br/>
+	 * <aside class='note'>
+	 *     <h3>A few things to consider: </h3>
+	 *     <ul>
+	 *         <li>This is not intended to be AMD compliant.</li>
+	 *    
+	 *         <li>This does not check file contents, so it won't check if the
+	 *             file defines an specific id.</li>
+	 *    
+	 *         <li>Urls passed as dependencies are considered ids, so they must
+	 *             be aliased first in order to be loaded.</li>
+	 *     
+	 *         <li>`require`, `module` and `exports` are not present in this
+	 *             loader.</li>
+	 *     
+	 *         <li>Anonymous modules are not allowed.</li>
+	 *     </ul>
+	 * </aside>
+	 *
+	 * @class
+	 * @memberof APR
+	 * @param {!string} id - The module id.
+	 * @param {string[]|string} dependencyIDs - Required module ids.
+	 * @param {*} value - The module value.
+	 *
+	 * @example
+	 * var files = APR.Define.findInDocument('data-files');
+	 * var fileIDs = Object.keys(files);
+	 *
+	 * APR.Define.load(files);
+	 * APR.Define('some id', fileIDs, function (file1, file2, ...) {
+	 *     // Loads after all ids have been defined.
+	 * });
+	 */
+	var Define = function APRDefine (id, dependencyIDs, value) {
+
+		var handler;
+
+		if (!(this instanceof APRDefine)) {
+			return new APRDefine(id, dependencyIDs, value);
+		}
+
+		if (typeof id !== 'string') {
+			throw new TypeError('The id must be a string');
+		}
+
+		if ((typeof value === 'undefined' && !check(dependencyIDs, []))
+			|| typeof dependencyIDs === 'function') {
+			value = arguments[1];
+			dependencyIDs = [];
+		}
+
+		if (typeof value === 'function') {
+			handler = value;
+		}
+
+		Object.defineProperties(privateStore(this), {
+
+			'state': {
+				'value': STATE_NON_CALLED,
+				'writable': true
+			},
+			'id': {
+				'value': id
+			},
+			'dependencyIDs': {
+				'value': normalizeIDs(dependencyIDs)
+			},
+			'handler': {
+				'value': handler
+			},
+			'returnedValue': {
+				'value': handler ? void 0 : value,
+				'writable': true
+			}
+
+		});
+
+		setModule(id, privateStore(this));
+		
+		updateModules();
+
+	};
 
 	function setModule (id, theModule) {
 		return definedModules[id] = theModule;
@@ -122,13 +212,12 @@ define('APRDefine', [
 
 	function loadModuleByID (moduleID, listener) {
 
-		var context = APR.Define;
-		var urlParts = (context.files[moduleID] || '').split(' ');
-		var eventListener = defaults(listener, APR.Define.DEFAULT_LOAD_LISTENER);
+		var urlParts = (Define.files[moduleID] || '').split(' ');
+		var eventListener = defaults(listener, Define.DEFAULT_LOAD_LISTENER);
 		var url = urlParts[1];
 		var tagName = urlParts[0];
 
-		if (!(moduleID in context.files)) {
+		if (!(moduleID in Define.files)) {
 			throw new TypeError(moduleID + ' must be added to "files".');
 		}
 
@@ -143,12 +232,12 @@ define('APRDefine', [
 				? new Error('Error loading the following url: ' + this.src)
 				: null
 			);
-			var globals = context.globals;
+			var globals = Define.globals;
 
 			if (moduleID in globals && !getModule(moduleID)) {
 
-				new APR.Define(moduleID, defaults(globals[moduleID], function () {
-					return access(window, globals[moduleID].split('.'), null, {
+				new Define(moduleID, defaults(globals[moduleID], function () {
+					return access(root, globals[moduleID].split('.'), null, {
 						'mutate': true
 					});
 				}));
@@ -184,95 +273,22 @@ define('APRDefine', [
 
 	}
 
-	APR.setModule('Define', /** @lends APR.Define */
-	/**
-	 * A module loader: it loads files in order (when needed) and
-	 * execute them when all his dependencies became available.
-	 * You define, it updates. That's it.
-	 *
-	 * This is not intended to be AMD compliant.
-	 *
-	 * This does not check file contents, so it won't check if the
-	 * file defines an specific id.
-	 *
-	 * Urls passed as dependencies are considered ids, so they must
-	 * be aliased first in order to be loaded.
-	 * 
-	 * `require`, `module` and `exports` are not present in this loader.
-	 * 
-	 * Anonymous modules are not allowed.
-	 *
-	 * @param {string} id The module id.
-	 * @param {!Array|string} dependencyIDs Required module ids.
-	 * @param {*} value The module value.
-	 * @constructor
-	 */
-	function APRDefine (id, dependencyIDs, value) {
-
-		var handler;
-
-		if (!(this instanceof APRDefine)) {
-			return new APRDefine(id, dependencyIDs, value);
-		}
-
-		if (typeof id !== 'string') {
-			throw new TypeError('The id must be a string');
-		}
-
-		if ((typeof value === 'undefined' && !check(dependencyIDs, []))
-			|| typeof dependencyIDs === 'function') {
-			value = arguments[1];
-			dependencyIDs = [];
-		}
-
-		if (typeof value === 'function') {
-			handler = value;
-		}
-
-		Object.defineProperties(privateStore(this), {
-
-			'state': {
-				'value': STATE_NON_CALLED,
-				'writable': true
-			},
-			'id': {
-				'value': id
-			},
-			'dependencyIDs': {
-				'value': normalizeIDs(dependencyIDs)
-			},
-			'handler': {
-				'value': handler
-			},
-			'returnedValue': {
-				'value': handler ? void 0 : value,
-				'writable': true
-			}
-
-		});
-
-		setModule(id, privateStore(this));
-		
-		updateModules();
-
-	}, /** @lends APR.Define */{
+	Object.defineProperties(Define, /** @lends APR.Define */{
 		/**
-		 * @typedef {Object.<key, value>} APR.Define~load_data
-		 *
-		 * @property {Event} event The triggered event: load or error.
-		 * @property {APR.Define~id} moduleID The module id.
-		 * @property {string} url The loaded url. 
-		 */
-		/**
-		 * A function to be called when the element loads.
+		 * A function to be called when the {@link APR.Define~file|file} load.
 		 * 
 		 * @typedef {function} APR.Define~load_listener
-		 * @param {?Error} error An error if the url is not being loaded.
-		 * @param {APR.Define~load_data} data Some metadata.
+		 * @param {!Error} error - An error if the url is not being loaded.
+		 * @param {!object} data - Some metadata.
+		 * @param {!Event} data.event - The triggered event: "load" or "error".
+		 * @param {!APR.Define~id} data.moduleID - The id passed to {@link APR.Define}.
+		 * @param {!url} data.url - The loaded url.
 		 */
+
 		/**
-		 * @property {APR.Define~load_listener} DEFAULT_LOAD_LISTENER   
-		 * @readOnly
+		 * Default {@link APR.Define~load_listener|listener} for the load event.
+		 * @type {APR.Define~load_listener}
+		 * @readonly
 		 */
 		'DEFAULT_LOAD_LISTENER': {
 			'value': function (error, data) {
@@ -283,7 +299,7 @@ define('APRDefine', [
 				var loadedUrl = this.src;
 
 				if (!getModule(loadedUrl) && id !== loadedUrl && id !== givenUrl) {
-					new APR.Define(loadedUrl, [id], function (theModule) {
+					new Define(loadedUrl, [id], function (theModule) {
 						return theModule;
 					});
 				}
@@ -291,14 +307,13 @@ define('APRDefine', [
 			}
 		},
 		/**
-		 * @property {function} load A function to load files by ids.
+		 * A function to load {@link APR.Define~file|files} by ids.
 		 *
-		 * @param {Object.<
-		 *     APR.Define~files_fileID,
-		 *     [APR.Define~load_listener=APR.Define~DEFAULT_LOAD_LISTENER]
-		 * > | String[APR.Define~files_fileID]
-		 *   | APR.Define~files_fileID
-		 * } value File ids.
+		 * @function
+		 * @param {APR.Define~file_id|APR.Define~file_id[]|Object.<
+		 *     APR.Define~file_id,
+		 *     APR.Define~load_listener
+		 * >} value - {@link APR.Define~file_id|File ids}.
 		 * @chainable
 		 */
 		'load': {
@@ -318,42 +333,51 @@ define('APRDefine', [
 					check.throwable(value, {}, [], 'string');
 				}
 
-				return APR.Define;
+				return Define;
 
 			}
 		},
 		/**
 		 * An alias for a url.
 		 *
-		 * @typedef {string} APR.Define~files_fileID
+		 * @typedef {string} APR.Define~file_id
 		 */
 
 		/**
-		 * An url, or a tag name with an url splitted by an space.
+		 * Any element that references an external source, like an
+		 * &lt;script&gt; or a &lt;link&gt;.
+		 * 
+		 * @typedef {string} APR.Define~file
+		 */
+
+		/**
+		 * A url, or a tag name with a url splitted by an space.
 		 * 
 		 * By default, "http://..." is the same as "script http://..."
 		 *
 		 * @typedef {string} APR.Define~files_expression
 		 *
-		 * @example <caption>An url</caption>
+		 * @example <caption>A url</caption>
 		 * "http://..."
 		 *
-		 * @example <caption>A tag name with an url.</caption>
+		 * @example <caption>A tag name with a url.</caption>
 		 * "link /index.css"; // Note the space in between.
 		 */
 
 		/**
-		 * @property {Object.<
-		 *     APR.Define~files_fileID,
+		 * Aliases for urls.
+		 * 
+		 * @type {Object.<
+		 *     APR.Define~file_id,
 		 *     APR.Define~files_expression
-		 * >} files Aliases for urls.
+		 * >}
 		 */
 		'files': {
 			'value': {},
 			'writable': true
 		},
 		/**
-		 * A function that returns the module value or an string
+		 * A function that returns the module value or a string
 		 * splitted by '.' that will be {@link APR~access|accessed}
 		 * from `window`.
 		 * 
@@ -362,52 +386,55 @@ define('APRDefine', [
 		 * @example <caption>A function.</caption>
 		 * function () { return 1; } // The module value is 1.
 		 *
-		 * @example <caption>An string.</caption>
+		 * @example <caption>A string.</caption>
 		 * "a.b"; // accesses to window, then window.a,
 		 *        // and then returns window.a.b
 		 */
+
 		/**
-		 * @property {Object.<
+		 * Aliases for ids.
+		 *
+		 * @type {Object.<
 		 *     APR.Define~id,
 		 *     APR.Define~globals_expression
-		 * >} globals Aliases for ids.
+		 * >}
 		 */
 		'globals': {
 			'value': {},
 			'writable': true
 		},
 		/**
-		 * @property {function} addGlobals Assigns values to
-		 * {@link APR.globals}.
-		 *
-		 * @param {Object.<key, value>} value
+		 * Assigns values to {@link APR.Define.globals|the globals property}.
+		 * 
+		 * @function
 		 * @chainable
+		 * @param {APR.Define.globals} value - {@link APR.Define.globals|Globals}.
 		 */
 		'addGlobals': {
 			'value': function (value) {
-				var context = APR.Define;
-				Object.assign(context.globals, value);
-				return context;
+				Object.assign(Define.globals, value);
+				return Define;
 			}
 		},
 		/**
-		 * @property {function} addFiles Assigns values to
-		 * {@link APR.files}.
+		 * Assigns values to {@link APR.Define.files|the files property}.
 		 *
-		 * @param {Object.<key, value>} value
+		 * @function
 		 * @chainable
+		 * @param {APR.Define.files} value - {@link APR.Define.files|Files}.
 		 */
 		'addFiles': {
 			'value': function (value) {
-				var context = APR.Define;
-				Object.assign(context.files, value);
-				return context;
+				Object.assign(Define.files, value);
+				return Define;
 			}
 		},
 		/**
 		 * Checks if module has been defined.
 		 *
-		 * @param {APR.Define~id} id
+		 * @function
+		 * @param {APR.Define~id} id - The id passed to {@link APR.Define}.
+		 * @return {boolean} `true` if defined, `false` otherwise.
 		 */
 		'isDefined': {
 			'value': hasModule
@@ -415,39 +442,45 @@ define('APRDefine', [
 		/**
 		 * Removes all defined modules.
 		 *
+		 * @function
 		 * @chainable
 		 */
 		'clean': {
 			'value': function () {
 				definedModules = {};
-				return APR.Define;
+				return Define;
 			}
 		},
 		/**
-		 * Finds {@link APR.Define~files|files} within the document
+		 * Finds {@link APR.Define.files|files} within the document
 		 * by selecting all the elements that contain an specific
 		 * attribute and parsing that attribute as a JSON.
+		 * <br/>
+		 * <aside class='note'>
+		 *     <h3>Note</h3>
+		 * 	   <p>Values within brackets will be replaced with
+		 *     actual attributes for that element.</p>
+		 *     <p>I.e.: &lt;span a='123' data-files='{"[a]456": "[a]456"}'&gt;&lt;/span&gt;
+		 *     will become: {123456: '123456'}</p>
+		 * </aside>
 		 *
-		 * Note that values within brackets will be replaced with
-		 * actual attributes for that element.
-		 * I.e.: <span a='123' data-files='{"[a]456": "[a]456"}'></span>
-		 * will become: {123456: '123456'}
-		 *
-		 * @param {string} attributeName Some attribute.
-		 * @param {Element} container Some container.
+		 * @function
+		 * @param {string} attributeName - The attribute which defines the
+		 *     {@link APR.Define.files|files} to be loaded.
+		 * @param {Element} [container=document]
 		 *
 		 * @example
 		 * // Considering the following document:
-		 * <body>
-		 *     <div id='a' data-files='{"[id]": "link a.css"}'></div>
-		 *     <script src='b.js' data-files='{"b": "script [src]"}'></script>
-		 * </body>
+		 * < body>
+		 *     < div id='a' data-files='{"[id]": "link a.css"}'>< /div>
+		 *     < script src='b.js' data-files='{"b": "script [src]"}'>< /script>
+		 * < /body>
 		 *
 		 * // then, in js:
 		 * findInDocument('data-files');
 		 * // Should return {a: 'link a.css', b: 'script b.js'}.
 		 * 
-		 * @return {!APR.Define~files}
+		 * @return {!APR.Define.files}
 		 */
 		'findInDocument': {
 			'value': function (attributeName, container) {
@@ -473,21 +506,29 @@ define('APRDefine', [
 	});
 	
 	/**
-	 * Finds files within the document, adds them, and
-	 * if some of it is called "main", it loads it.
+	 * Finds {@link APR.Define.files|files} within the document, adds them, and
+	 * if some is called "main", it loads it.
+	 * <br/>
+	 * <aside class='note'>
+	 *     <h3>Note</h3>
+	 *     <p>This function is called when the file is loaded.</p>
+	 * </aside>
+	 *
+	 * @function APR.Define.init
+	 * @package
 	 */
-	return (function init (APRDefine) {
+	(function init () {
 
-		var files = APRDefine.findInDocument('data-APR-Define');
+		var files = Define.findInDocument('data-APR-Define');
 
-		APR.Define.addFiles(files);
+		Define.addFiles(files);
 
 		if ('main' in files) {
-			APR.Define.load('main');
+			Define.load('main');
 		}
 
-		return APRDefine;
+	})();
 
-	})(APR.Define);
+	return APR.setModule('Define', Define);
 
 });

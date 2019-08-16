@@ -1,7 +1,5 @@
 var test = require('tape'),
-	flatten = require('../../src/lib/flatten'),
-	flattenArray = require('../../src/lib/flattenArray'),
-	flattenKeyValueObject = require('../../src/lib/flattenKeyValueObject');
+	flatten = require('../../src/lib/flatten');
 
 test('lib/flatten.js', function (t) {
 
@@ -12,7 +10,7 @@ test('lib/flatten.js', function (t) {
 			'flattenArray returns an Array.');
 		
 		st.deepEquals(flatten({}), {},
-			'flattenKeyValueObject returns a key-value object.');
+			'flattenObjectLiteral returns an object literal.');
 
 		st.end();
 

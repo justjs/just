@@ -2,42 +2,25 @@ define(['./core', './check'], function (APR, check) {
 	
 	'use strict';
 
-	return APR.setFn('defaults', /** @lends APR */
-	/**
-	 * @typedef {!Object.<key, value>} APR~defaults_options
-	 *
-	 * @param {boolean} [includeDefaultKeys=false] If `false` and `defaultValue`
-	 *     is a key-value object, the default keys will be added to `value`
-	 *     or checked against this function for each repeated key.
-	 *
-	 * @param {boolean} [checkLooks=true]
-	 *     If `true`:
-	 *         `[]` will match ONLY with another Array.
-	 *         `{}` will match ONLY with another "key-value" object.
-	 *     If `false`
-	 *         `[]` and `{}` will match with any other object.
-	 *
-	 * @param {boolean} [checkDeepLooks=true]
-	 *     Same as `checkLooks` but it works with the inner values
-	 *     of the objects.
-	 */
-
 	/**
 	 * Checks if `value` looks like `defaultValue`.
 	 *
-	 * @param {*} value Any value-
-	 * @param {*} defaultValue A value with a desired type for `value`.
-	 * 						   If a key-value object is given, all the keys of `value` will `default`
-	 * 						   to his corresponding key in this object.
-	 * @param {APR~defaults_options} opts Some options.
+	 * @namespace
+	 * @memberof APR
+	 * @param {*} value - Any value.
+	 * @param {*} [defaultValue] - A value with a desired type for `value`.
+	 *     If an object literal is given, all the keys of `value` will `default`
+	 * 	   to his corresponding key in this object.
+	 * @param {APR.defaults~options} [opts={@link APR.defaults.DEFAULT_OPTIONS}]
+	 *     Some options.
 	 *
 	 * @example
 	 * defaults([1, 2], {a: 1}); // {a: 1}
 	 * 
 	 * @example
-	 * defaults({}, null); // null: null is not a key-value object.
+	 * defaults({}, null); // null: null is not an object literal.
 	 * defaults([], null, {'checkLooks': false}); // []: null is an object.
-	 * defaults(null, {}); // {}: null is not a key-value object.
+	 * defaults(null, {}); // {}: null is not an object literal.
 	 * defaults(null, []); // []: null is not an Array.
 	 * 
 	 * @example
@@ -50,9 +33,9 @@ define(['./core', './check'], function (APR, check) {
 	 * defaults({'a': 1}, {'b': 2}, {'ignoreDefaultKeys': false}); // {'a': 1, 'b': 2}
 	 * defaults({'a': 1}, {'b': 2}, {'ignoreDefaultKeys': true}); // {'a': 1}
 	 *
-	 * @returns `value` if it looks like `defaultValue` or `defaultValue` otherwise.
+	 * @returns {value} `value` if it looks like `defaultValue` or `defaultValue` otherwise.
 	 */
-	function defaults (value, defaultValue, opts) {
+	var defaults = function defaults (value, defaultValue, opts) {
 
 		var options = Object.assign({}, defaults.DEFAULT_OPTIONS,
 			opts);
@@ -93,10 +76,33 @@ define(['./core', './check'], function (APR, check) {
 			: defaultValue
 		);
 
-	}, /** @lends APR.defaults */{
+	};
+
+	Object.defineProperties(defaults, /** @lends APR.defaults */{
 		/**
-		 * @property {APR~defaults_options} DEFAULT_OPTIONS
-		 * @readOnly
+		 * Options for {@link APR.defaults}.
+		 * 
+		 * @typedef {object} APR.defaults~options
+		 *
+		 * @property {boolean} [includeDefaultKeys=false] - If `false` and `defaultValue`
+		 *     is an object literal, the default keys will be added to `value`
+		 *     or checked against this function for each repeated key.
+		 * @property {boolean} [checkLooks=true] -
+		 *     If `true`:
+		 *         `[]` will match ONLY with another Array.
+		 *         `{}` will match ONLY with another object literal.
+		 *     If `false`
+		 *         `[]` and `{}` will match with any other object.
+		 * @property {boolean} [checkDeepLooks=true] -
+		 *     Same as `checkLooks` but it works with the inner values
+		 *     of the objects.
+		 */
+
+		/**
+		 * Default options for {@link APR.defaults}.
+		 *
+		 * @type {APR.defaults~options}
+		 * @readonly
 		 */
 		'DEFAULT_OPTIONS': {
 			'get': function () {
@@ -109,5 +115,7 @@ define(['./core', './check'], function (APR, check) {
 		}
 
 	});
+
+	return APR.setFn('defaults', defaults);
 
 });

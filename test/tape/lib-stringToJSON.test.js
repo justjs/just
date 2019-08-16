@@ -11,7 +11,8 @@ test('lib/stringToJSON.js', function (t) {
 	t.test('Should return an empty key-value object if something ' +
 		'fails.', function (st) {
 		st.deepEquals(stringToJSON(1), {}, 'not a JSON');
-		st.deepEquals(stringToJSON('["a": 1]'), {}, 'malformed JSON');
+		st.deepEquals(stringToJSON("{'a': 'b'}"), {}, 'malformed JSON: ' +
+			'Keys and string values must be enclosed in double quotes.');
 		st.end();
 	});
 

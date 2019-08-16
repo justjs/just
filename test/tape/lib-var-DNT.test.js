@@ -3,7 +3,7 @@ var test = require('tape'),
 
 test('/lib/var/DNT.js', function (t) {
 
-	t.test('Should return the DoNotTrack header on a common format.', function (st) {
+	t.test('Should return the DoNotTrack header in a common format.', function (st) {
 
 		st.is(/boolean|undefined/.test(typeof DNT), true);
 		st.end();

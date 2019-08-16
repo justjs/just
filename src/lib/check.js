@@ -2,37 +2,21 @@ define(['./core'], function (APR) {
 
 	'use strict';
 
-	return APR.setFn('check', /** @lends APR */
-	/**
-	 * A function that `check`s a value against others and
-	 * throws if the result is `false`.
-	 *
-	 * @typedef {function} APR~check_throwable 
-	 *
-	 * @this {string} A custom message to throw.
-	 *
-	 * @param {*} value Comparison value.
-	 * @param {*} [...otherValues] Values to check against.
-	 *
-	 * @throws {TypeError} If `check` returns `false`.
-	 *
-	 * @returns `value` if `check` returns `true`.
-	 */
-
 	/**
 	 * Checks if `value` looks like the other values.
 	 *
-	 * @param {*} value Comparison value.
-	 * @param {*} [...otherValues] Values to check against.
+	 * @namespace
+	 * @memberof APR
+	 * @param {*} value - Comparison value.
+	 * @param {...*} [otherValues] - Values to check against.
 	 *
 	 * @example
-	 *
 	 * check(null, {}, "null", []); // false. Neither is `null`.
 	 * check({}, [], {}); // true. {} is {}.
 	 *
-	 * @return {boolean} `true` if some `otherValue` looks like `value`.
+	 * @return {boolean} `true` if some other value looks like `value`.
 	 */
-	function check (value, otherValues) {
+	var check = function check (value, otherValues) {
 
 		return [].some.call(arguments, function (otherValue, i) {
 
@@ -51,9 +35,26 @@ define(['./core'], function (APR) {
 	
 		});
 
-	}, /** @lends APR.check */{
+	};
+
+	Object.defineProperties(check, /** @lends APR.check */{
 		/**
-		 * @property {APR~check_throwable} throwable
+		 *  A custom message to throw.
+		 *
+		 * @typedef {string} APR.check~throwable_message
+		 */
+
+		/**
+		 * A function that `check`s a value against others and
+		 * throws if the result is `false`.
+		 *
+		 * @function
+		 * @this APR.check~throwable_message
+		 * @param {*} value - Comparison value.
+		 * @param {...*} [otherValues] - Values to check against.
+		 *
+		 * @throws {TypeError} If `check` returns `false`.
+		 * @returns {value} `value` if `check` returns `true`.
 		 */
 		'throwable': {
 			'value': function (value, otherValues) {
@@ -74,5 +75,7 @@ define(['./core'], function (APR) {
 		}
 
 	});
+
+	return APR.setFn('check', check);
 
 });

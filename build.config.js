@@ -3,18 +3,20 @@ const fs = require('fs');
 
 const amdclean = require('amdclean');
 
-const pkg = require('../package.json'),
+const pkg = JSON.parse(fs.readFileSync('./package.json', 'utf8')),
 	license = fs.readFileSync('./LICENSE', 'utf8');
 
 const options = {
 	// Banner for built files.
 	'banner': (
-   `/*!
-	 * ${license.trim().replace(/\n/g, '\n * ')}
+   `/**
+	 * @license
+	 * ${license.replace(/\n/g, '\n * ')}
 	 */
-	/*
-	 * ${pkg.title}: ${pkg.description}
-	 * v${pkg.version}
+	/**!
+	 * @file ${pkg.title}: ${pkg.description}
+	 * @author ${pkg.author}
+	 * @version ${pkg.version}
 	 */`).replace(/\t/g, ''),
 
 	get publicDir () {
@@ -28,9 +30,11 @@ const options = {
 		const paths = {
 			'build': path,
 			'src': path + '/src',
+			'docs': path + '/docs',
+			'distribution': path + '/dist',
 			'test': pathTest,
-			'test-tap': pathTest + '/tap',
 			'test-tape': pathTest + '/tape',
+			'test-tap': pathTest + '/tap',
 			'test-server': pathTest + '/server',
 			// Path for finished files.
 			'production': './dist'
@@ -49,17 +53,33 @@ const options = {
 
 		// Data for variables.
 		const vars = {
-			'CORE_VERSION': pkg.version
+			'CORE_VERSION': pkg.version,
+			getModuleNote (moduleID) {
+				return "<aside class='note'><p>To use this module, see {@link " +
+					moduleID + "}.</p></aside>";
+			}
 		};
 
-		// Matches: // content %{key}%.
-		const regexp = /\/\/(.+)\%\{(.+)\}\%/g;
+		/* Matches any of the following:
+		 // %{key}%
+		 // %{getKey}["a", "b"]%
+		 %{key}%
+		 %{getKey}["a", "b"]%
+		*/
+		const regexp = /(?:\/\/(.+))?\%\{(.+)\}(\[.+\])?\%/g;
 
-		// Replaces `regexp` with vars[key] if vars[key] exists,
-		// otherwise it replaces `regexp` with an empty string.
-		const handler = ($0, content, key) => {
+		// Replaces `regexp` with
+		// vars[key] if vars[key] exists,
+		// vars[key].apply(null, args) if args is a JSON-STRINGIFIED Array,
+		// or with an empty string otherwise.
+		const handler = ($0, content, key, args) => {
+			const value = vars[key];
+
 			return (key in vars
-				? content + vars[key]
+				? (content || '') + (args
+					? value.apply(null, JSON.parse(args))
+					: value
+				)
 				: ''
 			);
 		};
@@ -67,8 +87,8 @@ const options = {
 		return code.replace(regexp, handler);
 
 	},
-	// Modifies a filename to match the unit-test one.
-	getUnitTestFilename (filename, type) {
+	// Modifies a filename to match the test one.
+	getTestFilename (filename, type) {
 
 		// Renames:
 		// ./someModule.js -> ./someModule.build.test.js
@@ -90,7 +110,7 @@ const options = {
 	getTestFiles (files, path) {
 
 		return files.map(file => {
-			return path + '/' + options.getUnitTestFilename(file)
+			return path + '/' + options.getTestFilename(file)
 		});
 
 	},
@@ -100,12 +120,15 @@ const options = {
 		const keys = {
 			
 			'test-tape': options.getPath('test-tape') + '/' +
-				options.getUnitTestFilename(buildKey, 'build'),
+				options.getTestFilename(buildKey, 'build'),
 			
-			'distribution': options.getPath('production') + '/' +
+			'bundle': options.getPath('distribution') + '/' +
+				buildKey + '.bundle.js',
+
+			'compact': options.getPath('distribution') + '/' +
 				buildKey + '.js',
 			
-			'distribution-minified': options.getPath('production') + '/' +
+			'minified': options.getPath('distribution') + '/' +
 				buildKey + '.min.js'
 
 		};
@@ -121,24 +144,19 @@ const options = {
 			'filePath': path,
 			'aggressiveOptimizations': true,
 			'wrap': {
-				'start': ('\n' +
-					'(function (fn) {\n' +
-					"	if (typeof define === 'function' && define.amd) { define('APR', fn); }\n" +
-					"	else if (module instanceof Object) { module.exports = fn(); }\n" +
-					'	else { this.APR = fn(); }\n' +
-					'}(this, function () {\n'
-				),
-				'end': '\n\treturn APR;\n}));'
+				'start': '(function(fn){if(typeof define==="function"&&define.amd)define("APR",[],fn);else if(typeof exports==="object"&&Object(module).exports){module.exports=fn()}else{this.APR=fn()}}).call(this,function(){\n',
+				'end': '\n\treturn APR;\n});'
 			},
 			'escodegen': {
 				// Some comments still being removed
 				// in version 2.7.0
 				'comment': true,
+				'removeAllRequires': true,
 				'format': {
 					'indent': {
 						'base': 1,
 						'style': '\t',
-						'adjustMultilineComment': false
+						'adjustMultilineComment': true
 					}
 				}
 			},
@@ -158,7 +176,8 @@ const options = {
 module.exports = {
 	'options': options,
 	'browser': {
-
+		/** @type {!Array} */
+		'polyfillsSrc': ['./src/lib/polyfills.js'],
 		'files': [
 			'browser',
 			'lib/var/DNT',
@@ -171,10 +190,9 @@ module.exports = {
 			'lib/getFunctionName',
 			'lib/getPressedKey',
 			'lib/getRemoteParent',
-			'lib/inheritFrom',
 			'lib/isEmptyObject',
 			'lib/isTouchDevice',
-			'lib/toKeyValueObject',
+			'lib/toObjectLiteral',
 			'lib/isWindow',
 			'lib/createPrivateKey',
 			'lib/loadElement',
@@ -183,13 +201,15 @@ module.exports = {
 			'lib/fill',
 			'lib/flatten',
 			'lib/flattenArray',
-			'lib/flattenKeyValueObject',
+			'lib/flattenObjectLiteral',
 			'lib/APRDefine',
 			'lib/APRLocalStorage'
 		].map(file => file.replace(/\.?\/?/, './src/') + '.js'),
-		
+		/** @type {string} */
 		get polyfills () {
-			return '\n' + fs.readFileSync('./src/lib/polyfills.js', 'utf8');
+			return this.polyfillsSrc.forEach(src => {
+				return '\n' + fs.readFileSync(src, 'utf8');
+			}).join('');
 		},
 		getBuildSrc (key) {
 			return options.getBuildSrc('browser', key);
@@ -197,7 +217,7 @@ module.exports = {
 		getTestFiles (pathKey) {
 			return options.getTestFiles(
 				this.files,
-				options.getPath(pathKey)
+				(pathKey ? options.getPath(pathKey) : '.')
 			);
 		},
 		replaceAMDModules (path) {
@@ -210,7 +230,8 @@ module.exports = {
 
 	},
 	'server': {
-
+		/** @type {!Array} */
+		'polyfillsSrc': [],
 		'files': [
 			'server',
 			'lib/access',
@@ -222,13 +243,15 @@ module.exports = {
 			'lib/fill',
 			'lib/flatten',
 			'lib/flattenArray',
-			'lib/flattenKeyValueObject',
-			'lib/toKeyValueObject',
+			'lib/flattenObjectLiteral',
+			'lib/toObjectLiteral',
 			'lib/stringToJSON'
 		].map(file => file.replace(/\.?\/?/, './src/') + '.js'),
-		
+		/** @type {string} */
 		get polyfills () {
-			return '';
+			return this.polyfillsSrc.map(src => {
+				return '\n' + fs.readFileSync(src, 'utf8');
+			}).join('');
 		},
 		getBuildSrc (key) {
 			return options.getBuildSrc('server', key);

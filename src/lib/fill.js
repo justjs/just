@@ -12,20 +12,19 @@ define([
 
 	'use strict';
 
-	return APR.setFn('fill', /** @lends APR */
 	/**
-	 * Fills a key-value object with `data`.
+	 * Fills an object literal with `data`.
 	 *
-	 * @param {Object<key, value>} structure The structured data to be filled.
-	 * 										If the value of some property is an array,
-	 *										the value gets pushed to the array.
+	 * @namespace
+	 * @memberof APR
+	 * @param {!object} structure - The structured data to be filled.
+	 *     If the value of some property is an array, the value gets
+	 *     pushed to the array.
 	 *
-	 * @param {Object} data The new contents added to the structure.
-	 *
-	 * @param {Boolean} preserveUndefined If it's a truthy value, `undefined` values in
-	 * 										-the structure- will become an optional key
-	 * 										that will be present only if `data` contains
-	 * 										that property (even if it's `undefined`).
+	 * @param {?object} data - The new contents added to the structure.
+	 * @param {boolean} preserveUndefined - If it's a truthy value, `undefined` values in
+	 *     -the structure- will become an optional key that will be present only
+	 *     if `data` contains that property (even if it's `undefined`).
 	 *
 	 * @example <caption>`undefined` values get removed by default.</caption>
 	 * fill({
@@ -40,9 +39,9 @@ define([
 	 * @example <caption>Passing a third argument preserves `undefined` values.</caption>
 	 * fill({'a': void 0}, null, true); // {'a': void 0}
 	 *
-	 * @return {!Object<key, value>} A new object preserving the given structure.
+	 * @return {!object} A new object preserving the given structure.
 	 */
-	function fill (structure, data, preserveUndefined) {
+	var fill = function fill (structure, data, preserveUndefined) {
 
 		var filled = {};
 
@@ -54,7 +53,7 @@ define([
 		}
 
 		if (!check(data, null, {})) {
-			throw new TypeError(data + ' must be null or a key-value object.');
+			throw new TypeError(data + ' must be null or an object literal.');
 		}
 
 		eachProperty(structure, function (currentValue, currentKey) {
@@ -81,6 +80,8 @@ define([
 
 		return filled;
 
-	});
+	};
+
+	return APR.setFn('fill', fill);
 
 });
