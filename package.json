@@ -34,7 +34,7 @@
     "almond": "^0.3.3",
     "amd-loader": "0.0.8",
     "amdclean": "^2.7.0",
-    "browserify": "^16.2.3",
+    "browserify": "^16.3.0",
     "browserify-replace": "^1.0.1",
     "deamdify": "^0.3.0",
     "grunt": "^1.0.4",
