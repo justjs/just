@@ -1,5 +1,5 @@
 var test = require('tape'),
-	browser = require('../../src/browser')
+	browser = require('../../src/browser');
 
 test('/browser.js', function (t) {
 

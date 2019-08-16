@@ -1,9 +1,10 @@
+/**
+ * Polyfills (for IE9 and above):
+ * console.log, Event, CustomEvent, WeakMap, Number.isNaN, 
+ * Object.assign, Object.values, Array.from, Location.origin, Location.toString,
+ * DOMTokenList, matches, requestAnimationFrame, cancelAnimationFrame
+ */
 (function (W) {
-
-	/**
-	 * Some commonly used polyfills (for ie9+).
-	 * @ignore
-	 */
 
 	var D=W.document, O=W.Object, S=W.String, A=W.Array, F=W.Function, E=W.Element, V=W.Event, L=W.Location;
 
@@ -27,8 +28,6 @@
 
 	if (!fy(L).origin) fg(fy(L),'origin',function(){return this.protocol+'//'+this.host});
 	fp(fy(L),'toString',function(){return this.href});
-
-	ff((function(fs){return{previousElementSibling:function(){return fs(this,'previous')},nextElementSibling:function(){return fs(this,'next')}}})(function fs(e,k){while((e=e[k+'Sibling'])&&e.nodeType!=1);return e}),function(k,v){(v in D.documentElement)||fg(fy(E),k,v)});
 
 	!function(g){var fs=function(t){return [].join.call(t,' ')},fi=function(t,s){return(' '+fs(t)+' ').indexOf(' '+s+' ')},fv=function(s){if(!(s=s+'')||/\s/.test(s))throw Error('"'+s+'" is invalid');return s},ft=function(s,f){var t=this;return t.contains(s)?(f===!1&&t.remove(s),!1):(f===!0&&t.add(s),!0)},fe=function(){return [].call(this,function(v,k){return !isNaN(k)})},fc=function(s){return !/\s/.test(s)&&fi(this,s)>=0},fr=function(a,b){var t=this;if(!b)throw TypeError('Not enough arguments');return t.contains(a=fv(a))&&(b=fv(b))&&(t.remove(a),t.add(b),!0)},fh=function(f,s){var t=this;ff(fe.call(t),function(k,v){f.call(s,v,+k,t)})},fk=function(){return O.keys(fe.call(this))},fT=function(e){var t=this;t.value=(e.getAttribute('class')||'').trim();t.length=t.value?[].push.apply(t,t.value.split(/\s+/)):0;t.element=e;fy(fT).toString=function(){return fs(this)};fy(fT)._values=fy(fT)._entries=fe;fy(fT)._keys=fk},_=D.createElement('a'),p='classList';fp(W,g,fT);(p in _)||fg(fy(E),p,function(){return new W[g](this)});fp(fy(fT),'add',function(){var t=this,a=arguments,i,s;for(i=0;i<a.length;i++)t.contains(s=fv(a[i]))||(fy(A).push.call(t,s),t.element.setAttribute('class',fs(t)))});fp(fy(fT),'remove',function(){var t=this,a=arguments,i=a.length,s;while(--i>=0)if(t.contains(s=fv(a[i]))){fh.call(t,function(v,k){v===s&&fy(A).splice.call(t,k,1)});t.element.setAttribute('class',fs(t))}});fp(fy(fT),'item',function(i){return this[i]||null});fp(fy(fT),'contains',fc);fp(fy(fT),'replace',fr);fp(fy(fT),'toggle',ft);fp(fy(fT),'forEach',fh);_[p].add('a','b');_[p].contains('b')||(fy(W[g]).contains=fc);_[p].toggle('c',!1)||(fy(W[g]).toggle=ft);_=null}
 	('DOMTokenList');

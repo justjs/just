@@ -52,7 +52,7 @@ define(function () {
 	 */
 	var APR = {};
 
-	return Object.defineProperties(APR, /** @lends module:APR */{
+	return Object.defineProperties(APR, /** @mixes APR */{
 		// 'version': '%{CORE_VERSION}%',
 		/**
 		 * Defines or modifies a property in {@link APR}.

@@ -144,14 +144,8 @@ const options = {
 			'filePath': path,
 			'aggressiveOptimizations': true,
 			'wrap': {
-				'start': ('\n' +
-					'(function (fn) {\n' +
-					"	if (typeof define === 'function' && define.amd) { define('APR', fn); }\n" +
-					"	else if (typeof module === 'object' && module) { module.exports = fn(); }\n" +
-					'	else { this.APR = fn(); }\n' +
-					'}.call(this, function () {\n'
-				),
-				'end': '\n\treturn APR;\n}));'
+				'start': '(function(fn){if(typeof define==="function"&&define.amd)define("APR",[],fn);else if(typeof exports==="object"&&Object(module).exports){module.exports=fn()}else{this.APR=fn()}}).call(this,function(){\n',
+				'end': '\n\treturn APR;\n});'
 			},
 			'escodegen': {
 				// Some comments still being removed
@@ -162,7 +156,7 @@ const options = {
 					'indent': {
 						'base': 1,
 						'style': '\t',
-						'adjustMultilineComment': false
+						'adjustMultilineComment': true
 					}
 				}
 			},
