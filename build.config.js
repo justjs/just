@@ -207,7 +207,7 @@ module.exports = {
 		].map(file => file.replace(/\.?\/?/, './src/') + '.js'),
 		/** @type {string} */
 		get polyfills () {
-			return this.polyfillsSrc.forEach(src => {
+			return this.polyfillsSrc.map(src => {
 				return '\n' + fs.readFileSync(src, 'utf8');
 			}).join('');
 		},
