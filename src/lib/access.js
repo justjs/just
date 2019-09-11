@@ -85,21 +85,11 @@ define(['./core', './defaults'], function (APR, defaults) {
 			: Object.assign({}, object)
 		);
 		var currentObject = initialObject;
-		var hasProperty = true;
+		var isNewProperty = false;
+		var lastKey = properties[properties.length - 1];
+		var hasProperty;
 
-		properties.forEach(function (key, i) {
-
-			if (i === properties.length - 1) {
-
-				currentObject = (handler
-					? handler.call(initialObject, currentObject,
-						key, hasProperty, properties)
-					: currentObject[key]
-				);
-
-				return;
-
-			}
+		properties.slice(0, -1).forEach(function (key, i) {
 
 			if (!(currentObject[key] instanceof Object)) {
 
@@ -111,7 +101,7 @@ define(['./core', './defaults'], function (APR, defaults) {
 
 				}
 
-				hasProperty = false;
+				isNewProperty = true;
 				currentObject[key] = {};
 
 			}
@@ -120,7 +110,12 @@ define(['./core', './defaults'], function (APR, defaults) {
 
 		});
 
-		return currentObject;
+		hasProperty = lastKey in currentObject && !isNewProperty;
+
+		return (handler
+			? handler.call(initialObject, currentObject, lastKey, hasProperty, properties)
+			: currentObject[lastKey]
+		);
 
 	};
 

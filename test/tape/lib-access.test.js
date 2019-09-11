@@ -3,6 +3,30 @@ var test = require('tape'),
 
 test('lib/access.js', function (t) {
 
+	t.test('Should access to one property.', function (st) {
+
+		st.plan(3);
+
+		access({'x': 1}, 'x', function (o, k, exists, path) {
+			st.is(o[k], 1);
+			st.is(exists, true);
+			st.deepEquals(path, ['x']);
+		});
+
+	});
+
+	t.test('Should access to one non-existent property.', function (st) {
+
+		st.plan(3);
+
+		access({}, 'x', function (o, k, exists, path) {
+			st.is(typeof o[k], 'undefined');
+			st.is(exists, false);
+			st.deepEquals(path, ['x']);
+		});
+
+	});
+
 	t.test('Should work as expected and access to a deep existent ' +
 		'property.', function (st) {
 
