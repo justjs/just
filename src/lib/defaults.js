@@ -33,13 +33,22 @@ define(['./core', './check'], function (APR, check) {
 	 * defaults({'a': 1}, {'b': 2}, {'ignoreDefaultKeys': false}); // {'a': 1, 'b': 2}
 	 * defaults({'a': 1}, {'b': 2}, {'ignoreDefaultKeys': true}); // {'a': 1}
 	 *
+	 * @example
+	 * defaults(1, null, {'ignoreNull': false}) // null (1 is not an object)
+	 * defaults(1, null, {'ignoreNull': true}) // 1
+	 * defaults(undefined, null, {'ignoreNull': true}) // null
+	 * defaults({a: 1}, {a: null}, {'ignoreNull': true}) // {a: 1}
+	 * 
 	 * @returns {value} `value` if it looks like `defaultValue` or `defaultValue` otherwise.
 	 */
 	var defaults = function defaults (value, defaultValue, opts) {
 
-		var options = Object.assign({}, defaults.DEFAULT_OPTIONS,
-			opts);
+		var options = Object.assign({}, defaults.DEFAULT_OPTIONS, opts);
 		var k;
+
+		if (options.ignoreNull && defaultValue === null && value !== void 0) {
+			return value;
+		}
 
 		if (options.checkLooks) {
 			
@@ -96,6 +105,9 @@ define(['./core', './check'], function (APR, check) {
 		 * @property {boolean} [checkDeepLooks=true] -
 		 *     Same as `checkLooks` but it works with the inner values
 		 *     of the objects.
+		 * @property {boolean} [ignoreNull=false]
+		 *     If `true`, `defaultValue`s with null as a value won't be checked
+		 *     and any `value` (except `undefined`) will be allowed.
 		 */
 
 		/**
@@ -109,7 +121,8 @@ define(['./core', './check'], function (APR, check) {
 				return {
 					'ignoreDefaultKeys': false,
 					'checkLooks': true,
-					'checkDeepLooks': true
+					'checkDeepLooks': true,
+					'ignoreNull': false
 				};
 			}
 		}

@@ -109,6 +109,31 @@ test('lib/defaults.js', function (t) {
 
 	});
 
+	t.test('Should ignore default null values.', function (st) {
+
+		st.is(defaults(1, null, {'ignoreNull': false}), null, '`1` is not an object.');
+		st.is(defaults(1, null, {'ignoreNull': true}), 1, 'Any value is allowed, ' +
+			'except undefined');
+		st.is(defaults(void 0, null, {'ignoreNull': true}), null,
+			'`undefined` defaults to null.');
+
+		st.end();
+
+	});
+
+	t.test('Should ignore default null values in an object.', function (st) {
+
+		st.deepEquals(defaults({'a': 0, 'b': void 0}, {'a': null, 'b': null}, {
+			'ignoreNull': true
+		}), {
+			'a': 0,
+			'b': null
+		});
+
+		st.end();
+
+	});
+
 	t.end();
 
 });
