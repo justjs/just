@@ -106,7 +106,7 @@ module.exports = grunt => {
 		'browserify': {
 			'unit-tests': {
 				'options': {
-					'transform': ['deamdify', [
+					'transform': ['browserify-istanbul', 'deamdify', [
 						// Fixes karma error 0 of 0 by using
 						// the karma-framework instead of a new
 						// import.
@@ -149,12 +149,12 @@ module.exports = grunt => {
 		'karma': {
 			'unit': {
 				'configFile': 'karma.config.js',
-				'browsers': ['jsdom'],
 				'singleRun': true,
 				'logLevel': 'INFO'
 			},
 			'unit-dev': {
 				'configFile': 'karma.config.js',
+				'browsers': ['Firefox'],
 				'singleRun': false,
 				'background': false
 			}

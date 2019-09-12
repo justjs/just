@@ -1,3 +1,5 @@
+const path = require('path');
+
 const tapSpec = require('tap-spec');
 
 const builds = (file => {
@@ -15,18 +17,15 @@ module.exports = config => {
 		'logLevel': config.LOG_DEBUG,
 		'failOnEmptyTestSuite': false,
 		'frameworks': ['tap'],
-		'browsers': ['Firefox'],
-		'reporters': ['coverage', 'tap-pretty'],
-		'preprocessors': {
-			[browserBuild.getBuildSrc('test-tape')]: ['coverage']
-		},
+		'browsers': ['jsdom'],
+		'reporters': ['coverage-istanbul', 'tap-pretty'],
 		'tapReporter': {
 			'prettify': tapSpec,
 			'separator': '****************************'
 		},
-		'coverageReporter': {
-			'type': 'html',
-			'dir': './coverage/'
+		'coverageIstanbulReporter': {
+			'reports': ['html', 'text', 'text-summary'],
+			'dir': path.join(__dirname, 'coverage/%browser%'),
 		},
 		'proxies': {
 			'/assets/': '/base/' + buildOptions.publicDir.replace('./', '') + '/'
