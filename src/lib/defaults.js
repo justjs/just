@@ -59,7 +59,7 @@ define(['./core', './check'], function (APR, check) {
 			if (check(value, {}) && options.checkDeepLooks) {
 
 				for (k in defaultValue) {
-
+					/* istanbul ignore next */
 					if (!({}).hasOwnProperty.call(defaultValue, k)) {
 						continue;
 					}
@@ -93,19 +93,19 @@ define(['./core', './check'], function (APR, check) {
 		 * 
 		 * @typedef {object} APR.defaults~options
 		 *
-		 * @property {boolean} [includeDefaultKeys=false] - If `false` and `defaultValue`
+		 * @property {boolean} ignoreDefaultKeys - If `false` and `defaultValue`
 		 *     is an object literal, the default keys will be added to `value`
 		 *     or checked against this function for each repeated key.
-		 * @property {boolean} [checkLooks=true] -
+		 * @property {boolean} checkLooks
 		 *     If `true`:
 		 *         `[]` will match ONLY with another Array.
 		 *         `{}` will match ONLY with another object literal.
 		 *     If `false`
 		 *         `[]` and `{}` will match with any other object.
-		 * @property {boolean} [checkDeepLooks=true] -
+		 * @property {boolean} checkDeepLooks
 		 *     Same as `checkLooks` but it works with the inner values
 		 *     of the objects.
-		 * @property {boolean} [ignoreNull=false]
+		 * @property {boolean} ignoreNull
 		 *     If `true`, `defaultValue`s with null as a value won't be checked
 		 *     and any `value` (except `undefined`) will be allowed.
 		 */
@@ -114,6 +114,10 @@ define(['./core', './check'], function (APR, check) {
 		 * Default options for {@link APR.defaults}.
 		 *
 		 * @type {APR.defaults~options}
+		 * @property {boolean} [ignoreDefaultKeys=false] - Add default keys.
+		 * @property {boolean} [checkLooks=true] - Check `[]` and `{}`.
+		 * @property {boolean} [checkDeepLooks=true] - `checkLooks` in literal objects.
+		 * @property {boolean} [ignoreNull=false] - Be strict checking `null`s.
 		 * @readonly
 		 */
 		'DEFAULT_OPTIONS': {

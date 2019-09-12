@@ -47,7 +47,7 @@ define([
 		}
 	
 		if (parsedUrl.origin !== window.location.origin &&
-			['video', 'img', 'script'].indexOf(tag) >= 0) {
+			['video', 'img', 'script', 'link'].indexOf(tag) >= 0) {
 			
 			element.setAttribute('crossorigin', 'anonymous');
 
