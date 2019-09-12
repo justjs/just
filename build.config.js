@@ -180,8 +180,6 @@ module.exports = {
 		'polyfillsSrc': ['./src/lib/polyfills.js'],
 		'files': [
 			'browser',
-			'lib/var/DNT',
-			'lib/var/elementNamespaces',
 			'lib/access',
 			'lib/check',
 			'lib/defaults',
