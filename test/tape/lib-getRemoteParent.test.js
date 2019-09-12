@@ -59,12 +59,16 @@ test('lib/getRemoteParent.js', function (t) {
 
 	t.test('Should return `null` if the expected parent ' +
 		'is not found.', function (st) {
-
-		var parent = getRemoteParent(html, function () {
+		var returnFalse = function () {
 			return false;
-		});
+		};
 
-		st.is(parent, null, 'The expected parent was not found.');
+		st.is(getRemoteParent(html, returnFalse), null,
+			'The expected parent was not found.');
+		
+		st.is(getRemoteParent(document.createElement('a'), returnFalse), null,
+			'There\'s no parent node, so `null` is expected.');
+		
 		st.end();
 
 	});

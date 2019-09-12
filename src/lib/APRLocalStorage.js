@@ -219,14 +219,16 @@ define([
 		 * @function
 		 * @param {APR.LocalStorage~isStorageAvailable_type} type
 		 *     A type of storage.
+		 * @param {string} [tempKey='_'] - Storage will save this key with `tempValue` as a value.
+		 * @param {string} [tempValue='_'] - Storage will save this value with `tempKey` as a key.
 		 *
 		 * @return {boolean} `true` if the function does not throw
 		 *     and is allowed by the user, `false` otherwise.
 		 */
 		'isStorageAvailable': {
-			'value': function isStorageAvailable (type) {
-	
-				var _ = '_';
+			'value': function isStorageAvailable (type, tempKey, tempValue) {
+				var k = defaults(tempKey, '_');
+				var v = defaults(tempValue, '_');
 				var storage;
 
 				if (!this.consent) {
@@ -235,18 +237,24 @@ define([
 
 				if (/cookie/i.test(type)) {
 
-					return this.setCookie(_, _) &&
-						LocalStorage.getCookie(_) === _ &&
-						this.removeCookie(_);
+					return this.setCookie(k, v) &&
+						LocalStorage.getCookie(k) === v &&
+						this.removeCookie(k);
 
 				}
 
 				try {
 					storage = window[type];
-					storage.setItem(_, _);
-					storage.removeItem(_);
+					storage.setItem(k, v);
+					storage.removeItem(k);
 				}
 				catch (exception) {
+					try {
+						storage.removeItem(k);
+					} catch (wrongImplementation) {
+						return false;
+					}
+
 					return false;
 				}
 				

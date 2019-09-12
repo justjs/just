@@ -24,8 +24,6 @@ test('lib/loadElement.js', function (t) {
 
 		}, function (loadedFile, url) {
 
-			var isCrossOrigin = parseUrl(url).origin !== window.location.origin;
-
 			st.is(this instanceof HTMLLinkElement, true,
 				'`this` is the current node.');
 
@@ -141,6 +139,16 @@ test('lib/loadElement.js', function (t) {
 				'element).');
 		});
 
+	});
+
+	t.test('Should set the "crossorigin" attribute to specific tags.', function (st) {
+		var noop = function () {};
+
+		st.plan(1);
+
+		loadElement('img', 'example.org', noop, function () {
+			st.is(this.getAttribute('crossorigin'), 'anonymous');
+		});
 	});
 
 	t.end();
