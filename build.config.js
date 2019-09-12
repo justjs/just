@@ -185,7 +185,6 @@ module.exports = {
 			'lib/defaults',
 			'lib/eachProperty',
 			'lib/findElements',
-			'lib/getFunctionName',
 			'lib/getPressedKey',
 			'lib/getRemoteParent',
 			'lib/isEmptyObject',
