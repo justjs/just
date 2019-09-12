@@ -217,10 +217,6 @@ define([
 		var url = urlParts[1];
 		var tagName = urlParts[0];
 
-		if (!(moduleID in Define.files)) {
-			throw new TypeError(moduleID + ' must be added to "files".');
-		}
-
 		if (!url) {
 			url = urlParts[0];
 			tagName = 'script';
@@ -318,14 +314,21 @@ define([
 		 */
 		'load': {
 			'value': function (value) {
-				
+				var throwOnBadID = function (id) {
+					if (!(id in Define.files)) {
+						throw new TypeError(id + ' must be added to "files".');
+					}
+				};
+
 				if (check(value, {})) {
 					eachProperty(check.throwable(value, {}), function (listener, id) {
+						throwOnBadID(id);
 						loadModuleByID(id, check.throwable(listener, Function, null, void 0));
 					});
 				}
 				else if (check(value, [], 'string')) {
-					[].forEach.call(arguments, function (id) {
+					defaults(value, [value]).forEach(function (id) {
+						throwOnBadID(id);
 						loadModuleByID(id);
 					});
 				}
