@@ -31,7 +31,7 @@
   "author": "Alexis Puga Ruíz",
   "license": "BSD-3-Clause",
   "devDependencies": {
-    "@apr/jsdoc-template": "file://var/www/@apr/jsdoc-template",
+    "@alexispuga/jsdoc-template": "^1.0.0",
     "almond": "^0.3.3",
     "amd-loader": "0.0.8",
     "amdclean": "^2.7.0",
