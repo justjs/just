@@ -29,10 +29,16 @@ test('/lib/APRDefine.js', function (t) {
 		}, TypeError, 'Dependency ids must be valid ids.');
 
 		st.throws(function () {
-			APRDefine('id', ['/url'], function () {
-				st.fail('"/url" is considered an id, not an url.');
-			});
-		}, TypeError, '"/url" must be defined first.');
+			APRDefine.load('/url');
+		}, TypeError, '"/url" is considered an id, not a url.');
+
+		st.doesNotThrow(function () {
+			APRDefine('id', ['/url'], function () { st.fail(); });
+		}, TypeError, 'Should never get called because "/url" was never defined.');
+
+		st.throws(function () {
+			APRDefine.load(null);
+		}, TypeError, 'Only strings, arrays and object literals are allowed.');
 
 		st.end();
 
@@ -223,6 +229,20 @@ test('/lib/APRDefine.js', function (t) {
 				st.end();
 			});
 
+		});
+
+		t.test('Should load files passing only ids.', {'timeout': 3000},
+			function (st) {
+			APRDefine.addFiles({
+				'multiple': '/assets/APRDefine-test-multiple.js'
+			});
+
+			APRDefine.load('multiple');
+			// "object", "null" and "undefined" are defined in APRDefine-test-multiple.js
+			APRDefine('load-string', ['object', 'null', 'undefined'], function () {
+				st.pass();
+				st.end();
+			});
 		});
 
 	}, TypeError);
