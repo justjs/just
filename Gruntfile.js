@@ -267,7 +267,7 @@ module.exports = grunt => {
 				'src': [browserBuild.getBuildSrc('compact')],
 				'dest': './docs/browser',
 				'options': {
-					'template': './node_modules/@apr/jsdoc-template',
+					'template': './node_modules/@alexispuga/jsdoc-template',
 					'configure': './jsdoc.config.json'
 				}
 			},
@@ -275,7 +275,7 @@ module.exports = grunt => {
 				'src': [serverBuild.getBuildSrc('compact')],
 				'dest': './docs/server',
 				'options': {
-					'template': './node_modules/@apr/jsdoc-template',
+					'template': './node_modules/@alexispuga/jsdoc-template',
 					'configure': './jsdoc.config.json'
 				}
 			}
