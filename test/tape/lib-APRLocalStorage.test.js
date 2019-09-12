@@ -90,6 +90,13 @@ test('/lib/APRLocalStorage.js', function (t) {
 
 	});
 
+	t.test('Should return the DoNotTrack header in a common format.', function (st) {
+
+		st.is(/boolean|undefined/.test(typeof APRLocalStorage.DNT), true);
+		st.end();
+
+	});
+
 	t.test('Should NOT use the local storage.', function (st) {
 
 		var aprLocalStorage = APRLocalStorage(false);
