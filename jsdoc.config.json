@@ -1,3 +1,7 @@
 {
-    "templates": {}
+    "templates": {
+    	"custom": {
+    		"siteName": "APR"
+    	}
+    }
 }
