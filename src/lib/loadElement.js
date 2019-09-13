@@ -42,6 +42,10 @@ define([
 		var elementFound = findElements(selectors.join(','))[0] || null;
 		var intercept = defaults(handler, loadElement.DEFAULT_HANDLER);
 
+		if (!url) {
+			throw new TypeError('The url is empty.');
+		}
+
 		if (tag === 'link') {
 			element.rel = 'stylesheet';
 		}
