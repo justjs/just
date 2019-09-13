@@ -194,6 +194,7 @@ module.exports = {
 			'lib/createPrivateKey',
 			'lib/loadElement',
 			'lib/parseUrl',
+			'lib/on',
 			'lib/stringToJSON',
 			'lib/fill',
 			'lib/flatten',
