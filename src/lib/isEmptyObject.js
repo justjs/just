@@ -17,7 +17,7 @@ define(['./core'], function (APR) {
 		var k;
 
 		for (k in obj) {
-			
+			/* istanbul ignore else */
 			if (({}).hasOwnProperty.call(obj, k)) {
 				return false;
 			}

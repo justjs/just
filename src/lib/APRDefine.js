@@ -141,7 +141,7 @@ define([
 		}
 
 		someModule.state = STATE_CALLING;
-
+		/* istanbul ignore else */
 		if (!someModule.dependencies) {
 
 			dependencies = someModule.dependencyIDs.map(function (dependencyID) {
@@ -294,6 +294,7 @@ define([
 				var theModule = getModule(id);
 				var loadedUrl = this.src;
 
+				/* istanbul ignore else */
 				if (!getModule(loadedUrl) && id !== loadedUrl && id !== givenUrl) {
 					new Define(loadedUrl, [id], function (theModule) {
 						return theModule;
