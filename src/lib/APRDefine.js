@@ -304,6 +304,32 @@ define([
 			}
 		},
 		/**
+		 * Finds {@link APR.Define.files|files} within the document, adds them, and
+		 * if some is called "main", it loads it.
+		 * <br/>
+		 * <aside class='note'>
+		 *     <h3>Note</h3>
+		 *     <p>This function is called when the file is loaded.</p>
+		 * </aside>
+		 *
+		 * @function
+		 * @chainable
+		 */
+		'init': {
+			'value': function () {
+				var files = Define.findInDocument('data-APR-Define');
+
+				Define.addFiles(files);
+
+				/* istanbul ignore else */
+				if ('main' in files) {
+					Define.load('main');
+				}
+
+				return Define;
+			}
+		},
+		/**
 		 * A function to load {@link APR.Define~file|files} by ids.
 		 *
 		 * @function
@@ -508,31 +534,7 @@ define([
 		}
 
 	});
-	
-	/**
-	 * Finds {@link APR.Define.files|files} within the document, adds them, and
-	 * if some is called "main", it loads it.
-	 * <br/>
-	 * <aside class='note'>
-	 *     <h3>Note</h3>
-	 *     <p>This function is called when the file is loaded.</p>
-	 * </aside>
-	 *
-	 * @function APR.Define.init
-	 * @package
-	 */
-	(function init () {
 
-		var files = Define.findInDocument('data-APR-Define');
-
-		Define.addFiles(files);
-
-		if ('main' in files) {
-			Define.load('main');
-		}
-
-	})();
-
-	return APR.setModule('Define', Define);
+	return APR.setModule('Define', Define.init());
 
 });
