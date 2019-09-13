@@ -212,7 +212,7 @@ define([
 
 	function loadModuleByID (moduleID, listener) {
 
-		var urlParts = (Define.files[moduleID] || '').split(' ');
+		var urlParts = (Define.files[moduleID] || '').split(/\s+/);
 		var eventListener = defaults(listener, Define.DEFAULT_LOAD_LISTENER);
 		var url = urlParts[1];
 		var tagName = urlParts[0];
