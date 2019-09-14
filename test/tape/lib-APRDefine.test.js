@@ -245,6 +245,33 @@ test('/lib/APRDefine.js', function (t) {
 			});
 		});
 
+		t.test('Should find file ids in document and load them.',
+			{'timeout': 5000}, function (st) {
+			var element = document.createElement('div');
+
+			removeScripts(
+				'script[src="/assets/APRDefine-test-main.js"]',
+				'script[src="/assets/APRDefine-test-multiple.js"]'
+			);
+
+			element.setAttribute('data-module-main', '/assets/APRDefine-test-main.js');
+			element.setAttribute('data-module-example', '/assets/APRDefine-test-multiple.js');
+			element.setAttribute('data-APR-Define', JSON.stringify({
+				'main': 'script [data-module-main]',
+				'some modules': '[data-module-example]'
+			}));
+			
+			document.body.appendChild(element);
+			
+			APRDefine.init(); // This is called when APRDefine loads.
+
+			APRDefine('on-load-main', 'index', function () {
+				st.pass('"some modules" were registered, but only "main" loaded ' +
+					'and called everything from there.');
+				st.end();
+			});
+		});
+
 	}, TypeError);
 	
 	t.end();
