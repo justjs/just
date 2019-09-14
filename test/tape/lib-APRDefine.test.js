@@ -6,6 +6,10 @@ window.APRDefine = APRDefine;
 
 test('/lib/APRDefine.js', function (t) {
 
+	/**
+	 * NOTE: Removing scripts might cause to load files twice, since
+	 * loadElement checks for urls in elements.
+	 */ 
 	function removeScripts (selector) {
 
 		[].forEach.call(document.querySelectorAll(selector),
@@ -210,6 +214,8 @@ test('/lib/APRDefine.js', function (t) {
 			var url = '/assets/APRDefine-test-non-script.css';
 			var tagName = 'link';
 
+			removeScripts('link[href="' + url + '"]');
+
 			APRDefine.addFiles({
 				// Tag names are passed in the urls this way:
 				'css': tagName + ' ' + url
@@ -233,6 +239,11 @@ test('/lib/APRDefine.js', function (t) {
 
 		t.test('Should load files passing only ids.', {'timeout': 3000},
 			function (st) {
+			
+			removeScripts(
+				'script[src="/assets/APRDefine-test-multiple.js"]'
+			);
+
 			APRDefine.addFiles({
 				'multiple': '/assets/APRDefine-test-multiple.js'
 			});
