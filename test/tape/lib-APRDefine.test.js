@@ -245,6 +245,14 @@ test('/lib/APRDefine.js', function (t) {
 			});
 		});
 
+		t.test('Should ignore invalid dependency ids.', function (st) {
+			APRDefine('null-id', null, function (value) {
+				st.is(typeof value, 'undefined');
+				st.pass();
+				st.end();
+			});
+		});
+
 		t.test('Should find file ids in document and load them.',
 			{'timeout': 5000}, function (st) {
 			var element = document.createElement('div');
