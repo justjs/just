@@ -3,9 +3,9 @@
   "title": "APR",
   "version": "0.1.0",
   "description": "Heavily-used javascript helpers for APR's developments.",
-  "main": "./dist/server.js",
+  "main": "./dist/server.min.js",
   "private": true,
-  "browser": "./dist/browser.js",
+  "browser": "./dist/browser.min.js",
   "scripts": {
     "start": "npm run development",
     "development": "grunt karma:unit-dev:start default",
