@@ -13,7 +13,7 @@ const options = {
 	 * @license
 	 * ${license.replace(/\n/g, '\n * ')}
 	 */
-	/**!
+	/*!
 	 * @file ${pkg.title}: ${pkg.description}
 	 * @author ${pkg.author}
 	 * @version ${pkg.version}
