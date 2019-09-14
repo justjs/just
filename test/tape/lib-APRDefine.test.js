@@ -6,6 +6,10 @@ window.APRDefine = APRDefine;
 
 test('/lib/APRDefine.js', function (t) {
 
+	/**
+	 * NOTE: Removing scripts might cause to load files twice, since
+	 * loadElement checks for urls in elements.
+	 */ 
 	function removeScripts (selector) {
 
 		[].forEach.call(document.querySelectorAll(selector),
@@ -210,6 +214,8 @@ test('/lib/APRDefine.js', function (t) {
 			var url = '/assets/APRDefine-test-non-script.css';
 			var tagName = 'link';
 
+			removeScripts('link[href="' + url + '"]');
+
 			APRDefine.addFiles({
 				// Tag names are passed in the urls this way:
 				'css': tagName + ' ' + url
@@ -233,6 +239,11 @@ test('/lib/APRDefine.js', function (t) {
 
 		t.test('Should load files passing only ids.', {'timeout': 3000},
 			function (st) {
+			
+			removeScripts(
+				'script[src="/assets/APRDefine-test-multiple.js"]'
+			);
+
 			APRDefine.addFiles({
 				'multiple': '/assets/APRDefine-test-multiple.js'
 			});
@@ -241,6 +252,41 @@ test('/lib/APRDefine.js', function (t) {
 			// "object", "null" and "undefined" are defined in APRDefine-test-multiple.js
 			APRDefine('load-string', ['object', 'null', 'undefined'], function () {
 				st.pass();
+				st.end();
+			});
+		});
+
+		t.test('Should ignore invalid dependency ids.', function (st) {
+			APRDefine('null-id', null, function (value) {
+				st.is(typeof value, 'undefined');
+				st.pass();
+				st.end();
+			});
+		});
+
+		t.test('Should find file ids in document and load them.',
+			{'timeout': 5000}, function (st) {
+			var element = document.createElement('div');
+
+			removeScripts(
+				'script[src="/assets/APRDefine-test-main.js"]',
+				'script[src="/assets/APRDefine-test-multiple.js"]'
+			);
+
+			element.setAttribute('data-module-main', '/assets/APRDefine-test-main.js');
+			element.setAttribute('data-module-example', '/assets/APRDefine-test-multiple.js');
+			element.setAttribute('data-APR-Define', JSON.stringify({
+				'main': 'script [data-module-main]',
+				'some modules': '[data-module-example]'
+			}));
+			
+			document.body.appendChild(element);
+			
+			APRDefine.init(); // This is called when APRDefine loads.
+
+			APRDefine('on-load-main', 'index', function () {
+				st.pass('"some modules" were registered, but only "main" loaded ' +
+					'and called everything from there.');
 				st.end();
 			});
 		});

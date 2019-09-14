@@ -69,7 +69,7 @@ define(function () {
 		'setProperty': {
 			'value': function setProperty (name, value) {
 				var descriptor = value;
-
+				/* istanbul ignore else */
 				if (!(value instanceof Object) || !['configurable', 'enumerable',
 					'value', 'writable', 'get', 'set'].some(function (key) {
 					return key in value;

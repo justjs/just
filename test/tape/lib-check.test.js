@@ -9,8 +9,14 @@ test('lib/check.js', function (t) {
 		st.is(check({}, null, [], function () {}), false,
 			'Neither is `{}`.');
 
+		st.is(check({}, null, [], {}), true,
+			'Last value is `{}`');
+
 		st.is(check(null, {}, [], 'null'), false,
 			'Neither is `null`.');
+
+		st.is(check(null, null), true,
+			'Both are `null`.');
 
 		st.is(check(void 0, undefined), true,
 			'Both are `undefined`.');

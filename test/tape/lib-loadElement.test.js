@@ -146,7 +146,7 @@ test('lib/loadElement.js', function (t) {
 
 		st.plan(1);
 
-		loadElement('img', 'example.org', noop, function () {
+		loadElement('img', '//:80', noop, function () {
 			st.is(this.getAttribute('crossorigin'), 'anonymous');
 		});
 	});

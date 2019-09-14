@@ -141,7 +141,7 @@ define([
 		}
 
 		someModule.state = STATE_CALLING;
-
+		/* istanbul ignore else */
 		if (!someModule.dependencies) {
 
 			dependencies = someModule.dependencyIDs.map(function (dependencyID) {
@@ -212,7 +212,7 @@ define([
 
 	function loadModuleByID (moduleID, listener) {
 
-		var urlParts = (Define.files[moduleID] || '').split(' ');
+		var urlParts = (Define.files[moduleID] || '').split(/\s+/);
 		var eventListener = defaults(listener, Define.DEFAULT_LOAD_LISTENER);
 		var url = urlParts[1];
 		var tagName = urlParts[0];
@@ -300,12 +300,39 @@ define([
 				var theModule = getModule(id);
 				var loadedUrl = this.src;
 
+				/* istanbul ignore else */
 				if (!getModule(loadedUrl) && id !== loadedUrl && id !== givenUrl) {
 					new Define(loadedUrl, [id], function (theModule) {
 						return theModule;
 					});
 				}
 
+			}
+		},
+		/**
+		 * Finds {@link APR.Define.files|files} within the document, adds them, and
+		 * if some is called "main", it loads it.
+		 * <br/>
+		 * <aside class='note'>
+		 *     <h3>Note</h3>
+		 *     <p>This function is called when the file is loaded.</p>
+		 * </aside>
+		 *
+		 * @function
+		 * @chainable
+		 */
+		'init': {
+			'value': function () {
+				var files = Define.findInDocument('data-APR-Define');
+
+				Define.addFiles(files);
+
+				/* istanbul ignore else */
+				if ('main' in files) {
+					Define.load('main');
+				}
+
+				return Define;
 			}
 		},
 		/**
@@ -506,31 +533,7 @@ define([
 		}
 
 	});
-	
-	/**
-	 * Finds {@link APR.Define.files|files} within the document, adds them, and
-	 * if some is called "main", it loads it.
-	 * <br/>
-	 * <aside class='note'>
-	 *     <h3>Note</h3>
-	 *     <p>This function is called when the file is loaded.</p>
-	 * </aside>
-	 *
-	 * @function APR.Define.init
-	 * @package
-	 */
-	(function init () {
 
-		var files = Define.findInDocument('data-APR-Define');
-
-		Define.addFiles(files);
-
-		if ('main' in files) {
-			Define.load('main');
-		}
-
-	})();
-
-	return APR.setModule('Define', Define);
+	return APR.setModule('Define', Define.init());
 
 });
