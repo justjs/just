@@ -291,18 +291,15 @@ module.exports = grunt => {
 		},
 
 		'compare_size': {
-			'production': {
-				'options': {
-					'cache': buildOptions.getPath('production') + '/.sizecache.json',
-					'compress': {
-						gz (fileContents) {
-							return gzip.zip(fileContents, {}).length;
-						}
+			'options': {
+				'cache': buildOptions.getPath('production') + '/.sizecache.json',
+				'compress': {
+					gz (fileContents) {
+						return gzip.zip(fileContents, {}).length;
 					}
-				},
-				'src': [buildOptions.getPath('production') + '/**']
-			}
-
+				}
+			},
+			'src': [buildOptions.getPath('production') + '/**']
 		}
 
 	});
@@ -378,7 +375,7 @@ module.exports = grunt => {
 		'document',
 		'clean:production',
 		'copy:dist-to-production',
-		'compare_size:production',
+		'compare_size',
 		'clean:build'
 	]);
 
