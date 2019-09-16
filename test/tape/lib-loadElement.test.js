@@ -4,8 +4,8 @@ var test = require('tape'),
 
 var head = document.head;
 var assets = {
-	'css': '/assets/load-test.css',
-	'js': '/assets/load-test.js'
+	'css': '/assets/loadElement-test.css',
+	'js': '/assets/loadElement-test.js'
 };
 
 test('lib/loadElement.js', function (t) {
