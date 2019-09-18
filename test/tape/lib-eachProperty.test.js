@@ -1,108 +1,108 @@
-var test = require('tape'),
-	eachProperty = require('../../src/lib/eachProperty');
+var test = require('tape');
+var eachProperty = require('../../src/lib/eachProperty');
 
 test('lib/eachProperty.js', function (t) {
 
-	var findNonOwnedProperty = function (flag) {
+    var findNonOwnedProperty = function (flag) {
 
-		var found = false;
+        var found = false;
 
-		function TestObject () {};
-		TestObject.own = true;
+        function TestObject () {}
 
-		// Demostration purposes.
-		Function.prototype.nonOwn = true;
+        TestObject.own = true;
 
-		eachProperty(TestObject, function (v, k, o, s) {
+        // Demostration purposes.
+        Function.prototype.nonOwn = true;
 
-			if (!({}).hasOwnProperty.call(o, k)) {
-				found = true;
-			}
+        eachProperty(TestObject, function (v, k, o, s) {
 
-		}, null, {'addNonOwned': flag});
+            if (!({}).hasOwnProperty.call(o, k)) { found = true; }
 
-		delete Function.prototype.nonOwn;
+        }, null, {'addNonOwned': flag});
 
-		return found;
+        delete Function.prototype.nonOwn;
 
-	};
-	var defaultOptions = eachProperty.DEFAULT_OPTIONS;
+        return found;
 
-	t.test('Should call a function on each element found.',
-		function (st) {
+    };
 
-		var mainObject = {'a': 1, 'b': 2};
-		var interrupted = eachProperty(mainObject,
-			function (value, key, object) {
+    t.test('Should call a function on each element found.', function (st) {
 
-			st.is(this, st);
-			st.is(/^1|2$/.test(value), true);
-			st.is(/^a|b$/.test(key), true);
-			st.deepEquals(object, Object(mainObject));
+        var mainObject = {'a': 1, 'b': 2};
+        var interrupted = eachProperty(mainObject,
+            function (value, key, object) {
 
-		}, st);
+                st.is(this, st);
+                st.is(/^1|2$/.test(value), true);
+                st.is(/^a|b$/.test(key), true);
+                st.deepEquals(object, Object(mainObject));
 
-		st.is(interrupted, false);
+            }, st);
 
-		st.end();
+        st.is(interrupted, false);
 
-	});
+        st.end();
 
-	t.test('Should iterate all the owned properties of an object.',
-		function (st) {
+    });
 
-		st.is(findNonOwnedProperty(false), false,
-			'No non-owned properties were found.');
+    t.test('Should iterate all the owned properties of an object.', function (st) {
 
-		st.end();
+        st.is(findNonOwnedProperty(false), false,
+            'No non-owned properties were found.');
 
-	});
+        st.end();
 
-	t.test('Should iterate the non-owned properties of an object.',
-		function (st) {
+    });
 
-		st.is(findNonOwnedProperty(true), true,
-			'A non-owned property was found.');
+    t.test('Should iterate the non-owned properties of an object.', function (st) {
 
-		st.end();
+        st.is(findNonOwnedProperty(true), true,
+            'A non-owned property was found.');
 
-	});
+        st.end();
 
-	t.test('Should exit when the function returns a truthy value.',
-		function (st) {
+    });
 
-		var object = {'a': null, 'b': 1, 'c': null};
-		var hasReturnedOnTime;
-		var interrupted = eachProperty(object, function (v, k, o, s) {
+    t.test('Should exit when the function returns a truthy value.', function (st) {
 
-			if (hasReturnedOnTime) {
-				hasReturnedOnTime = false;
-				st.fail('The function didn\'t return on time.');
-				st.end();
-			}
+        var object = {'a': null, 'b': 1, 'c': null};
+        var hasReturnedOnTime;
+        var interrupted = eachProperty(object, function (v, k, o, s) {
 
-			if (v === null) {
-				return hasReturnedOnTime = true;
-			}
+            if (hasReturnedOnTime) {
 
-		});
+                hasReturnedOnTime = false;
+                st.fail('The function didn\'t return on time.');
+                st.end();
 
-		st.is(hasReturnedOnTime, true);
-		st.is(interrupted, true);
-		st.end();
+            }
 
-	});
+            if (v === null) {
 
-	t.test('Should throw if something is invalid.', function (st) {
-		
-		st.plan(1);
+                return hasReturnedOnTime = true;
 
-		st.throws(function () {
-			eachProperty(null, 'not a function');
-		}, TypeError);
+            }
 
-	});
+        });
 
-	t.end();
+        st.is(hasReturnedOnTime, true);
+        st.is(interrupted, true);
+        st.end();
+
+    });
+
+    t.test('Should throw if something is invalid.', function (st) {
+
+        st.plan(1);
+
+        st.throws(function () {
+
+            eachProperty(null, 'not a function');
+
+        }, TypeError);
+
+    });
+
+    t.end();
 
 });

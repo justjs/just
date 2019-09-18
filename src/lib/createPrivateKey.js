@@ -1,10 +1,10 @@
-define([
-	'./core'
-], function (APR) {
+define(['./core'], function (APR) {
 
-	'use strict';
+    'use strict';
 
-	/**
+    /* globals WeakMap */
+
+    /**
 	 * An store of private members.
 	 *
 	 * @typedef {function} APR.createPrivateKey~privateStore
@@ -12,7 +12,7 @@ define([
 	 * @return {function} A private store.
 	 */
 
-	/**
+    /**
 	 * Implementation of private members in js.
 	 * @see {@link https://github.com/philipwalton/private-parts|Source}.
 	 *
@@ -42,45 +42,49 @@ define([
 	 *
 	 * @return {APR.createPrivateKey~privateStore} An store of the private values.
 	 */
-	var createPrivateKey = function createPrivateKey (factory, parent) {
+    var createPrivateKey = function createPrivateKey (factory, parent) {
 
-		var store = new WeakMap();
-		var seen = new WeakMap();
+        var store = new WeakMap();
+        var seen = new WeakMap();
 
-		if (parent instanceof Object) {
-			factory = Object.assign(Object.create(parent.prototype), factory);
-		}
+        /* eslint-disable padded-blocks*/
+        if (parent instanceof Object) {
+            factory = Object.assign(Object.create(parent.prototype), factory);
+        }
 
-		if (typeof factory !== 'function') {
-			factory = Object.create.bind(null, factory || Object.prototype, {});
-		}
+        if (typeof factory !== 'function') {
+            factory = Object.create.bind(null, factory || Object.prototype, {});
+        }
+        /* eslint-enable padded-blocks*/
 
-		return function (key) {
+        return function (key) {
 
-			var value;
+            var value;
 
-			if (!(key instanceof Object)) {
-				throw new TypeError(key + ' must be an object.');
-			}
+            /* eslint-disable padded-blocks*/
+            if (!(key instanceof Object)) {
+                throw new TypeError(key + ' must be an object.');
+            }
 
-			if (value = store.get(key)) {
-				return value;
-			}
+            if ((value = store.get(key))) {
+                return value;
+            }
 
-			if (seen.has(key)) {
-				return key;
-			}
+            if (seen.has(key)) {
+                return key;
+            }
+            /* eslint-enable padded-blocks*/
 
-			value = factory(key);
-			store.set(key, value);
-			seen.set(value, true);
+            value = factory(key);
+            store.set(key, value);
+            seen.set(value, true);
 
-			return value;
+            return value;
 
-		};
+        };
 
-	};
+    };
 
-	return APR.setFn('createPrivateKey', createPrivateKey);
+    return APR.setFn('createPrivateKey', createPrivateKey);
 
 });

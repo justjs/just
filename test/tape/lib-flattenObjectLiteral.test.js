@@ -1,43 +1,43 @@
-var test = require('tape'),
-	flattenObjectLiteral = require('../../src/lib/flattenObjectLiteral');
+var test = require('tape');
+var flattenObjectLiteral = require('../../src/lib/flattenObjectLiteral');
 
 test('lib/flattenObjectLiteral.js', function (t) {
 
-	t.test('Should flatten an object literal.', function (st) {
+    t.test('Should flatten an object literal.', function (st) {
 
-		var objectLiteral = {'a': {'b': 1}};
+        var objectLiteral = {'a': {'b': 1}};
 
-		st.deepEquals(flattenObjectLiteral(objectLiteral), {
-			'a.b': 1
-		}, 'The object got merged.');
+        st.deepEquals(flattenObjectLiteral(objectLiteral), {
+            'a.b': 1
+        }, 'The object got merged.');
 
-		st.end();
+        st.end();
 
-	});
+    });
 
-	t.test('Should throw if the passed value is not an ' +
+    t.test('Should throw if the passed value is not an ' +
 		'object literal.', function (st) {
 
-		st.plan(1);
+        st.plan(1);
 
-		st.throws(function () {
+        st.throws(function () {
 
-			flattenObjectLiteral([]);
+            flattenObjectLiteral([]);
 
-		}, TypeError, '`[]` is not an object literal.');
+        }, TypeError, '`[]` is not an object literal.');
 
-	});
+    });
 
-	t.test('Should change the default property separator.', function (st) {
-	
-		st.deepEquals(flattenObjectLiteral({'a': {'b': 1}}, {
-			'separator': '/'
-		}), {'a/b': 1}, 'The separator changed.');
+    t.test('Should change the default property separator.', function (st) {
 
-		st.end();
+        st.deepEquals(flattenObjectLiteral({'a': {'b': 1}}, {
+            'separator': '/'
+        }), {'a/b': 1}, 'The separator changed.');
 
-	});
+        st.end();
 
-	t.end();
+    });
+
+    t.end();
 
 });

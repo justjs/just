@@ -1,17 +1,18 @@
 define([
-	'./core',
-	'./check',
-	'./eachProperty',
-	'./defaults'
+    './core',
+    './check',
+    './eachProperty',
+    './defaults'
 ], function (
-	APR,
-	check,
-	eachProperty,
-	defaults
+    APR,
+    check,
+    eachProperty,
+    defaults
 ) {
 
-	'use strict';
-	/**
+    'use strict';
+
+    /**
 	 * Recursive function that flattens object literals.
 	 *
 	 * @param {!object} object - The object literal to flat.
@@ -20,32 +21,35 @@ define([
 	 *
 	 * @return {!object} The flattened object.
 	 */
-	var flattenObject = function flattenObject (object, options, previousKey) {
+    var flattenObject = function flattenObject (object, options, previousKey) {
 
-		var results = {};
+        var results = {};
 
-		eachProperty(object, function (value, key) {
-				
-			var flattenedKey = (previousKey
-				? previousKey + options.separator + key
-				: key
-			);
+        eachProperty(object, function (value, key) {
 
-			if (check(value, {})) {
-				Object.assign(results, flattenObject(value, options,
-					flattenedKey));
-			}
-			else {
-				results[flattenedKey] = value;
-			}
+            var flattenedKey = (previousKey
+                ? previousKey + options.separator + key
+                : key
+            );
 
-		});
+            if (check(value, {})) {
 
-		return results;
+                Object.assign(results, flattenObject(value, options,
+                    flattenedKey));
 
-	};
+            }
+            else {
 
-	/**
+                results[flattenedKey] = value;
+
+            }
+
+        });
+
+        return results;
+
+    };
+        /**
 	 * Flattens an object of objects.
 	 *
 	 * @namespace
@@ -61,36 +65,40 @@ define([
 	 *
 	 * @return {!object} The flattened object.
 	 */
-	var flattenObjectLiteral = function flattenObjectLiteral (object, opts) {
-		return flattenObject(
-			check.throwable(object, {}),
-			defaults(opts, flattenObjectLiteral.DEFAULT_OPTIONS),
-			null
-		);
-	};
+    var flattenObjectLiteral = function flattenObjectLiteral (object, opts) {
 
-	Object.defineProperties(flattenObjectLiteral, /** @lends APR.flattenObjectLiteral */{
-		/**
+        return flattenObject(
+            check.throwable(object, {}),
+            defaults(opts, flattenObjectLiteral.DEFAULT_OPTIONS),
+            null
+        );
+
+    };
+
+    Object.defineProperties(flattenObjectLiteral, /** @lends APR.flattenObjectLiteral */{
+        /**
 		 * Options for {@link APR.flattenObjectLiteral}.
 		 *
 		 * @typedef {object} APR.flattenObjectLiteral~options
 		 * @property {String} [separator=""] - A string to join the keys.
  		 */
 
-		/**
+        /**
 		 * Default options for {@link APR.flattenObjectLiteral}.
 		 *
-		 * @type {APR.flattenObjectLiteral~options} 
+		 * @type {APR.flattenObjectLiteral~options}
 		 */
-		'DEFAULT_OPTIONS': {
-			'get': function () {
-				return {
-					'separator': '.'
-				};
-			}
-		}
-	});
+        'DEFAULT_OPTIONS': {
+            'get': function () {
 
-	return APR.setFn('flattenObjectLiteral', flattenObjectLiteral);
+                return {
+                    'separator': '.'
+                };
+
+            }
+        }
+    });
+
+    return APR.setFn('flattenObjectLiteral', flattenObjectLiteral);
 
 });

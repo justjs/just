@@ -1,41 +1,47 @@
 define(['./core'], function (APR) {
 
-	'use strict';
+    'use strict';
 
-	/**
+    /**
 	 * Parses a JSON string into a JSON.
 	 *
 	 * @namespace
 	 * @memberof APR
 	 * @param {*} string - Some string to parse.
-	 * 
+	 *
 	 * @example
 	 * stringToJSON('{"a": 1}'); // returns {a: 1}.
 	 *
 	 * @example
 	 * stringToJSON(1); // returns {}.
-	 * 
+	 *
 	 * @return {!object} A JSON-like object.
 	 */
-	var stringToJSON = function stringToJSON (string) {
-		
-		var json;
+    var stringToJSON = function stringToJSON (string) {
 
-		if (!/\{.+\}/.test(string)) {
-			return {};
-		}
+        var json;
 
-		try {
-			json = JSON.parse(string);
-		}
-		catch (exception) {
-			return {};
-		}
+        /* eslint-disable padded-blocks */
+        if (!/\{.+\}/.test(string)) {
+            return {};
+        }
+        /* eslint-enable padded-blocks */
 
-		return json;
+        try {
 
-	};
+            json = JSON.parse(string);
 
-	return APR.setFn('stringToJSON', stringToJSON);
+        }
+        catch (exception) {
+
+            return {};
+
+        }
+
+        return json;
+
+    };
+
+    return APR.setFn('stringToJSON', stringToJSON);
 
 });

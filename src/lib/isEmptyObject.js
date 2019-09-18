@@ -1,33 +1,36 @@
 define(['./core'], function (APR) {
-	
-	'use strict';
 
-	/**
+    'use strict';
+
+    /**
 	 * Checks if an object has no direct keys.
-	 * 
+	 *
 	 * @namespace
 	 * @memberof APR
 	 * @param {*} [object=Object(object)] - Some object.
 	 * @return {boolean} `true` if the object doesn't contain owned properties,
 	 *     `false` otherwise.
 	 */
-	var isEmptyObject = function (object) {
-		
-		var obj = Object(object);
-		var k;
+    var isEmptyObject = function (object) {
 
-		for (k in obj) {
-			/* istanbul ignore else */
-			if (({}).hasOwnProperty.call(obj, k)) {
-				return false;
-			}
+        var obj = Object(object);
+        var k;
 
-		}
+        for (k in obj) {
 
-		return true;
+            /* istanbul ignore else */
+            if (({}).hasOwnProperty.call(obj, k)) {
 
-	};
+                return false;
 
-	return APR.setFn('isEmptyObject', isEmptyObject);
+            }
+
+        }
+
+        return true;
+
+    };
+
+    return APR.setFn('isEmptyObject', isEmptyObject);
 
 });

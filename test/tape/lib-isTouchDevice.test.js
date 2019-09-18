@@ -1,18 +1,18 @@
-var test = require('tape'),
-	isTouchDevice = require('../../src/lib/isTouchDevice');
+var test = require('tape');
+var isTouchDevice = require('../../src/lib/isTouchDevice');
 
 test('lib/isTouchDevice.js', function (t) {
 
-	t.test('Should check for touch support.', function (st) {
+    t.test('Should check for touch support.', function (st) {
 
-		var isTouchSupported = isTouchDevice();
+        var isTouchSupported = isTouchDevice();
 
-		st.is(typeof isTouchSupported, 'boolean');
+        st.is(typeof isTouchSupported, 'boolean');
 
-		st.end();
-		
-	});
+        st.end();
 
-	t.end();
+    });
+
+    t.end();
 
 });

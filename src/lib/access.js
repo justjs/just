@@ -1,15 +1,15 @@
 define(['./core', './defaults'], function (APR, defaults) {
 
-	'use strict';
+    'use strict';
 
-	/**
+    /**
 	 * The given object (if `mutate` evals to true) or a copy of each own property
 	 * of the given object.
 	 *
 	 * @typedef {!object} APR.access~handler_this
 	 */
 
-	/**
+    /**
 	 * A function to call when it reaches the deep property of an object.
 	 *
 	 * @typedef {function} APR.access~handler
@@ -21,7 +21,7 @@ define(['./core', './defaults'], function (APR, defaults) {
 	 * @return {*} The return value for {@link APR.access|the main function}.
 	 */
 
-	/**
+    /**
 	 * Accesses to a deep property in a new `object` (or `object` if `mutate` evals to `true`).
 	 *
 	 * @namespace
@@ -76,51 +76,52 @@ define(['./core', './defaults'], function (APR, defaults) {
 	 * @return {*} If `handler` is given: the returned value of that function,
 	 *         otherwise: the last value of `path` in the copied object.
 	 */
-	var access = function access (object, path, handler, opts) {
+    var access = function access (object, path, handler, opts) {
 
-		var options = defaults(opts, access.DEFAULT_OPTIONS);
-		var properties = defaults(path, [path]);
-		var initialObject = (options.mutate
-			? object
-			: Object.assign({}, object)
-		);
-		var currentObject = initialObject;
-		var isNewProperty = false;
-		var lastKey = properties[properties.length - 1];
-		var hasProperty;
+        var options = defaults(opts, access.DEFAULT_OPTIONS);
+        var properties = defaults(path, [path]);
+        var initialObject = (options.mutate
+                ? object
+                : Object.assign({}, object)
+        );
+        var currentObject = initialObject;
+        var isNewProperty = false;
+        var lastKey = properties[properties.length - 1];
+        var hasProperty;
 
-		properties.slice(0, -1).forEach(function (key, i) {
+        properties.slice(0, -1).forEach(function (key, i) {
 
-			if (!(currentObject[key] instanceof Object)) {
+            if (!(currentObject[key] instanceof Object)) {
 
-				if (typeof currentObject[key] !== 'undefined' &&
-					currentObject[key] !== null && !options.override) {
+                if (typeof currentObject[key] !== 'undefined'
+                    && currentObject[key] !== null
+                    && !options.override) {
 
-					throw new TypeError('The value of "' +
-						key + '" is not an object.');
+                    throw new TypeError('The value of "' + key +
+                        '" is not an object.');
 
-				}
+                }
 
-				isNewProperty = true;
-				currentObject[key] = {};
+                isNewProperty = true;
+                currentObject[key] = {};
 
-			}
+            }
 
-			currentObject = currentObject[key];
+            currentObject = currentObject[key];
 
-		});
+        });
 
-		hasProperty = lastKey in currentObject && !isNewProperty;
+        hasProperty = lastKey in currentObject && !isNewProperty;
 
-		return (handler
-			? handler.call(initialObject, currentObject, lastKey, hasProperty, properties)
-			: currentObject[lastKey]
-		);
+        return (handler
+            ? handler.call(initialObject, currentObject, lastKey, hasProperty, properties)
+            : currentObject[lastKey]
+        );
 
-	};
+    };
 
-	Object.defineProperties(access, /** @lends APR.access */{
-		/**
+    Object.defineProperties(access, /** @lends APR.access */{
+        /**
 		 * Options for {@link APR.access}.
 		 *
 		 * @typedef {object} APR.access~options
@@ -135,22 +136,24 @@ define(['./core', './defaults'], function (APR, defaults) {
 		 *
 		 */
 
-		/**
+        /**
 		 * Default options for {@link APR.access}.
 		 *
 		 * @type {APR.access~options}
 		 * @readonly
 		 */
-		'DEFAULT_OPTIONS': {
-			'get': function () {
-				return {
-					'override': true,
-					'mutate': false
-				};
-			}
-		}
-	});
+        'DEFAULT_OPTIONS': {
+            'get': function () {
 
-	return APR.setFn('access', access);
+                return {
+                    'override': true,
+                    'mutate': false
+                };
+
+            }
+        }
+    });
+
+    return APR.setFn('access', access);
 
 });

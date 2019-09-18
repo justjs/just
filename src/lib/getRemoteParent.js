@@ -1,10 +1,10 @@
 define(['./core'], function (APR) {
-	
-	'use strict';
 
-	/**
+    'use strict';
+
+    /**
 	 * A function that checks if `this` is the Node that you're looking for.
-	 * 
+	 *
 	 * @typedef {function} APR.getRemoteParent~fn
 	 *
 	 * @this Node
@@ -14,15 +14,15 @@ define(['./core'], function (APR) {
 	 * @return {boolean}
 	 */
 
-	/**
+    /**
 	 * Goes up through the `childNode` parents, until `fn` returns `true`
 	 * or a non-Node is found.
-	 * 
+	 *
 	 * @namespace
 	 * @memberof APR
 	 * @param {Node} childNode - Some child.
 	 * @param {APR.getRemoteParent~fn} fn - Some custom handler.
-	 * @param {Node} [rootContainer=html] - The farthest parent.  
+	 * @param {Node} [rootContainer=html] - The farthest parent.
 	 * @param {boolean} [includeChild=false] - If `true`, it calls `fn` with `childNode` too.
 	 *
 	 * @example
@@ -32,43 +32,49 @@ define(['./core'], function (APR) {
 	 *
 	 * @return {Node|null} - The current Node when `fn` returns true.
 	 */
-	var getRemoteParent = function getRemoteParent (childNode, fn, rootContainer, includeChild) {
+    var getRemoteParent = function getRemoteParent (childNode, fn, rootContainer, includeChild) {
 
-		var currentNode = childNode;
-		var deepLevel = 0;
-		
-		if (typeof fn !== 'function') {
-			throw new TypeError(fn + ' is not a function.');
-		}
+        var currentNode = childNode;
+        var deepLevel = 0;
 
-		if (!(childNode instanceof Node)) {
-			throw new TypeError('The child isn\'t an instance of a Node.');
-		}
+        /* eslint-disable padded-blocks */
+        if (typeof fn !== 'function') {
+            throw new TypeError(fn + ' is not a function.');
+        }
 
-		if (!(rootContainer instanceof Node)) {
-			rootContainer = document.documentElement;
-		}
+        if (!(childNode instanceof Node)) {
+            throw new TypeError('The child isn\'t an instance of a Node.');
+        }
 
-		while (currentNode) {
+        if (!(rootContainer instanceof Node)) {
+            rootContainer = document.documentElement;
+        }
+        /* eslint-enable padded-blocks */
 
-			if ((deepLevel > 0 || includeChild)
+        while (currentNode) {
+
+            if ((deepLevel > 0 || includeChild)
 				&& fn.call(currentNode, deepLevel, rootContainer)) {
-				return currentNode;
-			}
 
-			if (currentNode === rootContainer) {
-				return null;
-			}
+                return currentNode;
 
-			currentNode = currentNode.parentNode;
-			deepLevel++;
+            }
 
-		}
+            /* eslint-disable padded-blocks */
+            if (currentNode === rootContainer) {
+                return null;
+            }
+            /* eslint-enable padded-blocks */
 
-		return null;
+            currentNode = currentNode.parentNode;
+            deepLevel++;
 
-	};
+        }
 
-	return APR.setFn('getRemoteParent', getRemoteParent);
+        return null;
+
+    };
+
+    return APR.setFn('getRemoteParent', getRemoteParent);
 
 });

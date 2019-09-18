@@ -1,8 +1,8 @@
 define(['./core', './findElements'], function (APR, findElements) {
 
-	'use strict';
+    'use strict';
 
-	/**
+    /**
 	 * Add an event listener to multiple elements.
 	 *
 	 * @namespace
@@ -11,26 +11,38 @@ define(['./core', './findElements'], function (APR, findElements) {
 	 * @param {string|string[]} eventNames - The event types.
 	 * @param {function} listener - The handler for the event.
 	 * @param {object|boolean} [options=false] - Options for addEventListener
+     * @return {Element[]} elements
 	 */
-	var on = function (elements, eventNames, listener, options) {
-		if (typeof elements === 'string') {
-			elements = findElements(elements);
-		}
+    var on = function on (elements, eventNames, listener, options) {
 
-		if (!Array.isArray(eventNames)) {
-			eventNames = [eventNames];
-		}
+        /* eslint-disable padded-blocks */
+        if (typeof elements === 'string') {
+            elements = findElements(elements);
+        }
 
-		if (elements && !('length' in elements)) {
-			elements = [elements];
-		}
+        if (!Array.isArray(eventNames)) {
+            eventNames = [eventNames];
+        }
 
-		[].slice.call(elements || []).forEach(function (element) {
-			eventNames.forEach(function (eventName) {
-				element.addEventListener(eventName, listener, options || false);
-			});
-		});
-	};
+        if (elements && !('length' in elements)) {
+            elements = [elements];
+        }
+        /* eslint-enable padded-blocks */
 
-	return APR.setFn('on', on);
+        [].slice.call((elements = elements || [])).forEach(function (element) {
+
+            eventNames.forEach(function (eventName) {
+
+                element.addEventListener(eventName, listener, options || false);
+
+            });
+
+        });
+
+        return elements;
+
+    };
+
+    return APR.setFn('on', on);
+
 });

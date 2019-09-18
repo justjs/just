@@ -1,99 +1,103 @@
-var test = require('tape'),
-	createPrivateKey = require('../../src/lib/createPrivateKey');
+var test = require('tape');
+var createPrivateKey = require('../../src/lib/createPrivateKey');
 
 test('lib/createPrivateKey.js', function (t) {
 
-	t.test('Should create a private store.', function (st) {
+    t.test('Should create a private store.', function (st) {
 
-		var _ = createPrivateKey();
-		var public = new (function Public () {
-			this.publicProperty = 'public';
-			_(this).privateProperty = 'private';
-		});
+        var _ = createPrivateKey();
+        var public = new (function Public () {
 
-		st.is(typeof public.privateProperty, 'undefined');
-		st.is(_(public).privateProperty, 'private');
+            this.publicProperty = 'public';
+            _(this).privateProperty = 'private';
 
-		st.end();
+        });
 
-	});
+        st.is(typeof public.privateProperty, 'undefined');
+        st.is(_(public).privateProperty, 'private');
 
-	t.test('Should extend the prototype chain of an object.',
-		(function () {
+        st.end();
 
-		function Public () {
-			this.a = 'public';
-		}
+    });
 
-		Public.prototype.publicMethod = function () {};
+    t.test('Should extend the prototype chain of an object.', (function () {
 
-		return function (st) {
+        function Public () { this.a = 'public'; }
 
-			var key = {};
-			var _ = createPrivateKey({
-				
-				'privateMethod': function () {
-					st.is(typeof this.publicMethod, 'function');
-				}
+        Public.prototype.publicMethod = function () {};
 
-			}, Public);
+        return function (st) {
 
-			st.is(typeof _(key).privateMethod, 'function');
-			st.is(typeof _(key).publicMethod, 'function');
-			st.is(typeof _(key).a, 'undefined');
+            var key = {};
+            var _ = createPrivateKey({
 
-			_(key).privateMethod();
+                'privateMethod': function () {
 
-			st.end();
+                    st.is(typeof this.publicMethod, 'function');
 
-		};
+                }
 
-	})());
+            }, Public);
 
-	t.test('Should create a store for each given key.',
-		function (st) {
+            st.is(typeof _(key).privateMethod, 'function');
+            st.is(typeof _(key).publicMethod, 'function');
+            st.is(typeof _(key).a, 'undefined');
 
-		var storeA = createPrivateKey(), keyA = {};
-		var storeB = createPrivateKey(), keyB = {};
+            _(key).privateMethod();
 
-		storeA(keyA).store = 'A';
-		storeB(keyB).store = 'B';
+            st.end();
 
-		st.is(storeA(keyA).store, 'A');
-		st.is(storeB(keyB).store, 'B');
+        };
 
-		st.is(storeA(keyB).store, void 0);
-		st.is(storeB(keyA).store, void 0);
+    })());
 
-		st.end();
+    t.test('Should create a store for each given key.', function (st) {
 
-	});
+        var storeA = createPrivateKey();
+        var keyA = {};
+        var storeB = createPrivateKey();
+        var keyB = {};
 
-	t.test('Should throw if the given key is not an instance of ' +
+        storeA(keyA).store = 'A';
+        storeB(keyB).store = 'B';
+
+        st.is(storeA(keyA).store, 'A');
+        st.is(storeB(keyB).store, 'B');
+
+        st.is(storeA(keyB).store, void 0);
+        st.is(storeB(keyA).store, void 0);
+
+        st.end();
+
+    });
+
+    t.test('Should throw if the given key is not an instance of ' +
 		'an Object.', function (st) {
 
-		var notAnInstanceOfObject = null;
-		var _ = createPrivateKey();
+        var notAnInstanceOfObject = null;
+        var _ = createPrivateKey();
 
-		st.throws(function () {
-			_(notAnInstanceOfObject);
-		}, TypeError);
+        st.throws(function () {
 
-		st.end();
+            _(notAnInstanceOfObject);
 
-	});
+        }, TypeError);
 
-	t.test('Should not privatize an object twice.', function (st) {
-		
-		var _ = createPrivateKey();
-		var object = {};
+        st.end();
 
-		st.is(_(_(object)), _(object));
+    });
 
-		st.end();
+    t.test('Should not privatize an object twice.', function (st) {
 
-	});
+        var _ = createPrivateKey();
+        var object = {};
 
-	t.end();
+        st.is(_(_(object)), _(object));
+
+        st.end();
+
+    });
+
+    t.end();
 
 });

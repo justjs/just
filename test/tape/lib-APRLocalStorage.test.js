@@ -1,242 +1,254 @@
-var test = require('tape'),
-	APRLocalStorage = require('../../src/lib/APRLocalStorage');
+var test = require('tape');
+var APRLocalStorage = require('../../src/lib/APRLocalStorage');
 
 test('/lib/APRLocalStorage.js', function (t) {
 
-	var cookiesAreEnabled = APRLocalStorage(true).isStorageAvailable('cookies');
-	var passIfCookiesAreDisabled = function (t) {
-		// TODO: Mock
-		if (!cookiesAreEnabled) {
-			t.pass('Cookies are disabled.');
-			t.end();
-			return true;
-		}
+    var cookiesAreEnabled = APRLocalStorage(true).isStorageAvailable('cookies');
+    var passIfCookiesAreDisabled = function (t) {
 
-		return false;
+        // TODO: Mock
+        if (!cookiesAreEnabled) {
 
-	};
+            t.pass('Cookies are disabled.');
+            t.end();
 
-	t.test('Should set a consent.', function (st) {
-		
-		var a, b, c, d;
+            return true;
 
-		st.is(APRLocalStorage() instanceof APRLocalStorage, true);
+        }
 
-		a = APRLocalStorage(true);
-		st.is(a.consent, true);
-		st.is(a.isExplicit, true);
+        return false;
 
-		b = APRLocalStorage();
-		st.is(b.consent, false, 'Defaults to false.');
-		st.is(b.isExplicit, false, 'Defaults to false.');
+    };
 
-		c = APRLocalStorage(null);
-		st.is(c.consent, false, 'Values are converted to booleans.');
-		st.is(c.isExplicit, true, 'consent is not `undefined`, so true is expected.');
+    t.test('Should set a consent.', function (st) {
 
-		d = APRLocalStorage(null, false);
-		st.is(d.consent, false);
-		st.is(d.isExplicit, false);
+        var a,
+            b,
+            c,
+            d;
 
-		st.end();
+        st.is(APRLocalStorage() instanceof APRLocalStorage, true);
 
-	});
-	
-	t.test('Should check if a cookie exists.', function (st) {
+        a = APRLocalStorage(true);
+        st.is(a.consent, true);
+        st.is(a.isExplicit, true);
 
-		if (passIfCookiesAreDisabled(st)) {
-			return;
-		}
+        b = APRLocalStorage();
+        st.is(b.consent, false, 'Defaults to false.');
+        st.is(b.isExplicit, false, 'Defaults to false.');
 
-		document.cookie = 'a=b;';
+        c = APRLocalStorage(null);
+        st.is(c.consent, false, 'Values are converted to booleans.');
+        st.is(c.isExplicit, true, 'consent is not `undefined`, so true is expected.');
 
-		st.is(APRLocalStorage.cookieExists('a'), true);
-		st.is(APRLocalStorage.cookieExists('b'), false);
-		st.is(APRLocalStorage.cookieExists('a=b'), true);
-		st.is(APRLocalStorage.cookieExists('a=d'), false);
+        d = APRLocalStorage(null, false);
+        st.is(d.consent, false);
+        st.is(d.isExplicit, false);
 
-		st.end();
+        st.end();
 
-	});
+    });
 
-	t.test('Should get a cookie.', function (st) {
+    t.test('Should check if a cookie exists.', function (st) {
 
-		if (passIfCookiesAreDisabled(st)) {
-			return;
-		}
+        if (passIfCookiesAreDisabled(st)) { return; }
 
-		document.cookie = 'a=b;';
+        document.cookie = 'a=b;';
 
-		st.is(APRLocalStorage.getCookie('a'), 'b');
-		st.is(APRLocalStorage.getCookie('b'), null);
-		st.is(APRLocalStorage.getCookie('a=b'), null);
+        st.is(APRLocalStorage.cookieExists('a'), true);
+        st.is(APRLocalStorage.cookieExists('b'), false);
+        st.is(APRLocalStorage.cookieExists('a=b'), true);
+        st.is(APRLocalStorage.cookieExists('a=d'), false);
 
-		if (!passIfCookiesAreDisabled(st)) {
-			document.cookie = 'a=;';
-			st.is(APRLocalStorage.getCookie('a'), '',
-				'Should return an empty string when a cookie doesn\'t exist.');
-		}
+        st.end();
 
-		st.end();
-		
-	});
+    });
 
-	t.test('Should return the DoNotTrack header in a common format.', function (st) {
+    t.test('Should get a cookie.', function (st) {
 
-		st.is(/boolean|undefined/.test(typeof APRLocalStorage.DNT), true);
-		st.end();
+        if (passIfCookiesAreDisabled(st)) { return; }
 
-	});
+        document.cookie = 'a=b;';
 
-	t.test('Should NOT use the local storage.', function (st) {
+        st.is(APRLocalStorage.getCookie('a'), 'b');
+        st.is(APRLocalStorage.getCookie('b'), null);
+        st.is(APRLocalStorage.getCookie('a=b'), null);
 
-		var aprLocalStorage = APRLocalStorage(false);
+        if (!passIfCookiesAreDisabled(st)) {
 
-		st.test('Should NOT set a cookie.', function (sst) {
+            document.cookie = 'a=;';
+            st.is(APRLocalStorage.getCookie('a'), '',
+                'Should return an empty string when a cookie doesn\'t exist.');
 
-			if (passIfCookiesAreDisabled(sst)) {
-				return;
-			}
-			
-			document.cookie = 'a=; expires=' + new Date(0).toGMTString();
+        }
 
-			sst.is(aprLocalStorage.setCookie('a', 'b'), false);
-			sst.is(APRLocalStorage.cookieExists('a=b'), false);
+        st.end();
 
-			sst.end();
+    });
 
-		});
+    t.test('Should return the DoNotTrack header in a common format.', function (st) {
 
-		st.test('Should NOT remove a cookie.', function (sst) {
+        st.is(/boolean|undefined/.test(typeof APRLocalStorage.DNT), true);
+        st.end();
 
-			if (passIfCookiesAreDisabled(sst)) {
-				return;
-			}
+    });
 
-			document.cookie = 'a=b;';
-			
-			sst.is(aprLocalStorage.removeCookie('a'), false);
-			sst.is(APRLocalStorage.cookieExists('a'), true);
+    t.test('Should NOT use the local storage.', function (st) {
 
-			sst.end();
+        var aprLocalStorage = APRLocalStorage(false);
 
-		});
+        st.test('Should NOT set a cookie.', function (sst) {
 
-		st.test('Should return instantly and don\'t test anything.',
-			function (sst) {
+            if (passIfCookiesAreDisabled(sst)) { return; }
 
-			sst.is(aprLocalStorage.isStorageAvailable('localStorage'),
-				false, 'Testing with dumb data is not allowed.');
+            document.cookie = 'a=; expires=' + new Date(0).toGMTString();
 
-			sst.end();
+            sst.is(aprLocalStorage.setCookie('a', 'b'), false);
+            sst.is(APRLocalStorage.cookieExists('a=b'), false);
 
-		});
+            sst.end();
 
-		st.end();
+        });
 
-	});
+        st.test('Should NOT remove a cookie.', function (sst) {
 
-	t.test('Should use the local storage.', function (st) {
+            if (passIfCookiesAreDisabled(sst)) { return; }
 
-		var aprLocalStorage = APRLocalStorage(true);
-		
-		/** @TODO: Mock */
-		st.test('Should allow to change what\'s being saved in isStorageAvailable()',
-			function (sst) {
-			sst.is(typeof aprLocalStorage.isStorageAvailable('cookies', 'k'), 'boolean');
-			sst.is(typeof aprLocalStorage.isStorageAvailable('cookies', 'k', 'v'), 'boolean');
-			sst.end();
-		});
+            document.cookie = 'a=b;';
 
-		/** @TODO: Mock */
-		st.test('Should check if the storage exists and it\'s allowed to use it.',
-			function (sst) {
-			var testAvailability = function (storageType) {
-				var storage = window[storageType];
-				var k = 'a', v = 'b';
+            sst.is(aprLocalStorage.removeCookie('a'), false);
+            sst.is(APRLocalStorage.cookieExists('a'), true);
 
-				sst.is(typeof aprLocalStorage.isStorageAvailable(storageType, k, v),
-					'boolean', 'Should save a temporary value and remove it afterwards');
+            sst.end();
 
-				if (storageType === 'cookies') {
-					if (APRLocalStorage.getCookie(k) === v) {
-						sst.fail('The cookie wasn\'t removed.');
-					}
-				}
-				else if (storage.getItem(k) === v) {
-					sst.fail('The temporary value added to ' + storageType +
-						' wasn\'t removed');
-				}
-			};
+        });
 
-			testAvailability('cookies');
-			testAvailability('localStorage');
-			testAvailability('sessionStorage');
+        st.test('Should return instantly and don\'t test anything.', function (
+            sst) {
 
-			sst.end();
+            sst.is(aprLocalStorage.isStorageAvailable('localStorage'),
+                false, 'Testing with dumb data is not allowed.');
 
-		});
+            sst.end();
 
-		st.test('Should allow checking any function.', function (sst) {
-			var noop = function () {};
-			var throwableFn = function () {
-				throw new Error('My custom storage.');
-			};
+        });
 
-			window.myStorage = {
-				'setItem': throwableFn
-			};
+        st.end();
 
-			window.myStorage.removeItem = noop;
-			sst.is(aprLocalStorage.isStorageAvailable('myStorage'), false,
-				'Should return `false` if something fails.');
+    });
 
-			window.myStorage.removeItem = throwableFn;
-			sst.is(aprLocalStorage.isStorageAvailable('myStorage'), false,
-				'Should return `false` if `removeItem()` throws.');
+    t.test('Should use the local storage.', function (st) {
 
-			delete window.myStorage;
+        var aprLocalStorage = APRLocalStorage(true);
 
-			sst.end();
+        /** @TODO: Mock */
+        st.test('Should allow to change what\'s being saved in ' +
+            'isStorageAvailable()', function (sst) {
 
-		});
+            sst.is(typeof aprLocalStorage.isStorageAvailable('cookies', 'k'), 'boolean');
+            sst.is(typeof aprLocalStorage.isStorageAvailable('cookies', 'k', 'v'), 'boolean');
+            sst.end();
 
-		st.test('Should set a cookie.', function (sst) {
-			
-			if (passIfCookiesAreDisabled(sst)) {
-				return;
-			}
+        });
 
-			document.cookie = 'a=; expires=' + new Date(0).toGMTString();
-			
-			sst.is(aprLocalStorage.setCookie('a', 'b'), true);
-			sst.is(APRLocalStorage.cookieExists('a=b'), true);
+        /** @TODO: Mock */
+        st.test('Should check if the storage exists and it\'s allowed to ' +
+            'use it.', function (sst) {
 
-			sst.end();
+            var testAvailability = function (storageType) {
 
-		});
+                var storage = window[storageType];
+                var k = 'a';
+                var v = 'b';
 
-		st.test('Should remove a cookie.', function (sst) {
-			
-			if (passIfCookiesAreDisabled(sst)) {
-				return;
-			}
+                sst.is(typeof aprLocalStorage.isStorageAvailable(storageType, k, v),
+                    'boolean', 'Should save a temporary value and remove it afterwards');
 
-			document.cookie = 'a=b;';
-			
-			sst.is(aprLocalStorage.removeCookie('a'), true);
-			sst.is(APRLocalStorage.cookieExists('a'), false);
-			sst.is(aprLocalStorage.removeCookie('a'), true,
-				'When the cookie does not exist, `true` is returned.');
+                if (storageType === 'cookies') {
 
-			sst.end();
+                    if (APRLocalStorage.getCookie(k) === v) {
 
-		});
+                        sst.fail('The cookie wasn\'t removed.');
 
-		st.end();
+                    }
 
-	});
+                }
+                else if (storage.getItem(k) === v) {
 
-	t.end();
+                    sst.fail('The temporary value added to ' + storageType +
+					' wasn\'t removed');
+
+                }
+
+            };
+
+            testAvailability('cookies');
+            testAvailability('localStorage');
+            testAvailability('sessionStorage');
+
+            sst.end();
+
+        });
+
+        st.test('Should allow checking any function.', function (sst) {
+
+            var noop = function () {};
+            var throwableFn = function () {
+
+                throw new Error('My custom storage.');
+
+            };
+
+            window.myStorage = {
+                'setItem': throwableFn
+            };
+
+            window.myStorage.removeItem = noop;
+            sst.is(aprLocalStorage.isStorageAvailable('myStorage'), false,
+                'Should return `false` if something fails.');
+
+            window.myStorage.removeItem = throwableFn;
+            sst.is(aprLocalStorage.isStorageAvailable('myStorage'), false,
+                'Should return `false` if `removeItem()` throws.');
+
+            delete window.myStorage;
+
+            sst.end();
+
+        });
+
+        st.test('Should set a cookie.', function (sst) {
+
+            if (passIfCookiesAreDisabled(sst)) { return; }
+
+            document.cookie = 'a=; expires=' + new Date(0).toGMTString();
+
+            sst.is(aprLocalStorage.setCookie('a', 'b'), true);
+            sst.is(APRLocalStorage.cookieExists('a=b'), true);
+
+            sst.end();
+
+        });
+
+        st.test('Should remove a cookie.', function (sst) {
+
+            if (passIfCookiesAreDisabled(sst)) { return; }
+
+            document.cookie = 'a=b;';
+
+            sst.is(aprLocalStorage.removeCookie('a'), true);
+            sst.is(APRLocalStorage.cookieExists('a'), false);
+            sst.is(aprLocalStorage.removeCookie('a'), true,
+                'When the cookie does not exist, `true` is returned.');
+
+            sst.end();
+
+        });
+
+        st.end();
+
+    });
+
+    t.end();
 
 });

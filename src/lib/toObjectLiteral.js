@@ -1,8 +1,8 @@
 define(['./core', './check'], function (APR, check) {
 
-	'use strict';
+    'use strict';
 
-	/**
+    /**
 	 * Converts [[k0, v0], {k1: v1}] to {k0: v0, k1: v1}.
 	 *
 	 * @namespace
@@ -12,42 +12,51 @@ define(['./core', './check'], function (APR, check) {
 	 *
 	 * @return {!object} An object literal.
 	 */
-	var toObjectLiteral = function toObjectLiteral (array) {
+    var toObjectLiteral = function toObjectLiteral (array) {
 
-		var objectLiteral = {};
+        var objectLiteral = {};
 
-		if (check(array, {}, null)) {
-			return Object.assign({}, array);
-		}
+        /* eslint-disable padded-blocks */
+        if (check(array, {}, null)) {
+            return Object.assign({}, array);
+        }
 
-		if (!check(array, [])) {
-			throw new TypeError(array + ' must be either ' +
+        if (!check(array, [])) {
+            throw new TypeError(array + ' must be either ' +
 				'null, an object literal or an Array.');
-		}
+        }
+        /* eslint-enable padded-blocks */
 
-		array.forEach(function (subArray) {
+        array.forEach(function (subArray) {
 
-			var key, value;
+            var key,
+                value;
 
-			if (check(subArray, [])) {
-				key = subArray[0];
-				value = subArray[1];
-				this[key] = value;
-			}
-			else if (check(subArray, {})) {
-				Object.assign(this, subArray);
-			}
-			else {
-				throw new TypeError(subArray + ' must be either ' +
+            if (check(subArray, [])) {
+
+                key = subArray[0];
+                value = subArray[1];
+                this[key] = value;
+
+            }
+            else if (check(subArray, {})) {
+
+                Object.assign(this, subArray);
+
+            }
+            else {
+
+                throw new TypeError(subArray + ' must be either ' +
 					'an object literal or an Array.');
-			}
 
-		}, objectLiteral);
+            }
 
-		return objectLiteral;
+        }, objectLiteral);
 
-	};
+        return objectLiteral;
 
-	return APR.setFn('toObjectLiteral', toObjectLiteral);
+    };
+
+    return APR.setFn('toObjectLiteral', toObjectLiteral);
 
 });

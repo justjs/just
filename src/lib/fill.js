@@ -1,18 +1,18 @@
 define([
-	'./core',
-	'./eachProperty',
-	'./check',
-	'./isEmptyObject'
+    './core',
+    './eachProperty',
+    './check',
+    './isEmptyObject'
 ], function (
-	APR,
-	eachProperty,
-	check,
-	isEmptyObject
+    APR,
+    eachProperty,
+    check,
+    isEmptyObject
 ) {
 
-	'use strict';
+    'use strict';
 
-	/**
+    /**
 	 * Fills an object literal with `data`.
 	 *
 	 * @namespace
@@ -41,47 +41,58 @@ define([
 	 *
 	 * @return {!object} A new object preserving the given structure.
 	 */
-	var fill = function fill (structure, data, preserveUndefined) {
+    var fill = function fill (structure, data, preserveUndefined) {
 
-		var filled = {};
+        var filled = {};
 
-		check.throwable(structure, {});
+        check.throwable(structure, {});
 
-		if (typeof data === 'undefined' || typeof data === 'object' &&
-			isEmptyObject(data)) {
-			return Object.assign({}, structure);
-		}
+        if (typeof data === 'undefined' || typeof data === 'object'
+			&& isEmptyObject(data)) {
 
-		if (!check(data, null, {})) {
-			throw new TypeError(data + ' must be null or an object literal.');
-		}
+            return Object.assign({}, structure);
 
-		eachProperty(structure, function (currentValue, currentKey) {
+        }
 
-			var newValue = data[currentKey];
+        /* eslint-disable padded-blocks */
+        if (!check(data, null, {})) {
+            throw new TypeError(data + ' must be null or an object literal.');
+        }
+        /* eslint-enable padded-blocks */
 
-			if (currentValue === void 0 && preserveUndefined) {
-				return;
-			}
+        eachProperty(structure, function (currentValue, currentKey) {
 
-			if (!(currentKey in data)) {
-				filled[currentKey] = currentValue;
-				return;
-			}
+            var newValue = data[currentKey];
 
-			if (check(currentValue, [])) {
-				currentValue.push(newValue);
-				newValue = currentValue;
-			}
+            /* eslint-disable padded-blocks */
+            if (currentValue === void 0 && preserveUndefined) {
+                return;
+            }
+            /* eslint-enable padded-blocks */
 
-			filled[currentKey] = newValue;
+            if (!(currentKey in data)) {
 
-		});
+                filled[currentKey] = currentValue;
 
-		return filled;
+                return;
 
-	};
+            }
 
-	return APR.setFn('fill', fill);
+            if (check(currentValue, [])) {
+
+                currentValue.push(newValue);
+                newValue = currentValue;
+
+            }
+
+            filled[currentKey] = newValue;
+
+        });
+
+        return filled;
+
+    };
+
+    return APR.setFn('fill', fill);
 
 });

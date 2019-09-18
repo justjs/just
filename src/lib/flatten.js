@@ -1,20 +1,20 @@
 define([
-	'./core',
-	'./flattenObjectLiteral',
-	'./flattenArray',
-	'./check'
+    './core',
+    './flattenObjectLiteral',
+    './flattenArray',
+    './check'
 ], function (
-	APR,
-	flattenObjectLiteral,
-	flattenArray,
-	check
+    APR,
+    flattenObjectLiteral,
+    flattenArray,
+    check
 ) {
 
-	'use strict';
+    'use strict';
 
-	/**
+    /**
 	 * A factory for the "flatten..." alternatives.
-	 * 
+	 *
 	 * @namespace
 	 * @memberof APR
 	 * @param {...*} value - Arguments for {@link APR.flattenArray}
@@ -23,25 +23,31 @@ define([
 	 * @throws {TypeError} If the value couldn't be flattened.
 	 * @return {Array|!object} The flattened value.
 	 */
-	var flatten = function flatten (value) {
+    var flatten = function flatten (value) {
 
-		var args = Array.from(arguments);
-		var flattened;
+        var args = Array.from(arguments);
+        var flattened;
 
-		if (check(value, {})) {
-			flattened = flattenObjectLiteral.apply(this, args);
-		}
-		else if (check(value, [])) {
-			flattened = flattenArray.apply(this, args);
-		}
-		else {
-			throw new TypeError(value + ' couldn\'t be flattened.');
-		}
+        if (check(value, {})) {
 
-		return flattened;
+            flattened = flattenObjectLiteral.apply(this, args);
 
-	};
+        }
+        else if (check(value, [])) {
 
-	return APR.setFn('flatten', flatten);
+            flattened = flattenArray.apply(this, args);
+
+        }
+        else {
+
+            throw new TypeError(value + ' couldn\'t be flattened.');
+
+        }
+
+        return flattened;
+
+    };
+
+    return APR.setFn('flatten', flatten);
 
 });

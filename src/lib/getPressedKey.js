@@ -1,11 +1,11 @@
 define(['./core'], function (APR) {
 
-	'use strict';
+    'use strict';
 
-	/**
+    /**
 	 * A cross-browser solution to get the pressed key on a keyboard
 	 * event.
-	 * 
+	 *
 	 * @namespace
 	 * @memberof APR
 	 * @param {!Event} e - Some event.
@@ -19,10 +19,12 @@ define(['./core'], function (APR) {
 	 *
 	 * @return {number|string} Any of e.key, e.code, e.which or w.keyCode
 	 */
-	var getPressedKey = function getPressedKey (e) {
-		return e.key || e.code || e.which || e.keyCode;
-	};
+    var getPressedKey = function getPressedKey (e) {
 
-	return APR.setFn('getPressedKey', getPressedKey);
+        return e.key || e.code || e.which || e.keyCode;
+
+    };
+
+    return APR.setFn('getPressedKey', getPressedKey);
 
 });
