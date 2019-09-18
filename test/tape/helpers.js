@@ -14,6 +14,7 @@ exports.mock = function (object, key, newFn) {
     };
 
 };
+
 /**
  * {@link mock|Mock} `fn`, `intercept` it, call the original function
  * and call `then` afterwards.
@@ -40,6 +41,7 @@ exports.spyOn = function (object, key, intercept, then) {
     };
 
 };
+
 /**
  * @param {*} value
  * @param {array} values

@@ -89,6 +89,7 @@ define(function () {
 
             }
         },
+
         /**
          * Sets a function in {@link APR}.
          *
@@ -108,6 +109,7 @@ define(function () {
 
             }
         },
+
         /**
          * Sets a module in {@link APR}.
          *

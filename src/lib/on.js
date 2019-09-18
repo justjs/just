@@ -3,16 +3,16 @@ define(['./core', './findElements'], function (APR, findElements) {
     'use strict';
 
     /**
-	 * Add an event listener to multiple elements.
-	 *
-	 * @namespace
-	 * @memberof APR
-	 * @param {string|Element[]} elements - The targets.
-	 * @param {string|string[]} eventNames - The event types.
-	 * @param {function} listener - The handler for the event.
-	 * @param {object|boolean} [options=false] - Options for addEventListener
+     * Add an event listener to multiple elements.
+     *
+     * @namespace
+     * @memberof APR
+     * @param {string|Element[]} elements - The targets.
+     * @param {string|string[]} eventNames - The event types.
+     * @param {function} listener - The handler for the event.
+     * @param {object|boolean} [options=false] - Options for addEventListener
      * @return {Element[]} elements
-	 */
+     */
     var on = function on (elements, eventNames, listener, options) {
 
         /* eslint-disable padded-blocks */

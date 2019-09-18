@@ -3,34 +3,34 @@ define(['./core'], function (APR) {
     'use strict';
 
     /**
-	 * Parses `url` without checking if it's a valid url.
-	 *
-	 * Note that this function uses `window.location` to make relative urls, so
-	 * weird values in there will give weird results.
-	 *
-	 * @namespace
-	 * @memberof APR
-	 * @param {url} [url=window.location.href] - A relative, an absolute or a blob url.
-	 *
-	 * @example <caption>An absolute url:</caption>
-	 * parseUrl(window.location.href);
-	 *
-	 * @example <caption>A relative url:</caption>
-	 * parseUrl('/?a#c?d'); // "/" is the pathname, "?a" the search and "#c?d" the hash.
-	 *
-	 * @example <caption>A blob url:</caption>
-	 * parseUrl('blob:'); // Same as 'blob:' + `window.location.href`
-	 *
-	 * @example <caption>Some good-to-know urls:</caption>
-	 * parseUrl(); // Same as `window.location`.
-	 * parseUrl('a'); // Something that doesn't start with "/", "?", or "#" is evaluated as a host.
-	 * parseUrl('a:b'); // "a:b" is a host, since "b" is not a number.
-	 * parseUrl('//'); // evals as the current origin.
-	 * parseUrl('blob://'); // Same as 'blob:' + `window.location.origin`.
-	 * // [...]
-	 *
-	 * @return {url_parts}
-	 */
+     * Parses `url` without checking if it's a valid url.
+     *
+     * Note that this function uses `window.location` to make relative urls, so
+     * weird values in there will give weird results.
+     *
+     * @namespace
+     * @memberof APR
+     * @param {url} [url=window.location.href] - A relative, an absolute or a blob url.
+     *
+     * @example <caption>An absolute url:</caption>
+     * parseUrl(window.location.href);
+     *
+     * @example <caption>A relative url:</caption>
+     * parseUrl('/?a#c?d'); // "/" is the pathname, "?a" the search and "#c?d" the hash.
+     *
+     * @example <caption>A blob url:</caption>
+     * parseUrl('blob:'); // Same as 'blob:' + `window.location.href`
+     *
+     * @example <caption>Some good-to-know urls:</caption>
+     * parseUrl(); // Same as `window.location`.
+     * parseUrl('a'); // Something that doesn't start with "/", "?", or "#" is evaluated as a host.
+     * parseUrl('a:b'); // "a:b" is a host, since "b" is not a number.
+     * parseUrl('//'); // evals as the current origin.
+     * parseUrl('blob://'); // Same as 'blob:' + `window.location.origin`.
+     * // [...]
+     *
+     * @return {url_parts}
+     */
     var parseUrl = function parseUrl (url) {
 
         var parts = {};

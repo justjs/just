@@ -13,14 +13,14 @@ define([
     'use strict';
 
     /**
-	 * Recursive function that flattens object literals.
-	 *
-	 * @param {!object} object - The object literal to flat.
-	 * @param {!object} options - The options.
-	 * @param {String} [previousKey] - The previous key.
-	 *
-	 * @return {!object} The flattened object.
-	 */
+     * Recursive function that flattens object literals.
+     *
+     * @param {!object} object - The object literal to flat.
+     * @param {!object} options - The options.
+     * @param {String} [previousKey] - The previous key.
+     *
+     * @return {!object} The flattened object.
+     */
     var flattenObject = function flattenObject (object, options, previousKey) {
 
         var results = {};
@@ -50,21 +50,21 @@ define([
 
     };
         /**
-	 * Flattens an object of objects.
-	 *
-	 * @namespace
-	 * @memberof APR
-	 * @param {!object} object - Some object literal.
-	 * @param {?object} [
-	 *     opts={@link APR.flattenObjectLiteral.DEFAULT_OPTIONS}
-	 * ]
-	 * @throws {TypeError} If `object` is not a an object literal.
-	 *
-	 * @example
-	 * flattenObjectLiteral({'a': {'b': {'c': {'d': 1}}}}); // {'a.b.c.d' : 1}
-	 *
-	 * @return {!object} The flattened object.
-	 */
+         * Flattens an object of objects.
+         *
+         * @namespace
+         * @memberof APR
+         * @param {!object} object - Some object literal.
+         * @param {?object} [
+         *     opts={@link APR.flattenObjectLiteral.DEFAULT_OPTIONS}
+         * ]
+         * @throws {TypeError} If `object` is not a an object literal.
+         *
+         * @example
+         * flattenObjectLiteral({'a': {'b': {'c': {'d': 1}}}}); // {'a.b.c.d' : 1}
+         *
+         * @return {!object} The flattened object.
+         */
     var flattenObjectLiteral = function flattenObjectLiteral (object, opts) {
 
         return flattenObject(
@@ -77,17 +77,17 @@ define([
 
     Object.defineProperties(flattenObjectLiteral, /** @lends APR.flattenObjectLiteral */{
         /**
-		 * Options for {@link APR.flattenObjectLiteral}.
-		 *
-		 * @typedef {object} APR.flattenObjectLiteral~options
-		 * @property {String} [separator=""] - A string to join the keys.
- 		 */
+         * Options for {@link APR.flattenObjectLiteral}.
+         *
+         * @typedef {object} APR.flattenObjectLiteral~options
+         * @property {String} [separator=""] - A string to join the keys.
+         */
 
         /**
-		 * Default options for {@link APR.flattenObjectLiteral}.
-		 *
-		 * @type {APR.flattenObjectLiteral~options}
-		 */
+         * Default options for {@link APR.flattenObjectLiteral}.
+         *
+         * @type {APR.flattenObjectLiteral~options}
+         */
         'DEFAULT_OPTIONS': {
             'get': function () {
 

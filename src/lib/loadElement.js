@@ -124,6 +124,7 @@ define([
             }
 
         },
+
         /**
          * An src-like attribute for an Element.
          *

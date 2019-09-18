@@ -5,12 +5,12 @@ define(['./core'], function (APR) {
     /* globals DocumentTouch */
 
     /**
-	 * Checks if the screen -supports- touch.
-	 *
-	 * @namespace
-	 * @memberof APR
-	 * @return {boolean}
-	 */
+     * Checks if the screen -supports- touch.
+     *
+     * @namespace
+     * @memberof APR
+     * @return {boolean}
+     */
     var isTouchDevice = function isTouchDevice () {
 
         return !!('ontouchstart' in document.body

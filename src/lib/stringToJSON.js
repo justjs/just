@@ -3,20 +3,20 @@ define(['./core'], function (APR) {
     'use strict';
 
     /**
-	 * Parses a JSON string into a JSON.
-	 *
-	 * @namespace
-	 * @memberof APR
-	 * @param {*} string - Some string to parse.
-	 *
-	 * @example
-	 * stringToJSON('{"a": 1}'); // returns {a: 1}.
-	 *
-	 * @example
-	 * stringToJSON(1); // returns {}.
-	 *
-	 * @return {!object} A JSON-like object.
-	 */
+     * Parses a JSON string into a JSON.
+     *
+     * @namespace
+     * @memberof APR
+     * @param {*} string - Some string to parse.
+     *
+     * @example
+     * stringToJSON('{"a": 1}'); // returns {a: 1}.
+     *
+     * @example
+     * stringToJSON(1); // returns {}.
+     *
+     * @return {!object} A JSON-like object.
+     */
     var stringToJSON = function stringToJSON (string) {
 
         var json;

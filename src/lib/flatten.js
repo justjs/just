@@ -13,16 +13,16 @@ define([
     'use strict';
 
     /**
-	 * A factory for the "flatten..." alternatives.
-	 *
-	 * @namespace
-	 * @memberof APR
-	 * @param {...*} value - Arguments for {@link APR.flattenArray}
-	 *     if the first argument is an Array, or arguments for
-	 *     {@link APR.flattenObjectLiteral}.
-	 * @throws {TypeError} If the value couldn't be flattened.
-	 * @return {Array|!object} The flattened value.
-	 */
+     * A factory for the "flatten..." alternatives.
+     *
+     * @namespace
+     * @memberof APR
+     * @param {...*} value - Arguments for {@link APR.flattenArray}
+     *     if the first argument is an Array, or arguments for
+     *     {@link APR.flattenObjectLiteral}.
+     * @throws {TypeError} If the value couldn't be flattened.
+     * @return {Array|!object} The flattened value.
+     */
     var flatten = function flatten (value) {
 
         var args = Array.from(arguments);
