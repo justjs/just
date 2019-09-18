@@ -1,12 +1,12 @@
 /* eslint-disable */
 /**
  * Polyfills (for IE9 and above):
- * console.log, Event, CustomEvent, WeakMap, Number.isNaN, 
+ * console.log, Event, CustomEvent, WeakMap, Number.isNaN,
  * Object.assign, Object.values, Array.from, Location.origin, Location.toString,
  * DOMTokenList, matches, requestAnimationFrame, cancelAnimationFrame
  */
-(function(W) {
-
+(function (W) {
+    
     var D=W.document, O=W.Object, A=W.Array, E=W.Element, V=W.Event, L=W.Location;
 
     function fp(c,p,f){var o=c[p]=c[p]||f;o.APRPolyfill=f===o?null:f}
@@ -36,3 +36,4 @@
     /*! based on: https://gist.github.com/paulirish/1579671 */fp(W,'requestAnimationFrame',fv(W,'RequestAnimationFrame')||(function(l){return function(fn){var n=+new Date,c=Math.max(0,16-n-l),i=W.setTimeout(function(){fn(n+c)},c);l=n+c;return i}})(0));fp(W,'cancelAnimationFrame',fv(W,'CancelAnimationFrame')||fv(W,'CancelRequestAnimationFrame')||function(i){clearTimeout(i)});
 
 })(typeof window!=='undefined'&&window);
+/* eslint-enable */
