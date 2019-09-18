@@ -66,7 +66,9 @@ define(['./core'], function (APR) {
                 throw new TypeError(key + ' must be an object.');
             }
 
-            if ((value = store.get(key))) {
+            value = store.get(key);
+
+            if (value) {
                 return value;
             }
 
