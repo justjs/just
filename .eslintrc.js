@@ -14,23 +14,39 @@ module.exports = {
         'eslint:recommended'
     ],
 	'rules': {
+        'camelcase': 'error',
+        'no-bitwise': 'error',
+        'no-new-object': 'error',
+        'no-trailing-spaces': 'error',
+        'no-underscore-dangle': 'error',
+        'no-array-constructor': 'error',
+        'no-whitespace-before-property': 'error',
 		'indent': ['error', 4],
+        'curly': ['error', 'all'],
 		'linebreak-style': ['error','unix'],
 		'quotes': ['error', 'single'],
 		'semi': ['error', 'always'],
+        'eol-last': ['error', 'always'],
+        'space-before-blocks': ['error', 'always'],
+        'space-before-function-paren': ['error', 'always'],
+        'no-unused-vars': ['error', {'args': 'none'}],
         'object-curly-spacing': ['error', 'never'],
-        'no-whitespace-before-property': 'error',
+        'no-multiple-empty-lines': ['error', {'max': 2}],
+        'one-var-declaration-per-line': ['error', 'initializations'],
+        'brace-style': ['error', 'stroustrup', {'allowSingleLine': true}],
+        'one-var': ['error', {'initialized': 'never'}],
+        'padded-blocks': ['error', 'always', { // Use "onlyMultiline" if available.
+            'allowSingleLineBlocks': true
+        }],
+        'keyword-spacing': ['error', {
+            'before': true,
+            'after': true
+        }],
         'operator-linebreak': ['error', 'before', {
             'overrides': {
                 '+': 'ignore'
             }
         }],
-        'space-before-function-paren': ['error', 'always'],
-        'no-unused-vars': ['error', {'args': 'none'}],
-        // 'padded-blocks': ['error', 'never'/* 'multiline' */],
-        'no-trailing-spaces': 'error',
-        'no-underscore-dangle': 'error',
-        'curly': ['error', 'all'],
         'indent': [
             'error',
             4,
@@ -44,6 +60,7 @@ module.exports = {
                     'parameters': 1
                 },
                 'flatTernaryExpressions': true,
+                'ignoredNodes': ['ConditionalExpression'],
                 'ObjectExpression': 1,
                 'MemberExpression': 1
             }
@@ -52,13 +69,13 @@ module.exports = {
             'error',
             {
                 'blankLine': 'always',
-                'prev': ['expression', 'var'],
+                'prev': '*',
                 'next': 'return'
             },
             {
                 'blankLine': 'always',
                 'prev': 'var',
-                'next': ['expression', 'return']
+                'next': '*'
             },
             {
                 'blankLine': 'never',
@@ -67,17 +84,9 @@ module.exports = {
             },
             {
                 'blankLine': 'always',
-                'prev': ['block-like', 'block'],
+                'prev': 'directive',
                 'next': '*'
-            },
-            {
-                'blankLine': 'always',
-                'prev': '*',
-                'next': ['block-like', 'block']
             }
         ],
-        'no-multiple-empty-lines': ['error', {
-            'max': 2
-        }]
 	}
 };
