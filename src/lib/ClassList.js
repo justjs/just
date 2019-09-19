@@ -53,11 +53,10 @@ define(['./core', './defaults'], function (APR, defaults) {
 
                 var args = [].slice.call(methodArgs);
                 var classList = element.classList;
-                var method = classList[methodName];
 
                 if (/add|remove/.test(methodName)) {
 
-                    Array.from(args, function (arg) { method(arg); });
+                    Array.from(args, function (arg) { classList[methodName](arg); });
 
                     /** These methods return undefined. */
                     return void 0;
@@ -76,7 +75,7 @@ define(['./core', './defaults'], function (APR, defaults) {
                  * Should be the same as calling...
                  * classList.contains('a');
                  */
-                return method(args[0], args[1]);
+                return classList[methodName](args[0], args[1]);
 
             }
         }
