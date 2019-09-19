@@ -48,35 +48,37 @@ define(['./core', './defaults'], function (APR, defaults) {
          * ClassList.apply(this, 'remove', 'c'); // > undefined
          * ClassList.apply(this, 'toggle', ['a', true]); // > true
          */
-        'apply': function (element, methodName, methodArgs) {
+        'apply': {
+            'value': function (element, methodName, methodArgs) {
 
-            var args = [].slice.call(methodArgs);
-            var classList = element.classList;
-            var method = classList[methodName];
+                var args = [].slice.call(methodArgs);
+                var classList = element.classList;
+                var method = classList[methodName];
 
-            if (/add|remove/.test(methodName)) {
+                if (/add|remove/.test(methodName)) {
 
-                Array.from(args, function (arg) { method(arg); });
+                    Array.from(args, function (arg) { method(arg); });
 
-                /** These methods return undefined. */
-                return void 0;
+                    /** These methods return undefined. */
+                    return void 0;
+
+                }
+
+                /*
+                 * Passing undefined arguments instead of manually
+                 * adding more conditionals to call the method with
+                 * the correct amount shouldn't be a problem.
+                 *
+                 * I.e:
+                 * classList.contains('a', undefined);
+                 * classList.contains('a', 'some other value');
+                 *
+                 * Should be the same as calling...
+                 * classList.contains('a');
+                 */
+                return method(args[0], args[1]);
 
             }
-
-            /*
-             * Passing undefined arguments instead of manually
-             * adding more conditionals to call the method with
-             * the correct amount shouldn't be a problem.
-             *
-             * I.e:
-             * classList.contains('a', undefined);
-             * classList.contains('a', 'some other value');
-             *
-             * Should be the same as calling...
-             * classList.contains('a');
-             */
-            return method(args[0], args[1]);
-
         }
 
     });
@@ -87,61 +89,73 @@ define(['./core', './defaults'], function (APR, defaults) {
          * @alias Element.classList.add
          * @chainable
          */
-        'add': function () {
+        'add': {
+            'value': function () {
 
-            ClassList.apply(this.element, 'add', arguments);
+                ClassList.apply(this.element, 'add', arguments);
 
-            return this;
+                return this;
 
+            }
         },
         /**
          * @alias Element.classList.remove
          * @chainable
          */
-        'remove': function () {
+        'remove': {
+            'value': function () {
 
-            ClassList.apply(this.element, 'remove', arguments);
+                ClassList.apply(this.element, 'remove', arguments);
 
-            return this;
+                return this;
 
+            }
         },
         /**
          * @alias Element.classList.toggle
          * @chainable
          */
-        'toggle': function () {
+        'toggle': {
+            'value': function () {
 
-            return ClassList.apply(this.element, 'toggle', arguments);
+                return ClassList.apply(this.element, 'toggle', arguments);
 
+            }
         },
         /**
          * @alias Element.classList.replace
          * @chainable
          */
-        'replace': function () {
+        'replace': {
+            'value': function () {
 
-            ClassList.apply(this.element, 'replace', arguments);
+                ClassList.apply(this.element, 'replace', arguments);
 
-            return this;
+                return this;
 
+            }
         },
         /**
          * @alias Element.classList.contains
          * @return {boolean}
          */
-        'contains': function () {
+        'contains': {
+            'value': function () {
 
-            return ClassList.apply(this.element, 'contains', arguments);
+                return ClassList.apply(this.element, 'contains', arguments);
 
+            }
         },
         /**
          * @alias Element.classList.item
          * @return {?string}
          */
-        'item': function () {
+        'item': {
+            'value': function () {
 
-            return ClassList.apply(this.element, 'item', arguments);
+                return ClassList.apply(this.element, 'item', arguments);
 
+            }
         }
 
     });
