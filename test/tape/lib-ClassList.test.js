@@ -1,7 +1,7 @@
 var test = require('tape');
 var ClassList = require('../../src/lib/ClassList');
 
-test('lib/ClassList', function (t) {
+test('lib/ClassList.js', function (t) {
 
     var element = document.body;
     var containsClass = function (element, className) {
@@ -38,7 +38,14 @@ test('lib/ClassList', function (t) {
 
     t.test('apply()', function (st) {
 
-        t.test('Should work as Element.classList.prototype.add', function (sst) {
+        st.test('Should have a custom "apply" function.', function (sst) {
+
+            sst.is('apply' in ClassList, true);
+            sst.end();
+
+        });
+
+        st.test('Should work as Element.classList.prototype.add', function (sst) {
 
             removeClass(element, 'a');
 
@@ -55,7 +62,7 @@ test('lib/ClassList', function (t) {
 
         });
 
-        t.test('Should work as Element.classList.prototype.remove', function (sst) {
+        st.test('Should work as Element.classList.prototype.remove', function (sst) {
 
             addClass(element, 'a');
 
@@ -72,7 +79,7 @@ test('lib/ClassList', function (t) {
 
         });
 
-        t.test('Should work as Element.classList.prototype.toggle', function (sst) {
+        st.test('Should work as Element.classList.prototype.toggle', function (sst) {
 
             removeClass(element, 'a');
 
@@ -95,7 +102,7 @@ test('lib/ClassList', function (t) {
 
         });
 
-        t.test('Should work as Element.classList.prototype.replace', function (sst) {
+        st.test('Should work as Element.classList.prototype.replace', function (sst) {
 
             addClass(element, 'a');
             removeClass(element, 'b');
@@ -114,7 +121,7 @@ test('lib/ClassList', function (t) {
 
         });
 
-        t.test('Should work as Element.classList.prototype.contains', function (sst) {
+        st.test('Should work as Element.classList.prototype.contains', function (sst) {
 
             addClass(element, 'a');
             removeClass(element, 'b');
@@ -132,7 +139,7 @@ test('lib/ClassList', function (t) {
 
         });
 
-        t.test('Should work as Element.classList.prototype.item', function (sst) {
+        st.test('Should work as Element.classList.prototype.item', function (sst) {
 
             var emptyElement = document.createElement('a');
 
@@ -155,10 +162,12 @@ test('lib/ClassList', function (t) {
 
     });
 
-    t.test('Should chain addClass element, and add classes.', function (st) {
+    t.test('Should chain Element.classList.addClass element, and add ' +
+        'classes.', function (st) {
 
         removeClass(element, 'a', 'b');
 
+        st.is('add' in ClassList(element), true);
         st.is(ClassList(element).add('a', 'b') instanceof ClassList, true);
         st.is(containsClass(element, 'a'), true);
         st.is(containsClass(element, 'b'), true);
@@ -167,10 +176,12 @@ test('lib/ClassList', function (t) {
 
     });
 
-    t.test('Should chain removeClass element, and remove classes.', function (st) {
+    t.test('Should chain Element.classList.removeClass element, and remove ' +
+        'classes.', function (st) {
 
         addClass(element, 'a', 'b');
 
+        st.is('remove' in ClassList(element), true);
         st.is(ClassList(element).remove('a', 'b') instanceof ClassList, true);
         st.is(containsClass(element, 'a'), false);
         st.is(containsClass(element, 'b'), false);
@@ -184,6 +195,7 @@ test('lib/ClassList', function (t) {
 
         removeClass(element, 'a');
 
+        st.is('toggle' in ClassList(element), true);
         st.is(ClassList(element).toggle('a') instanceof ClassList, true);
         st.is(containsClass(element, 'a'), true);
 
@@ -203,6 +215,7 @@ test('lib/ClassList', function (t) {
         addClass(element, 'a');
         removeClass(element, 'b');
 
+        st.is('replace' in ClassList(element), true);
         st.is(ClassList(element).replace('a', 'b') instanceof ClassList, true);
         st.is(containsClass(element, 'a'), false);
         st.is(containsClass(element, 'b'), true);
@@ -217,6 +230,7 @@ test('lib/ClassList', function (t) {
         addClass(element, 'a');
         removeClass(element, 'b');
 
+        st.is('contains' in ClassList(element), true);
         st.is(ClassList(element).contains('a'), true);
         st.is(ClassList(element).contains('b'), false);
 
@@ -231,6 +245,7 @@ test('lib/ClassList', function (t) {
 
         addClass(emptyElement, 'a');
 
+        st.is('item' in ClassList(element), true);
         st.is(ClassList(emptyElement).item(0), 'a');
         st.is(ClassList(emptyElement).item(1), null);
 
