@@ -26,6 +26,7 @@
     "type": "git",
     "url": "https://github.com/apr-suite/APR.git"
   },
+  "bugs": "https://github.com/apr-suite/APR/issues",
   "keywords": [
     "javascript",
     "library",
