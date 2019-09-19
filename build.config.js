@@ -202,7 +202,8 @@ module.exports = {
 			'lib/flattenArray',
 			'lib/flattenObjectLiteral',
 			'lib/APRDefine',
-			'lib/APRLocalStorage'
+			'lib/APRLocalStorage',
+			'lib/ClassList'
 		].map(file => file.replace(/\.?\/?/, './src/') + '.js'),
 		/** @type {string} */
 		get polyfills () {
