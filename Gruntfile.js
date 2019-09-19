@@ -186,7 +186,7 @@ module.exports = grunt => {
 				}
 			},
 
-			'browser-bundle': {
+			/*'browser-bundle': {
 				'options': {
 					'include': browserBuild.files,
 					'out': browserBuild.getBuildSrc('bundle'),
@@ -194,7 +194,7 @@ module.exports = grunt => {
 						'start': buildOptions.banner
 					}
 				}
-			},
+			},*/
 
 			'server-build': {
 				'options': {
@@ -206,7 +206,7 @@ module.exports = grunt => {
 				}
 			},
 
-			'server-bundle': {
+			/*'server-bundle': {
 				'options': {
 					'include': serverBuild.files,
 					'out': serverBuild.getBuildSrc('bundle'),
@@ -214,7 +214,7 @@ module.exports = grunt => {
 						'start': buildOptions.banner
 					}
 				}
-			}
+			}*/
 
 		},
 
