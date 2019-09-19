@@ -144,7 +144,8 @@ const options = {
 			'filePath': path,
 			'aggressiveOptimizations': true,
 			'wrap': {
-				'start': '(function(fn){if(typeof define==="function"&&define.amd)define("APR",[],fn);else if(typeof exports==="object"&&Object(module).exports){module.exports=fn()}else{this.APR=fn()}}).call(this,function(){\n',
+				'start': '(function(fn){if(typeof define==="function"&&define.amd)define("APR",[],fn);else if(typeof exports==="object"&&Object(module).exports){module.exports=fn()}else{this.APR=fn()}}).call(this,function(){\n' +
+					'/* eslint-disable no-unused-vars */\n',
 				'end': '\n\treturn APR;\n});'
 			},
 			'escodegen': {
@@ -155,7 +156,7 @@ const options = {
 				'format': {
 					'indent': {
 						'base': 1,
-						'style': '\t',
+						'style': '    ',
 						'adjustMultilineComment': true
 					}
 				}
