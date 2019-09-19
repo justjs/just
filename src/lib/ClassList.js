@@ -54,7 +54,7 @@ define(['./core', './defaults'], function (APR, defaults) {
                 var args = [].slice.call(methodArgs);
                 var classList = element.classList;
 
-                if (/add|remove/.test(methodName)) {
+                if (/(?:add|remove)/.test(methodName)) {
 
                     Array.from(args, function (arg) { classList[methodName](arg); });
 
