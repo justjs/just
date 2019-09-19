@@ -18,6 +18,9 @@
     "test:dev": "grunt init test-dev",
     "tap": "grunt build copy:server-tape-to-tap && tap ./build/test/tap",
     "lint": "eslint . --cache",
+    "pretest": "npm run lint",
+    "precommit": "npm run test",
+    "prepack": "npm run pretest && npm run distribute && npm run lint -- --fix && grunt compare_size"
   },
   "repository": {
     "type": "git",
