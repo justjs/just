@@ -12,7 +12,7 @@
     "build": "grunt build",
     "test": "grunt build test",
     "document": "grunt build document",
-    "distribute": "grunt distribute",
+    "distribute": "NODE_ENV=production grunt distribute",
     "test:unit": "grunt build test:unit",
     "test:integration": "grunt build test:integration",
     "test:dev": "grunt init test-dev",
