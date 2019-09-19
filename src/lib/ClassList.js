@@ -51,7 +51,10 @@ define(['./core', './defaults'], function (APR, defaults) {
         'apply': {
             'value': function (element, methodName, methodArgs) {
 
-                var args = [].slice.call(methodArgs);
+                var args = (typeof methodArgs === 'number'
+                    ? [methodArgs]
+                    : [].slice.call(methodArgs)
+                );
                 var classList = element.classList;
 
                 if (/(?:add|remove)/.test(methodName)) {
@@ -117,7 +120,9 @@ define(['./core', './defaults'], function (APR, defaults) {
         'toggle': {
             'value': function () {
 
-                return ClassList.apply(this.element, 'toggle', arguments);
+                ClassList.apply(this.element, 'toggle', arguments);
+
+                return this;
 
             }
         },

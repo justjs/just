@@ -4,23 +4,23 @@ var ClassList = require('../../src/lib/ClassList');
 test('lib/ClassList.js', function (t) {
 
     var element = document.body;
-    var containsClass = function (element, className) {
+    var containsClass = function (target, className) {
 
-        return new RegExp('\\b' + className + '\\b').test(element.className);
+        return new RegExp('\\b' + className + '\\b').test(target.className);
 
     };
-    var addClass = function (element, className) {
+    var addClass = function (target, className) {
 
-        if (!containsClass(element, className)) {
+        if (!containsClass(target, className)) {
 
-            element.className += className;
+            target.className = (target.className + ' ' + className).trim();
 
         }
 
     };
-    var removeClass = function (element, className) {
+    var removeClass = function (target, className) {
 
-        element.className = element.className.replace(
+        target.className = target.className.replace(
             new RegExp('(^| )' + className + '( |$)'),
             ' '
         ).trim();
@@ -85,13 +85,13 @@ test('lib/ClassList.js', function (t) {
 
             removeClass(element, 'a');
 
-            sst.is(ClassList.apply(element, 'toggle', 'a'), void 0);
+            sst.is(ClassList.apply(element, 'toggle', 'a'), true);
             sst.is(containsClass(element, 'a'), true);
 
-            sst.is(ClassList.apply(element, 'toggle', ['a', true]), void 0);
+            sst.is(ClassList.apply(element, 'toggle', ['a', true]), true);
             sst.is(containsClass(element, 'a'), true);
 
-            sst.is(ClassList.apply(element, 'toggle', 'a'));
+            sst.is(ClassList.apply(element, 'toggle', 'a'), false);
             sst.is(containsClass(element, 'a'), false);
 
             sst.throws(function () {
@@ -110,13 +110,15 @@ test('lib/ClassList.js', function (t) {
             addClass(element, 'a');
             removeClass(element, 'b');
 
-            sst.is(ClassList.apply(element, 'replace', ['a', 'b']), void 0);
+            sst.is(/(undefined|boolean)/.test(
+                typeof ClassList.apply(element, 'replace', ['a', 'b'])
+            ), true);
             sst.is(containsClass(element, 'a'), false);
             sst.is(containsClass(element, 'b'), true);
 
             sst.throws(function () {
 
-                ClassList.apply(element, 'replace', 'a');
+                ClassList.apply(element, 'replace');
 
             }, TypeError, 'Not enough arguments.');
 
@@ -166,7 +168,7 @@ test('lib/ClassList.js', function (t) {
 
     });
 
-    t.test('Should chain Element.classList.addClass element, and add ' +
+    t.test('Should chain Element.classList.addClass and add ' +
         'classes.', function (st) {
 
         removeClass(element, 'a', 'b');
@@ -180,7 +182,7 @@ test('lib/ClassList.js', function (t) {
 
     });
 
-    t.test('Should chain Element.classList.removeClass element, and remove ' +
+    t.test('Should chain Element.classList.removeClass and remove ' +
         'classes.', function (st) {
 
         addClass(element, 'a', 'b');
