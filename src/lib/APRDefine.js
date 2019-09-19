@@ -276,16 +276,9 @@ define([
 
             var id = check.throwable(value, 'string');
 
-            if (!hasModule(id)) {
+            if (!hasModule(id) && id in Define.files) {
 
-                try {
-
-                    loadModuleByID(id);
-
-                }
-                catch (unknownID) {
-                    // Do nothing.
-                }
+                loadModuleByID(id);
 
             }
 
