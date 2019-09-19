@@ -62,7 +62,8 @@ test('lib/ClassList.js', function (t) {
 
         });
 
-        st.test('Should work as Element.classList.prototype.remove', function (sst) {
+        st.test('Should work as Element.classList.prototype.remove', function (
+            sst) {
 
             addClass(element, 'a');
 
@@ -79,7 +80,8 @@ test('lib/ClassList.js', function (t) {
 
         });
 
-        st.test('Should work as Element.classList.prototype.toggle', function (sst) {
+        st.test('Should work as Element.classList.prototype.toggle', function (
+            sst) {
 
             removeClass(element, 'a');
 
@@ -102,7 +104,8 @@ test('lib/ClassList.js', function (t) {
 
         });
 
-        st.test('Should work as Element.classList.prototype.replace', function (sst) {
+        st.test('Should work as Element.classList.prototype.replace', function (
+            sst) {
 
             addClass(element, 'a');
             removeClass(element, 'b');
@@ -121,7 +124,8 @@ test('lib/ClassList.js', function (t) {
 
         });
 
-        st.test('Should work as Element.classList.prototype.contains', function (sst) {
+        st.test('Should work as Element.classList.prototype.contains', function (
+            sst) {
 
             addClass(element, 'a');
             removeClass(element, 'b');
