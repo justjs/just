@@ -281,7 +281,11 @@ define([
                         storage.removeItem(k);
 
                     }
-                    catch (wrongImplementation) { /* return false; */ }
+                    catch (wrongImplementation) {
+
+                        return false;
+
+                    }
 
                     return false;
 
