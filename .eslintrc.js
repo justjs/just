@@ -22,7 +22,6 @@ module.exports = {
         'no-array-constructor': 'error',
         'no-whitespace-before-property': 'error',
         'multiline-comment-style': ['error', 'starred-block'],
-		'indent': ['error', 4],
         'curly': ['error', 'all'],
 		'linebreak-style': ['error','unix'],
         'block-spacing': ['error', 'always'],
@@ -37,8 +36,13 @@ module.exports = {
         'one-var-declaration-per-line': ['error', 'initializations'],
         'brace-style': ['error', 'stroustrup', {'allowSingleLine': true}],
         'one-var': ['error', {'initialized': 'never'}],
-        'padded-blocks': ['error', 'always', { // Use "onlyMultiline" if available.
+        'comma-spacing': ['error', {'before': false, 'after': true}],
+        'padded-blocks': ['error', 'always', { // Use 'onlyMultiline' if available.
             'allowSingleLineBlocks': true
+        }],
+        'key-spacing': ['error', {
+            'beforeColon': false,
+            'afterColon': true
         }],
         'keyword-spacing': ['error', {
             'before': true,
@@ -88,6 +92,11 @@ module.exports = {
                 'blankLine': 'always',
                 'prev': 'directive',
                 'next': '*'
+            },
+            {
+                'blankLine': 'always',
+                'prev': '*',
+                'next': 'block'
             }
         ],
 	}
