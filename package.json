@@ -3,9 +3,9 @@
   "title": "APR",
   "version": "0.1.0",
   "description": "Heavily-used javascript helpers for APR's developments.",
-  "main": "./dist/server.min.js",
+  "main": "dist/server.min.js",
   "private": true,
-  "browser": "./dist/browser.min.js",
+  "browser": "dist/browser.min.js",
   "scripts": {
     "start": "npm run development",
     "development": "grunt karma:unit-dev:start default",
@@ -16,7 +16,7 @@
     "test:unit": "grunt build test:unit",
     "test:integration": "grunt build test:integration",
     "test:dev": "grunt init test-dev",
-    "tap": "grunt build copy:server-tape-to-tap && tap ./build/test/tap",
+    "tap": "grunt build copy:server-tape-to-tap && tap build/test/tap",
     "lint": "eslint . --cache",
     "pretest": "npm run lint",
     "precommit": "npm run test",
@@ -31,6 +31,9 @@
     "library",
     "APR",
     "helpers"
+  ],
+  "files": [
+    "dist/*.js"
   ],
   "author": "Alexis Puga Ruíz",
   "license": "BSD-3-Clause",
