@@ -150,6 +150,7 @@ module.exports = grunt => {
 			'unit': {
 				'configFile': 'karma.config.js',
 				'singleRun': true,
+				'background': process.env.NODE_ENV === 'production',
 				'logLevel': 'INFO'
 			},
 			'unit-dev': {
