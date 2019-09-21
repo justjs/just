@@ -1,4 +1,4 @@
-define(['./core'], function (APR) {
+define(['./core'], function (just) {
 
     'use strict';
 
@@ -7,7 +7,7 @@ define(['./core'], function (APR) {
      * event.
      *
      * @namespace
-     * @memberof APR
+     * @memberof just
      * @param {!Event} e - Some event.
      *
      * @example
@@ -25,6 +25,6 @@ define(['./core'], function (APR) {
 
     };
 
-    return APR.setFn('getPressedKey', getPressedKey);
+    return just.setFn('getPressedKey', getPressedKey);
 
 });

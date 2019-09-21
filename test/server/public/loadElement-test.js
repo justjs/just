@@ -1,1 +1,1 @@
-/* this is a test for APR.loadElement */
+/* this is a test for loadElement */

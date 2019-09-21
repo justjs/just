@@ -1,10 +1,10 @@
 var test = require('tape');
-var APRDefine = require('../../src/lib/APRDefine');
+var Define = require('../../src/lib/Define');
 
 // Use in loaded files.
-window.APRDefine = APRDefine;
+window.Define = Define;
 
-test('/lib/APRDefine.js', function (t) {
+test('/lib/Define.js', function (t) {
 
     /**
      * NOTE: Removing scripts might cause to load files twice, since
@@ -27,31 +27,31 @@ test('/lib/APRDefine.js', function (t) {
 
         st.throws(function () {
 
-            APRDefine(function () {});
+            Define(function () {});
 
         }, TypeError, 'The id is needed.');
 
         st.throws(function () {
 
-            APRDefine(false, [], function () {});
+            Define(false, [], function () {});
 
         }, TypeError, 'Non-string ids are invalid.');
 
         st.throws(function () {
 
-            APRDefine('valid-id', 0, function () {});
+            Define('valid-id', 0, function () {});
 
         }, TypeError, 'Dependency ids must be valid ids.');
 
         st.throws(function () {
 
-            APRDefine.load('/url');
+            Define.load('/url');
 
         }, TypeError, '"/url" is considered an id, not a url.');
 
         st.doesNotThrow(function () {
 
-            APRDefine('id', ['/url'], function () {
+            Define('id', ['/url'], function () {
 
                 st.fail();
 
@@ -61,7 +61,7 @@ test('/lib/APRDefine.js', function (t) {
 
         st.throws(function () {
 
-            APRDefine.load(null);
+            Define.load(null);
 
         }, TypeError, 'Only strings, arrays and object literals are allowed.');
 
@@ -75,7 +75,7 @@ test('/lib/APRDefine.js', function (t) {
             'timeout': 3000
         }, function (st) {
 
-            APRDefine('no-dependencies', function () {
+            Define('no-dependencies', function () {
 
                 st.pass('The module got called.');
                 st.end();
@@ -89,11 +89,11 @@ test('/lib/APRDefine.js', function (t) {
 
             delete window.theGlobal;
 
-            APRDefine.addFiles({
-                'theGlobal': '/assets/APRDefine-test-global.js'
+            Define.addFiles({
+                'theGlobal': '/assets/Define-test-global.js'
             });
 
-            APRDefine('required-now', [], function () {
+            Define('required-now', [], function () {
 
                 st.is(typeof window.theGlobal, 'undefined');
                 st.pass('Module didn\'t load because it wasn\'t needed.');
@@ -108,20 +108,20 @@ test('/lib/APRDefine.js', function (t) {
             'finished loading.', {'timeout': 3000}, function (st) {
 
             removeScripts(
-                'script[src="/assets/APRDefine-test-global.js"], ' +
-                'script[src="/assets/APRDefine-test-local.js"]'
+                'script[src="/assets/Define-test-global.js"], ' +
+                'script[src="/assets/Define-test-local.js"]'
             );
 
-            APRDefine.clean();
+            Define.clean();
 
-            APRDefine.addFiles({
-                'theGlobal': '/assets/APRDefine-test-global.js',
-                'theLocal': '/assets/APRDefine-test-local.js'
+            Define.addFiles({
+                'theGlobal': '/assets/Define-test-global.js',
+                'theLocal': '/assets/Define-test-local.js'
             }).addGlobals({
                 'theGlobal': 'window.theGlobal'
             });
 
-            APRDefine('globals-and-locals', [
+            Define('globals-and-locals', [
                 'theGlobal',
                 'theLocal'
             ], function (theGlobal, theLocal) {
@@ -143,16 +143,16 @@ test('/lib/APRDefine.js', function (t) {
         t.test('Should return a custom value.', {'timeout': 3000}, function (st) {
 
             removeScripts(
-                'script[src="/assets/APRDefine-test-global.js"]'
+                'script[src="/assets/Define-test-global.js"]'
             );
 
             delete window.theGlobal;
             delete window.theOtherGlobal;
 
-            APRDefine.clean();
+            Define.clean();
 
-            APRDefine.addFiles({
-                'theGlobal': '/assets/APRDefine-test-global.js'
+            Define.addFiles({
+                'theGlobal': '/assets/Define-test-global.js'
             }).load({
 
                 'theGlobal': function (error, data) {
@@ -168,13 +168,13 @@ test('/lib/APRDefine.js', function (t) {
 
                     st.is(data.event instanceof Event, true);
 
-                    APRDefine(data.id, window.theOtherGlobal = {});
+                    Define(data.id, window.theOtherGlobal = {});
 
                 }
 
             });
 
-            APRDefine('modifying-the-value', ['theGlobal'], function (theGlobal) {
+            Define('modifying-the-value', ['theGlobal'], function (theGlobal) {
 
                 st.is(theGlobal, window.theOtherGlobal);
                 st.pass('Value has changed.');
@@ -189,16 +189,16 @@ test('/lib/APRDefine.js', function (t) {
         }, function (st) {
 
             removeScripts(
-                'script[src="/assets/APRDefine-test-not-a-function.js"]'
+                'script[src="/assets/Define-test-not-a-function.js"]'
             );
 
-            APRDefine.clean();
+            Define.clean();
 
-            APRDefine.addFiles({
-                'not-a-function': '/assets/APRDefine-test-not-a-function.js'
+            Define.addFiles({
+                'not-a-function': '/assets/Define-test-not-a-function.js'
             });
 
-            APRDefine('caller', ['not-a-function'], function (notAFunction) {
+            Define('caller', ['not-a-function'], function (notAFunction) {
 
                 st.deepEquals(notAFunction, {
                     'an': 'object'
@@ -215,18 +215,18 @@ test('/lib/APRDefine.js', function (t) {
         }, function (st) {
 
             removeScripts(
-                'script[src="/assets/APRDefine-test-recursive-a.js"], ' +
-            'script[src="/assets/APRDefine-test-recursive-b.js"]'
+                'script[src="/assets/Define-test-recursive-a.js"], ' +
+            'script[src="/assets/Define-test-recursive-b.js"]'
             );
 
-            APRDefine.clean();
+            Define.clean();
 
-            APRDefine.addFiles({
-                'recursive-a': '/assets/APRDefine-test-recursive-a.js',
-                'recursive-b': '/assets/APRDefine-test-recursive-b.js'
+            Define.addFiles({
+                'recursive-a': '/assets/Define-test-recursive-a.js',
+                'recursive-b': '/assets/Define-test-recursive-b.js'
             });
 
-            APRDefine('recursive', ['recursive-a', 'recursive-b'], function (a, b) {
+            Define('recursive', ['recursive-a', 'recursive-b'], function (a, b) {
 
                 st.is(a, b);
 
@@ -240,12 +240,12 @@ test('/lib/APRDefine.js', function (t) {
 
         t.test('Should load anything (not just scripts).', function (st) {
 
-            var url = '/assets/APRDefine-test-non-script.css';
+            var url = '/assets/Define-test-non-script.css';
             var tagName = 'link';
 
             removeScripts('link[href="' + url + '"]');
 
-            APRDefine.addFiles({
+            Define.addFiles({
                 // Tag names are passed in the urls this way:
                 'css': tagName + ' ' + url
             }).load({
@@ -257,12 +257,12 @@ test('/lib/APRDefine.js', function (t) {
                  */
                 'css': function (error, data) {
 
-                    APRDefine(data.id);
+                    Define(data.id);
 
                 }
             });
 
-            APRDefine('load-any-file', ['css'], function (css) {
+            Define('load-any-file', ['css'], function (css) {
 
                 st.is(css, void 0);
                 st.end();
@@ -275,16 +275,16 @@ test('/lib/APRDefine.js', function (t) {
             st) {
 
             removeScripts(
-                'script[src="/assets/APRDefine-test-multiple.js"]'
+                'script[src="/assets/Define-test-multiple.js"]'
             );
 
-            APRDefine.addFiles({
-                'multiple': '/assets/APRDefine-test-multiple.js'
+            Define.addFiles({
+                'multiple': '/assets/Define-test-multiple.js'
             });
 
-            APRDefine.load('multiple');
-            // "object", "null" and "undefined" are defined in APRDefine-test-multiple.js
-            APRDefine('load-string', ['object', 'null', 'undefined'], function () {
+            Define.load('multiple');
+            // "object", "null" and "undefined" are defined in Define-test-multiple.js
+            Define('load-string', ['object', 'null', 'undefined'], function () {
 
                 st.pass();
                 st.end();
@@ -295,7 +295,7 @@ test('/lib/APRDefine.js', function (t) {
 
         t.test('Should ignore invalid dependency ids.', function (st) {
 
-            APRDefine('null-id', null, function (value) {
+            Define('null-id', null, function (value) {
 
                 st.is(typeof value, 'undefined');
                 st.pass();
@@ -312,22 +312,22 @@ test('/lib/APRDefine.js', function (t) {
             var element = document.createElement('div');
 
             removeScripts(
-                'script[src="/assets/APRDefine-test-main.js"]',
-                'script[src="/assets/APRDefine-test-multiple.js"]'
+                'script[src="/assets/Define-test-main.js"]',
+                'script[src="/assets/Define-test-multiple.js"]'
             );
 
-            element.setAttribute('data-module-main', '/assets/APRDefine-test-main.js');
-            element.setAttribute('data-module-example', '/assets/APRDefine-test-multiple.js');
-            element.setAttribute('data-APR-Define', JSON.stringify({
+            element.setAttribute('data-module-main', '/assets/Define-test-main.js');
+            element.setAttribute('data-module-example', '/assets/Define-test-multiple.js');
+            element.setAttribute('data-just-Define', JSON.stringify({
                 'main': 'script [data-module-main]',
                 'some modules': '[data-module-example]'
             }));
 
             document.body.appendChild(element);
 
-            APRDefine.init(); // This is called when APRDefine loads.
+            Define.init(); // This is called when Define loads.
 
-            APRDefine('on-load-main', 'index', function () {
+            Define('on-load-main', 'index', function () {
 
                 st.pass('"some modules" were registered, but only "main" loaded ' +
                 'and called everything from there.');
@@ -345,6 +345,6 @@ test('/lib/APRDefine.js', function (t) {
 
 test.onFinish(function () {
 
-    delete window.APRDefine;
+    delete window.Define;
 
 });

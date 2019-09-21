@@ -1,4 +1,4 @@
-define(['./core'], function (APR) {
+define(['./core'], function (just) {
 
     'use strict';
 
@@ -6,7 +6,7 @@ define(['./core'], function (APR) {
      * Checks if an object has no direct keys.
      *
      * @namespace
-     * @memberof APR
+     * @memberof just
      * @param {*} [object=Object(object)] - Some object.
      * @return {boolean} `true` if the object doesn't contain owned properties,
      *     `false` otherwise.
@@ -31,6 +31,6 @@ define(['./core'], function (APR) {
 
     };
 
-    return APR.setFn('isEmptyObject', isEmptyObject);
+    return just.setFn('isEmptyObject', isEmptyObject);
 
 });

@@ -1,4 +1,4 @@
-define(['./core'], function (APR) {
+define(['./core'], function (just) {
 
     'use strict';
 
@@ -6,7 +6,7 @@ define(['./core'], function (APR) {
      * Checks if `value` looks like the other values.
      *
      * @namespace
-     * @memberof APR
+     * @memberof just
      * @param {*} value - Comparison value.
      * @param {...*} [otherValues] - Values to check against.
      *
@@ -34,11 +34,11 @@ define(['./core'], function (APR) {
 
     };
 
-    Object.defineProperties(check, /** @lends APR.check */{
+    Object.defineProperties(check, /** @lends just.check */{
         /**
          *  A custom message to throw.
          *
-         * @typedef {string} APR.check~throwable_message
+         * @typedef {string} just.check~throwable_message
          */
 
         /**
@@ -46,7 +46,7 @@ define(['./core'], function (APR) {
          * throws if the result is `false`.
          *
          * @function
-         * @this APR.check~throwable_message
+         * @this just.check~throwable_message
          * @param {*} value - Comparison value.
          * @param {...*} [otherValues] - Values to check against.
          *
@@ -63,7 +63,7 @@ define(['./core'], function (APR) {
                 ) : this);
 
                 /* eslint-disable padded-blocks */
-                if (!APR.check.apply(this, args)) {
+                if (!check.apply(this, args)) {
                     throw new TypeError(throwableMessage);
                 }
                 /* eslint-enable padded-blocks */
@@ -75,6 +75,6 @@ define(['./core'], function (APR) {
 
     });
 
-    return APR.setFn('check', check);
+    return just.setFn('check', check);
 
 });

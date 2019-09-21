@@ -1,11 +1,11 @@
-define(['./core', './defaults'], function (APR, defaults) {
+define(['./core', './defaults'], function (just, defaults) {
 
     'use strict';
 
     /**
-     * @typedef {function} APR.eachProperty~fn
+     * @typedef {function} just.eachProperty~fn
      *
-     * @this thisArg from {@link APR.eachProperty|the main function}.
+     * @this thisArg from {@link just.eachProperty|the main function}.
      *
      * @param {*} value - The current value.
      * @param {*} key - The current key.
@@ -20,12 +20,12 @@ define(['./core', './defaults'], function (APR, defaults) {
      * is returned from that function, the loop will stop.
      *
      * @namespace
-     * @memberof APR
+     * @memberof just
      * @param {*} object - Some value.
-     * @param {APR.eachProperty~fn} fn - The function that will be
+     * @param {just.eachProperty~fn} fn - The function that will be
      *     called on each iteration.
      * @param {*} [thisArg] - `this` for `fn`.
-     * @param {object} [opts={@link APR.eachProperty.DEFAULT_OPTIONS}] - Some options.
+     * @param {object} [opts={@link just.eachProperty.DEFAULT_OPTIONS}] - Some options.
      *
      * @throws {TypeError} If `fn` is not a function.
      * @return {boolean} `true` if the function was interrupted, `false` otherwise.
@@ -65,20 +65,20 @@ define(['./core', './defaults'], function (APR, defaults) {
 
     };
 
-    Object.defineProperties(eachProperty, /** @lends APR.eachProperty */{
+    Object.defineProperties(eachProperty, /** @lends just.eachProperty */{
         /**
-         * Options for {@link APR.eachProperty}.
+         * Options for {@link just.eachProperty}.
          *
-         * @typedef {object} APR.eachProperty~options
+         * @typedef {object} just.eachProperty~options
          * @property {boolean} [addNonOwned=false] - Include non-owned properties.
          *     `false`: iterate only the owned properties.
          *     `true`: iterate the (enumerable) inherited properties too.
          */
 
         /**
-         * Default options for {@link APR.eachProperty}.
+         * Default options for {@link just.eachProperty}.
          *
-         * @type {APR.eachProperty~options}
+         * @type {just.eachProperty~options}
          * @readonly
          */
         'DEFAULT_OPTIONS': {
@@ -93,6 +93,6 @@ define(['./core', './defaults'], function (APR, defaults) {
 
     });
 
-    return APR.setFn('eachProperty', eachProperty);
+    return just.setFn('eachProperty', eachProperty);
 
 });

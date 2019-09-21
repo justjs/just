@@ -144,9 +144,9 @@ const options = {
 			'filePath': path,
 			'aggressiveOptimizations': true,
 			'wrap': {
-				'start': '(function(fn){if(typeof define==="function"&&define.amd)define("APR",[],fn);else if(typeof exports==="object"&&Object(module).exports){module.exports=fn()}else{this.APR=fn()}}).call(this,function(){\n' +
+				'start': '(function(fn){if(typeof define==="function"&&define.amd)define("just",[],fn);else if(typeof exports==="object"&&Object(module).exports){module.exports=fn()}else{this.just=fn()}}).call(this,function(){\n' +
 					'/* eslint-disable no-unused-vars */\n',
-				'end': '\n\treturn APR;\n});'
+				'end': '\n\treturn just;\n});'
 			},
 			'escodegen': {
 				// Some comments still being removed
@@ -201,8 +201,8 @@ module.exports = {
 			'lib/flatten',
 			'lib/flattenArray',
 			'lib/flattenObjectLiteral',
-			'lib/APRDefine',
-			'lib/APRLocalStorage',
+			'lib/Define',
+			'lib/LocalStorage',
 			'lib/ClassList'
 		].map(file => file.replace(/\.?\/?/, './src/') + '.js'),
 		/** @type {string} */

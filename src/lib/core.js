@@ -47,21 +47,21 @@ define(function () {
      */
 
     /**
-     * @mixin APR
+     * @mixin just
      * @global
      */
-    var APR = {};
+    var just = {};
 
-    return Object.defineProperties(APR, /** @mixes APR */{
+    return Object.defineProperties(just, /** @mixes just */{
         // 'version': '%{CORE_VERSION}%',
         /**
-         * Defines or modifies a property in {@link APR}.
+         * Defines or modifies a property in {@link just}.
          *
          * @package
          * @readOnly
          * @function
          *
-         * @param {!string} name - The name of the APR property.
+         * @param {!string} name - The name of the just property.
          * @param {!propertyDescriptor|*} value - The value of the
          *     property or a {@link propertyDescriptor}.
          * @return {*} The added property.
@@ -83,21 +83,21 @@ define(function () {
 
                 }
 
-                Object.defineProperty(APR, name, descriptor);
+                Object.defineProperty(just, name, descriptor);
 
-                return APR[name];
+                return just[name];
 
             }
         },
 
         /**
-         * Sets a function in {@link APR}.
+         * Sets a function in {@link just}.
          *
          * @function
          * @package
          * @readOnly
          *
-         * @param {!string} name - The name of the APR property.
+         * @param {!string} name - The name of the just property.
          * @param {!function} fn - Some function.
          *
          * @return {!function} fn.
@@ -105,18 +105,18 @@ define(function () {
         'setFn': {
             'value': function setFn (name, fn) {
 
-                return APR.setProperty(name, fn);
+                return just.setProperty(name, fn);
 
             }
         },
 
         /**
-         * Sets a module in {@link APR}.
+         * Sets a module in {@link just}.
          *
          * @package
          * @readOnly
          * @function
-         * @param {!string} name - The name of the APR property.
+         * @param {!string} name - The name of the just property.
          * @param {!function} fn - Some constructor.
          *
          * @returns {!function} fn.
@@ -124,7 +124,7 @@ define(function () {
         'setModule': {
             'value': function setModule (name, fn) {
 
-                return APR.setFn(name, fn);
+                return just.setFn(name, fn);
 
             }
         }

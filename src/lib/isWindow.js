@@ -1,4 +1,4 @@
-define(['./core'], function (APR) {
+define(['./core'], function (just) {
 
     'use strict';
 
@@ -6,7 +6,7 @@ define(['./core'], function (APR) {
      * Checks if an object is a window by checking `window` or some common properties of `window`.
      *
      * @namespace
-     * @memberof APR
+     * @memberof just
      * @param {*} object - Some object.
      * @return {boolean} `true` if `object` is `window` or has the common properties,
      *     `false` otherwise.
@@ -21,6 +21,6 @@ define(['./core'], function (APR) {
 
     };
 
-    return APR.setFn('isWindow', isWindow);
+    return just.setFn('isWindow', isWindow);
 
 });

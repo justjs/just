@@ -1,4 +1,4 @@
-define(['./core'], function (APR) {
+define(['./core'], function (just) {
 
     'use strict';
 
@@ -7,7 +7,7 @@ define(['./core'], function (APR) {
      * returns an array.
      *
      * @namespace
-     * @memberof APR
+     * @memberof just
      * @param {DOMString} selector - A CSS selector.
      * @param {Node} [parent=document] - The parent node.
      *
@@ -19,6 +19,6 @@ define(['./core'], function (APR) {
 
     };
 
-    return APR.setFn('findElements', findElements);
+    return just.setFn('findElements', findElements);
 
 });

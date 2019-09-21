@@ -3,7 +3,7 @@ define([
     './defaults',
     './eachProperty'
 ], function (
-    APR,
+    just,
     defaults,
     eachProperty
 ) {
@@ -15,18 +15,18 @@ define([
      * in the browser.
      *
      * @class
-     * @memberof APR
+     * @memberof just
      * @param {boolean} [consent=false] - A boolean indicating that
      *     the user allowed the access to some kind of local storage.
      * @param {boolean} [isExplicit=typeof consent !== 'undefined'] -
      *     A value to indicate if the given consent was specified by the
      *     user.
      */
-    var LocalStorage = function APRLocalStorage (consent, isExplicit) {
+    var LocalStorage = function justLocalStorage (consent, isExplicit) {
 
         /* eslint-disable padded-blocks */
-        if (!(this instanceof APRLocalStorage)) {
-            return new APRLocalStorage(consent, isExplicit);
+        if (!(this instanceof justLocalStorage)) {
+            return new justLocalStorage(consent, isExplicit);
         }
         /* eslint-enable padded-blocks */
 
@@ -41,7 +41,7 @@ define([
 
     };
 
-    Object.defineProperties(LocalStorage, /** @lends APR.LocalStorage */{
+    Object.defineProperties(LocalStorage, /** @lends just.LocalStorage */{
         /**
          * The DoNotTrack header formatted as `true`, `false` or `undefined`
          * (for "unspecified").
@@ -114,11 +114,11 @@ define([
         }
     });
 
-    Object.defineProperties(LocalStorage.prototype, /** @lends APR.LocalStorage.prototype */{
+    Object.defineProperties(LocalStorage.prototype, /** @lends just.LocalStorage.prototype */{
         /**
          * Options/flags for the creation of the cookie.
          *
-         * @typedef {!object} APR.LocalStorage~setCookie_options
+         * @typedef {!object} just.LocalStorage~setCookie_options
          * @property {string} [secure=location.protocol === 'https:']
          *     "secure" flag for the cookie.
          */
@@ -131,7 +131,7 @@ define([
          * @param {string} value - The value of the cookie.
          * @param {!object} [opts=DEFAULT_OPTIONS]
          *     Cookie options.
-         * @property {APR.LocalStorage~setCookie_options} DEFAULT_OPTIONS
+         * @property {just.LocalStorage~setCookie_options} DEFAULT_OPTIONS
          *     Default options/flags.
          *
          * @return {boolean} `true` if was set, `false` otherwise.
@@ -197,7 +197,7 @@ define([
          * @function
          * @param {string} name - The name of the cookie.
          * @param {object} [opts=DEFAULT_OPTIONS] - Some extra options.
-         * @property {APR.LocalStorage~setCookie_options} DEFAULT_OPTIONS - A read only property.
+         * @property {just.LocalStorage~setCookie_options} DEFAULT_OPTIONS - A read only property.
          *
          * @return {boolean} `true` if was overriden or the cookie
          *     does not exist, `false` otherwise.
@@ -231,14 +231,14 @@ define([
         /**
          * Any of "cookie", "localStorage", "sessionStorage"...
          *
-         * @typedef {string} APR.LocalStorage~isStorageAvailable_type
+         * @typedef {string} just.LocalStorage~isStorageAvailable_type
          */
 
         /**
          * Tests if the specified storage does not throw.
          *
          * @function
-         * @param {APR.LocalStorage~isStorageAvailable_type} type
+         * @param {just.LocalStorage~isStorageAvailable_type} type
          *     A type of storage.
          * @param {string} [tempKey='_'] - Storage will save this key with `tempValue` as a value.
          * @param {string} [tempValue='_'] - Storage will save this value with `tempKey` as a key.
@@ -297,6 +297,6 @@ define([
         }
     });
 
-    return APR.setModule('LocalStorage', LocalStorage);
+    return just.setModule('LocalStorage', LocalStorage);
 
 });

@@ -1,10 +1,13 @@
 # All config files in the root directory.
 *.js
+
 # Except src and test files.
 !/src/**/*.js
 !/test/**/*.js
 !/dist/**/*.js
+
 # Ignore minified files.
 /dist/**/*.min.js
+
 # Ignore examples too.
 /test/server/**/*.js

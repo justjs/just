@@ -4,7 +4,7 @@ define([
     './eachProperty',
     './defaults'
 ], function (
-    APR,
+    just,
     check,
     eachProperty,
     defaults
@@ -53,10 +53,10 @@ define([
          * Flattens an object of objects.
          *
          * @namespace
-         * @memberof APR
+         * @memberof just
          * @param {!object} object - Some object literal.
          * @param {?object} [
-         *     opts={@link APR.flattenObjectLiteral.DEFAULT_OPTIONS}
+         *     opts={@link just.flattenObjectLiteral.DEFAULT_OPTIONS}
          * ]
          * @throws {TypeError} If `object` is not a an object literal.
          *
@@ -75,18 +75,18 @@ define([
 
     };
 
-    Object.defineProperties(flattenObjectLiteral, /** @lends APR.flattenObjectLiteral */{
+    Object.defineProperties(flattenObjectLiteral, /** @lends just.flattenObjectLiteral */{
         /**
-         * Options for {@link APR.flattenObjectLiteral}.
+         * Options for {@link just.flattenObjectLiteral}.
          *
-         * @typedef {object} APR.flattenObjectLiteral~options
+         * @typedef {object} just.flattenObjectLiteral~options
          * @property {String} [separator=""] - A string to join the keys.
          */
 
         /**
-         * Default options for {@link APR.flattenObjectLiteral}.
+         * Default options for {@link just.flattenObjectLiteral}.
          *
-         * @type {APR.flattenObjectLiteral~options}
+         * @type {just.flattenObjectLiteral~options}
          */
         'DEFAULT_OPTIONS': {
             'get': function () {
@@ -99,6 +99,6 @@ define([
         }
     });
 
-    return APR.setFn('flattenObjectLiteral', flattenObjectLiteral);
+    return just.setFn('flattenObjectLiteral', flattenObjectLiteral);
 
 });

@@ -1,9 +1,9 @@
 var test = require('tape');
-var APRLocalStorage = require('../../src/lib/APRLocalStorage');
+var LocalStorage = require('../../src/lib/LocalStorage');
 
-test('/lib/APRLocalStorage.js', function (t) {
+test('/lib/LocalStorage.js', function (t) {
 
-    var cookiesAreEnabled = APRLocalStorage(true).isStorageAvailable('cookies');
+    var cookiesAreEnabled = LocalStorage(true).isStorageAvailable('cookies');
     var passIfCookiesAreDisabled = function (t) {
 
         // TODO: Mock
@@ -27,21 +27,21 @@ test('/lib/APRLocalStorage.js', function (t) {
             c,
             d;
 
-        st.is(APRLocalStorage() instanceof APRLocalStorage, true);
+        st.is(LocalStorage() instanceof LocalStorage, true);
 
-        a = APRLocalStorage(true);
+        a = LocalStorage(true);
         st.is(a.consent, true);
         st.is(a.isExplicit, true);
 
-        b = APRLocalStorage();
+        b = LocalStorage();
         st.is(b.consent, false, 'Defaults to false.');
         st.is(b.isExplicit, false, 'Defaults to false.');
 
-        c = APRLocalStorage(null);
+        c = LocalStorage(null);
         st.is(c.consent, false, 'Values are converted to booleans.');
         st.is(c.isExplicit, true, 'consent is not `undefined`, so true is expected.');
 
-        d = APRLocalStorage(null, false);
+        d = LocalStorage(null, false);
         st.is(d.consent, false);
         st.is(d.isExplicit, false);
 
@@ -55,10 +55,10 @@ test('/lib/APRLocalStorage.js', function (t) {
 
         document.cookie = 'a=b;';
 
-        st.is(APRLocalStorage.cookieExists('a'), true);
-        st.is(APRLocalStorage.cookieExists('b'), false);
-        st.is(APRLocalStorage.cookieExists('a=b'), true);
-        st.is(APRLocalStorage.cookieExists('a=d'), false);
+        st.is(LocalStorage.cookieExists('a'), true);
+        st.is(LocalStorage.cookieExists('b'), false);
+        st.is(LocalStorage.cookieExists('a=b'), true);
+        st.is(LocalStorage.cookieExists('a=d'), false);
 
         st.end();
 
@@ -70,14 +70,14 @@ test('/lib/APRLocalStorage.js', function (t) {
 
         document.cookie = 'a=b;';
 
-        st.is(APRLocalStorage.getCookie('a'), 'b');
-        st.is(APRLocalStorage.getCookie('b'), null);
-        st.is(APRLocalStorage.getCookie('a=b'), null);
+        st.is(LocalStorage.getCookie('a'), 'b');
+        st.is(LocalStorage.getCookie('b'), null);
+        st.is(LocalStorage.getCookie('a=b'), null);
 
         if (!passIfCookiesAreDisabled(st)) {
 
             document.cookie = 'a=;';
-            st.is(APRLocalStorage.getCookie('a'), '',
+            st.is(LocalStorage.getCookie('a'), '',
                 'Should return an empty string when a cookie doesn\'t exist.');
 
         }
@@ -88,14 +88,14 @@ test('/lib/APRLocalStorage.js', function (t) {
 
     t.test('Should return the DoNotTrack header in a common format.', function (st) {
 
-        st.is(/boolean|undefined/.test(typeof APRLocalStorage.DNT), true);
+        st.is(/boolean|undefined/.test(typeof LocalStorage.DNT), true);
         st.end();
 
     });
 
     t.test('Should NOT use the local storage.', function (st) {
 
-        var aprLocalStorage = APRLocalStorage(false);
+        var aprLocalStorage = LocalStorage(false);
 
         st.test('Should NOT set a cookie.', function (sst) {
 
@@ -104,7 +104,7 @@ test('/lib/APRLocalStorage.js', function (t) {
             document.cookie = 'a=; expires=' + new Date(0).toGMTString();
 
             sst.is(aprLocalStorage.setCookie('a', 'b'), false);
-            sst.is(APRLocalStorage.cookieExists('a=b'), false);
+            sst.is(LocalStorage.cookieExists('a=b'), false);
 
             sst.end();
 
@@ -117,7 +117,7 @@ test('/lib/APRLocalStorage.js', function (t) {
             document.cookie = 'a=b;';
 
             sst.is(aprLocalStorage.removeCookie('a'), false);
-            sst.is(APRLocalStorage.cookieExists('a'), true);
+            sst.is(LocalStorage.cookieExists('a'), true);
 
             sst.end();
 
@@ -139,7 +139,7 @@ test('/lib/APRLocalStorage.js', function (t) {
 
     t.test('Should use the local storage.', function (st) {
 
-        var aprLocalStorage = APRLocalStorage(true);
+        var aprLocalStorage = LocalStorage(true);
 
         /** @TODO: Mock */
         st.test('Should allow to change what\'s being saved in ' +
@@ -166,7 +166,7 @@ test('/lib/APRLocalStorage.js', function (t) {
 
                 if (storageType === 'cookies') {
 
-                    if (APRLocalStorage.getCookie(k) === v) {
+                    if (LocalStorage.getCookie(k) === v) {
 
                         sst.fail('The cookie wasn\'t removed.');
 
@@ -224,7 +224,7 @@ test('/lib/APRLocalStorage.js', function (t) {
             document.cookie = 'a=; expires=' + new Date(0).toGMTString();
 
             sst.is(aprLocalStorage.setCookie('a', 'b'), true);
-            sst.is(APRLocalStorage.cookieExists('a=b'), true);
+            sst.is(LocalStorage.cookieExists('a=b'), true);
 
             sst.end();
 
@@ -237,7 +237,7 @@ test('/lib/APRLocalStorage.js', function (t) {
             document.cookie = 'a=b;';
 
             sst.is(aprLocalStorage.removeCookie('a'), true);
-            sst.is(APRLocalStorage.cookieExists('a'), false);
+            sst.is(LocalStorage.cookieExists('a'), false);
             sst.is(aprLocalStorage.removeCookie('a'), true,
                 'When the cookie does not exist, `true` is returned.');
 

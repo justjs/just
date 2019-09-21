@@ -1,4 +1,4 @@
-define(['./core', './findElements'], function (APR, findElements) {
+define(['./core', './findElements'], function (just, findElements) {
 
     'use strict';
 
@@ -6,7 +6,7 @@ define(['./core', './findElements'], function (APR, findElements) {
      * Add an event listener to multiple elements.
      *
      * @namespace
-     * @memberof APR
+     * @memberof just
      * @param {string|Element[]} elements - The targets.
      * @param {string|string[]} eventNames - The event types.
      * @param {function} listener - The handler for the event.
@@ -43,6 +43,6 @@ define(['./core', './findElements'], function (APR, findElements) {
 
     };
 
-    return APR.setFn('on', on);
+    return just.setFn('on', on);
 
 });

@@ -9,7 +9,7 @@ define([
     './stringToJSON',
     './defaults'
 ], function (
-    APR,
+    just,
     access,
     eachProperty,
     loadElement,
@@ -29,7 +29,7 @@ define([
     var definedModules = {};
     var privateStore = createPrivateKey();
     /**
-     * A module loader: it loads {@link APR.Define~file|files} in order (when needed) and
+     * A module loader: it loads {@link just.Define~file|files} in order (when needed) and
      * execute them when all his dependencies became available.
      *
      * <br/>
@@ -52,27 +52,27 @@ define([
      * </aside>
      *
      * @class
-     * @memberof APR
+     * @memberof just
      * @param {!string} id - The module id.
      * @param {string[]|string} dependencyIDs - Required module ids.
      * @param {*} value - The module value.
      *
      * @example
-     * var files = APR.Define.findInDocument('data-files');
+     * var files = just.Define.findInDocument('data-files');
      * var fileIDs = Object.keys(files);
      *
-     * APR.Define.load(files);
-     * APR.Define('some id', fileIDs, function (file1, file2, ...) {
+     * just.Define.load(files);
+     * just.Define('some id', fileIDs, function (file1, file2, ...) {
      *     // Loads after all ids have been defined.
      * });
      */
-    var Define = function APRDefine (id, dependencyIDs, value) {
+    var Define = function justDefine (id, dependencyIDs, value) {
 
         var handler;
 
         /* eslint-disable padded-blocks */
-        if (!(this instanceof APRDefine)) {
-            return new APRDefine(id, dependencyIDs, value);
+        if (!(this instanceof justDefine)) {
+            return new justDefine(id, dependencyIDs, value);
         }
 
         if (typeof id !== 'string') {
@@ -288,21 +288,21 @@ define([
 
     }
 
-    Object.defineProperties(Define, /** @lends APR.Define */{
+    Object.defineProperties(Define, /** @lends just.Define */{
         /**
-         * A function to be called when the {@link APR.Define~file|file} load.
+         * A function to be called when the {@link just.Define~file|file} load.
          *
-         * @typedef {function} APR.Define~load_listener
+         * @typedef {function} just.Define~load_listener
          * @param {!Error} error - An error if the url is not being loaded.
          * @param {!object} data - Some metadata.
          * @param {!Event} data.event - The triggered event: "load" or "error".
-         * @param {!APR.Define~id} data.moduleID - The id passed to {@link APR.Define}.
+         * @param {!just.Define~id} data.moduleID - The id passed to {@link just.Define}.
          * @param {!url} data.url - The loaded url.
          */
 
         /**
-         * Default {@link APR.Define~load_listener|listener} for the load event.
-         * @type {APR.Define~load_listener}
+         * Default {@link just.Define~load_listener|listener} for the load event.
+         * @type {just.Define~load_listener}
          * @readonly
          */
         'DEFAULT_LOAD_LISTENER': {
@@ -325,7 +325,7 @@ define([
         },
 
         /**
-         * Finds {@link APR.Define.files|files} within the document, adds them, and
+         * Finds {@link just.Define.files|files} within the document, adds them, and
          * if some is called "main", it loads it.
          * <br/>
          * <aside class='note'>
@@ -339,7 +339,7 @@ define([
         'init': {
             'value': function () {
 
-                var files = Define.findInDocument('data-APR-Define');
+                var files = Define.findInDocument('data-just-Define');
 
                 Define.addFiles(files);
 
@@ -356,13 +356,13 @@ define([
         },
 
         /**
-         * A function to load {@link APR.Define~file|files} by ids.
+         * A function to load {@link just.Define~file|files} by ids.
          *
          * @function
-         * @param {APR.Define~file_id|APR.Define~file_id[]|Object.<
-         *     APR.Define~file_id,
-         *     APR.Define~load_listener
-         * >} value - {@link APR.Define~file_id|File ids}.
+         * @param {just.Define~file_id|just.Define~file_id[]|Object.<
+         *     just.Define~file_id,
+         *     just.Define~load_listener
+         * >} value - {@link just.Define~file_id|File ids}.
          * @chainable
          */
         'load': {
@@ -398,14 +398,14 @@ define([
         /**
          * An alias for a url.
          *
-         * @typedef {string} APR.Define~file_id
+         * @typedef {string} just.Define~file_id
          */
 
         /**
          * Any element that references an external source, like an
          * &lt;script&gt; or a &lt;link&gt;.
          *
-         * @typedef {string} APR.Define~file
+         * @typedef {string} just.Define~file
          */
 
         /**
@@ -413,7 +413,7 @@ define([
          *
          * By default, "http://..." is the same as "script http://..."
          *
-         * @typedef {string} APR.Define~files_expression
+         * @typedef {string} just.Define~files_expression
          *
          * @example <caption>A url</caption>
          * "http://..."
@@ -426,8 +426,8 @@ define([
          * Aliases for urls.
          *
          * @type {Object.<
-         *     APR.Define~file_id,
-         *     APR.Define~files_expression
+         *     just.Define~file_id,
+         *     just.Define~files_expression
          * >}
          */
         'files': {
@@ -437,10 +437,10 @@ define([
 
         /**
          * A function that returns the module value or a string
-         * splitted by '.' that will be {@link APR~access|accessed}
+         * splitted by '.' that will be {@link just~access|accessed}
          * from `window`.
          *
-         * @typedef {string|function} APR.Define~globals_expression
+         * @typedef {string|function} just.Define~globals_expression
          *
          * @example <caption>A function.</caption>
          * function () { return 1; } // The module value is 1.
@@ -454,8 +454,8 @@ define([
          * Aliases for ids.
          *
          * @type {Object.<
-         *     APR.Define~id,
-         *     APR.Define~globals_expression
+         *     just.Define~id,
+         *     just.Define~globals_expression
          * >}
          */
         'globals': {
@@ -464,11 +464,11 @@ define([
         },
 
         /**
-         * Assigns values to {@link APR.Define.globals|the globals property}.
+         * Assigns values to {@link just.Define.globals|the globals property}.
          *
          * @function
          * @chainable
-         * @param {APR.Define.globals} value - {@link APR.Define.globals|Globals}.
+         * @param {just.Define.globals} value - {@link just.Define.globals|Globals}.
          */
         'addGlobals': {
             'value': function (value) {
@@ -481,11 +481,11 @@ define([
         },
 
         /**
-         * Assigns values to {@link APR.Define.files|the files property}.
+         * Assigns values to {@link just.Define.files|the files property}.
          *
          * @function
          * @chainable
-         * @param {APR.Define.files} value - {@link APR.Define.files|Files}.
+         * @param {just.Define.files} value - {@link just.Define.files|Files}.
          */
         'addFiles': {
             'value': function (value) {
@@ -501,7 +501,7 @@ define([
          * Checks if module has been defined.
          *
          * @function
-         * @param {APR.Define~id} id - The id passed to {@link APR.Define}.
+         * @param {just.Define~id} id - The id passed to {@link just.Define}.
          * @return {boolean} `true` if defined, `false` otherwise.
          */
         'isDefined': {
@@ -525,7 +525,7 @@ define([
         },
 
         /**
-         * Finds {@link APR.Define.files|files} within the document
+         * Finds {@link just.Define.files|files} within the document
          * by selecting all the elements that contain an specific
          * attribute and parsing that attribute as a JSON.
          * <br/>
@@ -539,7 +539,7 @@ define([
          *
          * @function
          * @param {string} attributeName - The attribute which defines the
-         *     {@link APR.Define.files|files} to be loaded.
+         *     {@link just.Define.files|files} to be loaded.
          * @param {Element} [container=document]
          *
          * @example
@@ -553,7 +553,7 @@ define([
          * findInDocument('data-files');
          * // Should return {a: 'link a.css', b: 'script b.js'}.
          *
-         * @return {!APR.Define.files}
+         * @return {!just.Define.files}
          */
         'findInDocument': {
             'value': function (attributeName, container) {
@@ -578,6 +578,6 @@ define([
 
     });
 
-    return APR.setModule('Define', Define.init());
+    return just.setModule('Define', Define.init());
 
 });

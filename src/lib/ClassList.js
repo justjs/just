@@ -1,4 +1,4 @@
-define(['./core', './defaults'], function (APR, defaults) {
+define(['./core', './defaults'], function (just, defaults) {
 
     'use strict';
 
@@ -6,7 +6,7 @@ define(['./core', './defaults'], function (APR, defaults) {
      * Chainable methods for the classList property.
      *
      * @namespace
-     * @memberof APR
+     * @memberof just
      *
      * @constructor
      * @param {Element} element - The target.
@@ -32,7 +32,7 @@ define(['./core', './defaults'], function (APR, defaults) {
 
     };
 
-    Object.defineProperties(ClassList, /** @lends APR.ClassList */{
+    Object.defineProperties(ClassList, /** @lends just.ClassList */{
 
         /**
          * Simulate Element.classList.prototype.method.apply(element, args)
@@ -85,7 +85,7 @@ define(['./core', './defaults'], function (APR, defaults) {
 
     });
 
-    Object.defineProperties(ClassList.prototype, /** @lends APR.ClassList.prototype */{
+    Object.defineProperties(ClassList.prototype, /** @lends just.ClassList.prototype */{
 
         /**
          * @alias Element.classList.add
@@ -164,7 +164,7 @@ define(['./core', './defaults'], function (APR, defaults) {
 
     });
 
-    return APR.setFn('ClassList', ClassList);
+    return just.setFn('ClassList', ClassList);
 
 });
 

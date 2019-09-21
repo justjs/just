@@ -4,7 +4,7 @@ define([
     './check',
     './isEmptyObject'
 ], function (
-    APR,
+    just,
     eachProperty,
     check,
     isEmptyObject
@@ -16,7 +16,7 @@ define([
      * Fills an object literal with `data`.
      *
      * @namespace
-     * @memberof APR
+     * @memberof just
      * @param {!object} structure - The structured data to be filled.
      *     If the value of some property is an array, the value gets
      *     pushed to the array.
@@ -93,6 +93,6 @@ define([
 
     };
 
-    return APR.setFn('fill', fill);
+    return just.setFn('fill', fill);
 
 });

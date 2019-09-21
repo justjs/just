@@ -1,4 +1,4 @@
-define(['./core', './check'], function (APR, check) {
+define(['./core', './check'], function (just, check) {
 
     'use strict';
 
@@ -6,7 +6,7 @@ define(['./core', './check'], function (APR, check) {
      * Converts [[k0, v0], {k1: v1}] to {k0: v0, k1: v1}.
      *
      * @namespace
-     * @memberof APR
+     * @memberof just
      * @param {!object[]|!object} array - An array containing sub-arrays
      *     with object literal pairs, or object literals: [[k, v], {k: v}].
      *
@@ -57,6 +57,6 @@ define(['./core', './check'], function (APR, check) {
 
     };
 
-    return APR.setFn('toObjectLiteral', toObjectLiteral);
+    return just.setFn('toObjectLiteral', toObjectLiteral);
 
 });

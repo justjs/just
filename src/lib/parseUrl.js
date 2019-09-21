@@ -1,4 +1,4 @@
-define(['./core'], function (APR) {
+define(['./core'], function (just) {
 
     'use strict';
 
@@ -9,7 +9,7 @@ define(['./core'], function (APR) {
      * weird values in there will give weird results.
      *
      * @namespace
-     * @memberof APR
+     * @memberof just
      * @param {url} [url=window.location.href] - A relative, an absolute or a blob url.
      *
      * @example <caption>An absolute url:</caption>
@@ -122,6 +122,6 @@ define(['./core'], function (APR) {
 
     };
 
-    return APR.setFn('parseUrl', parseUrl);
+    return just.setFn('parseUrl', parseUrl);
 
 });

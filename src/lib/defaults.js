@@ -1,4 +1,4 @@
-define(['./core', './check'], function (APR, check) {
+define(['./core', './check'], function (just, check) {
 
     'use strict';
 
@@ -6,12 +6,12 @@ define(['./core', './check'], function (APR, check) {
      * Checks if `value` looks like `defaultValue`.
      *
      * @namespace
-     * @memberof APR
+     * @memberof just
      * @param {*} value - Any value.
      * @param {*} [defaultValue] - A value with a desired type for `value`.
      *     If an object literal is given, all the keys of `value` will `default`
      *     to his corresponding key in this object.
-     * @param {APR.defaults~options} [opts={@link APR.defaults.DEFAULT_OPTIONS}]
+     * @param {just.defaults~options} [opts={@link just.defaults.DEFAULT_OPTIONS}]
      *     Some options.
      *
      * @example
@@ -96,11 +96,11 @@ define(['./core', './check'], function (APR, check) {
 
     };
 
-    Object.defineProperties(defaults, /** @lends APR.defaults */{
+    Object.defineProperties(defaults, /** @lends just.defaults */{
         /**
-         * Options for {@link APR.defaults}.
+         * Options for {@link just.defaults}.
          *
-         * @typedef {object} APR.defaults~options
+         * @typedef {object} just.defaults~options
          *
          * @property {boolean} ignoreDefaultKeys - If `false` and `defaultValue`
          *     is an object literal, the default keys will be added to `value`
@@ -120,9 +120,9 @@ define(['./core', './check'], function (APR, check) {
          */
 
         /**
-         * Default options for {@link APR.defaults}.
+         * Default options for {@link just.defaults}.
          *
-         * @type {APR.defaults~options}
+         * @type {just.defaults~options}
          * @property {boolean} [ignoreDefaultKeys=false] - Add default keys.
          * @property {boolean} [checkLooks=true] - Check `[]` and `{}`.
          * @property {boolean} [checkDeepLooks=true] - `checkLooks` in literal objects.
@@ -144,6 +144,6 @@ define(['./core', './check'], function (APR, check) {
 
     });
 
-    return APR.setFn('defaults', defaults);
+    return just.setFn('defaults', defaults);
 
 });

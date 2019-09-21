@@ -4,7 +4,7 @@ define([
     './defaults',
     './parseUrl'
 ], function (
-    APR,
+    just,
     findElements,
     defaults,
     parseUrl
@@ -17,18 +17,18 @@ define([
      * found.
      *
      * @namespace
-     * @memberof APR
+     * @memberof just
      * @param {element_tag} tag - A tag name.
      * @param {url} url - The url of the file.
-     * @param {APR.loadElement~handler} [handler={@link APR.loadElement.DEFAULT_HANDLER}]
+     * @param {just.loadElement~handler} [handler={@link just.loadElement.DEFAULT_HANDLER}]
      *     If it's a function: it will be triggered
      *     (without appending the element),
      *     otherwise: the element will be appended to
-     *     {@link APR.head|head}.
-     * @param  {APR.loadElement~listener} [listener] - A function to trigger after
+     *     {@link just.head|head}.
+     * @param  {just.loadElement~listener} [listener] - A function to trigger after
      *     the element is appended.
      *
-     * @return {*} The return of the {@link APR.loadElement~handler|handler}.
+     * @return {*} The return of the {@link just.loadElement~handler|handler}.
      */
     var loadElement = function loadElement (tag, url, listener, handler) {
 
@@ -80,11 +80,11 @@ define([
 
     };
 
-    Object.defineProperties(loadElement, /** @lends APR.loadElement */{
+    Object.defineProperties(loadElement, /** @lends just.loadElement */{
         /**
          * A listener for the "onload" or "onerror" events.
          *
-         * @typedef {function} APR.loadElement~listener
+         * @typedef {function} just.loadElement~listener
          *
          * @this Element
          * @param {!Event} event - The triggered event.
@@ -94,7 +94,7 @@ define([
         /**
          * A custom function to append the created element.
          *
-         * @typedef {function} APR.loadElement~handler
+         * @typedef {function} just.loadElement~handler
          * @this {!Element} - The element that loads the url.
          * @param {?Element} loadedElement - An identical element that has been loaded previously.
          * @param {url} url - The given url to load.
@@ -105,7 +105,7 @@ define([
         /**
          * The handler that will be provided in case that no function is provided.
          *
-         * @type {APR.loadElement~handler}
+         * @type {just.loadElement~handler}
          * @readonly
          * @chainable
          */
@@ -128,7 +128,7 @@ define([
         /**
          * An src-like attribute for an Element.
          *
-         * @typedef {string} APR.loadElement~srcLikeAttribute
+         * @typedef {string} just.loadElement~srcLikeAttribute
          */
 
         /**
@@ -137,7 +137,7 @@ define([
          *
          * @type {Object.<
          *     element_tag,
-         *     APR.loadElement~srcLikeAttribute
+         *     just.loadElement~srcLikeAttribute
          * >}
          */
         'nonSrcAttributes': {
@@ -150,6 +150,6 @@ define([
 
     });
 
-    return APR.setFn('loadElement', loadElement);
+    return just.setFn('loadElement', loadElement);
 
 });

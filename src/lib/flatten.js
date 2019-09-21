@@ -4,7 +4,7 @@ define([
     './flattenArray',
     './check'
 ], function (
-    APR,
+    just,
     flattenObjectLiteral,
     flattenArray,
     check
@@ -16,10 +16,10 @@ define([
      * A factory for the "flatten..." alternatives.
      *
      * @namespace
-     * @memberof APR
-     * @param {...*} value - Arguments for {@link APR.flattenArray}
+     * @memberof just
+     * @param {...*} value - Arguments for {@link just.flattenArray}
      *     if the first argument is an Array, or arguments for
-     *     {@link APR.flattenObjectLiteral}.
+     *     {@link just.flattenObjectLiteral}.
      * @throws {TypeError} If the value couldn't be flattened.
      * @return {Array|!object} The flattened value.
      */
@@ -48,6 +48,6 @@ define([
 
     };
 
-    return APR.setFn('flatten', flatten);
+    return just.setFn('flatten', flatten);
 
 });

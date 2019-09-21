@@ -1,4 +1,4 @@
-define(['./core'], function (APR) {
+define(['./core'], function (just) {
 
     'use strict';
 
@@ -7,7 +7,7 @@ define(['./core'], function (APR) {
     /**
      * An store of private members.
      *
-     * @typedef {function} APR.createPrivateKey~privateStore
+     * @typedef {function} just.createPrivateKey~privateStore
      * @param {!Object} key - Some object to get/set properties from/to it.
      * @return {function} A private store.
      */
@@ -17,10 +17,10 @@ define(['./core'], function (APR) {
      * @see {@link https://github.com/philipwalton/private-parts|Source}.
      *
      * @namespace
-     * @memberof APR
+     * @memberof just
      * @param {function|!object} [factory=Object.prototype] - A new object with `factory` as it's prototype...
      * @param {!object} [parent] - The object to inherit from.
-     * @throws {TypeError} If the key given {@link APR.createPrivateKey~privateStore|in the private store}
+     * @throws {TypeError} If the key given {@link just.createPrivateKey~privateStore|in the private store}
      *     is not an object.
      * @example
      * // Creates an store which extends the public-constructor prototype.
@@ -40,7 +40,7 @@ define(['./core'], function (APR) {
      *
      * console.log(new Public()); // Shows [...] {public: 'public'}
      *
-     * @return {APR.createPrivateKey~privateStore} An store of the private values.
+     * @return {just.createPrivateKey~privateStore} An store of the private values.
      */
     var createPrivateKey = function createPrivateKey (factory, parent) {
 
@@ -87,6 +87,6 @@ define(['./core'], function (APR) {
 
     };
 
-    return APR.setFn('createPrivateKey', createPrivateKey);
+    return just.setFn('createPrivateKey', createPrivateKey);
 
 });

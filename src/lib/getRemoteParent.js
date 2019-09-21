@@ -1,11 +1,11 @@
-define(['./core'], function (APR) {
+define(['./core'], function (just) {
 
     'use strict';
 
     /**
      * A function that checks if `this` is the Node that you're looking for.
      *
-     * @typedef {function} APR.getRemoteParent~fn
+     * @typedef {function} just.getRemoteParent~fn
      *
      * @this Node
      * @param {!Number} deepLevel - A counter that indicates how many elements have checked.
@@ -19,14 +19,14 @@ define(['./core'], function (APR) {
      * or a non-Node is found.
      *
      * @namespace
-     * @memberof APR
+     * @memberof just
      * @param {Node} childNode - Some child.
-     * @param {APR.getRemoteParent~fn} fn - Some custom handler.
+     * @param {just.getRemoteParent~fn} fn - Some custom handler.
      * @param {Node} [rootContainer=html] - The farthest parent.
      * @param {boolean} [includeChild=false] - If `true`, it calls `fn` with `childNode` too.
      *
      * @example
-     * APR.getRemoteParent(APR.body, function () {
+     * just.getRemoteParent(just.body, function () {
      *     return this.tagName === 'HTML';
      * }); // returns the <html> Element.
      *
@@ -75,6 +75,6 @@ define(['./core'], function (APR) {
 
     };
 
-    return APR.setFn('getRemoteParent', getRemoteParent);
+    return just.setFn('getRemoteParent', getRemoteParent);
 
 });

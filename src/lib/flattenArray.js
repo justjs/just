@@ -1,4 +1,4 @@
-define(['./core', './defaults'], function (APR, defaults) {
+define(['./core', './defaults'], function (just, defaults) {
 
     'use strict';
 
@@ -6,7 +6,7 @@ define(['./core', './defaults'], function (APR, defaults) {
      * Flattens an array of arrays.
      *
      * @namespace
-     * @memberof APR
+     * @memberof just
      * @param {*} [value=[value]] - The target.
      * @param {Number} [maxLevel=-1] - Maximum deep-level to flatten.
      *
@@ -48,6 +48,6 @@ define(['./core', './defaults'], function (APR, defaults) {
 
     };
 
-    return APR.setFn('flattenArray', flattenArray);
+    return just.setFn('flattenArray', flattenArray);
 
 });

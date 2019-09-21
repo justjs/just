@@ -1,4 +1,4 @@
-define(['./core', './defaults'], function (APR, defaults) {
+define(['./core', './defaults'], function (just, defaults) {
 
     'use strict';
 
@@ -6,30 +6,30 @@ define(['./core', './defaults'], function (APR, defaults) {
      * The given object (if `mutate` evals to true) or a copy of each own property
      * of the given object.
      *
-     * @typedef {!object} APR.access~handler_this
+     * @typedef {!object} just.access~handler_this
      */
 
     /**
      * A function to call when it reaches the deep property of an object.
      *
-     * @typedef {function} APR.access~handler
-     * @this APR.access~handler_this
+     * @typedef {function} just.access~handler
+     * @this just.access~handler_this
      * @param {!object} lastObject - The object containing the `lastKey`.
      * @param {string} lastKey - The last value given in `path`.
      * @param {boolean} hasProperty - `false` if some key of `path` was created, `true` otherwise.
      * @param {string[]} path - The given keys.
-     * @return {*} The return value for {@link APR.access|the main function}.
+     * @return {*} The return value for {@link just.access|the main function}.
      */
 
     /**
      * Accesses to a deep property in a new `object` (or `object` if `mutate` evals to `true`).
      *
      * @namespace
-     * @memberof APR
+     * @memberof just
      * @param {!object} object - The base object.
      * @param {string[]} [path=[path]] - The ordered keys.
-     * @param {APR.access~handler} [handler] - A custom function.
-     * @param {APR.access~options} [opts={@link APR.access.DEFAULT_OPTIONS|default options}] - Some options.
+     * @param {just.access~handler} [handler] - A custom function.
+     * @param {just.access~options} [opts={@link just.access.DEFAULT_OPTIONS|default options}] - Some options.
      * @throws {TypeError} If some property causes access problems.
      *
      * @example <caption>Accessing to some existent property</caption>
@@ -120,11 +120,11 @@ define(['./core', './defaults'], function (APR, defaults) {
 
     };
 
-    Object.defineProperties(access, /** @lends APR.access */{
+    Object.defineProperties(access, /** @lends just.access */{
         /**
-         * Options for {@link APR.access}.
+         * Options for {@link just.access}.
          *
-         * @typedef {object} APR.access~options
+         * @typedef {object} just.access~options
          * @property {boolean} [mutate=false] - If `true`, it will use
          *     the given object as the base object, otherwise it will
          *     copy all the owned properties to a new object.
@@ -137,9 +137,9 @@ define(['./core', './defaults'], function (APR, defaults) {
          */
 
         /**
-         * Default options for {@link APR.access}.
+         * Default options for {@link just.access}.
          *
-         * @type {APR.access~options}
+         * @type {just.access~options}
          * @readonly
          */
         'DEFAULT_OPTIONS': {
@@ -154,6 +154,6 @@ define(['./core', './defaults'], function (APR, defaults) {
         }
     });
 
-    return APR.setFn('access', access);
+    return just.setFn('access', access);
 
 });

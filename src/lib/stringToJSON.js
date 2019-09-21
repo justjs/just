@@ -1,4 +1,4 @@
-define(['./core'], function (APR) {
+define(['./core'], function (just) {
 
     'use strict';
 
@@ -6,7 +6,7 @@ define(['./core'], function (APR) {
      * Parses a JSON string into a JSON.
      *
      * @namespace
-     * @memberof APR
+     * @memberof just
      * @param {*} string - Some string to parse.
      *
      * @example
@@ -42,6 +42,6 @@ define(['./core'], function (APR) {
 
     };
 
-    return APR.setFn('stringToJSON', stringToJSON);
+    return just.setFn('stringToJSON', stringToJSON);
 
 });

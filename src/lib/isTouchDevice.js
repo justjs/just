@@ -1,4 +1,4 @@
-define(['./core'], function (APR) {
+define(['./core'], function (just) {
 
     'use strict';
 
@@ -8,7 +8,7 @@ define(['./core'], function (APR) {
      * Checks if the screen -supports- touch.
      *
      * @namespace
-     * @memberof APR
+     * @memberof just
      * @return {boolean}
      */
     var isTouchDevice = function isTouchDevice () {
@@ -22,6 +22,6 @@ define(['./core'], function (APR) {
 
     };
 
-    return APR.setFn('isTouchDevice', isTouchDevice);
+    return just.setFn('isTouchDevice', isTouchDevice);
 
 });
