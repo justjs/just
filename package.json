@@ -39,7 +39,7 @@
   "author": "Alexis Puga Ruíz",
   "license": "BSD-3-Clause",
   "devDependencies": {
-    "@alexispuga/jsdoc-template": "^1.0.0",
+    "@alexispuga/jsdoc-template": "^1.0.1",
     "almond": "^0.3.3",
     "amd-loader": "0.0.8",
     "amdclean": "^2.7.0",
@@ -73,7 +73,7 @@
     "karma-tap": "^4.1.4",
     "karma-tap-pretty-reporter": "^4.1.0",
     "load-grunt-tasks": "^5.0.0",
-    "tap": "^14.6.2",
+    "tap": "^14.6.5",
     "tap-spec": "^5.0.0",
     "tape": "^4.10.2"
   },
