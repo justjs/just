@@ -1,4 +1,4 @@
-# Just
+# Just [![Build Status](https://travis-ci.org/justjs/just.svg?branch=master)](https://travis-ci.org/justjs/just)
 
 *The core for all your javascript projects.*
 
