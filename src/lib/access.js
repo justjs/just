@@ -10,7 +10,7 @@ define(['./core', './defaults'], function (just, defaults) {
      */
 
     /**
-     * A function to call when it reaches the deep property of an object.
+     * A function to call when {@link just.access} reaches the deep property of an object.
      *
      * @typedef {function} just.access~handler
      * @this just.access~handler_this

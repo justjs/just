@@ -3,7 +3,7 @@ define(['./core', './check'], function (just, check) {
     'use strict';
 
     /**
-     * Checks if `value` looks like `defaultValue`.
+     * Defaults to `defaultValue` if `value` looks like `defaultValue`.
      *
      * @namespace
      * @memberof just
