@@ -3,9 +3,9 @@
   "title": "Just",
   "version": "0.1.0",
   "description": "The core for all your javascript proyects.",
-  "main": "dist/server.min.js",
+  "main": "dist/server/just.min.js",
   "private": true,
-  "browser": "dist/browser.min.js",
+  "browser": "dist/browser/just.min.js",
   "scripts": {
     "start": "npm run development",
     "development": "grunt karma:unit-dev:start default",

@@ -123,13 +123,13 @@ const options = {
 				options.getTestFilename(buildKey, 'build'),
 			
 			'bundle': options.getPath('distribution') + '/' +
-				buildKey + '.bundle.js',
+				buildKey + '/just.bundle.js',
 
 			'compact': options.getPath('distribution') + '/' +
-				buildKey + '.js',
+				buildKey + '/just.js',
 			
 			'minified': options.getPath('distribution') + '/' +
-				buildKey + '.min.js'
+				buildKey + '/just.min.js'
 
 		};
 
