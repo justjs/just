@@ -18,7 +18,7 @@ define(['./core'], function (just) {
      *
      * @namespace
      * @memberof just
-     * @param {function|!object} [factory=Object.prototype] - A new object with `factory` as its prototype...
+     * @param {function|!object} [factory=Object.prototype] - A new object with <var>factory</var> as its prototype...
      * @param {!object} [parent] - The object to inherit from.
      * @throws {TypeError} If the key given {@link just.createPrivateKey~privateStore|in the private store}
      *     is not an object.

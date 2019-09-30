@@ -13,7 +13,7 @@ define(['./core', './defaults'], function (just, defaults) {
      * @example
      * flattenArray([0, [1, [2]]]); // [0, 1, 2]
      *
-     * @example <caption>Using `maxLevel`</caption>
+     * @example <caption>Using <var>maxLevel</var></caption>
      * var arrayLike = {'0': [0, [1, [2]]]};
      * var array = Array.from(arrayLike);
      * var maxLevel = 1;

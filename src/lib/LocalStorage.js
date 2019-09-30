@@ -68,7 +68,7 @@ define([
         },
 
         /**
-         * Checks if `cookie` is in `document.cookie`.
+         * Checks if <var>cookie</var> is in <var>document.cookie</var>.
          *
          * @function
          * @static
@@ -93,7 +93,7 @@ define([
         },
 
         /**
-         * Returns a cookie from `document.cookie`.
+         * Returns a cookie from <var>document.cookie</var>.
          *
          * @function
          * @static
@@ -124,7 +124,7 @@ define([
          */
 
         /**
-         * Concatenates a value to `document.cookie`.
+         * Concatenates a value to <var>document.cookie</var>.
          *
          * @function
          * @param {string} name - The name of the cookie.
@@ -240,8 +240,8 @@ define([
          * @function
          * @param {just.LocalStorage~isStorageAvailable_type} type
          *     A type of storage.
-         * @param {string} [tempKey='_'] - Storage will save this key with `tempValue` as a value.
-         * @param {string} [tempValue='_'] - Storage will save this value with `tempKey` as a key.
+         * @param {string} [tempKey='_'] - Storage will save this key with <var>tempValue</var> as a value.
+         * @param {string} [tempValue='_'] - Storage will save this value with <var>tempKey</var> as a key.
          *
          * @return {boolean} `true` if the function does not throw
          *     and is allowed by the user, `false` otherwise.

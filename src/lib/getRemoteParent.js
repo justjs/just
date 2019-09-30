@@ -3,7 +3,7 @@ define(['./core'], function (just) {
     'use strict';
 
     /**
-     * A function that checks if `this` is the Node that you're looking for.
+     * A function that checks if <var>this</var> is the Node that you're looking for.
      *
      * @typedef {function} just.getRemoteParent~fn
      *
@@ -15,7 +15,7 @@ define(['./core'], function (just) {
      */
 
     /**
-     * Goes up through the `childNode` parents, until `fn` returns `true`
+     * Goes up through the <var>childNode</var> parents, until <var>fn</var> returns `true`
      * or a non-Node is found.
      *
      * @namespace
@@ -23,14 +23,14 @@ define(['./core'], function (just) {
      * @param {Node} childNode - Some child.
      * @param {just.getRemoteParent~fn} fn - Some custom handler.
      * @param {Node} [rootContainer=html] - The farthest parent.
-     * @param {boolean} [includeChild=false] - If `true`, it calls `fn` with `childNode` too.
+     * @param {boolean} [includeChild=false] - If `true`, it calls <var>fn</var> with <var>childNode</var> too.
      *
      * @example
      * just.getRemoteParent(just.body, function () {
      *     return this.tagName === 'HTML';
      * }); // returns the <html> Element.
      *
-     * @return {Node|null} - The current Node when `fn` returns true.
+     * @return {Node|null} The current Node when <var>fn</var> returns `true`.
      */
     var getRemoteParent = function getRemoteParent (childNode, fn, rootContainer, includeChild) {
 

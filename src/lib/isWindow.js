@@ -3,12 +3,13 @@ define(['./core'], function (just) {
     'use strict';
 
     /**
-     * Checks if an object is a window by checking `window` or some common properties of `window`.
+     * Checks if an object is the window global by checking <var>window</var> or
+     * some common properties of <var>window</var>.
      *
      * @namespace
      * @memberof just
      * @param {*} object - Some object.
-     * @return {boolean} `true` if `object` is `window` or has the common properties,
+     * @return {boolean} `true` if <var>object</var> is <var>window</var> or contains the common properties,
      *     `false` otherwise.
      */
     var isWindow = function isWindow (object) {

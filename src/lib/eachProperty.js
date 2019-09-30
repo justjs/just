@@ -5,7 +5,7 @@ define(['./core', './defaults'], function (just, defaults) {
     /**
      * @typedef {function} just.eachProperty~fn
      *
-     * @this thisArg from {@link just.eachProperty|the main function}.
+     * @this {@link just.eachProperty|<var>thisArg</var> from the main function}.
      *
      * @param {*} value - The current value.
      * @param {*} key - The current key.
@@ -15,7 +15,7 @@ define(['./core', './defaults'], function (just, defaults) {
      */
 
     /**
-     * Converts `object` to an Object, iterates over it,
+     * Converts <var>object</var> to an Object, iterates over it,
      * calls a function on each iteration, and if a truthy value
      * is returned from that function, the loop will stop.
      *
@@ -24,10 +24,10 @@ define(['./core', './defaults'], function (just, defaults) {
      * @param {*} object - Some value.
      * @param {just.eachProperty~fn} fn - The function that will be
      *     called on each iteration.
-     * @param {*} [thisArg] - `this` for `fn`.
+     * @param {*} [thisArg] - <var>this</var> for <var>fn</var>.
      * @param {object} [opts={@link just.eachProperty.DEFAULT_OPTIONS}] - Some options.
      *
-     * @throws {TypeError} If `fn` is not a function.
+     * @throws {TypeError} If <var>fn</var> is not a function.
      * @return {boolean} `true` if the function was interrupted, `false` otherwise.
      */
     var eachProperty = function eachProperty (object, fn, thisArg, opts) {

@@ -58,7 +58,7 @@ define([
          * @param {?object} [
          *     opts={@link just.flattenObjectLiteral.DEFAULT_OPTIONS}
          * ]
-         * @throws {TypeError} If `object` is not a an object literal.
+         * @throws {TypeError} If <var>object</var> is not a an object literal.
          *
          * @example
          * flattenObjectLiteral({'a': {'b': {'c': {'d': 1}}}}); // {'a.b.c.d' : 1}

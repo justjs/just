@@ -5,7 +5,7 @@ define(['./core'], function (just) {
     /* globals DocumentTouch */
 
     /**
-     * Checks if the screen -supports- touch.
+     * Checks if the screen <em>supports</em> touch.
      *
      * @namespace
      * @memberof just

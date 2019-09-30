@@ -3,7 +3,7 @@ define(['./core'], function (just) {
     'use strict';
 
     /**
-     * Checks if `value` looks like the other values.
+     * Checks if <var>value</var> looks like the other values.
      *
      * @namespace
      * @memberof just
@@ -14,7 +14,7 @@ define(['./core'], function (just) {
      * check(null, {}, "null", []); // false. Neither is `null`.
      * check({}, [], {}); // true. {} is {}.
      *
-     * @return {boolean} `true` if some other value looks like `value`.
+     * @return {boolean} `true` if some other value looks like <var>value</var>.
      */
     var check = function check (value, otherValues) {
 
@@ -42,7 +42,7 @@ define(['./core'], function (just) {
          */
 
         /**
-         * A function that `check`s a value against others and
+         * A function that {@link just.check|checks} a value against others and
          * throws if the result is `false`.
          *
          * @function
@@ -50,8 +50,8 @@ define(['./core'], function (just) {
          * @param {*} value - Comparison value.
          * @param {...*} [otherValues] - Values to check against.
          *
-         * @throws {TypeError} If `check` returns `false`.
-         * @returns {value} `value` if `check` returns `true`.
+         * @throws {TypeError} If <var>check</var> returns `false`.
+         * @returns {value} <var>value</var> if <var>check</var> returns `true`.
          */
         'throwable': {
             'value': function (value, otherValues) {

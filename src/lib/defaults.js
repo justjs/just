@@ -3,13 +3,14 @@ define(['./core', './check'], function (just, check) {
     'use strict';
 
     /**
-     * Defaults to `defaultValue` if `value` looks like `defaultValue`.
+     * Defaults to <var>defaultValue</var> if <var>value</var> looks like
+     * <var>defaultValue</var>.
      *
      * @namespace
      * @memberof just
      * @param {*} value - Any value.
-     * @param {*} [defaultValue] - A value with a desired type for `value`.
-     *     If an object literal is given, all the keys of `value` will `default`
+     * @param {*} [defaultValue] - A value with a desired type for <var>value</var>.
+     *     If an object literal is given, all the keys of <var>value</var> will <var>default</var>
      *     to his corresponding key in this object.
      * @param {just.defaults~options} [opts={@link just.defaults.DEFAULT_OPTIONS}]
      *     Some options.
@@ -39,7 +40,7 @@ define(['./core', './check'], function (just, check) {
      * defaults(undefined, null, {'ignoreNull': true}) // null
      * defaults({a: 1}, {a: null}, {'ignoreNull': true}) // {a: 1}
      *
-     * @returns {value} `value` if it looks like `defaultValue` or `defaultValue` otherwise.
+     * @returns {value} <var>value</var> if it looks like <var>defaultValue</var> or <var>defaultValue</var> otherwise.
      */
     var defaults = function defaults (value, defaultValue, opts) {
 
@@ -102,8 +103,8 @@ define(['./core', './check'], function (just, check) {
          *
          * @typedef {object} just.defaults~options
          *
-         * @property {boolean} ignoreDefaultKeys - If `false` and `defaultValue`
-         *     is an object literal, the default keys will be added to `value`
+         * @property {boolean} ignoreDefaultKeys - If `false` and <var>defaultValue</var>
+         *     is an object literal, the default keys will be added to <var>value</var>
          *     or checked against this function for each repeated key.
          * @property {boolean} checkLooks
          *     If `true`:
@@ -112,11 +113,11 @@ define(['./core', './check'], function (just, check) {
          *     If `false`
          *         `[]` and `{}` will match with any other object.
          * @property {boolean} checkDeepLooks
-         *     Same as `checkLooks` but it works with the inner values
+         *     Same as <var>checkLooks</var> but it works with the inner values
          *     of the objects.
          * @property {boolean} ignoreNull
-         *     If `true`, `defaultValue`s with null as a value won't be checked
-         *     and any `value` (except `undefined`) will be allowed.
+         *     If `true`, <var>defaultValue</var>s with null as a value won't be checked
+         *     and any <var>value</var> (except `undefined`) will be allowed.
          */
 
         /**
@@ -124,8 +125,8 @@ define(['./core', './check'], function (just, check) {
          *
          * @type {just.defaults~options}
          * @property {boolean} [ignoreDefaultKeys=false] - Add default keys.
-         * @property {boolean} [checkLooks=true] - Check `[]` and `{}`.
-         * @property {boolean} [checkDeepLooks=true] - `checkLooks` in literal objects.
+         * @property {boolean} [checkLooks=true] - Check <code>[]</code> and <code>{}</code>.
+         * @property {boolean} [checkDeepLooks=true] - <var>checkLooks</var> in literal objects.
          * @property {boolean} [ignoreNull=false] - Be strict checking `null`s.
          * @readonly
          */

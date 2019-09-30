@@ -44,8 +44,8 @@ define([
      *         <li>Urls passed as dependencies are considered ids, so they must
      *             be aliased first in order to be loaded.</li>
      *
-     *         <li>`require`, `module` and `exports` are not present in this
-     *             loader.</li>
+     *         <li><var>require</var>, <var>module</var> and <var>exports</var>
+     *             are not present in this loader.</li>
      *
      *         <li>Anonymous modules are not allowed.</li>
      *     </ul>
@@ -438,7 +438,7 @@ define([
         /**
          * A function that returns the module value or a string
          * splitted by '.' that will be {@link just~access|accessed}
-         * from `window`.
+         * from <var>window</var>.
          *
          * @typedef {string|function} just.Define~globals_expression
          *

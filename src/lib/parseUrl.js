@@ -3,9 +3,9 @@ define(['./core'], function (just) {
     'use strict';
 
     /**
-     * Parses `url` without checking if it's a valid url.
+     * Parses <var>url</var> without checking if it's a valid url.
      *
-     * Note that this function uses `window.location` to make relative urls, so
+     * Note that this function uses <var>window.location</var> to make relative urls, so
      * weird values in there will give weird results.
      *
      * @namespace

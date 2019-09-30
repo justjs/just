@@ -27,14 +27,14 @@ define(function () {
      */
 
     /**
-     * Same as the second param for `Object.defineProperties`
+     * Same as the second param for <var>Object.defineProperties</var>
      *
      * @typedef {!object} propertiesDescriptor
      * @global
      */
 
     /**
-     * Same as the third param for `Object.defineProperty`
+     * Same as the third param for <var>Object.defineProperty</var>
      *
      * @typedef {!object} propertyDescriptor
      * @global

@@ -3,12 +3,12 @@ define(['./core', './check'], function (just, check) {
     'use strict';
 
     /**
-     * Converts [[k0, v0], {k1: v1}] to {k0: v0, k1: v1}.
+     * Converts <code>[[k0, v0], {k1: v1}]</code> to <code>{k0: v0, k1: v1}</code>.
      *
      * @namespace
      * @memberof just
      * @param {!object[]|!object} array - An array containing sub-arrays
-     *     with object literal pairs, or object literals: [[k, v], {k: v}].
+     *     with object literal pairs, or object literals: <code>[[k, v], {k: v}]</code>.
      *
      * @return {!object} An object literal.
      */

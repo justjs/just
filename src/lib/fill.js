@@ -13,7 +13,7 @@ define([
     'use strict';
 
     /**
-     * Fills an object literal with `data`.
+     * Fills an object literal with <var>data</var>.
      *
      * @namespace
      * @memberof just
@@ -23,8 +23,8 @@ define([
      *
      * @param {?object} data - The new contents added to the structure.
      * @param {boolean} preserveUndefined - If it's a truthy value, `undefined` values in
-     *     -the structure- will become an optional key that will be present only
-     *     if `data` contains that property (even if it's `undefined`).
+     *     <em>the structure</em> will become an optional key that will be present only
+     *     if <var>data</var> contains that property (even if it's `undefined`).
      *
      * @example <caption>`undefined` values get removed by default.</caption>
      * fill({

@@ -3,8 +3,8 @@ define(['./core', './defaults'], function (just, defaults) {
     'use strict';
 
     /**
-     * The given object (if `mutate` evals to true) or a copy of each own property
-     * of the given object.
+     * The given object (if <var>mutate</var> evals to `true`)
+     * or a copy of each own property of the given object.
      *
      * @typedef {!object} just.access~handler_this
      */
@@ -14,15 +14,17 @@ define(['./core', './defaults'], function (just, defaults) {
      *
      * @typedef {function} just.access~handler
      * @this just.access~handler_this
-     * @param {!object} lastObject - The object containing the `lastKey`.
-     * @param {string} lastKey - The last value given in `path`.
-     * @param {boolean} hasProperty - `false` if some key of `path` was created, `true` otherwise.
+     * @param {!object} lastObject - The object containing the <var>lastKey</var>.
+     * @param {string} lastKey - The last value given in <var>path</var>.
+     * @param {boolean} hasProperty - `false` if some key of <var>path</var>
+     *     was created, `true` otherwise.
      * @param {string[]} path - The given keys.
      * @return {*} The return value for {@link just.access|the main function}.
      */
 
     /**
-     * Accesses to a deep property in a new `object` (or `object` if `mutate` evals to `true`).
+     * Accesses to a deep property in a new <var>object</var>
+     * (or <var>object</var> if <var>mutate</var> evals to `true`).
      *
      * @namespace
      * @memberof just
@@ -73,8 +75,8 @@ define(['./core', './defaults'], function (just, defaults) {
      *
      * // now `obj` is {a: {a: true}, b: {b: true}, prototype: [...]}.
      *
-     * @return {*} If `handler` is given: the returned value of that function,
-     *         otherwise: the last value of `path` in the copied object.
+     * @return {*} If <var>handler</var> is given: the returned value of that function,
+     *         otherwise: the last value of <var>path</var> in the copied object.
      */
     var access = function access (object, path, handler, opts) {
 
@@ -133,7 +135,6 @@ define(['./core', './defaults'], function (just, defaults) {
          *     the function will throw a TypeError.
          *     If `false`, the current value will be overriden by
          *     an empty object if it's not an object nor `undefined`.
-         *
          */
 
         /**
