@@ -39,7 +39,7 @@
   "author": "Alexis Puga Ruíz",
   "license": "BSD-3-Clause",
   "devDependencies": {
-    "@alexispuga/jsdoc-template": "^1.0.1",
+    "@alexispuga/jsdoc-template": "^1.0.2",
     "almond": "^0.3.3",
     "amd-loader": "0.0.8",
     "amdclean": "^2.7.0",
@@ -47,7 +47,7 @@
     "browserify-istanbul": "^3.0.1",
     "browserify-replace": "^1.0.1",
     "deamdify": "^0.3.0",
-    "eslint": "^6.4.0",
+    "eslint": "^6.5.0",
     "eslint-config-prettier": "^6.3.0",
     "eslint-plugin-es5": "^1.4.1",
     "grunt": "^1.0.4",
@@ -73,7 +73,7 @@
     "karma-tap": "^4.1.4",
     "karma-tap-pretty-reporter": "^4.1.0",
     "load-grunt-tasks": "^5.0.0",
-    "tap": "^14.6.5",
+    "tap": "^14.6.7",
     "tap-spec": "^5.0.0",
     "tape": "^4.10.2"
   },
