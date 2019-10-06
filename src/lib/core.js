@@ -52,7 +52,7 @@ define(function () {
      */
     var just = {};
 
-    return Object.defineProperties(just, /** @mixes just */{
+    return Object.defineProperties(just, /** @lends just */{
         // 'version': '%{CORE_VERSION}%',
         /**
          * Defines or modifies a property in {@link just}.
