@@ -23,7 +23,7 @@ exports.mock = function (object, key, newFn) {
  * @param {!object} object - The object containing the function.
  * @param {!string} key - The key for <var>object</var> that contains the function.
  * @param {!function} intercept - A function with the same values as <var>object[key]</var>.
- * @param {!function} then - A function with the same values as <var>object[key]</var>.
+ * @param {?function} then - A function with the same values as <var>object[key]</var>.
  */
 exports.spyOn = function (object, key, intercept, then) {
 
@@ -36,7 +36,7 @@ exports.spyOn = function (object, key, intercept, then) {
 
         intercept.apply(this, args);
         originalReturn = originalFn.apply(this, args);
-        then.apply(this, args);
+        if (typeof then === 'function') { then.apply(this, args); }
 
         return originalReturn;
 
