@@ -76,7 +76,8 @@ module.exports = grunt => {
 					options[buildKey + '-tape-to-tap'] = {
 						'cwd': tapePath,
 						'src': buildOptions.getTestFiles(builds[buildKey].files.concat('integration'), tapePath)
-							.map(file => file.replace(tapePath + '/', '')),
+							.map(file => file.replace(tapePath + '/', ''))
+							.concat('**/!(\.test)\.js'),
 						'dest': tapPath,
 						'expand': true,
 						'options': {
