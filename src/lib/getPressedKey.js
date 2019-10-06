@@ -11,17 +11,18 @@ define(['./core'], function (just) {
      * @param {!Event} e - Some event.
      *
      * @example
-     * document.addEventListener('keypress', function (e) {
+     * document.addEventListener('keydown', function (e) {
      *     if (/(Enter|13)/.test(getPressedKey(e))) {
      *         console.log('Enter');
      *     }
      * });
      *
-     * @return {number|string} Any of e.key, e.code, e.which or w.keyCode
+     * @return {number|string} Any of <var>e.key</var>, <var>e.which</var> or
+     *     <var>w.keyCode</var>.
      */
     var getPressedKey = function getPressedKey (e) {
 
-        return e.key || e.code || e.which || e.keyCode;
+        return e.key || e.which || e.keyCode;
 
     };
 
