@@ -2,8 +2,9 @@
  * Replace a function with another.
  * NOTE: The original function won't be saved.
  *
- * @param {function} originalFn
- * @param {function} newFn
+ * @param {!object} object - Any object.
+ * @param {!string} key - The key for <var>object</var> containing the function.
+ * @param {!function} newFn - The replacent for <var>object[key]</var>.
  */
 exports.mock = function (object, key, newFn) {
 
@@ -16,12 +17,13 @@ exports.mock = function (object, key, newFn) {
 };
 
 /**
- * {@link mock|Mock} `fn`, `intercept` it, call the original function
- * and call `then` afterwards.
+ * {@link mock|Mock} <var>object[key]</var>, <var>intercept</var> it,
+ * call the original function and call <var>then</var> afterwards.
  *
- * @param {function} fn - The original function.
- * @param {fn} intercept - A function with the same values as `fn`.
- * @param {fn} then - A function with the same values as `fn`.
+ * @param {!object} object - The object containing the function.
+ * @param {!string} key - The key for <var>object</var> that contains the function.
+ * @param {!function} intercept - A function with the same values as <var>object[key]</var>.
+ * @param {!function} then - A function with the same values as <var>object[key]</var>.
  */
 exports.spyOn = function (object, key, intercept, then) {
 
@@ -43,6 +45,8 @@ exports.spyOn = function (object, key, intercept, then) {
 };
 
 /**
+ * Find <var>value</var> in <var>values</var> and remove it if it was found.
+ *
  * @param {*} value
  * @param {array} values
  * @return {boolean} `true` if `value` was found, `false` otherwise.
