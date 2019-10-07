@@ -4,7 +4,6 @@ define([
     './eachProperty',
     './loadElement',
     './check',
-    './createPrivateKey',
     './findElements',
     './stringToJSON',
     './defaults'
@@ -14,7 +13,6 @@ define([
     eachProperty,
     loadElement,
     check,
-    createPrivateKey,
     findElements,
     stringToJSON,
     defaults
@@ -27,7 +25,6 @@ define([
     var STATE_CALLED = 2;
     var root = window;
     var definedModules = {};
-    var privateStore = createPrivateKey();
     /**
      * A module loader: it loads {@link just.Define~file|files} in order (when needed) and
      * execute them when all his dependencies became available.
@@ -90,7 +87,7 @@ define([
 
         if (typeof value === 'function') { handler = value; }
 
-        Object.defineProperties(privateStore(this), {
+        Object.defineProperties(this, {
 
             'state': {
                 'value': STATE_NON_CALLED,
@@ -112,7 +109,7 @@ define([
 
         });
 
-        setModule(id, privateStore(this));
+        setModule(id, this);
 
         updateModules();
 
