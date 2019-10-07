@@ -16,7 +16,7 @@
     "test:unit": "grunt build test:unit",
     "test:integration": "grunt build test:integration",
     "test:dev": "grunt init test-dev",
-    "tap": "grunt build copy:server-tape-to-tap && tap build/test/tap",
+    "tap": "grunt build clean:test copy:test copy:server-tape-to-tap && tap build/test/tap",
     "lint": "eslint . --cache",
     "pretest": "npm run lint",
     "precommit": "npm run test",
