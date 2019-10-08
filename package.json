@@ -39,7 +39,7 @@
   "author": "Alexis Puga Ruíz",
   "license": "BSD-3-Clause",
   "devDependencies": {
-    "@alexispuga/jsdoc-template": "^1.0.2",
+    "@alexispuga/jsdoc-template": "^1.1.0-rc.1",
     "almond": "^0.3.3",
     "amd-loader": "0.0.8",
     "amdclean": "^2.7.0",
@@ -48,7 +48,7 @@
     "browserify-replace": "^1.0.1",
     "deamdify": "^0.3.0",
     "eslint": "^6.5.0",
-    "eslint-config-prettier": "^6.3.0",
+    "eslint-config-prettier": "^6.4.0",
     "eslint-plugin-es5": "^1.4.1",
     "grunt": "^1.0.4",
     "grunt-browserify": "^5.3.0",
