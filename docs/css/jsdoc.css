@@ -6,12 +6,8 @@
 #content-nav li:not(.is-active),
 #page-header,
 #page-header a,
-#page-header h3,
-.signature-attributes,
-.type-signature,
-.variation,
-body, html {a
-	color: #8c84a7;
+#page-header h3 {
+	color: #6d638f;
 }
 
 a {
