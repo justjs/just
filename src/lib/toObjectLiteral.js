@@ -1,4 +1,4 @@
-define(['./core', './check'], function (just, check) {
+define(['./check'], function (check) {
 
     'use strict';
 
@@ -29,8 +29,7 @@ define(['./core', './check'], function (just, check) {
 
         array.forEach(function (subArray) {
 
-            var key,
-                value;
+            var key, value;
 
             if (check(subArray, [])) {
 
@@ -57,6 +56,6 @@ define(['./core', './check'], function (just, check) {
 
     };
 
-    return just.setFn('toObjectLiteral', toObjectLiteral);
+    return toObjectLiteral;
 
 });

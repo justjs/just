@@ -1,4 +1,4 @@
-define(['./core', './defaults'], function (just, defaults) {
+define(function () {
 
     'use strict';
 
@@ -33,7 +33,7 @@ define(['./core', './defaults'], function (just, defaults) {
     var eachProperty = function eachProperty (object, fn, thisArg, opts) {
 
         var properties = Object(object);
-        var options = defaults(opts, eachProperty.DEFAULT_OPTIONS);
+        var options = Object.assign({}, eachProperty.DEFAULT_OPTIONS, opts);
         var wasInterrupted = false;
         var k;
 
@@ -45,14 +45,9 @@ define(['./core', './defaults'], function (just, defaults) {
 
         for (k in properties) {
 
-            /* eslint-disable padded-blocks */
-            if (wasInterrupted) {
-                break;
-            }
-            /* eslint-enable padded-blocks */
+            if (wasInterrupted) { break; }
 
-            if (options.addNonOwned
-                || ({}).hasOwnProperty.call(properties, k)) {
+            if (options.addNonOwned || ({}).hasOwnProperty.call(properties, k)) {
 
                 wasInterrupted = !!fn.call(thisArg, properties[k], k,
                     properties);
@@ -65,7 +60,7 @@ define(['./core', './defaults'], function (just, defaults) {
 
     };
 
-    Object.defineProperties(eachProperty, /** @lends just.eachProperty */{
+    return Object.defineProperties(eachProperty, /** @lends just.eachProperty */{
         /**
          * Options for {@link just.eachProperty}.
          *
@@ -92,7 +87,5 @@ define(['./core', './defaults'], function (just, defaults) {
         }
 
     });
-
-    return just.setFn('eachProperty', eachProperty);
 
 });

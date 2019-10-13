@@ -1,4 +1,4 @@
-define(['./core'], function (just) {
+define(function () {
 
     'use strict';
 
@@ -22,6 +22,6 @@ define(['./core'], function (just) {
 
     };
 
-    return just.setFn('isTouchDevice', isTouchDevice);
+    return isTouchDevice;
 
 });

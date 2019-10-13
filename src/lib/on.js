@@ -1,4 +1,4 @@
-define(['./core', './findElements'], function (just, findElements) {
+define(['./findElements'], function (findElements) {
 
     'use strict';
 
@@ -15,21 +15,11 @@ define(['./core', './findElements'], function (just, findElements) {
      */
     var on = function on (elements, eventNames, listener, options) {
 
-        /* eslint-disable padded-blocks */
-        if (typeof elements === 'string') {
-            elements = findElements(elements);
-        }
+        if (typeof elements === 'string') { elements = findElements(elements); }
+        if (!Array.isArray(eventNames)) { eventNames = [eventNames]; }
+        if (elements && !('length' in elements)) { elements = [elements]; }
 
-        if (!Array.isArray(eventNames)) {
-            eventNames = [eventNames];
-        }
-
-        if (elements && !('length' in elements)) {
-            elements = [elements];
-        }
-        /* eslint-enable padded-blocks */
-
-        [].slice.call((elements = elements || [])).forEach(function (element) {
+        Array.from((elements = elements || []), function (element) {
 
             eventNames.forEach(function (eventName) {
 
@@ -43,6 +33,6 @@ define(['./core', './findElements'], function (just, findElements) {
 
     };
 
-    return just.setFn('on', on);
+    return on;
 
 });

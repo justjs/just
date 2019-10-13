@@ -1,4 +1,4 @@
-define(['./core'], function (just) {
+define(function () {
 
     'use strict';
 
@@ -15,10 +15,10 @@ define(['./core'], function (just) {
      */
     var findElements = function findElements (selector, parent) {
 
-        return Array.from((parent || document).querySelectorAll(selector));
+        return [].slice.call((parent || document).querySelectorAll(selector));
 
     };
 
-    return just.setFn('findElements', findElements);
+    return findElements;
 
 });

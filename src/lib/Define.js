@@ -1,5 +1,5 @@
 define([
-    './core',
+    './defineProperties',
     './access',
     './eachProperty',
     './loadElement',
@@ -8,7 +8,7 @@ define([
     './stringToJSON',
     './defaults'
 ], function (
-    just,
+    defineProperties,
     access,
     eachProperty,
     loadElement,
@@ -87,20 +87,14 @@ define([
 
         if (typeof value === 'function') { handler = value; }
 
-        Object.defineProperties(this, {
+        defineProperties(this, {
 
+            'id': id,
+            'dependencyIDs': normalizeIDs(dependencyIDs),
+            'handler': handler,
             'state': {
                 'value': STATE_NON_CALLED,
                 'writable': true
-            },
-            'id': {
-                'value': id
-            },
-            'dependencyIDs': {
-                'value': normalizeIDs(dependencyIDs)
-            },
-            'handler': {
-                'value': handler
             },
             'returnedValue': {
                 'value': handler ? void 0 : value,
@@ -115,19 +109,9 @@ define([
 
     };
 
-    /* eslint-disable padded-blocks */
-    function setModule (id, theModule) {
-        return definedModules[id] = theModule;
-    }
-
-    function getModule (id) {
-        return definedModules[id];
-    }
-
-    function hasModule (id) {
-        return id in definedModules;
-    }
-    /* eslint-enable padded-blocks */
+    function setModule (id, theModule) { return definedModules[id] = theModule; }
+    function getModule (id) { return definedModules[id]; }
+    function hasModule (id) { return id in definedModules; }
 
     function callModule (someModule) {
 
@@ -171,6 +155,7 @@ define([
         return true;
 
     }
+
     function updateModules () {
 
         clearTimeout(updateModules.timeout);
@@ -212,6 +197,7 @@ define([
         }, 0);
 
     }
+
     function loadModuleByID (moduleID, listener) {
 
         var urlParts = (Define.files[moduleID] || '').split(/\s+/);
@@ -261,6 +247,7 @@ define([
         });
 
     }
+
     function normalizeIDs (ids) {
 
         /* eslint-disable padded-blocks */
@@ -285,7 +272,7 @@ define([
 
     }
 
-    Object.defineProperties(Define, /** @lends just.Define */{
+    return defineProperties(Define, /** @lends just.Define */{
         /**
          * A function to be called when the {@link just.Define~file|file} load.
          *
@@ -302,23 +289,21 @@ define([
          * @type {just.Define~load_listener}
          * @readonly
          */
-        'DEFAULT_LOAD_LISTENER': {
-            'value': function (error, data) {
+        'DEFAULT_LOAD_LISTENER': function (error, data) {
 
-                var id = data.id;
-                var givenUrl = data.url;
-                var loadedUrl = this.src;
+            var id = data.id;
+            var givenUrl = data.url;
+            var loadedUrl = this.src;
 
-                /* istanbul ignore else */
-                if (!getModule(loadedUrl) && id !== loadedUrl && id !== givenUrl) {
+            /* istanbul ignore else */
+            if (!getModule(loadedUrl) && id !== loadedUrl && id !== givenUrl) {
 
-                    new Define(loadedUrl, [id],
-                        function (theModule) { return theModule; }
-                    );
-
-                }
+                new Define(loadedUrl, [id],
+                    function (theModule) { return theModule; }
+                );
 
             }
+
         },
 
         /**
@@ -333,23 +318,21 @@ define([
          * @function
          * @chainable
          */
-        'init': {
-            'value': function () {
+        'init': function () {
 
-                var files = Define.findInDocument('data-just-Define');
+            var files = Define.findInDocument('data-just-Define');
 
-                Define.addFiles(files);
+            Define.addFiles(files);
 
-                /* istanbul ignore else */
-                if ('main' in files) {
+            /* istanbul ignore else */
+            if ('main' in files) {
 
-                    Define.load('main');
-
-                }
-
-                return Define;
+                Define.load('main');
 
             }
+
+            return Define;
+
         },
 
         /**
@@ -362,34 +345,32 @@ define([
          * >} value - {@link just.Define~file_id|File ids}.
          * @chainable
          */
-        'load': {
-            'value': function (value) {
+        'load': function (value) {
 
-                if (check(value, {})) {
+            if (check(value, {})) {
 
-                    eachProperty(check.throwable(value, {}), function (listener, id) {
+                eachProperty(check.throwable(value, {}), function (listener, id) {
 
-                        loadModuleByID(id, check.throwable(listener, Function, null, void 0));
+                    loadModuleByID(id, check.throwable(listener, Function, null, void 0));
 
-                    });
-
-                }
-                else if (check(value, [], 'string')) {
-
-                    defaults(value, [value]).forEach(
-                        function (id) { loadModuleByID(id); }
-                    );
-
-                }
-                else {
-
-                    check.throwable(value, {}, [], 'string');
-
-                }
-
-                return Define;
+                });
 
             }
+            else if (check(value, [], 'string')) {
+
+                defaults(value, [value]).forEach(
+                    function (id) { loadModuleByID(id); }
+                );
+
+            }
+            else {
+
+                check.throwable(value, {}, [], 'string');
+
+            }
+
+            return Define;
+
         },
 
         /**
@@ -467,14 +448,12 @@ define([
          * @chainable
          * @param {just.Define.globals} value - {@link just.Define.globals|Globals}.
          */
-        'addGlobals': {
-            'value': function (value) {
+        'addGlobals': function (value) {
 
-                Object.assign(Define.globals, value);
+            Object.assign(Define.globals, value);
 
-                return Define;
+            return Define;
 
-            }
         },
 
         /**
@@ -484,14 +463,12 @@ define([
          * @chainable
          * @param {just.Define.files} value - {@link just.Define.files|Files}.
          */
-        'addFiles': {
-            'value': function (value) {
+        'addFiles': function (value) {
 
-                Object.assign(Define.files, value);
+            Object.assign(Define.files, value);
 
-                return Define;
+            return Define;
 
-            }
         },
 
         /**
@@ -501,9 +478,7 @@ define([
          * @param {just.Define~id} id - The id passed to {@link just.Define}.
          * @return {boolean} `true` if defined, `false` otherwise.
          */
-        'isDefined': {
-            'value': hasModule
-        },
+        'isDefined': hasModule,
 
         /**
          * Removes all defined modules.
@@ -511,14 +486,12 @@ define([
          * @function
          * @chainable
          */
-        'clean': {
-            'value': function () {
+        'clean': function () {
 
-                definedModules = {};
+            definedModules = {};
 
-                return Define;
+            return Define;
 
-            }
         },
 
         /**
@@ -552,29 +525,25 @@ define([
          *
          * @return {!just.Define.files}
          */
-        'findInDocument': {
-            'value': function (attributeName, container) {
+        'findInDocument': function (attributeName, container) {
 
-                var files = {};
+            var files = {};
 
-                findElements('*[' + attributeName + ']', container).forEach(function (element) {
+            findElements('*[' + attributeName + ']', container).forEach(function (element) {
 
-                    var attribute = element.getAttribute(attributeName) + '';
-                    var files = stringToJSON(attribute.replace(/\[([^\]]+)\]/ig,
-                        function (_, key) { return element.getAttribute(key); }
-                    ));
+                var attribute = element.getAttribute(attributeName) + '';
+                var files = stringToJSON(attribute.replace(/\[([^\]]+)\]/ig,
+                    function (_, key) { return element.getAttribute(key); }
+                ));
 
-                    Object.assign(this, files);
+                Object.assign(this, files);
 
-                }, files);
+            }, files);
 
-                return files;
+            return files;
 
-            }
         }
 
-    });
-
-    return just.setModule('Define', Define.init());
+    }).init();
 
 });

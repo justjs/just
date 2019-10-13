@@ -1,8 +1,4 @@
-define([
-    './core',
-    './eachProperty',
-    './defineProperty'
-], function (just, eachProperty, defineProperty) {
+define(['./defineProperty'], function (defineProperty) {
 
     'use strict';
 
@@ -12,22 +8,30 @@ define([
      * @see {@link defineProperty} for more details.
      * @namespace
      * @memberof just
-     * @param {!object} object - The target.
-     * @param {!object} properties - {@link propertyDescriptor}
+     * @param {!object} object
+     * @param {!object.<key, propertyDescriptor>|!object.<key, value>} properties
      * @return <var>object</var>
      */
     var defineProperties = function defineProperties (object, properties) {
 
-        eachProperty(properties, function (value, key) {
+        var key, value;
 
-            defineProperty(object, key, value);
+        for (key in properties) {
 
-        });
+            value = properties[key];
+
+            if (({}).hasOwnProperty.call(properties, key)) {
+
+                defineProperty(object, key, value);
+
+            }
+
+        }
 
         return object;
 
     };
 
-    return just.setFn('defineProperties', defineProperties);
+    return defineProperties;
 
 });

@@ -1,4 +1,4 @@
-define(['./core'], function (just) {
+define(function () {
 
     'use strict';
 
@@ -34,7 +34,7 @@ define(['./core'], function (just) {
 
     };
 
-    Object.defineProperties(check, /** @lends just.check */{
+    return Object.defineProperties(check, /** @lends just.check */{
         /**
          *  A custom message to throw.
          *
@@ -56,17 +56,13 @@ define(['./core'], function (just) {
         'throwable': {
             'value': function (value, otherValues) {
 
-                var args = Array.from(arguments);
+                var args = [].slice.call(arguments);
                 var throwableMessage = (!(Object(this) instanceof String) ? (value +
                     ' must be like one of the following values: ' +
                     args.slice(1).map(function (v) { return v + ''; }).join(', ')
                 ) : this);
 
-                /* eslint-disable padded-blocks */
-                if (!check.apply(this, args)) {
-                    throw new TypeError(throwableMessage);
-                }
-                /* eslint-enable padded-blocks */
+                if (!check.apply(this, args)) { throw new TypeError(throwableMessage); }
 
                 return value;
 
@@ -74,7 +70,5 @@ define(['./core'], function (just) {
         }
 
     });
-
-    return just.setFn('check', check);
 
 });

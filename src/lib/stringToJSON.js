@@ -1,4 +1,4 @@
-define(['./core'], function (just) {
+define(function () {
 
     'use strict';
 
@@ -21,27 +21,15 @@ define(['./core'], function (just) {
 
         var json;
 
-        /* eslint-disable padded-blocks */
-        if (!/\{.+\}/.test(string)) {
-            return {};
-        }
-        /* eslint-enable padded-blocks */
+        if (!/\{.+\}/.test(string)) { return {}; }
 
-        try {
-
-            json = JSON.parse(string);
-
-        }
-        catch (exception) {
-
-            return {};
-
-        }
+        try { json = JSON.parse(string); }
+        catch (exception) { return {}; }
 
         return json;
 
     };
 
-    return just.setFn('stringToJSON', stringToJSON);
+    return stringToJSON;
 
 });

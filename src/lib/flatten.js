@@ -1,10 +1,8 @@
 define([
-    './core',
     './flattenObjectLiteral',
     './flattenArray',
     './check'
 ], function (
-    just,
     flattenObjectLiteral,
     flattenArray,
     check
@@ -25,29 +23,17 @@ define([
      */
     var flatten = function flatten (value) {
 
-        var args = Array.from(arguments);
+        var args = [].slice.call(arguments);
         var flattened;
 
-        if (check(value, {})) {
-
-            flattened = flattenObjectLiteral.apply(this, args);
-
-        }
-        else if (check(value, [])) {
-
-            flattened = flattenArray.apply(this, args);
-
-        }
-        else {
-
-            throw new TypeError(value + ' couldn\'t be flattened.');
-
-        }
+        if (check(value, {})) { flattened = flattenObjectLiteral.apply(this, args); }
+        else if (check(value, [])) { flattened = flattenArray.apply(this, args); }
+        else { throw new TypeError(value + ' couldn\'t be flattened.'); }
 
         return flattened;
 
     };
 
-    return just.setFn('flatten', flatten);
+    return flatten;
 
 });

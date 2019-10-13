@@ -1,4 +1,4 @@
-define(['./core', './defaults'], function (just, defaults) {
+define(function () {
 
     'use strict';
 
@@ -80,8 +80,8 @@ define(['./core', './defaults'], function (just, defaults) {
      */
     var access = function access (object, path, handler, opts) {
 
-        var options = defaults(opts, access.DEFAULT_OPTIONS);
-        var properties = defaults(path, [path]);
+        var options = Object.assign({}, access.DEFAULT_OPTIONS, opts);
+        var properties = Array.isArray(path) ? path : [path];
         var initialObject = (options.mutate
                 ? object
                 : Object.assign({}, object)
@@ -122,7 +122,7 @@ define(['./core', './defaults'], function (just, defaults) {
 
     };
 
-    Object.defineProperties(access, /** @lends just.access */{
+    return Object.defineProperties(access, /** @lends just.access */{
         /**
          * Options for {@link just.access}.
          *
@@ -154,7 +154,5 @@ define(['./core', './defaults'], function (just, defaults) {
             }
         }
     });
-
-    return just.setFn('access', access);
 
 });

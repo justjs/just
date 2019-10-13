@@ -1,4 +1,4 @@
-define(['./core', './check'], function (just, check) {
+define(['./check'], function (check) {
 
     'use strict';
 
@@ -97,7 +97,7 @@ define(['./core', './check'], function (just, check) {
 
     };
 
-    Object.defineProperties(defaults, /** @lends just.defaults */{
+    return Object.defineProperties(defaults, /** @lends just.defaults */{
         /**
          * Options for {@link just.defaults}.
          *
@@ -144,7 +144,5 @@ define(['./core', './check'], function (just, check) {
         }
 
     });
-
-    return just.setFn('defaults', defaults);
 
 });

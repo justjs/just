@@ -1,10 +1,8 @@
 define([
-    './core',
     './eachProperty',
     './check',
     './isEmptyObject'
 ], function (
-    just,
     eachProperty,
     check,
     isEmptyObject
@@ -93,6 +91,6 @@ define([
 
     };
 
-    return just.setFn('fill', fill);
+    return fill;
 
 });

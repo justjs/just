@@ -1,4 +1,4 @@
-define(['./core', './defaults'], function (just, defaults) {
+define(function () {
 
     'use strict';
 
@@ -24,16 +24,11 @@ define(['./core', './defaults'], function (just, defaults) {
      */
     var flattenArray = function flattenArray (value, maxLevel) {
 
-        var array = defaults(value, [value]);
+        var array = Array.isArray(value) ? value : [value];
         var flattened = [];
 
-        maxLevel = defaults(maxLevel, -1);
-
-        /* eslint-disable padded-blocks */
-        if (maxLevel === 0) {
-            return array;
-        }
-        /* eslint-enable padded-blocks */
+        if (typeof maxLevel !== 'number') { maxLevel = -1; }
+        if (maxLevel === 0) { return array; }
 
         [].forEach.call(array, function (value) {
 
@@ -48,6 +43,6 @@ define(['./core', './defaults'], function (just, defaults) {
 
     };
 
-    return just.setFn('flattenArray', flattenArray);
+    return flattenArray;
 
 });

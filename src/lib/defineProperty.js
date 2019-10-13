@@ -1,8 +1,4 @@
-define([
-    './core',
-    './check',
-    './defaults'
-], function (just, check, defaults) {
+define(['./check'], function (check) {
 
     'use strict';
 
@@ -54,6 +50,6 @@ define([
 
     };
 
-    return just.setFn('defineProperty', defineProperty);
+    return defineProperty;
 
 });

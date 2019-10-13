@@ -1,4 +1,4 @@
-define(['./core'], function (just) {
+define(function () {
 
     'use strict';
 
@@ -19,11 +19,7 @@ define(['./core'], function (just) {
         for (k in obj) {
 
             /* istanbul ignore else */
-            if (({}).hasOwnProperty.call(obj, k)) {
-
-                return false;
-
-            }
+            if (({}).hasOwnProperty.call(obj, k)) { return false; }
 
         }
 
@@ -31,6 +27,6 @@ define(['./core'], function (just) {
 
     };
 
-    return just.setFn('isEmptyObject', isEmptyObject);
+    return isEmptyObject;
 
 });

@@ -1,10 +1,8 @@
 define([
-    './core',
     './check',
     './eachProperty',
     './defaults'
 ], function (
-    just,
     check,
     eachProperty,
     defaults
@@ -49,22 +47,22 @@ define([
         return results;
 
     };
-        /**
-         * Flattens an object of objects.
-         *
-         * @namespace
-         * @memberof just
-         * @param {!object} object - Some object literal.
-         * @param {?object} [
-         *     opts={@link just.flattenObjectLiteral.DEFAULT_OPTIONS}
-         * ]
-         * @throws {TypeError} If <var>object</var> is not a an object literal.
-         *
-         * @example
-         * flattenObjectLiteral({'a': {'b': {'c': {'d': 1}}}}); // {'a.b.c.d' : 1}
-         *
-         * @return {!object} The flattened object.
-         */
+    /**
+     * Flattens an object of objects.
+     *
+     * @namespace
+     * @memberof just
+     * @param {!object} object - Some object literal.
+     * @param {?object} [
+     *     opts={@link just.flattenObjectLiteral.DEFAULT_OPTIONS}
+     * ]
+     * @throws {TypeError} If <var>object</var> is not a an object literal.
+     *
+     * @example
+     * flattenObjectLiteral({'a': {'b': {'c': {'d': 1}}}}); // {'a.b.c.d' : 1}
+     *
+     * @return {!object} The flattened object.
+     */
     var flattenObjectLiteral = function flattenObjectLiteral (object, opts) {
 
         return flattenObject(
@@ -75,7 +73,7 @@ define([
 
     };
 
-    Object.defineProperties(flattenObjectLiteral, /** @lends just.flattenObjectLiteral */{
+    return Object.defineProperties(flattenObjectLiteral, /** @lends just.flattenObjectLiteral */{
         /**
          * Options for {@link just.flattenObjectLiteral}.
          *
@@ -98,7 +96,5 @@ define([
             }
         }
     });
-
-    return just.setFn('flattenObjectLiteral', flattenObjectLiteral);
 
 });

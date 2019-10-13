@@ -1,12 +1,10 @@
 define([
-    './core',
+    './defineProperties',
     './findElements',
-    './defaults',
     './parseUrl'
 ], function (
-    just,
+    defineProperties,
     findElements,
-    defaults,
     parseUrl
 ) {
 
@@ -40,13 +38,9 @@ define([
             tag + '[' + attribute + '="' + parsedUrl.href + '"]'
         ];
         var elementFound = findElements(selectors.join(','))[0] || null;
-        var intercept = defaults(handler, loadElement.DEFAULT_HANDLER);
+        var intercept = typeof handler === 'function' ? handler : loadElement.DEFAULT_HANDLER;
 
-        /* eslint-disable padded-blocks */
-        if (!url) {
-            throw new TypeError('The url is empty.');
-        }
-        /* eslint-enable padded-blocks */
+        if (!url) { throw new TypeError('The url is empty.'); }
 
         if (tag === 'link') {
 
@@ -80,7 +74,7 @@ define([
 
     };
 
-    Object.defineProperties(loadElement, /** @lends just.loadElement */{
+    return defineProperties(loadElement, /** @lends just.loadElement */{
         /**
          * A listener for the "onload" or "onerror" events.
          *
@@ -109,19 +103,15 @@ define([
          * @readonly
          * @chainable
          */
-        'DEFAULT_HANDLER': {
+        'DEFAULT_HANDLER': function (elementFound, url) {
 
-            'value': function (elementFound, url) {
+            if (!elementFound) {
 
-                if (!elementFound) {
-
-                    document.head.appendChild(this);
-
-                }
-
-                return this;
+                document.head.appendChild(this);
 
             }
+
+            return this;
 
         },
 
@@ -141,15 +131,9 @@ define([
          * >}
          */
         'nonSrcAttributes': {
-
-            'value': {
-                'link': 'href'
-            }
-
+            'link': 'href'
         }
 
     });
-
-    return just.setFn('loadElement', loadElement);
 
 });
