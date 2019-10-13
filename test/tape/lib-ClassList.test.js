@@ -1,7 +1,8 @@
 var test = require('tape');
 var ClassList = require('../../src/lib/ClassList');
+var options = {'skip': typeof window === 'undefined'};
 
-test('lib/ClassList.js', function (t) {
+test('lib/ClassList.js', options, function (t) {
 
     var element = document.body;
     var containsClass = function (target, className) {

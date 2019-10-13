@@ -1,7 +1,8 @@
 var test = require('tape');
 var LocalStorage = require('../../src/lib/LocalStorage');
+var options = {'skip': typeof window === 'undefined'};
 
-test('/lib/LocalStorage.js', function (t) {
+test('/lib/LocalStorage.js', options, function (t) {
 
     var cookiesAreEnabled = LocalStorage(true).isStorageAvailable('cookies');
     var passIfCookiesAreDisabled = function (t) {

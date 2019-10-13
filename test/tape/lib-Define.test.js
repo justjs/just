@@ -1,10 +1,12 @@
 var test = require('tape');
-var Define = require('../../src/lib/Define');
+var options = {'skip': typeof window === 'undefined'};
 
-// Use in loaded files.
-window.Define = Define;
+test('/lib/Define.js', options, function (t) {
 
-test('/lib/Define.js', function (t) {
+    var Define = require('../../src/lib/Define');
+
+    // Use in loaded files.
+    window.Define = Define;
 
     /**
      * NOTE: Removing scripts might cause to load files twice, since
@@ -343,8 +345,13 @@ test('/lib/Define.js', function (t) {
 
 });
 
-test.onFinish(function () {
+if (test.onFinish) {
 
-    delete window.Define;
+    test.onFinish(function () {
 
-});
+        delete window.Define;
+
+    });
+
+}
+

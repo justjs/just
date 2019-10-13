@@ -28,9 +28,12 @@ define(['./check'], function (check) {
     var defineProperty = function defineProperty (object, key, value) {
 
         var descriptor = Object(value);
-        var defaultAttributes = Object.getOwnPropertyDescriptor(
+        var defaultAttributes = Object.assign(Object.getOwnPropertyDescriptor(
             Object.defineProperty({}, '_', {}), '_'
-        );
+        ), {
+            'get': void 0,
+            'set': void 0
+        });
 
         if (!check(value, {}) || !Object.keys(defaultAttributes).some(
             function (key) { return key in descriptor; }

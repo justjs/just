@@ -7,6 +7,12 @@ test('lib/defineProperty.js', function (t) {
         Object.defineProperty({}, '_', {}),
         '_'
     );
+    var defaultPropertyAccessor = {
+        'get': void 0,
+        'set': void 0,
+        'configurable': false,
+        'enumerable': false
+    };
 
     t.test('Should throw if an invalid value is given.', function (st) {
 
@@ -39,11 +45,12 @@ test('lib/defineProperty.js', function (t) {
         var randomObject = {'some': 'value'};
         var someDescriptor = {'configurable': true};
         var descriptorWithNonDescriptors = Object.assign({}, someDescriptor, randomObject);
+        var fn = function () {};
 
         [
             [
                 void 0,
-                defaultPropertyDescriptor,
+                Object.assign({}, defaultPropertyDescriptor, {'value': void 0}),
                 'Non objects into `value` attribute.'
             ],
             [
@@ -60,6 +67,16 @@ test('lib/defineProperty.js', function (t) {
                 someDescriptor,
                 Object.assign({}, defaultPropertyDescriptor, someDescriptor),
                 'Property descriptors into property descriptors.'
+            ],
+            [
+                {'get': fn},
+                Object.assign({}, defaultPropertyAccessor, {'get': fn}),
+                'Getters into getters.'
+            ],
+            [
+                {'set': fn},
+                Object.assign({}, defaultPropertyAccessor, {'set': fn}),
+                'Setters into setters.'
             ],
             [
                 descriptorWithNonDescriptors,

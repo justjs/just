@@ -1,7 +1,8 @@
 var test = require('tape');
 var isWindow = require('../../src/lib/isWindow');
+var options = {'skip': typeof window === 'undefined'};
 
-test('lib/isWindow.js', function (t) {
+test('lib/isWindow.js', options, function (t) {
 
     t.test('Should return `true` if the given value is a `window` ' +
 		'object.', function (st) {

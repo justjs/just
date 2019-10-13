@@ -1,7 +1,8 @@
 var test = require('tape');
 var toObjectLiteral = require('../../src/lib/toObjectLiteral');
+var options = {'skip': typeof window === 'undefined'};
 
-test('lib/toObjectLiteral.js', function (t) {
+test('lib/toObjectLiteral.js', options, function (t) {
 
     t.test('Should convert null, object literals and arrays and ' +
 		'return a new object, and throw with malformed values.', function (st) {

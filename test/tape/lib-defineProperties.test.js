@@ -8,28 +8,46 @@ test('lib/defineProperties.js', function (t) {
         Object.defineProperty({}, '_', {}),
         '_'
     );
+    var defaultAccessors = {
+        'get': void 0,
+        'set': void 0,
+        'configurable': false,
+        'enumerable': false
+    };
 
     t.test('Should define multiple properties.', function (st) {
+
+        var fn = function () {};
 
         [
             [
                 1,
-                {'value': 1},
+                Object.assign({}, defaultDescriptors, {'value': 1}),
                 'Non property descriptors.'
             ],
             [
                 {},
-                {'value': {}},
+                Object.assign({}, defaultDescriptors, {'value': {}}),
                 'Empty objects.'
             ],
             [
                 {'configurable': true},
-                {'configurable': true},
+                Object.assign({}, defaultDescriptors, {'configurable': true}),
                 'Property descriptors.'
             ],
             [
+                {'get': fn},
+                Object.assign({}, defaultAccessors, {'get': fn}),
+                'Getters into getters.'
+            ],
+            [
+                {'set': fn},
+                Object.assign({}, defaultAccessors, {'set': fn}),
+                'Setters into setters.'
+            ],
+            [
                 {'value': 1, 'not': 'descriptor'},
-                {'value': {'value': 1, 'not': 'descriptor'}},
+                Object.assign({}, defaultDescriptors, {'value': {'value': 1, 'not': 'descriptor'}}),
                 'Mixed property descriptors.'
             ]
         ].forEach(function (values) {
@@ -45,7 +63,7 @@ test('lib/defineProperties.js', function (t) {
                     defineProperties({}, properties),
                     key
                 ),
-                Object.assign({}, defaultDescriptors, values[1]),
+                values[1],
                 values[2]
             );
 

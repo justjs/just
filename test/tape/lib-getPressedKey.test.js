@@ -1,7 +1,8 @@
 var test = require('tape');
 var getPressedKey = require('../../src/lib/getPressedKey');
+var options = {'skip': typeof window === 'undefined'};
 
-test('lib/getPressedKey.js', function (t) {
+test('lib/getPressedKey.js', options, function (t) {
 
     t.test('Should get one of the supported variants for a key ' +
 		'when a keyboard event is fired.', function (st) {

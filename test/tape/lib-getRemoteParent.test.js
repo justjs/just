@@ -1,9 +1,11 @@
 var test = require('tape');
 var getRemoteParent = require('../../src/lib/getRemoteParent');
-var html = document.documentElement;
-var body = document.body;
+var options = {'skip': typeof window === 'undefined'};
 
-test('lib/getRemoteParent.js', function (t) {
+test('lib/getRemoteParent.js', options, function (t) {
+
+    var html = document.documentElement;
+    var body = document.body;
 
     t.test('Should work as expected and return a remote parent.', function (st) {
 

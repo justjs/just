@@ -1,10 +1,11 @@
 var test = require('tape');
 var parseUrl = require('../../src/lib/parseUrl');
-var fill = require('../../src/lib/fill');
+var options = {'skip': typeof window === 'undefined'};
 
 // TODO: Mock
-test('lib/parseUrl.js', function (t) {
+test('lib/parseUrl.js', options, function (t) {
 
+    var fill = require('../../src/lib/fill');
     var currentLocation = Object.assign({}, location, {
         'origin': location.origin
     });

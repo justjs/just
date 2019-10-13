@@ -1,13 +1,15 @@
 var test = require('tape');
 var loadElement = require('../../src/lib/loadElement');
-var parseUrl = require('../../src/lib/parseUrl');
-var head = document.head;
-var assets = {
-    'css': '/assets/loadElement-test.css',
-    'js': '/assets/loadElement-test.js'
-};
+var options = {'skip': typeof window === 'undefined'};
 
-test('lib/loadElement.js', function (t) {
+test('lib/loadElement.js', options, function (t) {
+
+    var parseUrl = require('../../src/lib/parseUrl');
+    var head = document.head;
+    var assets = {
+        'css': '/assets/loadElement-test.css',
+        'js': '/assets/loadElement-test.js'
+    };
 
     t.test('Should load files and set some default properties to ' +
 		'the element.', function (st) {

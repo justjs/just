@@ -1,7 +1,8 @@
 var test = require('tape');
 var isTouchDevice = require('../../src/lib/isTouchDevice');
+var options = {'skip': typeof window === 'undefined'};
 
-test('lib/isTouchDevice.js', function (t) {
+test('lib/isTouchDevice.js', options, function (t) {
 
     t.test('Should check for touch support.', function (st) {
 

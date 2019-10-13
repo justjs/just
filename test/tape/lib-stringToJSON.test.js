@@ -1,7 +1,8 @@
 var test = require('tape');
 var stringToJSON = require('../../src/lib/stringToJSON');
+var options = {'skip': typeof window === 'undefined'};
 
-test('lib/stringToJSON.js', function (t) {
+test('lib/stringToJSON.js', options, function (t) {
 
     t.test('Should parse a valid string.', function (st) {
 

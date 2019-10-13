@@ -1,10 +1,11 @@
 var test = require('tape');
-var h = require('./helpers');
 var on = require('../../src/lib/on');
-var addEventListener = Element.prototype.addEventListener;
+var options = {'skip': typeof window === 'undefined'};
 
-test('/lib/on', function (t) {
+test('/lib/on', options, function (t) {
 
+    var h = require('./helpers');
+    var addEventListener = Element.prototype.addEventListener;
     var off = function (type, listener, options) {
 
         this.removeEventListener(type, listener, options);
@@ -99,12 +100,7 @@ test('/lib/on', function (t) {
 
     });
 
-    t.end();
-
-});
-
-test.onFinish(function () {
-
     Element.prototype.addEventListener = addEventListener;
+    t.end();
 
 });
