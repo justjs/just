@@ -31,7 +31,7 @@ var check = function check (value, otherValues) {
 
 };
 
-just.register({'check': [check, /** @lends just.check */{
+module.exports = just.register({'check': [check, /** @lends just.check */{
     /**
      *  A custom message to throw.
      *
@@ -63,6 +63,4 @@ just.register({'check': [check, /** @lends just.check */{
 
     }
 
-}]});
-
-module.exports = check;
+}]}).check;

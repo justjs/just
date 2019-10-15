@@ -117,7 +117,7 @@ var access = function access (object, path, handler, opts) {
 
 };
 
-just.register({'access': [access, /** @lends just.access */{
+module.exports = just.register({'access': [access, /** @lends just.access */{
     /**
      * Options for {@link just.access}.
      *
@@ -142,6 +142,4 @@ just.register({'access': [access, /** @lends just.access */{
         'override': true,
         'mutate': false
     })
-}]});
-
-module.exports = access;
+}]}).access;

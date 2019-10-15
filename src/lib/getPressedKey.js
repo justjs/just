@@ -23,6 +23,4 @@ var getPressedKey = function getPressedKey (e) {
 
 };
 
-just.register({'getPressedKey': getPressedKey});
-
-module.exports = getPressedKey;
+module.exports = just.register({'getPressedKey': getPressedKey}).getPressedKey;

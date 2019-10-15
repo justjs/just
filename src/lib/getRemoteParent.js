@@ -71,6 +71,4 @@ var getRemoteParent = function getRemoteParent (childNode, fn, rootContainer, in
 
 };
 
-just.register({'getRemoteParent': getRemoteParent});
-
-module.exports = getRemoteParent;
+module.exports = just.register({'getRemoteParent': getRemoteParent}).getRemoteParent;

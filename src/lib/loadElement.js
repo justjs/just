@@ -65,7 +65,7 @@ var loadElement = function loadElement (tag, url, listener, handler) {
 
 };
 
-just.register({'loadElement': [loadElement, /** @lends just.loadElement */{
+module.exports = just.register({'loadElement': [loadElement, /** @lends just.loadElement */{
     /**
      * A listener for the "onload" or "onerror" events.
      *
@@ -121,6 +121,4 @@ just.register({'loadElement': [loadElement, /** @lends just.loadElement */{
         'link': 'href'
     }
 
-}]});
-
-module.exports = loadElement;
+}]}).loadElement;

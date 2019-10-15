@@ -29,7 +29,7 @@ var LocalStorage = function LocalStorage (consent, isExplicit) {
 
 };
 
-just.register({'LocalStorage': [LocalStorage, /** @lends just.LocalStorage */{
+module.exports = just.register({'LocalStorage': [LocalStorage, /** @lends just.LocalStorage */{
     /**
      * The DoNotTrack header formatted as `true`, `false` or `undefined`
      * (for "unspecified").
@@ -227,6 +227,4 @@ just.register({'LocalStorage': [LocalStorage, /** @lends just.LocalStorage */{
         return true;
 
     }
-}]});
-
-module.exports = LocalStorage;
+}]}).LocalStorage;

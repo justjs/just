@@ -1,6 +1,4 @@
 var just = require('./core');
 var eachProperty = require('./internals/eachProperty');
 
-just.register({'eachProperty': eachProperty});
-
-module.exports = eachProperty;
+module.exports = just.register({'eachProperty': eachProperty}).eachProperty;

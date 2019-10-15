@@ -24,6 +24,4 @@ var isEmptyObject = function (object) {
 
 };
 
-just.register({'isEmptyObject': isEmptyObject});
-
-module.exports = isEmptyObject;
+module.exports = just.register({'isEmptyObject': isEmptyObject}).isEmptyObject;

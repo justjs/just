@@ -16,6 +16,4 @@ var findElements = function findElements (selector, parent) {
 
 };
 
-just.register({'findElements': findElements});
-
-module.exports = findElements;
+module.exports = just.register({'findElements': findElements}).findElements;

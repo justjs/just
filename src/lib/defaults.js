@@ -89,7 +89,7 @@ var defaults = function defaults (value, defaultValue, opts) {
 
 };
 
-just.register({'defaults': [defaults, /** @lends just.defaults */{
+module.exports = just.register({'defaults': [defaults, /** @lends just.defaults */{
     /**
      * Options for {@link just.defaults}.
      *
@@ -129,6 +129,4 @@ just.register({'defaults': [defaults, /** @lends just.defaults */{
         'ignoreNull': false
     })
 
-}]});
-
-module.exports = defaults;
+}]}).defaults;

@@ -54,6 +54,4 @@ var toObjectLiteral = function toObjectLiteral (array) {
 
 };
 
-just.register({'toObjectLiteral': toObjectLiteral});
-
-module.exports = toObjectLiteral;
+module.exports = just.register({'toObjectLiteral': toObjectLiteral}).toObjectLiteral;

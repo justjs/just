@@ -11,7 +11,7 @@ var findElements = require('./findElements');
  * @param {object|boolean} [options=false] - Options for addEventListener
  * @return {Element[]} elements
  */
-var on = function on (elements, eventNames, listener, options) {
+var on = function addEventListener (elements, eventNames, listener, options) {
 
     if (typeof elements === 'string') { elements = findElements(elements); }
     if (!Array.isArray(eventNames)) { eventNames = [eventNames]; }
@@ -31,6 +31,4 @@ var on = function on (elements, eventNames, listener, options) {
 
 };
 
-just.register({'on': on});
-
-module.exports = on;
+module.exports = just.register({'on': on}).on;

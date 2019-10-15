@@ -119,6 +119,4 @@ var parseUrl = function parseUrl (url) {
 
 };
 
-just.register({'parseUrl': parseUrl});
-
-module.exports = parseUrl;
+module.exports = just.register({'parseUrl': parseUrl}).parseUrl;

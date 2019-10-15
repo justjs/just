@@ -25,7 +25,7 @@ var ClassList = function ClassList (element) {
 
 };
 
-just.register({'ClassList': [ClassList, /** @lends just.ClassList */{
+module.exports = just.register({'ClassList': [ClassList, /** @lends just.ClassList */{
 
     /**
      * Simulate Element.classList.prototype.method.apply(element, args)
@@ -136,6 +136,4 @@ just.register({'ClassList': [ClassList, /** @lends just.ClassList */{
 
     }
 
-}]});
-
-module.exports = ClassList;
+}]}).ClassList;

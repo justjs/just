@@ -19,6 +19,4 @@ var isWindow = function isWindow (object) {
 
 };
 
-just.register({'isWindow': isWindow});
-
-module.exports = isWindow;
+module.exports = just.register({'isWindow': isWindow}).isWindow;

@@ -27,6 +27,4 @@ var stringToJSON = function stringToJSON (string) {
 
 };
 
-just.register({'stringToJSON': stringToJSON});
-
-module.exports = stringToJSON;
+module.exports = just.register({'stringToJSON': stringToJSON}).stringToJSON;

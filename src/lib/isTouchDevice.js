@@ -18,6 +18,4 @@ var isTouchDevice = function isTouchDevice () {
 
 };
 
-just.register({'isTouchDevice': isTouchDevice});
-
-module.exports = isTouchDevice;
+module.exports = just.register({'isTouchDevice': isTouchDevice}).isTouchDevice;
