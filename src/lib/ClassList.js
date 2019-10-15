@@ -1,8 +1,7 @@
 define([
     './defineProperties',
-    './defaults',
-    './toArray'
-], function (defineProperties, defaults, toArray) {
+    './defaults'
+], function (defineProperties, defaults) {
 
     'use strict';
 
@@ -117,7 +116,7 @@ define([
          */
         'apply': function (element, methodName, methodArgs) {
 
-            var args = toArray(methodArgs);
+            var args = typeof methodArgs === 'number' ? [methodArgs] : Array.from(methodArgs);
             var classList = element.classList;
 
             if (/(?:add|remove)/.test(methodName)) {
