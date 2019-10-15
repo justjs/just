@@ -1,37 +1,6 @@
-define(['./defineProperty'], function (defineProperty) {
+var just = require('./core');
+var defineProperties = require('./internals/defineProperties');
 
-    'use strict';
+just.register({'defineProperties': defineProperties});
 
-    /**
-     * Alternative to <var>Object.defineProperties</var>.
-     *
-     * @see {@link defineProperty} for more details.
-     * @namespace
-     * @memberof just
-     * @param {!object} object
-     * @param {!object.<key, propertyDescriptor>|!object.<key, value>} properties
-     * @return <var>object</var>
-     */
-    var defineProperties = function defineProperties (object, properties) {
-
-        var key, value;
-
-        for (key in properties) {
-
-            value = properties[key];
-
-            if (({}).hasOwnProperty.call(properties, key)) {
-
-                defineProperty(object, key, value);
-
-            }
-
-        }
-
-        return object;
-
-    };
-
-    return defineProperties;
-
-});
+module.exports = defineProperties;

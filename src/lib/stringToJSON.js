@@ -1,35 +1,32 @@
-define(function () {
+var just = require('./core');
+/**
+ * Parses a JSON string into a JSON.
+ *
+ * @namespace
+ * @memberof just
+ * @param {*} string - Some string to parse.
+ *
+ * @example
+ * stringToJSON('{"a": 1}'); // returns {a: 1}.
+ *
+ * @example
+ * stringToJSON(1); // returns {}.
+ *
+ * @return {!object} A JSON-like object.
+ */
+var stringToJSON = function stringToJSON (string) {
 
-    'use strict';
+    var json;
 
-    /**
-     * Parses a JSON string into a JSON.
-     *
-     * @namespace
-     * @memberof just
-     * @param {*} string - Some string to parse.
-     *
-     * @example
-     * stringToJSON('{"a": 1}'); // returns {a: 1}.
-     *
-     * @example
-     * stringToJSON(1); // returns {}.
-     *
-     * @return {!object} A JSON-like object.
-     */
-    var stringToJSON = function stringToJSON (string) {
+    if (!/\{.+\}/.test(string)) { return {}; }
 
-        var json;
+    try { json = JSON.parse(string); }
+    catch (exception) { return {}; }
 
-        if (!/\{.+\}/.test(string)) { return {}; }
+    return json;
 
-        try { json = JSON.parse(string); }
-        catch (exception) { return {}; }
+};
 
-        return json;
+just.register({'stringToJSON': stringToJSON});
 
-    };
-
-    return stringToJSON;
-
-});
+module.exports = stringToJSON;

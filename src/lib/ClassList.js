@@ -1,150 +1,141 @@
-define([
-    './defineProperties',
-    './defaults'
-], function (defineProperties, defaults) {
+var just = require('./core');
+/**
+ * Chainable methods for the classList property.
+ *
+ * @namespace
+ * @memberof just
+ *
+ * @constructor
+ * @param {Element} element - The target.
+ *
+ * @example
+ * ClassList(button)
+ *     .add('a', 'b', 'c')
+ *     .remove('b')
+ *     .toggle('c', (let force = true))
+ *     .replace('a', 'z')
+ *     .contains('b'); // false
+ */
+var ClassList = function ClassList (element) {
 
-    'use strict';
+    if (!(this instanceof ClassList)) { return new ClassList(element); }
+
+    /** @ŧype {Element} */
+    this.element = element;
+
+};
+
+just.register({'ClassList': [ClassList, /** @lends just.ClassList */{
 
     /**
-     * Chainable methods for the classList property.
+     * Simulate Element.classList.prototype.method.apply(element, args)
+     * since it's not possible to call a classList-method that way.
      *
-     * @namespace
-     * @memberof just
-     *
-     * @constructor
      * @param {Element} element - The target.
+     * @param {string} methodName - The name of the classList method to call.
+     * @param {array[]|*} [methodArgs=[methodArgs]] - Arguments for the classList method.
+     * @return Whatever the method returns.
      *
      * @example
-     * ClassList(button)
-     *     .add('a', 'b', 'c')
-     *     .remove('b')
-     *     .toggle('c', (let force = true))
-     *     .replace('a', 'z')
-     *     .contains('b'); // false
+     * ClassList.apply(this, 'add', ['x', 'b']); // > undefined
+     * ClassList.apply(this, 'remove', 'c'); // > undefined
+     * ClassList.apply(this, 'toggle', ['a', true]); // > true
      */
-    var ClassList = function ClassList (element) {
+    'apply': function (element, methodName, methodArgs) {
 
-        if (!(this instanceof ClassList)) { return new ClassList(element); }
+        var args = typeof methodArgs === 'number' ? [methodArgs] : Array.from(methodArgs);
+        var classList = element.classList;
 
-        /** @ŧype {Element} */
-        this.element = element;
+        if (/(?:add|remove)/.test(methodName)) {
 
-    };
+            args.forEach(function (arg) { classList[methodName](arg); });
 
-    defineProperties(ClassList.prototype, /** @lends just.ClassList.prototype */{
-
-        /**
-         * @alias Element.classList.add
-         * @chainable
-         */
-        'add': function () {
-
-            ClassList.apply(this.element, 'add', arguments);
-
-            return this;
-
-        },
-        /**
-         * @alias Element.classList.remove
-         * @chainable
-         */
-        'remove': function () {
-
-            ClassList.apply(this.element, 'remove', arguments);
-
-            return this;
-
-        },
-        /**
-         * @alias Element.classList.toggle
-         * @chainable
-         */
-        'toggle': function () {
-
-            ClassList.apply(this.element, 'toggle', arguments);
-
-            return this;
-
-        },
-        /**
-         * @alias Element.classList.replace
-         * @chainable
-         */
-        'replace': function () {
-
-            ClassList.apply(this.element, 'replace', arguments);
-
-            return this;
-
-        },
-        /**
-         * @alias Element.classList.contains
-         * @return {boolean}
-         */
-        'contains': function () {
-
-            return ClassList.apply(this.element, 'contains', arguments);
-
-        },
-        /**
-         * @alias Element.classList.item
-         * @return {?string}
-         */
-        'item': function () {
-
-            return ClassList.apply(this.element, 'item', arguments);
+            /** These methods return undefined. */
+            return void 0;
 
         }
 
-    });
-
-    return defineProperties(ClassList, /** @lends just.ClassList */{
-
-        /**
-         * Simulate Element.classList.prototype.method.apply(element, args)
-         * since it's not possible to call a classList-method that way.
+        /*
+         * Passing undefined arguments instead of manually
+         * adding more conditionals to call the method with
+         * the correct amount shouldn't be a problem.
          *
-         * @param {Element} element - The target.
-         * @param {string} methodName - The name of the classList method to call.
-         * @param {array[]|*} [methodArgs=[methodArgs]] - Arguments for the classList method.
-         * @return Whatever the method returns.
+         * I.e:
+         * classList.contains('a', undefined);
+         * classList.contains('a', 'some other value');
          *
-         * @example
-         * ClassList.apply(this, 'add', ['x', 'b']); // > undefined
-         * ClassList.apply(this, 'remove', 'c'); // > undefined
-         * ClassList.apply(this, 'toggle', ['a', true]); // > true
+         * Should be the same as calling...
+         * classList.contains('a');
          */
-        'apply': function (element, methodName, methodArgs) {
+        return classList[methodName](args[0], args[1]);
 
-            var args = typeof methodArgs === 'number' ? [methodArgs] : Array.from(methodArgs);
-            var classList = element.classList;
+    }
 
-            if (/(?:add|remove)/.test(methodName)) {
+}, /** @lends just.ClassList.prototype */{
 
-                args.forEach(function (arg) { classList[methodName](arg); });
+    /**
+     * @alias Element.classList.add
+     * @chainable
+     */
+    'add': function () {
 
-                /** These methods return undefined. */
-                return void 0;
+        ClassList.apply(this.element, 'add', arguments);
 
-            }
+        return this;
 
-            /*
-             * Passing undefined arguments instead of manually
-             * adding more conditionals to call the method with
-             * the correct amount shouldn't be a problem.
-             *
-             * I.e:
-             * classList.contains('a', undefined);
-             * classList.contains('a', 'some other value');
-             *
-             * Should be the same as calling...
-             * classList.contains('a');
-             */
-            return classList[methodName](args[0], args[1]);
+    },
+    /**
+     * @alias Element.classList.remove
+     * @chainable
+     */
+    'remove': function () {
 
-        }
+        ClassList.apply(this.element, 'remove', arguments);
 
-    });
+        return this;
 
-});
+    },
+    /**
+     * @alias Element.classList.toggle
+     * @chainable
+     */
+    'toggle': function () {
 
+        ClassList.apply(this.element, 'toggle', arguments);
+
+        return this;
+
+    },
+    /**
+     * @alias Element.classList.replace
+     * @chainable
+     */
+    'replace': function () {
+
+        ClassList.apply(this.element, 'replace', arguments);
+
+        return this;
+
+    },
+    /**
+     * @alias Element.classList.contains
+     * @return {boolean}
+     */
+    'contains': function () {
+
+        return ClassList.apply(this.element, 'contains', arguments);
+
+    },
+    /**
+     * @alias Element.classList.item
+     * @return {?string}
+     */
+    'item': function () {
+
+        return ClassList.apply(this.element, 'item', arguments);
+
+    }
+
+}]});
+
+module.exports = ClassList;

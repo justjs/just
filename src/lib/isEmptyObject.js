@@ -1,32 +1,29 @@
-define(function () {
+var just = require('./core');
+/**
+ * Checks if an object has no direct keys.
+ *
+ * @namespace
+ * @memberof just
+ * @param {*} [object=Object(object)] - Some object.
+ * @return {boolean} `true` if the object doesn't contain owned properties,
+ *     `false` otherwise.
+ */
+var isEmptyObject = function (object) {
 
-    'use strict';
+    var obj = Object(object);
+    var k;
 
-    /**
-     * Checks if an object has no direct keys.
-     *
-     * @namespace
-     * @memberof just
-     * @param {*} [object=Object(object)] - Some object.
-     * @return {boolean} `true` if the object doesn't contain owned properties,
-     *     `false` otherwise.
-     */
-    var isEmptyObject = function (object) {
+    for (k in obj) {
 
-        var obj = Object(object);
-        var k;
+        /* istanbul ignore else */
+        if (({}).hasOwnProperty.call(obj, k)) { return false; }
 
-        for (k in obj) {
+    }
 
-            /* istanbul ignore else */
-            if (({}).hasOwnProperty.call(obj, k)) { return false; }
+    return true;
 
-        }
+};
 
-        return true;
+just.register({'isEmptyObject': isEmptyObject});
 
-    };
-
-    return isEmptyObject;
-
-});
+module.exports = isEmptyObject;

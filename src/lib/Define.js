@@ -1,22 +1,14 @@
-define([
-    './defineProperties',
-    './access',
-    './eachProperty',
-    './loadElement',
-    './check',
-    './findElements',
-    './stringToJSON',
-    './defaults'
-], function (
-    defineProperties,
-    access,
-    eachProperty,
-    loadElement,
-    check,
-    findElements,
-    stringToJSON,
-    defaults
-) {
+var just = require('./core');
+var defineProperties = require('./defineProperties');
+var access = require('./access');
+var eachProperty = require('./eachProperty');
+var loadElement = require('./loadElement');
+var check = require('./check');
+var findElements = require('./findElements');
+var stringToJSON = require('./stringToJSON');
+var defaults = require('./defaults');
+
+module.exports = just.register({'Define': (function () {
 
     'use strict';
 
@@ -63,13 +55,13 @@ define([
      *     // Loads after all ids have been defined.
      * });
      */
-    var Define = function justDefine (id, dependencyIDs, value) {
+    var Define = function Define (id, dependencyIDs, value) {
 
         var handler;
 
         /* eslint-disable padded-blocks */
-        if (!(this instanceof justDefine)) {
-            return new justDefine(id, dependencyIDs, value);
+        if (!(this instanceof Define)) {
+            return new Define(id, dependencyIDs, value);
         }
 
         if (typeof id !== 'string') {
@@ -546,4 +538,4 @@ define([
 
     }).init();
 
-});
+})()}).Define;

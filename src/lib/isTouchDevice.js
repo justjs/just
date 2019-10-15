@@ -1,27 +1,23 @@
-define(function () {
+/* global DocumentTouch */
+var just = require('./core');
+/**
+ * Checks if the screen <em>supports</em> touch.
+ *
+ * @namespace
+ * @memberof just
+ * @return {boolean}
+ */
+var isTouchDevice = function isTouchDevice () {
 
-    'use strict';
+    return !!('ontouchstart' in document.body
+		|| window.navigator.maxTouchPoints > 0
+		|| window.navigator.msMaxTouchPoints > 0
+		|| 'DocumentTouch' in window
+		&& document instanceof DocumentTouch
+    );
 
-    /* globals DocumentTouch */
+};
 
-    /**
-     * Checks if the screen <em>supports</em> touch.
-     *
-     * @namespace
-     * @memberof just
-     * @return {boolean}
-     */
-    var isTouchDevice = function isTouchDevice () {
+just.register({'isTouchDevice': isTouchDevice});
 
-        return !!('ontouchstart' in document.body
-			|| window.navigator.maxTouchPoints > 0
-			|| window.navigator.msMaxTouchPoints > 0
-			|| 'DocumentTouch' in window
-			&& document instanceof DocumentTouch
-        );
-
-    };
-
-    return isTouchDevice;
-
-});
+module.exports = isTouchDevice;

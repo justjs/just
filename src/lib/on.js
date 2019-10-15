@@ -1,38 +1,36 @@
-define(['./findElements'], function (findElements) {
+var just = require('./core');
+var findElements = require('./findElements');
+/**
+ * Add an event listener to multiple elements.
+ *
+ * @namespace
+ * @memberof just
+ * @param {string|Element[]} elements - The targets.
+ * @param {string|string[]} eventNames - The event types.
+ * @param {function} listener - The handler for the event.
+ * @param {object|boolean} [options=false] - Options for addEventListener
+ * @return {Element[]} elements
+ */
+var on = function on (elements, eventNames, listener, options) {
 
-    'use strict';
+    if (typeof elements === 'string') { elements = findElements(elements); }
+    if (!Array.isArray(eventNames)) { eventNames = [eventNames]; }
+    if (elements && !('length' in elements)) { elements = [elements]; }
 
-    /**
-     * Add an event listener to multiple elements.
-     *
-     * @namespace
-     * @memberof just
-     * @param {string|Element[]} elements - The targets.
-     * @param {string|string[]} eventNames - The event types.
-     * @param {function} listener - The handler for the event.
-     * @param {object|boolean} [options=false] - Options for addEventListener
-     * @return {Element[]} elements
-     */
-    var on = function on (elements, eventNames, listener, options) {
+    Array.from((elements = elements || []), function (element) {
 
-        if (typeof elements === 'string') { elements = findElements(elements); }
-        if (!Array.isArray(eventNames)) { eventNames = [eventNames]; }
-        if (elements && !('length' in elements)) { elements = [elements]; }
+        eventNames.forEach(function (eventName) {
 
-        Array.from((elements = elements || []), function (element) {
-
-            eventNames.forEach(function (eventName) {
-
-                element.addEventListener(eventName, listener, options || false);
-
-            });
+            element.addEventListener(eventName, listener, options || false);
 
         });
 
-        return elements;
+    });
 
-    };
+    return elements;
 
-    return on;
+};
 
-});
+just.register({'on': on});
+
+module.exports = on;
