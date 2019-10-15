@@ -146,22 +146,6 @@ module.exports = grunt => {
 			}
 		},
 
-		// Test client code.
-		'karma': {
-			'unit': {
-				'configFile': 'karma.config.js',
-				'singleRun': true,
-				'background': process.env.NODE_ENV === 'production' || process.env.CI
-			},
-			'unit-dev': {
-				'configFile': 'karma.config.js',
-				'browsers': ['Firefox'],
-				'singleRun': false,
-				'background': false,
-				'logLevel': 'DEBUG'
-			}
-		},
-
 		// Build distributions
 		'requirejs': {
 
@@ -323,8 +307,7 @@ module.exports = grunt => {
 		'copy:test',
 		'copy:server-tape-to-tap',
 		'browserify:unit-tests',
-		'tape:tap-unit',
-		'karma:unit'
+		'tape:tap-unit'
 	]);
 
 	grunt.registerTask('test:unit-dev', [
@@ -332,8 +315,7 @@ module.exports = grunt => {
 		'copy:test',
 		'copy:server-tape-to-tap',
 		'browserify:unit-tests',
-		'tape:tap-unit',
-		'karma:unit-dev'
+		'tape:tap-unit'
 	]);
 
 	grunt.registerTask('test:integration', [
