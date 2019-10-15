@@ -1,10 +1,12 @@
 module.exports = {
 	'env': {
 		'browser': true,
-		'node': true
+		'node': true,
+        'jest/globals': true
 	},
     'plugins': [
-        'es5'
+        'es5',
+        'jest'
     ],
     'globals': {
         'define': 'readonly'
