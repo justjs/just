@@ -8,19 +8,13 @@
   "browser": "dist/browser/just.min.js",
   "scripts": {
     "start": "npm run development",
-    "development": "grunt karma:unit-dev:start default",
-    "build": "grunt build",
-    "test": "grunt build test",
-    "document": "grunt build document",
-    "distribute": "NODE_ENV=production grunt distribute",
-    "test:unit": "grunt build test:unit",
-    "test:integration": "grunt build test:integration",
-    "test:dev": "grunt init test-dev",
-    "tap": "grunt build clean:test copy:test copy:server-tape-to-tap && tap build/test/tap",
+    "development": "",
+    "build": "npm test",
+    "test": "",
     "lint": "eslint . --cache",
     "pretest": "npm run lint",
     "precommit": "npm run test",
-    "prepack": "npm run pretest && npm run distribute && npm run lint -- --fix && grunt compare_size"
+    "prepack": "npm run build"
   },
   "repository": {
     "type": "git",
