@@ -14,7 +14,7 @@ module.exports = config => {
 
 	config.set({
 		'autoWatch': false,
-		'logLevel': config.LOG_DEBUG,
+		'logLevel': config.LOG_DISABLE,
 		'failOnEmptyTestSuite': false,
 		'frameworks': ['tap'],
 		'browsers': ['jsdom'],
@@ -22,6 +22,9 @@ module.exports = config => {
 		'tapReporter': {
 			'prettify': tapSpec,
 			'separator': '****************************'
+		},
+		'client': {
+			'captureConsole': false
 		},
 		'coverageIstanbulReporter': {
 			'reports': ['html', 'text', 'text-summary'],
