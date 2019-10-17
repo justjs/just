@@ -2,62 +2,61 @@ var access = require('@lib/access');
 
 describe('@lib/access.js', function () {
 
-    it('Should access to one property.', function () {
+    it('Should access to one existent property.', function () {
 
-        access({'x': 1}, 'x', function (o, k, exists, path) {
+        var fn = jest.fn();
 
-            expect(o[k]).toBe(1);
-            expect(exists).toBe(true);
-            expect(path).toMatchObject(['x']);
+        access({'x': 1}, ['x'], fn);
 
-        });
+        expect(fn).toHaveBeenCalledWith({'x': 1}, 'x', true, ['x']);
+
+    });
+
+    it('Should return the value returned from the handler.', function () {
+
+        var expectedValue = 'expected';
+        var fn = function () { return expectedValue; };
+
+        expect(access({}, [], fn)).toBe(expectedValue);
+
+    });
+
+    it('Should return the accessed value if no handler is given.', function () {
+
+        var expectedValue = 'expected';
+
+        expect(access({'a': expectedValue}, 'a')).toBe(expectedValue);
+
+    });
+
+    it('Should normalize the property path to an array.', function () {
+
+        var expectedValue = 'expected';
+        var object = {'a': expectedValue};
+
+        expect(access(object, ['a'])).toBe(access(object, 'a'));
 
     });
 
     it('Should access to one non-existent property.', function () {
 
-        access({}, 'x', function (o, k, exists, path) {
+        var fn = jest.fn();
 
-            expect(o[k]).not.toBeDefined();
-            expect(exists).toBe(false);
-            expect(path).toMatchObject(['x']);
+        access({}, ['x'], fn);
 
-        });
+        expect(fn).toHaveBeenCalledWith({}, 'x', false, ['x']);
 
     });
 
-    it('Should work as expected and access to a deep existent ' +
-		'property.', function () {
+    it('Should access to one deep existent property.', function () {
 
         var expectedValue = 'expected';
-        var baseObject = {'a': {'b': {'c': {'d': expectedValue}}}};
-        var keys = ['a', 'b', 'c', 'd'];
-        var result = access(baseObject, keys, function (lastObject, lastKey,
-            exists, path) {
+        var baseObject = {'a': {'b': {'c': expectedValue}}};
+        var keys = ['a', 'b', 'c'];
+        var fn = jest.fn();
 
-            expect(lastKey).toMatch(/^(a|b|c|d)$/);
-            expect(exists).toBe(true);
-            expect(path).toMatchObject(keys);
-
-            return (exists
-                ? lastObject[lastKey]
-                : null
-            );
-
-        }, {'mutate': false});
-
-        expect(result).toBe(expectedValue);
-
-    });
-
-    it('Should return the accessed value if no handler ' +
-		'is given.', function () {
-
-        var expectedValue = 'expected';
-        var object = {'a': {'b': expectedValue}};
-        var keys = ['a', 'b'];
-
-        expect(access(object, keys)).toBe(expectedValue);
+        access(baseObject, keys, fn, {'mutate': false});
+        expect(fn).toHaveBeenCalledWith({'c': expectedValue}, 'c', true, keys);
 
     });
 
@@ -81,48 +80,51 @@ describe('@lib/access.js', function () {
 
         }).not.toThrow(TypeError);
 
+        expect(function () {
+
+            /** override is true by default. */
+            access({'a': 1}, ['a', 'b']);
+
+        }).not.toThrow(TypeError);
+
     });
 
     it('Should create and access to some non-existent properties.', function () {
 
-        var object = Object.assign({'z': 1}, {
-            'prototype': Function.prototype
-        });
-        var keys = ['a', 'b', 'c'];
-        var newObject = access(object, keys, function (lastObject, lastKey,
-            exists, path) {
+        var fn = jest.fn();
+        var keys = ['a', 'b'];
 
-            expect(this).not.toBe(object);
-            expect(lastObject).toMatchObject({});
-            expect(lastKey).toBe('c');
-            expect(exists).toBe(false);
+        access({}, keys, fn);
+        expect(fn).toHaveBeenCalledWith({}, 'b', false, keys);
 
-            if (!exists) { lastObject[lastKey] = path.length; }
+    });
 
-            return this;
+    it('Should not modify the base object.', function () {
 
-        }, {'mutate': false});
+        var fn = function () { return this; };
+        var object = {};
 
-        expect(newObject).toMatchObject(
-            Object.assign({'a': {'b': {'c': 3}}}, object)
-        );
+        expect(access(object, 'new', fn)).not.toBe(object);
+        expect(object).not.toHaveProperty('new');
+
+        expect(access(object, 'new', fn, {'mutate': false})).not.toBe(object);
+        expect(object).not.toHaveProperty('new');
 
     });
 
     it('Should modify the base object.', function () {
 
-        var object = {'a': {'b': false}, 'b': {'b': false}};
-        var keys = 'a.b'.split('.');
-        var result = access(object, keys, function (lastObject, lastKey) {
+        var fn = function () { return this; };
+        var object = {};
 
-            lastObject[lastKey] = true;
+        expect(access(object, ['a', 'b'], fn, {'mutate': true})).toBe(object);
+        expect(object).toHaveProperty('a');
 
-            return this;
-
-        }, {'mutate': true});
-
-        expect(object).toMatchObject({'a': {'b': true}, 'b': {'b': false}});
-        expect(result).toBe(object);
+        /**
+         * Since `fn` didn't modify the last property,
+         * the last key won't be present.
+         */
+        expect(object).not.toHaveProperty('a.b');
 
     });
 
