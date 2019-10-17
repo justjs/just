@@ -7,7 +7,7 @@ var just = require('./core');
  * @memberof just
  * @return {boolean}
  */
-var isTouchDevice = function isTouchDevice () {
+var isTouchSupported = function isTouchSupported () {
 
     return !!('ontouchstart' in document.body
 		|| window.navigator.maxTouchPoints > 0
@@ -18,4 +18,4 @@ var isTouchDevice = function isTouchDevice () {
 
 };
 
-module.exports = just.register({'isTouchDevice': isTouchDevice}).isTouchDevice;
+module.exports = just.register({'isTouchSupported': isTouchSupported}).isTouchSupported;
