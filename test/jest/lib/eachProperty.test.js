@@ -2,79 +2,59 @@ var eachProperty = require('@lib/eachProperty');
 
 describe('@lib/eachProperty.js', function () {
 
-    var findNonOwnedProperty = function (flag) {
-
-        var found = false;
-
-        function TestObject () {}
-
-        TestObject.own = true;
-
-        // Demostration purposes.
-        Function.prototype.nonOwn = true;
-
-        eachProperty(TestObject, function (v, k, o, s) {
-
-            if (!({}).hasOwnProperty.call(o, k)) { found = true; }
-
-        }, null, {'addNonOwned': flag});
-
-        delete Function.prototype.nonOwn;
-
-        return found;
-
-    };
-
     it('Should call a function on each element found.', function () {
 
         var thisArg = {};
         var mainObject = {'a': 'x', 'b': 'y'};
-        var interrupted = eachProperty(mainObject, function (value, key, object) {
+        var fn = jest.fn(function (value, key, object) {
 
             expect(this).toBe(thisArg);
             expect(value).toMatch(/^x|y$/);
             expect(key).toMatch(/^a|b$/);
             expect(object).toMatchObject(Object(mainObject));
 
-        }, thisArg);
+        });
 
-        expect(interrupted).toBe(false);
+        eachProperty(mainObject, fn, thisArg);
+        expect(fn).toHaveBeenCalledTimes(2);
 
     });
 
     it('Should iterate all the owned properties of an object.', function () {
 
-        /** No non-owned properties were found. */
-        expect(findNonOwnedProperty(false)).toBe(false);
+        var fn = jest.fn();
+        var spy = jest.spyOn(Object.prototype, 'hasOwnProperty');
+
+        eachProperty({'a': 1}, fn);
+        expect(spy).toHaveBeenCalledWith('a');
+        expect(spy).toHaveReturnedWith(true);
+        expect(fn).toHaveBeenCalledTimes(1);
+        expect(fn).toHaveBeenCalledWith(1, 'a', {'a': 1});
+
+        spy.mockRestore();
 
     });
 
     it('Should iterate the non-owned properties of an object.', function () {
 
-        /** A non-owned property was found. */
-        expect(findNonOwnedProperty(true)).toBe(true);
+        var fn = jest.fn();
+        var mock = jest.spyOn(Object.prototype, 'hasOwnProperty')
+            .mockImplementation(function (key) { return key !== 'a'; });
+
+        eachProperty({'a': 1}, fn, {'addNonOwned': true});
+        expect(fn).not.toHaveBeenCalled();
+
+        mock.mockRestore();
 
     });
 
     it('Should exit when the function returns a truthy value.', function () {
 
-        var object = {'a': null, 'b': 1, 'c': null};
-        var hasReturnedOnTime;
-        var fail = jest.fn();
-        var interrupted = eachProperty(object, function (v, k, o, s) {
+        var fn = jest.fn(function () { return true; });
+        var interrupted = eachProperty({'a': 1, 'b': 2}, fn);
 
-            if (hasReturnedOnTime) {
-
-                fail('The function didn\'t return on time.');
-
-            }
-
-            if (v === null) { return hasReturnedOnTime = true; }
-
-        });
-
-        expect(fail).not.toHaveBeenCalled();
         expect(interrupted).toBe(true);
+        expect(fn).toHaveBeenCalledTimes(1);
 
     });
 
