@@ -1,7 +1,7 @@
-var defineProperties = require('@src/lib/defineProperties');
+var defineProperties = require('@lib/defineProperties');
 
 // TODO: Mock
-test('@src/lib/defineProperties.js', function () {
+test('@lib/defineProperties.js', function () {
 
     var defaultDescriptors = Object.getOwnPropertyDescriptor(
         Object.defineProperty({}, '_', {}),

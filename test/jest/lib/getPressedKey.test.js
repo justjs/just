@@ -1,6 +1,6 @@
-var getPressedKey = require('@src/lib/getPressedKey');
+var getPressedKey = require('@lib/getPressedKey');
 
-describe('@src/lib/getPressedKey.js', function () {
+describe('@lib/getPressedKey.js', function () {
 
     it('Should get one of the supported variants for a key ' +
 		'when a keyboard event is fired.', function () {

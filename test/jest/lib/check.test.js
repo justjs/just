@@ -1,6 +1,6 @@
-var check = require('@src/lib/check');
+var check = require('@lib/check');
 
-describe('@src/lib/check.js', function () {
+describe('@lib/check.js', function () {
 
     it('Should check if the given value looks like the others.', function () {
 

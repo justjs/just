@@ -1,4 +1,4 @@
-var LocalStorage = require('@src/lib/LocalStorage');
+var LocalStorage = require('@lib/LocalStorage');
 var isLocalStorageAvailable = true;
 var stores = {
     'cookies': {},
@@ -66,7 +66,7 @@ beforeAll(function () {
 
 });
 
-describe('@src/lib/LocalStorage.js', function () {
+describe('@lib/LocalStorage.js', function () {
 
     it('Should set a consent.', function () {
 

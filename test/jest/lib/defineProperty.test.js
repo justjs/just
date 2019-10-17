@@ -1,6 +1,6 @@
-var defineProperty = require('@src/lib/defineProperty');
+var defineProperty = require('@lib/defineProperty');
 
-describe('@src/lib/defineProperty.js', function () {
+describe('@lib/defineProperty.js', function () {
 
     var defaultPropertyDescriptor = Object.getOwnPropertyDescriptor(
         Object.defineProperty({}, '_', {}),

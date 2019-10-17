@@ -1,6 +1,6 @@
-var isEmptyObject = require('@src/lib/isEmptyObject');
+var isEmptyObject = require('@lib/isEmptyObject');
 
-describe('@src/lib/isEmptyObject.js', function () {
+describe('@lib/isEmptyObject.js', function () {
 
     it('Should return `true` if it\'s an empty object.', function () {
 

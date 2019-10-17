@@ -1,6 +1,6 @@
-var findElements = require('@src/lib/findElements');
+var findElements = require('@lib/findElements');
 
-describe('@src/lib/findElements.js', function () {
+describe('@lib/findElements.js', function () {
 
     it('Should always return an Array.', function () {
 

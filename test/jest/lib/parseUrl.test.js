@@ -1,6 +1,6 @@
-var parseUrl = require('@src/lib/parseUrl');
+var parseUrl = require('@lib/parseUrl');
 
-describe('@src/lib/parseUrl.js', function () {
+describe('@lib/parseUrl.js', function () {
 
     var currentLocation = JSON.parse(JSON.stringify(location));
     var nonOriginParts = {

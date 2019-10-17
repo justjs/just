@@ -1,7 +1,7 @@
-var on = require('@src/lib/on');
-var helpers = require('./helpers');
+var on = require('@lib/on');
+var helpers = require('@test/helpers');
 
-describe('@src/lib/on', function () {
+describe('@lib/on', function () {
 
     var off = function (type, listener, options) {
 

@@ -1,7 +1,7 @@
-var loadElement = require('@src/lib/loadElement');
-var parseUrl = require('@src/lib/parseUrl');
+var loadElement = require('@lib/loadElement');
+var parseUrl = require('@lib/parseUrl');
 
-describe('@src/lib/loadElement.js', function () {
+describe('@lib/loadElement.js', function () {
 
     var head = document.head;
     var assets = {

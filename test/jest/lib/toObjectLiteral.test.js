@@ -1,6 +1,6 @@
-var toObjectLiteral = require('@src/lib/toObjectLiteral');
+var toObjectLiteral = require('@lib/toObjectLiteral');
 
-describe('@src/lib/toObjectLiteral.js', function () {
+describe('@lib/toObjectLiteral.js', function () {
 
     it('Should convert null, object literals and arrays and ' +
 		'return a new object, and throw with malformed values.', function () {

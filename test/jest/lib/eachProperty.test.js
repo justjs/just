@@ -1,6 +1,6 @@
-var eachProperty = require('@src/lib/eachProperty');
+var eachProperty = require('@lib/eachProperty');
 
-describe('@src/lib/eachProperty.js', function () {
+describe('@lib/eachProperty.js', function () {
 
     var findNonOwnedProperty = function (flag) {
 

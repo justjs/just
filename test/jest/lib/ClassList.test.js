@@ -1,6 +1,6 @@
-var ClassList = require('@src/lib/ClassList');
+var ClassList = require('@lib/ClassList');
 
-describe('@src/lib/ClassList.js', function () {
+describe('@lib/ClassList.js', function () {
 
     var element = document.body;
     var containsClass = function (target, className) {

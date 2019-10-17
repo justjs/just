@@ -1,6 +1,6 @@
-var isTouchDevice = require('@src/lib/isTouchDevice');
+var isTouchDevice = require('@lib/isTouchDevice');
 
-describe('@src/lib/isTouchDevice.js', function () {
+describe('@lib/isTouchDevice.js', function () {
 
     it('Should check for touch support.', function () {
 

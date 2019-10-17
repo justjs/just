@@ -1,4 +1,4 @@
-var Define = require('@src/lib/Define');
+var Define = require('@lib/Define');
 
 beforeAll(function () {
 
@@ -7,7 +7,13 @@ beforeAll(function () {
 
 });
 
-describe('@src/lib/Define.js', function () {
+beforeEach(function () {
+
+    Define.clean();
+
+});
+
+describe('@lib/Define.js', function () {
 
     /**
      * NOTE: Removing scripts might cause to load files twice, since
@@ -56,14 +62,12 @@ describe('@src/lib/Define.js', function () {
 
         expect(function () {
 
-            var fn = jest.fn(function () {
-
-                /* Should never get called because "/url" was never defined. */
-                expect(fn).not.toHaveBeenCalled();
-
-            });
+            var fn = jest.fn();
 
             Define('id', ['/url'], fn);
+
+            /* Should never get called because "/url" was never defined. */
+            expect(fn).not.toHaveBeenCalled();
 
         }).not.toThrow(TypeError);
 
@@ -76,19 +80,13 @@ describe('@src/lib/Define.js', function () {
 
     }, 3000);
 
-    it('Should call a module if no dependencies are given.', function () {
+    it('Should call a module if no dependencies are given.', function (done) {
 
-        var fn = jest.fn(function () {
-
-            expect(fn).toHaveBeenCalledTimes(1);
-
-        });
-
-        Define('no-dependencies', fn);
+        Define('no-dependencies', done);
 
     }, 3000);
 
-    it('Should load files when required.', function () {
+    it('Should load files when required.', function (done) {
 
         delete window.theGlobal;
 
@@ -100,20 +98,41 @@ describe('@src/lib/Define.js', function () {
 
             /** Module didn't load because it wasn't needed. */
             expect(window.theGlobal).not.toBeDefined();
+            done();
 
         });
 
     }, 3000);
 
+    it('Should return a global if the file doesn\'t contain a module definition' +
+        'and no handler for the load event is given.', function (done) {
+
+        removeScripts(
+            'script[src="/assets/Define-test-global.js"]'
+        );
+
+        delete window.theGlobal;
+
+        Define.addFiles({
+            'theGlobal': '/assets/Define-test-global.js'
+        });
+
+        Define('load using default handler', ['theGlobal'], function (theGlobal) {
+
+            expect(theGlobal).toBe(window.theGlobal);
+            done();
+
+        });
+
+    });
+
     it('Should load files and execute them when the dependencies ' +
-        'finished loading.', function () {
+        'finished loading.', function (done) {
 
         removeScripts(
             'script[src="/assets/Define-test-global.js"], ' +
             'script[src="/assets/Define-test-local.js"]'
         );
-
-        Define.clean();
 
         Define.addFiles({
             'theGlobal': '/assets/Define-test-global.js',
@@ -133,11 +152,13 @@ describe('@src/lib/Define.js', function () {
             expect(theLocal).toBe('local');
             expect(window.theLocal).not.toBeDefined();
 
+            done();
+
         });
 
     }, 3000);
 
-    it('Should return a custom value.', function () {
+    it('Should return a custom value.', function (done) {
 
         removeScripts(
             'script[src="/assets/Define-test-global.js"]'
@@ -145,8 +166,6 @@ describe('@src/lib/Define.js', function () {
 
         delete window.theGlobal;
         delete window.theOtherGlobal;
-
-        Define.clean();
 
         Define.addFiles({
             'theGlobal': '/assets/Define-test-global.js'
@@ -175,17 +194,17 @@ describe('@src/lib/Define.js', function () {
 
             expect(theGlobal).toBe(window.theOtherGlobal);
 
+            done();
+
         });
 
     }, 3000);
 
-    it('Should return any value (not only results from functions).', function () {
+    it('Should return any value (not only results from functions).', function (done) {
 
         removeScripts(
             'script[src="/assets/Define-test-not-a-function.js"]'
         );
-
-        Define.clean();
 
         Define.addFiles({
             'not-a-function': '/assets/Define-test-not-a-function.js'
@@ -197,18 +216,18 @@ describe('@src/lib/Define.js', function () {
                 'an': 'object'
             });
 
+            done();
+
         });
 
     }, 3000);
 
-    it('Should call modules with recursive dependencies.', function () {
+    it('Should call modules with recursive dependencies.', function (done) {
 
         removeScripts(
             'script[src="/assets/Define-test-recursive-a.js"], ' +
             'script[src="/assets/Define-test-recursive-b.js"]'
         );
-
-        Define.clean();
 
         Define.addFiles({
             'recursive-a': '/assets/Define-test-recursive-a.js',
@@ -218,12 +237,13 @@ describe('@src/lib/Define.js', function () {
         Define('recursive', ['recursive-a', 'recursive-b'], function (a, b) {
 
             expect(a).toBe(b);
+            done();
 
         });
 
     }, 3000);
 
-    it('Should load anything (not just scripts).', function () {
+    it('Should load anything (not just scripts).', function (done) {
 
         var url = '/assets/Define-test-non-script.css';
         var tagName = 'link';
@@ -250,18 +270,13 @@ describe('@src/lib/Define.js', function () {
         Define('load-any-file', ['css'], function (css) {
 
             expect(css).toBeUndefined();
+            done();
 
         });
 
     }, 3000);
 
-    it('Should load files passing only ids.', function () {
-
-        var fn = jest.fn(function () {
-
-            expect(fn).toHaveBeenCalledTimes(1);
-
-        });
+    it('Should load files passing only ids.', function (done) {
 
         removeScripts(
             'script[src="/assets/Define-test-multiple.js"]'
@@ -273,31 +288,27 @@ describe('@src/lib/Define.js', function () {
 
         Define.load('multiple');
         // "object", "null" and "undefined" are defined in Define-test-multiple.js
-        Define('load-string', ['object', 'null', 'undefined'], fn);
+        Define('load-string', ['object', 'null', 'undefined'], function () {
+
+            done();
+
+        });
 
     }, 3000);
 
-    it('Should ignore invalid dependency ids.', function () {
+    it('Should ignore invalid dependency ids.', function (done) {
 
         Define('null-id', null, function (value) {
 
             expect(value).not.toBeDefined();
+            done();
 
         });
 
     });
 
-    it('Should find file ids in document and load them.', function () {
+    it('Should find file ids in document and load them.', function (done) {
 
-        var fn = jest.fn(function () {
-
-            /**
-             * "some modules" were registered, but only "main" loaded
-             * and called everything from there.
-             */
-            expect(fn).toHaveBeenCalledTimes(1);
-
-        });
         var element = document.createElement('div');
 
         removeScripts(
@@ -316,7 +327,15 @@ describe('@src/lib/Define.js', function () {
 
         Define.init(); // This is called when Define loads.
 
-        Define('on-load-main', 'index', fn);
+        Define('on-load-main', 'index', function () {
+
+            /**
+             * "some modules" were registered, but only "main" loaded
+             * and called everything from there.
+             */
+            done();
+
+        });
 
     }, 5000);
 

@@ -1,6 +1,6 @@
-var stringToJSON = require('@src/lib/stringToJSON');
+var stringToJSON = require('@lib/stringToJSON');
 
-describe('@src/lib/stringToJSON.js', function () {
+describe('@lib/stringToJSON.js', function () {
 
     it('Should parse a valid string.', function () {
 

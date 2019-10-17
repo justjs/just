@@ -1,6 +1,6 @@
-var defaults = require('@src/lib/defaults');
+var defaults = require('@lib/defaults');
 
-describe('@src/lib/defaults.js', function () {
+describe('@lib/defaults.js', function () {
 
     it('Should return the given value if it looks like ' +
 		'the default value, or the default value otherwise.', function () {

@@ -1,1 +1,1 @@
-test.todo('@src/lib/polyfills.js');
+test.todo('@lib/polyfills.js');

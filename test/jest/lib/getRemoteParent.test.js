@@ -1,6 +1,6 @@
-var getRemoteParent = require('@src/lib/getRemoteParent');
+var getRemoteParent = require('@lib/getRemoteParent');
 
-describe('@src/lib/getRemoteParent.js', function () {
+describe('@lib/getRemoteParent.js', function () {
 
     var html = document.documentElement;
     var body = document.body;

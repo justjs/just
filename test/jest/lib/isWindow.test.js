@@ -1,6 +1,6 @@
-var isWindow = require('@src/lib/isWindow');
+var isWindow = require('@lib/isWindow');
 
-describe('@src/lib/isWindow.js', function () {
+describe('@lib/isWindow.js', function () {
 
     it('Should return `true` if the given value is a `window` ' +
 		'object.', function () {

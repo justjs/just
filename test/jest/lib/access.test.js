@@ -1,6 +1,6 @@
-var access = require('@src/lib/access');
+var access = require('@lib/access');
 
-describe('@src/lib/access.js', function () {
+describe('@lib/access.js', function () {
 
     it('Should access to one property.', function () {
 
