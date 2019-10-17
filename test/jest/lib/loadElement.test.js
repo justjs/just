@@ -1,5 +1,6 @@
 var loadElement = require('@lib/loadElement');
 var parseUrl = require('@lib/parseUrl');
+var helpers = require('@test/helpers');
 
 describe('@lib/loadElement.js', function () {
 
@@ -98,19 +99,10 @@ describe('@lib/loadElement.js', function () {
 		'if no function is given.', function () {
 
         var url = assets['js'];
-        var scriptsWithTheSameUrl = document.querySelectorAll(
+
+        helpers.removeElements(
             'script[src="' + url + '"]'
         );
-
-        if (scriptsWithTheSameUrl) {
-
-            [].forEach.call(scriptsWithTheSameUrl, function (element) {
-
-                element.parentNode.removeChild(element);
-
-            });
-
-        }
 
         loadElement('script', url, function () {
 

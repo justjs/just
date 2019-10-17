@@ -1,4 +1,5 @@
 var Define = require('@lib/Define');
+var helpers = require('@test/helpers');
 
 beforeAll(function () {
 
@@ -14,21 +15,6 @@ beforeEach(function () {
 });
 
 describe('@lib/Define.js', function () {
-
-    /**
-     * NOTE: Removing scripts might cause to load files twice, since
-     * loadElement checks for urls in elements.
-     */
-    function removeScripts (selector) {
-
-        [].forEach.call(document.querySelectorAll(selector),
-            function (script) {
-
-                script.parentNode.removeChild(script);
-
-            });
-
-    }
 
     it('Should throw (or not) if something is invalid.', function () {
 
@@ -107,11 +93,11 @@ describe('@lib/Define.js', function () {
     it('Should return a global if the file doesn\'t contain a module definition' +
         'and no handler for the load event is given.', function (done) {
 
-        removeScripts(
-            'script[src="/assets/Define-test-global.js"]'
-        );
 
         delete window.theGlobal;
+        helpers.removeElements(
+            'script[src="' + url + '"]'
+        );
 
         Define.addFiles({
             'theGlobal': '/assets/Define-test-global.js'
@@ -129,7 +115,7 @@ describe('@lib/Define.js', function () {
     it('Should load files and execute them when the dependencies ' +
         'finished loading.', function (done) {
 
-        removeScripts(
+        helpers.removeElements(
             'script[src="/assets/Define-test-global.js"], ' +
             'script[src="/assets/Define-test-local.js"]'
         );
@@ -160,7 +146,7 @@ describe('@lib/Define.js', function () {
 
     it('Should return a custom value.', function (done) {
 
-        removeScripts(
+        helpers.removeElements(
             'script[src="/assets/Define-test-global.js"]'
         );
 
@@ -202,7 +188,7 @@ describe('@lib/Define.js', function () {
 
     it('Should return any value (not only results from functions).', function (done) {
 
-        removeScripts(
+        helpers.removeElements(
             'script[src="/assets/Define-test-not-a-function.js"]'
         );
 
@@ -224,7 +210,7 @@ describe('@lib/Define.js', function () {
 
     it('Should call modules with recursive dependencies.', function (done) {
 
-        removeScripts(
+        helpers.removeElements(
             'script[src="/assets/Define-test-recursive-a.js"], ' +
             'script[src="/assets/Define-test-recursive-b.js"]'
         );
@@ -248,7 +234,7 @@ describe('@lib/Define.js', function () {
         var url = '/assets/Define-test-non-script.css';
         var tagName = 'link';
 
-        removeScripts('link[href="' + url + '"]');
+        helpers.removeElements('link[href="' + url + '"]');
 
         Define.addFiles({
             // Tag names are passed in the urls this way:
@@ -278,7 +264,7 @@ describe('@lib/Define.js', function () {
 
     it('Should load files passing only ids.', function (done) {
 
-        removeScripts(
+        helpers.removeElements(
             'script[src="/assets/Define-test-multiple.js"]'
         );
 
@@ -311,7 +297,7 @@ describe('@lib/Define.js', function () {
 
         var element = document.createElement('div');
 
-        removeScripts(
+        helpers.removeElements(
             'script[src="/assets/Define-test-main.js"]',
             'script[src="/assets/Define-test-multiple.js"]'
         );
