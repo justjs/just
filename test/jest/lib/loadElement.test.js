@@ -11,9 +11,9 @@ describe('@lib/loadElement.js', function () {
     };
 
     it('Should load files and set some default properties to ' +
-		'the element.', function () {
+		'the element.', function (done) {
 
-        var link = loadElement('link', assets['css'], function (e) {
+        var onEvent = jest.fn(function (e) {
 
             /** The element finished loading. */
 
@@ -21,8 +21,10 @@ describe('@lib/loadElement.js', function () {
             expect(e).toBeInstanceOf(Event);
 
             this.parentNode.removeChild(this);
+            done();
 
-        }, function (loadedFile, url) {
+        });
+        var fn = jest.fn(function (loadedFile, url) {
 
             /** `this` is the current node. */
             expect(this).toBeInstanceOf(HTMLLinkElement);
@@ -38,57 +40,47 @@ describe('@lib/loadElement.js', function () {
             /** The url was added to the src-like attribute. */
             expect(this.href).toBe(parseUrl(url).href);
 
+            head.appendChild(this);
+
             return this;
 
         });
+        var link = loadElement('link', assets['css'], onEvent, fn);
 
+        expect(fn).toHaveBeenCalledTimes(1);
         /** The function returned the current Node. */
+        expect(fn).toHaveReturnedWith(link);
         expect(link).toBeInstanceOf(Node);
 
     });
 
-    it('Should avoid to load the same file multiple times.', function () {
+    it('Should avoid loading the same file multiple times.', function (done) {
 
-        var pass = jest.fn(function () {
+        var url = assets['css'];
 
-            expect(pass).toHaveBeenCalled();
+        helpers.removeElements('link[href="' + url + '"]');
 
-        });
-        var fail = jest.fn(function () {
+        loadElement('link', url, function () {
 
-            expect(fail).not.toHaveBeenCalled();
-
-        });
-
-        loadElement('link', assets['css'], function () {
-
-            loadElement('link', this.src, null, function (wasLoaded) {
+            loadElement('link', url, null, function (wasLoaded) {
 
                 if (wasLoaded) {
 
-                    pass('The file was found and didn\'t ' +
-					'get loaded.');
+                    /** The file was found and didn't get loaded. */
+                    done();
 
                 }
                 else {
 
-                    fail('The file was already loaded.');
+                    done(new Error('The file was already loaded.'));
 
                 }
 
             });
 
-        }, function (isAlreadyLoaded, url) {
+        }, function (loadedElement) {
 
-            if (isAlreadyLoaded) {
-
-                pass('A script was found with the same '+
-				'characteristics and didn\'t get loaded.');
-
-                return this;
-
-            }
-
+            expect(loadedElement).toBeNull();
             head.appendChild(this);
 
         });
@@ -96,7 +88,7 @@ describe('@lib/loadElement.js', function () {
     });
 
     it('Should use the default function to append the element ' +
-		'if no function is given.', function () {
+		'if no function is given.', function (done) {
 
         var url = assets['js'];
 
@@ -108,12 +100,13 @@ describe('@lib/loadElement.js', function () {
 
             /** The element was appended to the `head` */
             expect(this.parentNode).toBe(head);
+            done();
 
         }, null);
 
     });
 
-    it('Should be capable of extend the properties.', function () {
+    it('Should be capable of extending the properties.', function (done) {
 
         delete loadElement.nonSrcAttributes['a'];
 
@@ -126,18 +119,20 @@ describe('@lib/loadElement.js', function () {
              * (even though "a" is not a "loadable" element).
              */
             expect(this).toBeInstanceOf(HTMLAnchorElement);
+            done();
 
         });
 
     });
 
-    it('Should set the "crossorigin" attribute to specific tags.', function () {
+    it('Should set the "crossorigin" attribute to specific tags.', function (done) {
 
         var noop = function () {};
 
         loadElement('img', '//:80', noop, function () {
 
             expect(this.getAttribute('crossorigin')).toBe('anonymous');
+            done();
 
         });
 
