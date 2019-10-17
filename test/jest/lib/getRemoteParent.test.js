@@ -13,7 +13,7 @@ describe('@lib/getRemoteParent.js', function () {
             'BODY': 0,
             'HTML': 1
         };
-        var parent = getRemoteParent(child, function (deepLevel, rootContainer) {
+        var fn = jest.fn(function (deepLevel, rootContainer) {
 
             /** `this` is always a Node. */
             expect(this).toBeInstanceOf(Node);
@@ -28,7 +28,9 @@ describe('@lib/getRemoteParent.js', function () {
             return this === expectedParent;
 
         });
+        var parent = getRemoteParent(child, fn);
 
+        expect(fn).toHaveBeenCalledTimes(1);
         /**
          * The given function returned a truthy value, so the current node
          * was returned.
@@ -40,14 +42,16 @@ describe('@lib/getRemoteParent.js', function () {
     it('Should go up through the child parents ' +
 		'until the expected parent is found.', function () {
 
-        var child = body;
+        var child = body.appendChild(document.createElement('div'));
         var expectedParent = html;
-        var parent = getRemoteParent(child, function (deepLevel, rootContainer) {
+        var fn = jest.fn(function () { return this === expectedParent; });
+        var parent = getRemoteParent(child, fn);
 
-            return this === expectedParent;
-
-        });
-
+        expect(fn).toHaveBeenCalledTimes(2);
+        // expect(fn).toHaveBeenNthCalledWith(1, html);
+        expect(fn).toHaveNthReturnedWith(1, false);
+        // expect(fn).toHaveBeenNthCalledWith(2, html);
+        expect(fn).toHaveNthReturnedWith(2, true);
         expect(parent).toBe(expectedParent);
 
     });
@@ -55,14 +59,11 @@ describe('@lib/getRemoteParent.js', function () {
     it('Should return `null` if the expected parent ' +
 		'is not found.', function () {
 
-        var returnFalse = function () {
-
-            return false;
-
-        };
+        var returnFalse = jest.fn(function () { return false; });
 
         /** The expected parent was not found. */
-        expect(getRemoteParent(html, returnFalse)).toBeNull();
+        expect(getRemoteParent(body, returnFalse)).toBeNull();
+        expect(returnFalse).toHaveBeenCalledTimes(1);
         /** There's no parent node, so `null` is expected. */
         expect(getRemoteParent(document.createElement('a'), returnFalse)).toBeNull();
 
@@ -88,15 +89,11 @@ describe('@lib/getRemoteParent.js', function () {
 
     it('Should stop at the given container.', function () {
 
-        var child = body;
-        var remoteParent = getRemoteParent(child, function () {
-
-            return this === html;
-
-        }, body);
+        var fn = jest.fn(function () { return this === html; });
 
         /** The function stopped at `body` and the element wasn't found. */
-        expect(remoteParent).toBeNull();
+        expect(getRemoteParent(body, fn, body)).toBeNull();
+        expect(fn).not.toHaveBeenCalled();
 
     });
 
@@ -104,17 +101,14 @@ describe('@lib/getRemoteParent.js', function () {
 
         var includeChild = true;
         var child = body;
-        var parent = getRemoteParent(child, function () {
-
-            return this === child;
-
-        }, null, includeChild);
+        var fn = jest.fn(function () { return this === child; });
 
         /**
          * The function included the child as part of the check because
          * `includeChild` was a truthy value.
          */
-        expect(parent).toBe(child);
+        expect(getRemoteParent(child, fn, null, includeChild)).toBe(child);
+        expect(fn).toHaveBeenCalledTimes(1);
 
     });
 
