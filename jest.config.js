@@ -4,6 +4,7 @@ module.exports = {
 		'^@lib(.*)': '<rootDir>/src/lib$1',
 		'^@test(.*)': '<rootDir>/test$1'
 	},
+	'testURL': 'http://localhost:7890',
 	'testEnvironmentOptions': {
 		'resources': 'usable'
 	}
