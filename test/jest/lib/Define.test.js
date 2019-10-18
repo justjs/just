@@ -11,6 +11,7 @@ beforeAll(function () {
 beforeEach(function () {
 
     Define.clean();
+    Define.files = {};
 
 });
 
@@ -90,22 +91,29 @@ describe('@lib/Define.js', function () {
 
     }, 3000);
 
-    it('Should return a global if the file doesn\'t contain a module definition' +
-        'and no handler for the load event is given.', function (done) {
+    it('Should set the file url as an alias for the file, ' +
+        'if no handler for the load event is given.', function (done) {
 
+        var url = '/assets/Define-test-local.js';
+        var alias = location.origin + url;
 
-        delete window.theGlobal;
         helpers.removeElements(
             'script[src="' + url + '"]'
         );
 
         Define.addFiles({
-            'theGlobal': '/assets/Define-test-global.js'
+            'theLocal': url
         });
 
-        Define('load using default handler', ['theGlobal'], function (theGlobal) {
+        /**
+         * If an alias is used as dependency id,
+         * the non-alias file must be loaded first.
+         */
+        Define.load('theLocal');
 
-            expect(theGlobal).toBe(window.theGlobal);
+        Define('load using default handler', [alias], function (theLocal) {
+
+            expect(theLocal).toBe('local');
             done();
 
         });
@@ -293,6 +301,24 @@ describe('@lib/Define.js', function () {
 
     });
 
+    it('Should replace `[attribute-name]` with the value of the attribute ' +
+        'when finding elements in document.', function () {
+
+        var element = document.createElement('div');
+
+        element.setAttribute('data-entry', 'main');
+        element.setAttribute('data-just-Define', JSON.stringify({
+            'entry: [data-entry]': '/assets/Define-test-[data-entry].js'
+        }));
+
+        document.body.appendChild(element);
+
+        expect(Define.findInDocument('data-just-Define')).toMatchObject({
+            'entry: main': '/assets/Define-test-main.js'
+        });
+
+    });
+
     it('Should find file ids in document and load them.', function (done) {
 
         var element = document.createElement('div');
@@ -302,11 +328,9 @@ describe('@lib/Define.js', function () {
             'script[src="/assets/Define-test-multiple.js"]'
         );
 
-        element.setAttribute('data-module-main', '/assets/Define-test-main.js');
-        element.setAttribute('data-module-example', '/assets/Define-test-multiple.js');
         element.setAttribute('data-just-Define', JSON.stringify({
-            'main': 'script [data-module-main]',
-            'some modules': '[data-module-example]'
+            'main': '/assets/Define-test-main.js',
+            'multiple': '/assets/Define-test-multiple.js'
         }));
 
         document.body.appendChild(element);

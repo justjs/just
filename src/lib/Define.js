@@ -314,14 +314,7 @@ module.exports = just.register({'Define': (function () {
 
             var files = Define.findInDocument('data-just-Define');
 
-            Define.addFiles(files);
-
-            /* istanbul ignore else */
-            if ('main' in files) {
-
-                Define.load('main');
-
-            }
+            Define.addFiles(files).load(Object.keys(files));
 
             return Define;
 
