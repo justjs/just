@@ -10,6 +10,31 @@ describe('@lib/loadElement.js', function () {
         'js': '/assets/loadElement-test.js'
     };
 
+    it('Should throw if something is missing.', function () {
+
+        expect(function () {
+
+            /** Not enough arguments (from document.createElement) */
+            loadElement();
+
+        }).toThrow(TypeError);
+
+        expect(function () {
+
+            /** Not a valid url. */
+            loadElement('link', '');
+
+        }).toThrow(TypeError);
+
+        expect(function () {
+
+            /** Not a valid url. */
+            loadElement('link', null);
+
+        }).toThrow(TypeError);
+
+    });
+
     it('Should load files and set some default properties to ' +
 		'the element.', function (done) {
 

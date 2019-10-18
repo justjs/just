@@ -7,8 +7,9 @@ var parseUrl = require('./parseUrl');
  *
  * @namespace
  * @memberof just
- * @param {element_tag} tag - A tag name.
- * @param {url} url - The url of the file.
+ * @throws document.createElement exception or TypeError if <var>url</var> is missing.
+ * @param {!element_tag} tag - A tag name.
+ * @param {!url} url - The url of the file.
  * @param {just.loadElement~handler} [handler={@link just.loadElement.DEFAULT_HANDLER}]
  *     If it's a function: it will be triggered
  *     (without appending the element),
@@ -31,7 +32,7 @@ var loadElement = function loadElement (tag, url, listener, handler) {
     var elementFound = findElements(selectors.join(','))[0] || null;
     var intercept = typeof handler === 'function' ? handler : loadElement.DEFAULT_HANDLER;
 
-    if (!url) { throw new TypeError('The url is empty.'); }
+    if (!url || typeof url !== 'string') { throw new TypeError(url + ' is not a valid url.'); }
 
     if (tag === 'link') {
 
