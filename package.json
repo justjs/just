@@ -10,9 +10,9 @@
     "start": "npm run dev",
     "dev": "npm run test:dev",
     "build": "npm test",
-    "test:cmd": "concurrently -r -k \"http-server test/server/public -p 7890\"",
-    "test:dev": "npm run test:cmd -- \"jest test/jest --watch --coverage\"",
-    "test": "npm run test:cmd -- \"jest test/jest\"",
+    "test": "npm run test:jest -- --ci",
+    "test:dev": "WATCHING=true npm run test:jest -- --watch --coverage",
+    "test:jest": "jest test/jest -c test/jest/config.js",
     "lint": "eslint . --cache",
     "pretest": "npm run lint",
     "precommit": "npm run test",
@@ -35,24 +35,11 @@
   "author": "Alexis Puga Ruíz",
   "license": "BSD-3-Clause",
   "devDependencies": {
-    "@alexispuga/jsdoc-template": "^1.1.0-rc.1",
-    "almond": "^0.3.3",
-    "amd-loader": "0.0.8",
-    "amdclean": "^2.7.0",
-    "concurrently": "^5.0.0",
-    "deamdify": "^0.3.0",
     "eslint": "^6.5.1",
     "eslint-config-prettier": "^6.4.0",
     "eslint-plugin-es5": "^1.4.1",
     "eslint-plugin-jest": "^22.19.0",
-    "gzip-js": "^0.3.2",
-    "http-server": "^0.11.1",
-    "jest": "^24.9.0",
-    "jsdoc": "^3.6.3",
-    "jsdom": "^15.1.1",
-    "tap": "^14.6.7",
-    "tap-spec": "^5.0.0",
-    "tape": "^4.10.2"
+    "jest": "^24.9.0"
   },
   "dependencies": {}
 }
