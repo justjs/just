@@ -1,4 +1,5 @@
-var just = require('./core');
+var defineProperties = require('./defineProperties');
+
 /**
  * Checks if <var>value</var> looks like the other values.
  *
@@ -13,7 +14,7 @@ var just = require('./core');
  *
  * @return {boolean} `true` if some other value looks like <var>value</var>.
  */
-var check = function check (value, otherValues) {
+function check (value, otherValues) {
 
     return [].slice.call(arguments, 1).some(function (otherValue, i) {
 
@@ -29,14 +30,15 @@ var check = function check (value, otherValues) {
 
     });
 
-};
+}
 
-module.exports = just.register({'check': [check, /** @lends just.check */{
+defineProperties(check, /** @lends just.check */{
     /**
      *  A custom message to throw.
      *
      * @typedef {string} just.check~throwable_message
      */
+
     /**
      * A function that {@link just.check|checks} a value against others and
      * throws if the result is `false`.
@@ -63,4 +65,6 @@ module.exports = just.register({'check': [check, /** @lends just.check */{
 
     }
 
-}]}).check;
+});
+
+module.exports = check;

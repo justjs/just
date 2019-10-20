@@ -1,4 +1,5 @@
-var just = require('./core');
+var defineProperties = require('./defineProperties');
+
 /**
  * Chainable methods for the classList property.
  *
@@ -16,16 +17,16 @@ var just = require('./core');
  *     .replace('a', 'z')
  *     .contains('b'); // false
  */
-var ClassList = function ClassList (element) {
+function ClassList (element) {
 
     if (!(this instanceof ClassList)) { return new ClassList(element); }
 
-    /** @ŧype {Element} */
+    /** @member {Element} */
     this.element = element;
 
-};
+}
 
-module.exports = just.register({'ClassList': [ClassList, /** @lends just.ClassList */{
+defineProperties(ClassList, /** @lends just.ClassList */{
 
     /**
      * Simulate Element.classList.prototype.method.apply(element, args)
@@ -71,7 +72,9 @@ module.exports = just.register({'ClassList': [ClassList, /** @lends just.ClassLi
 
     }
 
-}, /** @lends just.ClassList.prototype */{
+});
+
+defineProperties(ClassList.prototype, /** @lends just.ClassList.prototype */{
 
     /**
      * @alias Element.classList.add
@@ -136,4 +139,6 @@ module.exports = just.register({'ClassList': [ClassList, /** @lends just.ClassLi
 
     }
 
-}]}).ClassList;
+});
+
+module.exports = ClassList;

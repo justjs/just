@@ -1,5 +1,5 @@
-var just = require('./core');
 var eachProperty = require('./eachProperty');
+
 /**
  * Checks if an object has no direct keys.
  *
@@ -9,10 +9,10 @@ var eachProperty = require('./eachProperty');
  * @return {boolean} `true` if the object doesn't contain owned properties,
  *     `false` otherwise.
  */
-var isEmptyObject = function (object) {
+function isEmptyObject (object) {
 
     return !eachProperty(object, function () { return true; });
 
-};
+}
 
-module.exports = just.register({'isEmptyObject': isEmptyObject}).isEmptyObject;
+module.exports = isEmptyObject;

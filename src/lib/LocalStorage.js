@@ -1,7 +1,7 @@
-var just = require('./core');
 var defineProperties = require('./defineProperties');
 var eachProperty = require('./eachProperty');
 var defaults = require('./defaults');
+
 /**
  * A mixin of properties that access to some kind of storage
  * in the browser.
@@ -14,7 +14,7 @@ var defaults = require('./defaults');
  *     A value to indicate if the given consent was specified by the
  *     user.
  */
-var LocalStorage = function LocalStorage (consent, isExplicit) {
+function LocalStorage (consent, isExplicit) {
 
     /* eslint-disable padded-blocks */
     if (!(this instanceof LocalStorage)) {
@@ -27,9 +27,9 @@ var LocalStorage = function LocalStorage (consent, isExplicit) {
         'isExplicit': defaults(isExplicit, typeof consent !== 'undefined')
     });
 
-};
+}
 
-module.exports = just.register({'LocalStorage': [LocalStorage, /** @lends just.LocalStorage */{
+defineProperties(LocalStorage, /** @lends just.LocalStorage */{
     /**
      * The DoNotTrack header formatted as `true`, `false` or `undefined`
      * (for "unspecified").
@@ -96,30 +96,22 @@ module.exports = just.register({'LocalStorage': [LocalStorage, /** @lends just.L
         );
 
     }
-}, /** @lends just.LocalStorage.prototype */{
-    /**
-     * Options/flags for the creation of the cookie.
-     *
-     * @typedef {!object} just.LocalStorage~setCookie_options
-     * @property {string} [secure=location.protocol === 'https:']
-     *     "secure" flag for the cookie.
-     */
+});
 
+defineProperties(LocalStorage.prototype, /** @lends just.LocalStorage.prototype */{
     /**
      * Concatenates a value to <var>document.cookie</var>.
      *
      * @function
      * @param {string} name - The name of the cookie.
      * @param {string} value - The value of the cookie.
-     * @param {!object} [opts=DEFAULT_OPTIONS]
-     *     Cookie options.
-     * @property {just.LocalStorage~setCookie_options} DEFAULT_OPTIONS
-     *     Default options/flags.
+     * @param {!object} [opts] - Cookie options.
+     * @param {string} [opts.secure=location.protocol === 'https:'] - "secure" flag for the cookie.
      *
      * @return {boolean} `true` if was set, `false` otherwise.
      * @readOnly
      */
-    'setCookie': defineProperties(function setCookie (name, value, opts) {
+    'setCookie': function setCookie (name, value, opts) {
 
         var cookie = '';
         var set = function (k, v) {
@@ -127,7 +119,9 @@ module.exports = just.register({'LocalStorage': [LocalStorage, /** @lends just.L
             cookie += k + (typeof v !== 'undefined' ? '=' + v : '') + '; ';
 
         };
-        var options = defaults(opts, setCookie.DEFAULT_OPTIONS);
+        var options = defaults(opts, {
+            'secure': location.protocol === 'https:'
+        });
 
         if (!this.consent) { return false; }
 
@@ -143,36 +137,30 @@ module.exports = just.register({'LocalStorage': [LocalStorage, /** @lends just.L
 
         return true;
 
-    }, {
-        'DEFAULT_OPTIONS': Object.freeze({
-            'secure': location.protocol === 'https:'
-        })
-    }),
+    },
 
     /**
      * Overrides a cookie by setting an empty value and expiring it.
      *
      * @function
      * @param {string} name - The name of the cookie.
-     * @param {object} [opts=DEFAULT_OPTIONS] - Some extra options.
-     * @property {just.LocalStorage~setCookie_options} DEFAULT_OPTIONS - A read only property.
+     * @param {object} [opts] - Some extra options.
+     * @param {Date} [opts.expires=new Date(0)] - A date in the past.
      *
      * @return {boolean} `true` if was overriden or the cookie
      *     does not exist, `false` otherwise.
      */
-    'removeCookie': defineProperties(function removeCookie (name, opts) {
+    'removeCookie': function removeCookie (name, opts) {
 
-        var options = defaults(opts, removeCookie.DEFAULT_OPTIONS);
+        var options = defaults(opts, {
+            'expires': new Date(0)
+        });
 
         if (!LocalStorage.cookieExists(name)) { return true; }
 
         return this.setCookie(name, '', options);
 
-    }, {
-        'DEFAULT_OPTIONS': Object.freeze({
-            'expires': new Date(0)
-        })
-    }),
+    },
 
     /**
      * Any of "cookie", "localStorage", "sessionStorage"...
@@ -227,4 +215,6 @@ module.exports = just.register({'LocalStorage': [LocalStorage, /** @lends just.L
         return true;
 
     }
-}]}).LocalStorage;
+});
+
+module.exports = LocalStorage;

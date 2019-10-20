@@ -1,6 +1,6 @@
-var just = require('./core');
 var check = require('./check');
 var eachProperty = require('./eachProperty');
+
 /**
  * Defaults to <var>defaultValue</var> if <var>value</var> looks like
  * <var>defaultValue</var>.
@@ -11,8 +11,22 @@ var eachProperty = require('./eachProperty');
  * @param {*} [defaultValue] - A value with a desired type for <var>value</var>.
  *     If an object literal is given, all the keys of <var>value</var> will <var>default</var>
  *     to his corresponding key in this object.
- * @param {just.defaults~options} [opts={@link just.defaults.DEFAULT_OPTIONS}]
- *     Some options.
+ * @param {object} opts - Some options.
+ * @param {boolean} [opts.ignoreDefaultKeys=false] - If `false` and <var>defaultValue</var>
+ *     is an object literal, the default keys will be added to <var>value</var>
+ *     or checked against this function for each repeated key.
+ * @param {boolean} [opts.checkLooks=true]
+ *     If `true`:
+ *         `[]` will match ONLY with another Array.
+ *         `{}` will match ONLY with another object literal.
+ *     If `false`
+ *         `[]` and `{}` will match with any other object.
+ * @param {boolean} [opts.checkDeepLooks=true]
+ *     Same as <var>checkLooks</var> but it works with the inner values
+ *     of the objects.
+ * @param {boolean} [opts.ignoreNull=false]
+ *     If `true`, <var>defaultValue</var>s with null as a value won't be checked
+ *     and any <var>value</var> (except `undefined`) will be allowed.
  *
  * @example
  * defaults([1, 2], {a: 1}); // {a: 1}
@@ -41,9 +55,14 @@ var eachProperty = require('./eachProperty');
  *
  * @returns {value} <var>value</var> if it looks like <var>defaultValue</var> or <var>defaultValue</var> otherwise.
  */
-var defaults = function defaults (value, defaultValue, opts) {
+function defaults (value, defaultValue, opts) {
 
-    var options = Object.assign({}, defaults.DEFAULT_OPTIONS, opts);
+    var options = Object.assign({}, {
+        'ignoreDefaultKeys': false,
+        'checkLooks': true,
+        'checkDeepLooks': true,
+        'ignoreNull': false
+    }, opts);
 
     /* eslint-disable padded-blocks */
     if (options.ignoreNull && defaultValue === null && value !== void 0) {
@@ -87,46 +106,6 @@ var defaults = function defaults (value, defaultValue, opts) {
         : defaultValue
     );
 
-};
+}
 
-module.exports = just.register({'defaults': [defaults, /** @lends just.defaults */{
-    /**
-     * Options for {@link just.defaults}.
-     *
-     * @typedef {object} just.defaults~options
-     *
-     * @property {boolean} ignoreDefaultKeys - If `false` and <var>defaultValue</var>
-     *     is an object literal, the default keys will be added to <var>value</var>
-     *     or checked against this function for each repeated key.
-     * @property {boolean} checkLooks
-     *     If `true`:
-     *         `[]` will match ONLY with another Array.
-     *         `{}` will match ONLY with another object literal.
-     *     If `false`
-     *         `[]` and `{}` will match with any other object.
-     * @property {boolean} checkDeepLooks
-     *     Same as <var>checkLooks</var> but it works with the inner values
-     *     of the objects.
-     * @property {boolean} ignoreNull
-     *     If `true`, <var>defaultValue</var>s with null as a value won't be checked
-     *     and any <var>value</var> (except `undefined`) will be allowed.
-     */
-
-    /**
-     * Default options for {@link just.defaults}.
-     *
-     * @type {just.defaults~options}
-     * @property {boolean} [ignoreDefaultKeys=false] - Add default keys.
-     * @property {boolean} [checkLooks=true] - Check <code>[]</code> and <code>{}</code>.
-     * @property {boolean} [checkDeepLooks=true] - <var>checkLooks</var> in literal objects.
-     * @property {boolean} [ignoreNull=false] - Be strict checking `null`s.
-     * @readonly
-     */
-    'DEFAULT_OPTIONS': Object.freeze({
-        'ignoreDefaultKeys': false,
-        'checkLooks': true,
-        'checkDeepLooks': true,
-        'ignoreNull': false
-    })
-
-}]}).defaults;
+module.exports = defaults;

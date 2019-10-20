@@ -1,4 +1,3 @@
-var just = require('./core');
 /**
  * A function that checks if <var>this</var> is the Node that you're looking for.
  *
@@ -10,6 +9,7 @@ var just = require('./core');
  *
  * @return {boolean}
  */
+
 /**
  * Goes up through the <var>childNode</var> parents, until <var>fn</var> returns `true`
  * or a non-Node is found.
@@ -28,7 +28,7 @@ var just = require('./core');
  *
  * @return {Node|null} The current Node when <var>fn</var> returns `true`.
  */
-var getRemoteParent = function getRemoteParent (childNode, fn, rootContainer, includeChild) {
+function getRemoteParent (childNode, fn, rootContainer, includeChild) {
 
     var currentNode = childNode;
     var deepLevel = 0;
@@ -69,6 +69,6 @@ var getRemoteParent = function getRemoteParent (childNode, fn, rootContainer, in
 
     return null;
 
-};
+}
 
-module.exports = just.register({'getRemoteParent': getRemoteParent}).getRemoteParent;
+module.exports = getRemoteParent;

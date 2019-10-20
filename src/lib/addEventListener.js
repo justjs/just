@@ -1,5 +1,5 @@
-var just = require('./core');
 var findElements = require('./findElements');
+
 /**
  * Add an event listener to multiple elements.
  *
@@ -11,7 +11,7 @@ var findElements = require('./findElements');
  * @param {object|boolean} [options=false] - Options for addEventListener
  * @return {Element[]} elements
  */
-var on = function addEventListener (elements, eventNames, listener, options) {
+function addEventListener (elements, eventNames, listener, options) {
 
     if (typeof elements === 'string') { elements = findElements(elements); }
     if (!Array.isArray(eventNames)) { eventNames = [eventNames]; }
@@ -29,6 +29,6 @@ var on = function addEventListener (elements, eventNames, listener, options) {
 
     return elements;
 
-};
+}
 
-module.exports = just.register({'on': on}).on;
+module.exports = addEventListener;

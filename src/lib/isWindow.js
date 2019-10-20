@@ -1,4 +1,3 @@
-var just = require('./core');
 /**
  * Checks if an object is the window global by checking <var>window</var> or
  * some common properties of <var>window</var>.
@@ -9,7 +8,7 @@ var just = require('./core');
  * @return {boolean} `true` if <var>object</var> is <var>window</var> or contains the common properties,
  *     `false` otherwise.
  */
-var isWindow = function isWindow (object) {
+function isWindow (object) {
 
     return !!(object === window
 		|| object instanceof Object
@@ -17,6 +16,6 @@ var isWindow = function isWindow (object) {
 		&& object.setInterval
     );
 
-};
+}
 
-module.exports = just.register({'isWindow': isWindow}).isWindow;
+module.exports = isWindow;

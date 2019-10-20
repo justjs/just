@@ -1,6 +1,27 @@
-var just = require('./core');
 var findElements = require('./findElements');
 var parseUrl = require('./parseUrl');
+var defineProperties = require('./defineProperties');
+
+/**
+ * A listener for the "onload" or "onerror" events.
+ *
+ * @typedef {function} just.loadElement~listener
+ *
+ * @this Element
+ * @param {!Event} event - The triggered event.
+ * @return {*}
+ */
+
+/**
+ * A custom function to append the created element.
+ *
+ * @typedef {function} just.loadElement~handler
+ * @this {!Element} - The element that loads the url.
+ * @param {?Element} loadedElement - An identical element that has been loaded previously.
+ * @param {url} url - The given url to load.
+ *
+ * @return {*} Some value.
+ */
 /**
  * Loads an external file if no other similar element is
  * found.
@@ -10,7 +31,7 @@ var parseUrl = require('./parseUrl');
  * @throws document.createElement exception or TypeError if <var>url</var> is missing.
  * @param {!element_tag} tag - A tag name.
  * @param {!url} url - The url of the file.
- * @param {just.loadElement~handler} [handler={@link just.loadElement.DEFAULT_HANDLER}]
+ * @param {just.loadElement~handler} [handler=appendToHead]
  *     If it's a function: it will be triggered
  *     (without appending the element),
  *     otherwise: the element will be appended to
@@ -20,7 +41,7 @@ var parseUrl = require('./parseUrl');
  *
  * @return {*} The return of the {@link just.loadElement~handler|handler}.
  */
-var loadElement = function loadElement (tag, url, listener, handler) {
+function loadElement (tag, url, listener, handler) {
 
     var attribute = loadElement.nonSrcAttributes[tag] || 'src';
     var element = document.createElement(tag);
@@ -30,7 +51,13 @@ var loadElement = function loadElement (tag, url, listener, handler) {
         tag + '[' + attribute + '="' + parsedUrl.href + '"]'
     ];
     var elementFound = findElements(selectors.join(','))[0] || null;
-    var intercept = typeof handler === 'function' ? handler : loadElement.DEFAULT_HANDLER;
+    var intercept = typeof handler === 'function' ? handler : function appendToHead (elementFound, url) {
+
+        if (!elementFound) { document.head.appendChild(this); }
+
+        return this;
+
+    };
 
     if (!url || typeof url !== 'string') { throw new TypeError(url + ' is not a valid url.'); }
 
@@ -64,45 +91,9 @@ var loadElement = function loadElement (tag, url, listener, handler) {
 
     return intercept.call(element, elementFound, url);
 
-};
+}
 
-module.exports = just.register({'loadElement': [loadElement, /** @lends just.loadElement */{
-    /**
-     * A listener for the "onload" or "onerror" events.
-     *
-     * @typedef {function} just.loadElement~listener
-     *
-     * @this Element
-     * @param {!Event} event - The triggered event.
-     * @return {*}
-     */
-
-    /**
-     * A custom function to append the created element.
-     *
-     * @typedef {function} just.loadElement~handler
-     * @this {!Element} - The element that loads the url.
-     * @param {?Element} loadedElement - An identical element that has been loaded previously.
-     * @param {url} url - The given url to load.
-     *
-     * @return {*} Some value.
-     */
-
-    /**
-     * The handler that will be provided in case that no function is provided.
-     *
-     * @type {just.loadElement~handler}
-     * @readonly
-     * @chainable
-     */
-    'DEFAULT_HANDLER': function (elementFound, url) {
-
-        if (!elementFound) { document.head.appendChild(this); }
-
-        return this;
-
-    },
-
+defineProperties(loadElement, /** @lends just.loadElement */{
     /**
      * An src-like attribute for an Element.
      *
@@ -122,4 +113,6 @@ module.exports = just.register({'loadElement': [loadElement, /** @lends just.loa
         'link': 'href'
     }
 
-}]}).loadElement;
+});
+
+module.exports = loadElement;

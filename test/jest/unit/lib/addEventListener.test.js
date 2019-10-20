@@ -1,9 +1,9 @@
-var on = require('@lib/on');
+var addEventListener = require('@lib/addEventListener');
 var helpers = require('@test/helpers');
 
-describe('@lib/on', function () {
+describe('@lib/addEventListener', function () {
 
-    var off = function (type, listener, options) {
+    var removeEventListener = function (type, listener, options) {
 
         this.removeEventListener(type, listener, options);
 
@@ -21,11 +21,11 @@ describe('@lib/on', function () {
             /** If no provided, useCapture will default to `false` */
             expect(options).toBe(false);
 
-            off.apply(this, Array.from(arguments));
+            removeEventListener.apply(this, Array.from(arguments));
 
         });
 
-        on('body', 'click', onClick);
+        addEventListener('body', 'click', onClick);
         expect(mock).toHaveBeenCalledTimes(1);
         mock.mockRestore();
 
@@ -53,11 +53,11 @@ describe('@lib/on', function () {
             /** Uses same options for all. */
             expect(options).toBe(expected.options);
 
-            off.apply(this, Array.from(arguments));
+            removeEventListener.apply(this, Array.from(arguments));
 
         });
 
-        on(selector, eventTypes, onActive, options);
+        addEventListener(selector, eventTypes, onActive, options);
         expect(mock).toHaveBeenCalledTimes(expected.elements.length * expected.types.length);
         mock.mockRestore();
 
@@ -70,11 +70,11 @@ describe('@lib/on', function () {
 
             expect(this).toBe(element);
 
-            off.apply(this, Array.from(arguments));
+            removeEventListener.apply(this, Array.from(arguments));
 
         });
 
-        on(element, 'click', function () {});
+        addEventListener(element, 'click', function () {});
         mock.mockRestore();
 
     }, 3000);
@@ -87,11 +87,11 @@ describe('@lib/on', function () {
 
             expect(helpers.findInArrayAndRemove(this, expectedElements)).toBe(true);
 
-            off.apply(this, Array.from(arguments));
+            removeEventListener.apply(this, Array.from(arguments));
 
         });
 
-        on(elements, 'click', function (e) {});
+        addEventListener(elements, 'click', function (e) {});
         mock.mockRestore();
 
     }, 3000);

@@ -1,4 +1,3 @@
-var just = require('./core');
 /**
  * Parses a JSON string into a JSON.
  *
@@ -14,7 +13,7 @@ var just = require('./core');
  *
  * @return {!object} A JSON-like object.
  */
-var stringToJSON = function stringToJSON (string) {
+function stringToJSON (string) {
 
     var json;
 
@@ -25,6 +24,6 @@ var stringToJSON = function stringToJSON (string) {
 
     return json;
 
-};
+}
 
-module.exports = just.register({'stringToJSON': stringToJSON}).stringToJSON;
+module.exports = stringToJSON;

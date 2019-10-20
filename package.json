@@ -9,13 +9,15 @@
   "scripts": {
     "start": "npm run dev",
     "dev": "npm run test:dev",
-    "build": "npm test",
-    "test": "npm run test:jest -- --ci",
-    "test:dev": "WATCHING=true npm run test:jest -- --watch --coverage",
-    "test:jest": "jest test/jest -c test/jest/config.js",
+    "build": "NODE_ENV=production npm run test:unit && node build.js && npm run test:integration",
+    "test": "npm run test:jest -- test/jest --ci",
+    "test:unit": "npm run test:jest -- test/jest/unit",
+    "test:integration": "npm run test:jest -- test/jest/integration",
+    "test:dev": "WATCHING=true npm run test:unit -- --watch --coverage",
+    "test:jest": "jest -c test/jest/config.js",
     "lint": "eslint . --cache",
     "pretest": "npm run lint",
-    "precommit": "npm run test",
+    "precommit": "npm run test:unit",
     "prepack": "npm run build"
   },
   "repository": {
@@ -39,7 +41,8 @@
     "eslint-config-prettier": "^6.4.0",
     "eslint-plugin-es5": "^1.4.1",
     "eslint-plugin-jest": "^22.19.0",
-    "jest": "^24.9.0"
+    "jest": "^24.9.0",
+    "requirejs": "^2.3.6"
   },
   "dependencies": {}
 }

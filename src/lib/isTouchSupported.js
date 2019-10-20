@@ -1,5 +1,4 @@
 /* global DocumentTouch */
-var just = require('./core');
 /**
  * Checks if the screen <em>supports</em> touch.
  *
@@ -7,7 +6,7 @@ var just = require('./core');
  * @memberof just
  * @return {boolean}
  */
-var isTouchSupported = function isTouchSupported () {
+function isTouchSupported () {
 
     return !!('ontouchstart' in document.body
 		|| window.navigator.maxTouchPoints > 0
@@ -16,6 +15,6 @@ var isTouchSupported = function isTouchSupported () {
 		&& document instanceof DocumentTouch
     );
 
-};
+}
 
-module.exports = just.register({'isTouchSupported': isTouchSupported}).isTouchSupported;
+module.exports = isTouchSupported;

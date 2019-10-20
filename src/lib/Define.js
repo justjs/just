@@ -1,4 +1,3 @@
-var just = require('./core');
 var defineProperties = require('./defineProperties');
 var access = require('./access');
 var eachProperty = require('./eachProperty');
@@ -7,8 +6,7 @@ var check = require('./check');
 var findElements = require('./findElements');
 var stringToJSON = require('./stringToJSON');
 var defaults = require('./defaults');
-
-module.exports = just.register({'Define': (function () {
+var Define = (function () {
 
     'use strict';
 
@@ -17,6 +15,7 @@ module.exports = just.register({'Define': (function () {
     var STATE_CALLED = 2;
     var root = window;
     var definedModules = {};
+
     /**
      * A module loader: it loads {@link just.Define~file|files} in order (when needed) and
      * execute them when all his dependencies became available.
@@ -55,7 +54,7 @@ module.exports = just.register({'Define': (function () {
      *     // Loads after all ids have been defined.
      * });
      */
-    var Define = function Define (id, dependencyIDs, value) {
+    function Define (id, dependencyIDs, value) {
 
         var handler;
 
@@ -99,7 +98,7 @@ module.exports = just.register({'Define': (function () {
 
         updateModules();
 
-    };
+    }
 
     function setModule (id, theModule) { return definedModules[id] = theModule; }
     function getModule (id) { return definedModules[id]; }
@@ -193,7 +192,22 @@ module.exports = just.register({'Define': (function () {
     function loadModuleByID (moduleID, listener) {
 
         var urlParts = (Define.files[moduleID] || '').split(/\s+/);
-        var eventListener = defaults(listener, Define.DEFAULT_LOAD_LISTENER);
+        var eventListener = defaults(listener, function setUrlAsAlias (error, data) {
+
+            var id = data.id;
+            var givenUrl = data.url;
+            var loadedUrl = this.src;
+
+            /* istanbul ignore else */
+            if (!getModule(loadedUrl) && id !== loadedUrl && id !== givenUrl) {
+
+                new Define(loadedUrl, [id],
+                    function (theModule) { return theModule; }
+                );
+
+            }
+
+        });
         var url = urlParts[1];
         var tagName = urlParts[0];
 
@@ -242,11 +256,7 @@ module.exports = just.register({'Define': (function () {
 
     function normalizeIDs (ids) {
 
-        /* eslint-disable padded-blocks */
-        if (check(ids, null, void 0)) {
-            ids = [];
-        }
-        /* eslint-enable padded-blocks */
+        if (check(ids, null, void 0)) { ids = []; }
 
         return defaults(ids, [ids]).map(function (value) {
 
@@ -265,39 +275,6 @@ module.exports = just.register({'Define': (function () {
     }
 
     return defineProperties(Define, /** @lends just.Define */{
-        /**
-         * A function to be called when the {@link just.Define~file|file} load.
-         *
-         * @typedef {function} just.Define~load_listener
-         * @param {!Error} error - An error if the url is not being loaded.
-         * @param {!object} data - Some metadata.
-         * @param {!Event} data.event - The triggered event: "load" or "error".
-         * @param {!just.Define~id} data.moduleID - The id passed to {@link just.Define}.
-         * @param {!url} data.url - The loaded url.
-         */
-
-        /**
-         * Default {@link just.Define~load_listener|listener} for the load event.
-         * @type {just.Define~load_listener}
-         * @readonly
-         */
-        'DEFAULT_LOAD_LISTENER': function (error, data) {
-
-            var id = data.id;
-            var givenUrl = data.url;
-            var loadedUrl = this.src;
-
-            /* istanbul ignore else */
-            if (!getModule(loadedUrl) && id !== loadedUrl && id !== givenUrl) {
-
-                new Define(loadedUrl, [id],
-                    function (theModule) { return theModule; }
-                );
-
-            }
-
-        },
-
         /**
          * Finds {@link just.Define.files|files} within the document, adds them, and
          * if some is called "main", it loads it.
@@ -319,6 +296,16 @@ module.exports = just.register({'Define': (function () {
             return Define;
 
         },
+        /**
+         * A function to be called when the {@link just.Define~file|file} load.
+         *
+         * @typedef {function} just.Define~load_listener
+         * @param {!Error} error - An error if the url is not being loaded.
+         * @param {!object} data - Some metadata.
+         * @param {!Event} data.event - The triggered event: "load" or "error".
+         * @param {!just.Define~id} data.moduleID - The id passed to {@link just.Define}.
+         * @param {!url} data.url - The loaded url.
+         */
 
         /**
          * A function to load {@link just.Define~file|files} by ids.
@@ -531,4 +518,6 @@ module.exports = just.register({'Define': (function () {
 
     }).init();
 
-})()}).Define;
+})();
+
+module.exports = Define;

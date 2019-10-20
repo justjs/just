@@ -1,10 +1,12 @@
-var register = require('./internals/register');
+/* eslint-disable no-unused-vars */
+
 /**
  * An absolute, relative or blob url.
  *
  * @typedef {string} url
  * @global
  */
+
 /**
  * The full parts of an url.
  *
@@ -21,32 +23,32 @@ var register = require('./internals/register');
  * @property {string} username - The given username or an empty string.
  * @property {string} password - The given password or an empty string.
  */
+
 /**
  * Same as the second param for <var>Object.defineProperties</var>
  *
  * @typedef {!object} propertiesDescriptor
  * @global
  */
+
 /**
  * Same as the third param for <var>Object.defineProperty</var>
  *
  * @typedef {!object} propertyDescriptor
  * @global
  */
+
 /**
  * A tagName of an Element (such as "link").
  *
  * @typedef {string} element_tag
  */
+
 /**
  * @mixin just
  * @global
  */
 var just = {};
-var registerOnJust = register(just);
+var set = function registerMember (name, value) { Object.defineProperty(just, name, {'value': value}); }
 
-module.exports = registerOnJust(/** @lends just */{
-    // 'version': '%{CORE_VERSION}%',
-    'register': registerOnJust,
-
-});
+set('register', set);

@@ -1,5 +1,5 @@
-var just = require('./core');
 var check = require('./check');
+
 /**
  * Converts <code>[[k0, v0], {k1: v1}]</code> to <code>{k0: v0, k1: v1}</code>.
  *
@@ -10,7 +10,7 @@ var check = require('./check');
  *
  * @return {!object} An object literal.
  */
-var toObjectLiteral = function toObjectLiteral (array) {
+function toObjectLiteral (array) {
 
     var objectLiteral = {};
 
@@ -52,6 +52,6 @@ var toObjectLiteral = function toObjectLiteral (array) {
 
     return objectLiteral;
 
-};
+}
 
-module.exports = just.register({'toObjectLiteral': toObjectLiteral}).toObjectLiteral;
+module.exports = toObjectLiteral;

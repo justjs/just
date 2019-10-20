@@ -1,4 +1,3 @@
-var just = require('./core');
 /**
  * A cross-browser solution to get the pressed key on a keyboard
  * event.
@@ -17,10 +16,10 @@ var just = require('./core');
  * @return {number|string} Any of <var>e.key</var>, <var>e.which</var> or
  *     <var>w.keyCode</var>.
  */
-var getPressedKey = function getPressedKey (e) {
+function getPressedKey (e) {
 
     return e.key || e.which || e.keyCode;
 
-};
+}
 
-module.exports = just.register({'getPressedKey': getPressedKey}).getPressedKey;
+module.exports = getPressedKey;

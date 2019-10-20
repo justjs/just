@@ -1,10 +1,10 @@
-var just = require('./core');
 /**
  * The given object (if <var>mutate</var> evals to `true`)
  * or a copy of each own property of the given object.
  *
  * @typedef {!object} just.access~handler_this
  */
+
 /**
  * A function to call when {@link just.access} reaches the deep property of an object.
  *
@@ -17,6 +17,7 @@ var just = require('./core');
  * @param {string[]} path - The given keys.
  * @return {*} The return value for {@link just.access|the main function}.
  */
+
 /**
  * Accesses to a deep property in a new <var>object</var>
  * (or <var>object</var> if <var>mutate</var> evals to `true`).
@@ -25,8 +26,17 @@ var just = require('./core');
  * @memberof just
  * @param {!object} object - The base object.
  * @param {string[]} [path=[path]] - The ordered keys.
- * @param {just.access~handler} [handler] - A custom function.
- * @param {just.access~options} [opts={@link just.access.DEFAULT_OPTIONS|default options}] - Some options.
+ * @param {just.access~handler} [handler=returnValue] - A custom function.
+ * @param {object} opts
+ * @param {boolean} [opts.mutate=false] - If `true`, it will use
+ *     the given object as the base object, otherwise it will
+ *     copy all the owned properties to a new object.
+ * @param {boolean} [opts.override=true] - If `true`, and the
+ *     current value is different to `null` or `undefined`,
+ *     the function will throw a TypeError.
+ *     If `false`, the current value will be overriden by
+ *     an empty object if it's not an object nor `undefined`.
+ *
  * @throws {TypeError} If some property causes access problems.
  *
  * @example <caption>Accessing to some existent property</caption>
@@ -73,14 +83,14 @@ var just = require('./core');
  * @return {*} If <var>handler</var> is given: the returned value of that function,
  *         otherwise: the last value of <var>path</var> in the copied object.
  */
-var access = function access (object, path, handler, opts) {
+function access (object, path, handler, opts) {
 
-    var options = Object.assign({}, access.DEFAULT_OPTIONS, opts);
+    var options = Object.assign({}, {
+        'override': true,
+        'mutate': false
+    }, opts);
     var properties = Array.isArray(path) ? path : [path];
-    var initialObject = (options.mutate
-            ? object
-            : Object.assign({}, object)
-    );
+    var initialObject = options.mutate ? object : Object.assign({}, object);
     var currentObject = initialObject;
     var isNewProperty = false;
     var lastKey = properties[properties.length - 1];
@@ -115,31 +125,6 @@ var access = function access (object, path, handler, opts) {
         : currentObject[lastKey]
     );
 
-};
+}
 
-module.exports = just.register({'access': [access, /** @lends just.access */{
-    /**
-     * Options for {@link just.access}.
-     *
-     * @typedef {object} just.access~options
-     * @property {boolean} [mutate=false] - If `true`, it will use
-     *     the given object as the base object, otherwise it will
-     *     copy all the owned properties to a new object.
-     * @property {boolean} [override=true] - If `true`, and the
-     *     current value is different to `null` or `undefined`,
-     *     the function will throw a TypeError.
-     *     If `false`, the current value will be overriden by
-     *     an empty object if it's not an object nor `undefined`.
-     */
-
-    /**
-     * Default options for {@link just.access}.
-     *
-     * @type {just.access~options}
-     * @readonly
-     */
-    'DEFAULT_OPTIONS': Object.freeze({
-        'override': true,
-        'mutate': false
-    })
-}]}).access;
+module.exports = access;

@@ -1,4 +1,3 @@
-var just = require('./core');
 /**
  * Parses <var>url</var> without checking if it's a valid url.
  *
@@ -28,7 +27,7 @@ var just = require('./core');
  *
  * @return {url_parts}
  */
-var parseUrl = function parseUrl (url) {
+function parseUrl (url) {
 
     var parts = {};
     var loc = window.location;
@@ -117,6 +116,6 @@ var parseUrl = function parseUrl (url) {
 
     return parts;
 
-};
+}
 
-module.exports = just.register({'parseUrl': parseUrl}).parseUrl;
+module.exports = parseUrl;
