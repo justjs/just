@@ -9,15 +9,15 @@
   "scripts": {
     "start": "npm run dev",
     "dev": "npm run test:dev",
-    "build": "NODE_ENV=production npm run pretest && npm run test:unit && node src/build && npm run test:integration",
-    "test": "npm run test:jest -- test/jest --ci",
+    "build": "NODE_ENV=production npm run test && node src/build && npm run test:integration",
+    "test": "npm run test:unit -- --ci",
     "test:unit": "npm run test:jest -- test/jest/unit",
     "test:integration": "npm run test:jest -- test/jest/integration",
-    "test:dev": "WATCHING=true npm run test:unit -- --watch --coverage",
+    "test:dev": "WATCHING=true npm run test -- --watch --coverage",
     "test:jest": "jest -c test/jest/config.js",
     "lint": "eslint . --cache",
     "pretest": "npm run lint",
-    "precommit": "npm run pretest && npm run test:unit",
+    "precommit": "npm run test",
     "prepack": "npm run build"
   },
   "repository": {
