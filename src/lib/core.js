@@ -49,6 +49,12 @@
  * @global
  */
 var just = {};
+/**
+ * Register non-writable, non-enumerable and non-configurable members on Just.
+ * @package
+ */
 var set = function registerMember (name, value) { Object.defineProperty(just, name, {'value': value}); };
 
 set('register', set);
+
+module.exports = just;

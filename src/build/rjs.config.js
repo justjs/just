@@ -3,6 +3,17 @@
  */
 var fs = require('fs');
 var config = require('./config.js');
+var removeCjsThings = function (contents) {
+
+    return (contents + '')
+        // Replace relative requires with vars: require('./x') -> x
+        .replace(/require\(['"]\.\/([^)]+)['"]\)/g, '$1')
+        // Remove same var assignment: var x = x;\n
+        .replace(/var ([^\s]+) = \1;\n*/g, '')
+        // Replace CJS export with `just` register.
+        .replace(/module\.exports = ([^\s]+);/g, 'set(\'$1\', $1);');
+
+};
 
 module.exports = {
     'skipModuleInsertion': true,
@@ -11,7 +22,7 @@ module.exports = {
         'start': (
             config.banner + '\n' +
             config.wrapper.start + '\n' +
-            fs.readFileSync('./src/lib/core.js') +
+            removeCjsThings(fs.readFileSync('./src/lib/core.js')) +
             config.metadata + '\n'
         ) + '\n',
         'end': config.wrapper.end
@@ -20,14 +31,7 @@ module.exports = {
 
         if (/index/.test(moduleName)) { return ''; }
 
-        return contents
-            // Replace relative requires with vars: require('./x') -> x
-            .replace(/require\(['"]\.\/([^)]+)['"]\)/g, '$1')
-            // Remove same var assignment: var x = x;\n
-            .replace(/var ([^\s]+) = \1;\n*/g, '')
-            // Replace CJS export with `just` register.
-            .replace(/module\.exports = ([^\s]+);/g, 'set(\'$1\', $1);')
-            .trim();
+        return removeCjsThings(contents).trim();
 
     }
 };
