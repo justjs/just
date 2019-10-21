@@ -1,14 +1,14 @@
 define([
-    'lib/access',
-    'lib/check',
-    'lib/defaults',
-    'lib/defineProperties',
-    'lib/defineProperty',
-    'lib/eachProperty',
-    'lib/isEmptyObject',
-    'lib/parseUrl',
-    'lib/stringToJSON',
-    'lib/toObjectLiteral'
+    '../lib/access',
+    '../lib/check',
+    '../lib/defaults',
+    '../lib/defineProperties',
+    '../lib/defineProperty',
+    '../lib/eachProperty',
+    '../lib/isEmptyObject',
+    '../lib/parseUrl',
+    '../lib/stringToJSON',
+    '../lib/toObjectLiteral'
 ], function (
     access,
     check,

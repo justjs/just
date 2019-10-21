@@ -49,6 +49,6 @@
  * @global
  */
 var just = {};
-var set = function registerMember (name, value) { Object.defineProperty(just, name, {'value': value}); }
+var set = function registerMember (name, value) { Object.defineProperty(just, name, {'value': value}); };
 
 set('register', set);

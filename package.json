@@ -9,7 +9,7 @@
   "scripts": {
     "start": "npm run dev",
     "dev": "npm run test:dev",
-    "build": "NODE_ENV=production npm run test:unit && node build.js && npm run test:integration",
+    "build": "NODE_ENV=production npm run pretest && npm run test:unit && node src/build && npm run test:integration",
     "test": "npm run test:jest -- test/jest --ci",
     "test:unit": "npm run test:jest -- test/jest/unit",
     "test:integration": "npm run test:jest -- test/jest/integration",
@@ -17,7 +17,7 @@
     "test:jest": "jest -c test/jest/config.js",
     "lint": "eslint . --cache",
     "pretest": "npm run lint",
-    "precommit": "npm run test:unit",
+    "precommit": "npm run pretest && npm run test:unit",
     "prepack": "npm run build"
   },
   "repository": {
