@@ -33,7 +33,12 @@ var copyExtraFiles = function (build) {
         var file = dir + '/' + filename;
         var out = outDir + '/' + filename;
 
-        if (fs.existsSync(file)) { return fs.copyFileSync(file, out); }
+        if (fs.existsSync(file)) {
+
+            fs.mkdirSync(outDir, {'recursive': true});
+            fs.copyFileSync(file, out);
+
+        }
 
     });
 
