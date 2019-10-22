@@ -3,22 +3,48 @@
  */
 var fs = require('fs');
 var requirejs = require('requirejs');
+var gzipSize = require('gzip-size');
 var rjsConfig = require('./rjs.config.js');
-var bundle = function (build) {
+var bytesToKb = function (bytes) { return bytes * 1e-3; };
+var logSize = function (filepath) {
 
-    requirejs.optimize(Object.assign({}, rjsConfig, {
+    var fileSizeKb = bytesToKb(fs.statSync(filepath).size);
+    var fileSizeGzipKb = bytesToKb(gzipSize.fileSync(filepath));
+
+    console.log(filepath + ' | ' + fileSizeKb + ' kb. -> ' + fileSizeGzipKb + ' kb.');
+
+};
+var bundle = function concatenate (build) {
+
+    var fileConfig = Object.assign({}, rjsConfig, {
         'name': 'index',
         'out': 'dist/' + build + '/just.js',
         'baseUrl': './src/' + build,
         'optimize': 'none'
-    }), function () {
+    });
 
-        requirejs.optimize(Object.assign({}, rjsConfig, {
+    requirejs.optimize(fileConfig, function minify () {
+
+        var minFileConfig = Object.assign({}, rjsConfig, {
             'baseUrl': './dist/' + build,
             'name': 'just',
             'out': './dist/' + build + '/just.min.js',
-            'wrap': null
-        }));
+            'wrap': null,
+            'uglify': {
+                'warnings': true,
+                'mangle': true,
+                'toplevel': true,
+                'typeofs': false
+            }
+        });
+
+        logSize(fileConfig.out);
+
+        requirejs.optimize(minFileConfig, function () {
+
+            logSize(minFileConfig.out);
+
+        });
 
     });
 
