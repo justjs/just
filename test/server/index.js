@@ -28,7 +28,7 @@ server.listen(7890, '0.0.0.0', function () {
 
     var address = this.address();
 
-    console.log('Listening on ' + address.address + ':' + address.port);
+    console.log('[HTTP] Listening on ' + address.address + ':' + address.port);
 
 });
 
