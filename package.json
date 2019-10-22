@@ -1,7 +1,7 @@
 {
   "name": "just",
   "title": "Just",
-  "version": "0.1.0",
+  "version": "1.0.0-dev",
   "description": "The core for all your javascript proyects.",
   "main": "dist/server/just.min.js",
   "private": true,
