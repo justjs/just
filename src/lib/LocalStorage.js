@@ -30,6 +30,7 @@ function LocalStorage (consent, isExplicit) {
 }
 
 defineProperties(LocalStorage, /** @lends just.LocalStorage */{
+
     /**
      * The DoNotTrack header formatted as `true`, `false` or `undefined`
      * (for "unspecified").
@@ -99,6 +100,7 @@ defineProperties(LocalStorage, /** @lends just.LocalStorage */{
 });
 
 defineProperties(LocalStorage.prototype, /** @lends just.LocalStorage.prototype */{
+
     /**
      * Concatenates a value to <var>document.cookie</var>.
      *

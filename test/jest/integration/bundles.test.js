@@ -48,4 +48,12 @@ describe('Bundles', function () {
 
     });
 
+    test.each(bundleFilepathsRelativeToRoot)('Should preserve @preserve tags.', function (filepath) {
+
+        var file = fs.readFileSync(filepath) + '';
+
+        expect(file).toMatch(/@preserve/);
+
+    });
+
 });

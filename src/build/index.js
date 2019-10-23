@@ -5,15 +5,32 @@ var path = require('path');
 var fs = require('fs');
 var requirejs = require('requirejs');
 var gzipSize = require('gzip-size');
+var UglifyJS = require('uglify-js');
 var rjsConfig = require('./rjs.config.js');
+var uglifyJsConfig = require('./uglifyjs.config.js');
 var bytesToKb = function (bytes) { return bytes * 1e-3; };
+var getFileSize = function (filepath, opts) {
+
+    var options = Object.assign({
+        'decimals': 3,
+        'gzip': false
+    }, opts);
+    var decimals = options.decimals;
+    var bytes = options.gzip ? gzipSize.fileSync(filepath) : fs.statSync(filepath).size;
+
+    return {
+        'b': bytes,
+        'kb': +bytesToKb(bytes).toFixed(decimals)
+    };
+
+};
 var logSize = function (filepath, minFilepath) {
 
-    var fileSizeKb = bytesToKb(fs.statSync(filepath).size).toFixed(3);
-    var fileSizeGzipKb = bytesToKb(gzipSize.fileSync(filepath)).toFixed(3);
+    var fileSize = getFileSize(filepath);
+    var minFileSize = getFileSize(minFilepath);
+    var fileSizeGzip = getFileSize(filepath, {'gzip': true});
+    var minFileSizeGzip = getFileSize(minFilepath, {'gzip': true});
     var relativeFilepath = path.relative(process.cwd(), filepath);
-    var minFileSizeKb = bytesToKb(fs.statSync(minFilepath).size).toFixed(3);
-    var minFileSizeGzipKb = bytesToKb(gzipSize.fileSync(minFilepath)).toFixed(3);
     var minRelativeFilepath = path.relative(process.cwd(), minFilepath);
 
     console.log([
@@ -21,10 +38,10 @@ var logSize = function (filepath, minFilepath) {
         '| ',
         '| ' + relativeFilepath + ' -> ' + minRelativeFilepath,
         '| ',
-        '| Base: ' + fileSizeKb + ' kb.',
-        '| Gzipped: ' + fileSizeGzipKb + ' kb.',
-        '| Minified: ' + minFileSizeKb + ' kb.',
-        '| Minified & gzipped: ' + minFileSizeGzipKb + ' kb.',
+        '| Base: ' + fileSize.kb + ' kb.',
+        '| Gzipped: ' + fileSizeGzip.kb + ' kb.',
+        '| Minified: ' + minFileSize.kb + ' kb.',
+        '| Minified & gzipped: ' + minFileSizeGzip.kb + ' kb.',
         '| '
     ].join('\n'));
 
@@ -34,28 +51,26 @@ var bundle = function concatenate (build) {
     var fileConfig = Object.assign({}, rjsConfig, {
         'name': 'index',
         'out': 'dist/' + build + '/just.js',
-        'baseUrl': './src/' + build,
-        'optimize': 'none'
+        'baseUrl': './src/' + build
     });
 
     requirejs.optimize(fileConfig, function minify () {
 
-        var minFileConfig = Object.assign({}, rjsConfig, {
-            'baseUrl': './dist/' + build,
-            'name': 'just',
-            'out': './dist/' + build + '/just.min.js',
-            'wrap': null,
-            'uglify': {
-                'warnings': true,
-                'mangle': true,
-                'toplevel': true,
-                'typeofs': false
-            }
-        });
+        fs.readFile(fileConfig.out, function (error, file) {
 
-        requirejs.optimize(minFileConfig, function () {
+            var code = file + '';
+            var result = UglifyJS.minify(code, uglifyJsConfig);
+            var minFilepath = fileConfig.out.replace('.js', '.min.js');
 
-            logSize(fileConfig.out, minFileConfig.out);
+            if (result.error) { throw error; }
+
+            (result.warnings || []).forEach(
+                function (warning) { console.log(warning); }
+            );
+
+            fs.writeFileSync(minFilepath, result.code, 'utf8');
+
+            logSize(fileConfig.out, minFilepath);
 
         });
 

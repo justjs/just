@@ -33,8 +33,9 @@ function check (value, otherValues) {
 }
 
 defineProperties(check, /** @lends just.check */{
+
     /**
-     *  A custom message to throw.
+     * A custom message to throw.
      *
      * @typedef {string} just.check~throwable_message
      */

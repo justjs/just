@@ -275,6 +275,7 @@ var Define = (function () {
     }
 
     return defineProperties(Define, /** @lends just.Define */{
+
         /**
          * Finds {@link just.Define.files|files} within the document, adds them, and
          * if some is called "main", it loads it.
@@ -296,6 +297,7 @@ var Define = (function () {
             return Define;
 
         },
+
         /**
          * A function to be called when the {@link just.Define~file|file} load.
          *

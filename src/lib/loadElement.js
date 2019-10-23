@@ -22,6 +22,7 @@ var defineProperties = require('./defineProperties');
  *
  * @return {*} Some value.
  */
+
 /**
  * Loads an external file if no other similar element is
  * found.
@@ -94,6 +95,7 @@ function loadElement (tag, url, listener, handler) {
 }
 
 defineProperties(loadElement, /** @lends just.loadElement */{
+
     /**
      * An src-like attribute for an Element.
      *

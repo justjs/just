@@ -20,6 +20,7 @@ var removeCjsThings = function (contents) {
 };
 
 module.exports = {
+    'optimize': 'none',
     'skipModuleInsertion': true,
     'skipSemiColonInsertion': true,
     'wrap': {
