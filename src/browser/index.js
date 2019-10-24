@@ -13,6 +13,7 @@ require([
     '../lib/eachProperty',
     '../lib/eachProp',
     '../lib/findElements',
+    '../lib/el',
     '../lib/getRemoteParent',
     '../lib/isEmptyObject',
     '../lib/isTouchSupported',
