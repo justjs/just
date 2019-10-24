@@ -8,7 +8,6 @@ require([
     '../lib/defineProperty',
     '../lib/eachProperty',
     '../lib/findElements',
-    '../lib/getPressedKey',
     '../lib/getRemoteParent',
     '../lib/isEmptyObject',
     '../lib/isTouchSupported',

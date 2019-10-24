@@ -13,7 +13,6 @@ describe('Browser bundle', function () {
         ['defineProperty'],
         ['eachProperty'],
         ['findElements'],
-        ['getPressedKey'],
         ['getRemoteParent'],
         ['isEmptyObject'],
         ['isTouchSupported'],
