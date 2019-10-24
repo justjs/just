@@ -8,6 +8,7 @@ require([
     '../lib/defineProperty',
     '../lib/defProp',
     '../lib/eachProperty',
+    '../lib/eachProp',
     '../lib/isEmptyObject',
     '../lib/parseUrl',
     '../lib/stringToJSON',

@@ -11,6 +11,7 @@ require([
     '../lib/defineProperty',
     '../lib/defProp',
     '../lib/eachProperty',
+    '../lib/eachProp',
     '../lib/findElements',
     '../lib/getRemoteParent',
     '../lib/isEmptyObject',
