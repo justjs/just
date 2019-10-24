@@ -14,5 +14,6 @@ require([
     '../lib/emptyObj',
     '../lib/parseUrl',
     '../lib/stringToJSON',
+    '../lib/toJSON',
     '../lib/toObjectLiteral'
 ]);
