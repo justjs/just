@@ -1,6 +1,6 @@
 /**
- * Alias for {@link just.addEventListener}.
- * @memberof just
+ * @mixin just
+ * @borrows just.addEventListener as on
  */
 var on = require('./addEventListener');
 

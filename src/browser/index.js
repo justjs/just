@@ -15,6 +15,7 @@ require([
     '../lib/loadElement',
     '../lib/LocalStorage',
     '../lib/addEventListener',
+    '../lib/on',
     '../lib/parseUrl',
     '../lib/stringToJSON',
     '../lib/toObjectLiteral'
