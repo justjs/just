@@ -4,6 +4,7 @@ require([
     '../lib/check',
     '../lib/is',
     '../lib/defaults',
+    '../lib/from',
     '../lib/defineProperties',
     '../lib/defProps',
     '../lib/defineProperty',
