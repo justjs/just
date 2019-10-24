@@ -11,6 +11,7 @@ require([
     '../lib/eachProperty',
     '../lib/eachProp',
     '../lib/isEmptyObject',
+    '../lib/emptyObj',
     '../lib/parseUrl',
     '../lib/stringToJSON',
     '../lib/toObjectLiteral'

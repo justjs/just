@@ -18,6 +18,7 @@ require([
     '../lib/getRemoteParent',
     '../lib/parent',
     '../lib/isEmptyObject',
+    '../lib/emptyObj',
     '../lib/isTouchSupported',
     '../lib/isWindow',
     '../lib/loadElement',
