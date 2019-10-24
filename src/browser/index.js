@@ -16,6 +16,7 @@ require([
     '../lib/findElements',
     '../lib/el',
     '../lib/getRemoteParent',
+    '../lib/parent',
     '../lib/isEmptyObject',
     '../lib/isTouchSupported',
     '../lib/isWindow',
