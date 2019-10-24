@@ -20,6 +20,7 @@ require([
     '../lib/isEmptyObject',
     '../lib/emptyObj',
     '../lib/isTouchSupported',
+    '../lib/supportsTouch',
     '../lib/isWindow',
     '../lib/loadElement',
     '../lib/load',
