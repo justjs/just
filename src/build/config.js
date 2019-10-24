@@ -13,10 +13,9 @@ module.exports = {
         ' */\n' +
         '\n' +
         '/**\n' +
+        ' * @preserve Copyright 2019 ' + pkg.author + '.\n' +
         ' * @file ' + pkg.title + ': ' + pkg.description + '\n' +
-        ' * @author ' + pkg.author + '\n' +
         ' * @version ' + pkg.version + '\n' +
-        ' * @preserve\n' +
         ' */'
     ).replace(/\t/g, ''),
     'wrapper': {
