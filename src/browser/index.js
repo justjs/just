@@ -1,4 +1,4 @@
-define([
+require([
     '../lib/access',
     '../lib/check',
     '../lib/ClassList',
@@ -19,50 +19,4 @@ define([
     '../lib/parseUrl',
     '../lib/stringToJSON',
     '../lib/toObjectLiteral'
-], function (
-    access,
-    check,
-    ClassList,
-    defaults,
-    Define,
-    defineProperties,
-    defineProperty,
-    eachProperty,
-    findElements,
-    getPressedKey,
-    getRemoteParent,
-    isEmptyObject,
-    isTouchSupported,
-    isWindow,
-    loadElement,
-    LocalStorage,
-    addEventListener,
-    parseUrl,
-    stringToJSON,
-    toObjectLiteral
-) {
-
-    return {
-        'access': access,
-        'check': check,
-        'ClassList': ClassList,
-        'defaults': defaults,
-        'Define': Define,
-        'defineProperties': defineProperties,
-        'defineProperty': defineProperty,
-        'eachProperty': eachProperty,
-        'findElements': findElements,
-        'getPressedKey': getPressedKey,
-        'getRemoteParent': getRemoteParent,
-        'isEmptyObject': isEmptyObject,
-        'isTouchSupported': isTouchSupported,
-        'isWindow': isWindow,
-        'loadElement': loadElement,
-        'LocalStorage': LocalStorage,
-        'addEventListener': addEventListener,
-        'parseUrl': parseUrl,
-        'stringToJSON': stringToJSON,
-        'toObjectLiteral': toObjectLiteral
-    };
-
-});
+]);
