@@ -5,6 +5,7 @@ require([
     '../lib/ClassList',
     '../lib/defaults',
     '../lib/Define',
+    '../lib/Def',
     '../lib/defineProperties',
     '../lib/defineProperty',
     '../lib/eachProperty',
