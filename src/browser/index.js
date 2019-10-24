@@ -22,6 +22,7 @@ require([
     '../lib/isTouchSupported',
     '../lib/isWindow',
     '../lib/loadElement',
+    '../lib/load',
     '../lib/LocalStorage',
     '../lib/addEventListener',
     '../lib/on',
