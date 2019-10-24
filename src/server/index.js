@@ -6,6 +6,7 @@ require([
     '../lib/defineProperties',
     '../lib/defProps',
     '../lib/defineProperty',
+    '../lib/defProp',
     '../lib/eachProperty',
     '../lib/isEmptyObject',
     '../lib/parseUrl',
