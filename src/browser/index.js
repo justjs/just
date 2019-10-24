@@ -1,6 +1,7 @@
 require([
     '../lib/access',
     '../lib/check',
+    '../lib/is',
     '../lib/ClassList',
     '../lib/defaults',
     '../lib/Define',
