@@ -29,5 +29,6 @@ require([
     '../lib/parseUrl',
     '../lib/stringToJSON',
     '../lib/toJSON',
-    '../lib/toObjectLiteral'
+    '../lib/toObjectLiteral',
+    '../lib/toObj'
 ]);
