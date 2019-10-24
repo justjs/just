@@ -1,5 +1,6 @@
 require([
     '../lib/access',
+    '../lib/prop',
     '../lib/check',
     '../lib/is',
     '../lib/defaults',
