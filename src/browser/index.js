@@ -7,6 +7,7 @@ require([
     '../lib/Define',
     '../lib/Def',
     '../lib/defineProperties',
+    '../lib/defProps',
     '../lib/defineProperty',
     '../lib/eachProperty',
     '../lib/findElements',
