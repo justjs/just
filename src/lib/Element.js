@@ -30,7 +30,7 @@ var Element = (function () {
 
     };
     var createBounds = function (position, size) {
-        /** TODO: Check compatibility with >> 0 */
+
         var x = defaults(position.x, position.left || 0);
         var y = defaults(position.y, position.top || 0);
         var width = defaults(size.width, 0);
