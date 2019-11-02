@@ -1,323 +1,385 @@
-APR.Define('APR/Event', 0.1).using(function () {
-
-	'use strict';
-
-	var ArrayProto = Array.prototype;
-	var _ = Object.assign(APR.createPrivateKey(), {
-		'isEventTypeIncluded' : function (option, eventType) {
-			return option === true || APR.inArray(APR.defaults(option, [option]), eventType);
-		},
-		'getReservedOptions' : function (options) {
-			return APR.defaults(APR.defaults(options, {}).addGlobalEvent, {});
-		},
-		'throttle' : function (ms, callback, store) {
-
-			var handler = function () {
-				callback();
-				store.temp = null;
-			};
-
-			if (typeof ms === 'number') {
-				clearTimeout(store.temp);
-				store.temp = setTimeout(handler, ms);
-			}
-			else {
-				store.temp = true;
-				window.requestAnimationFrame(handler);
-			}
-
-		}
-
-	});
-
-	function APREvent (elements) {
-
-		if (!(this instanceof APREvent)) {
-			return new APREvent(elements);
-		}
-
-		if (this.constructor === APREvent) {
-			this.length = ArrayProto.push.apply(this, APR.defaults(elements, [elements]));
-		}
-
-		ArrayProto.forEach.call(this, function (element) {
-			
-			if (!_(element).attachedEvents) {
-				_(element).attachedEvents = {};
-			}
-
-		});
-
-	}
-
-	Object.assign(APREvent, {
-		'version' : this.version,
-		'getAttachedEvents' : function (element) {
-			return _(element).attachedEvents;
-		}
-	});
-
-	Object.assign(APREvent.prototype, {
-
-		'addEvent' : (function () {
-
-			var DEFAULT_OPTIONS = {
-				'useCapture' : false,
-				'once' : false,
-				'detail' : null,
-				'bubbles' : void 0,
-				'throttle' : void 0,
-				'cloned' : void 0,
-				'custom' : void 0,
-				'filter' : null,
-				'originalListener' : void 0
-			};
-
-			return function (names, handler, options) {
+var defaults = require('./defaults');
+var findElements = require('./findElements');
+var defineProperties = require('./defineProperties');
+var check = require('./check');
+var eachProperty = require('./eachProperty');
+var getRemoteParent = require('./getRemoteParent');
+var Event = (function () {
 
-				var instance = this;
-				var listener = (function () {
+    'use strict';
 
-					var throttleStore = {};
+    var isEventTypeIncluded = function (option, eventType) {
 
-					return function (e) {
-					
-						var params = options.detail;					
-						var filter = options.filter;
-						var once = options.once;
-						var throttle = options.throttle;
-						var eventType = e.type;
+        return option === true || defaults(option, [option]).indexOf(eventType) > -1;
 
-						if (typeof filter === 'function' && !filter.call(this, e, params)) {
-							return;
-						}
+    };
+    var doThrottle = function (ms, callback, store) {
 
-						if (_.isEventTypeIncluded(once, eventType)) {
-							instance.removeListener(handler);
-						}
+        var handler = function () {
 
-						if (typeof throttle !== 'undefined') {
+            callback();
+            store.temp = null;
 
-							if (APR.isKeyValueObject(throttle)) {
-								throttle = throttle[eventType];
-							}
-							else if (_.isEventTypeIncluded(throttle, eventType)) {
-								throttle = true;
-							}
+        };
 
-							_.throttle(throttle, handler.bind(this, e, params), throttleStore);
+        if (typeof ms === 'number') {
 
-						}
-						else {
-							handler.call(this, e, params);
-						}
-						
-					};
+            clearTimeout(store.temp);
+            store.temp = setTimeout(handler, ms);
 
-				})();
+        }
+        else {
 
-				options = Object.assign({}, DEFAULT_OPTIONS, options);
-				
-				if (typeof options.bubbles === 'boolean') {
-					options.useCapture = !options.bubbles;
-				}
+            store.temp = true;
+            window.requestAnimationFrame(handler);
 
-				APR.defaults(names, [names]).forEach(function (name) {
+        }
 
-					var type = (_.isEventTypeIncluded(options.custom, name)
-						? name
-						: name.slice(name.lastIndexOf('.') + 1)
-					);
-					var id = name;
+    };
+    var store = function (element) {
 
-					ArrayProto.forEach.call(this, function (element) {
+        return element.justEvent = defaults(element.justEvent, {});
 
-						if (_(handler).id === id && _(element).attachedEvents[id]) {
-							return;
-						}
+    };
 
-						_(handler).id = id;
+    function Event (elements) {
 
-						element.addEventListener(type, listener, options.useCapture);
+        /* eslint-disable padded-blocks */
+        if (!(this instanceof Event)) {
+            return new Event(elements);
+        }
 
-						_(element).attachedEvents[id] = {
-							'type' : type,
-							'name' : name,
-							'hasNamespace' : type !== name,
-							'originalListener' : options.originalListener || handler,
-							'listener' : listener,
-							'options' : options
-						};
+        if (this.constructor === Event) {
+            this.length = [].push.apply(this, defaults(elements, [elements]));
+        }
+        /* eslint-enable padded-blocks */
 
-						if (options.trigger) {
-							this.triggerEvent(name, options.trigger);
-						}
+        [].forEach.call(this, function (element) {
 
-					}, this);
+            if (!store(element).attachedEvents) {
 
-				}, this);
+                store(element).attachedEvents = {};
 
-				return this;
+            }
 
-			};
+        });
 
-		})(),
-		'addCustomEvent' : function (types, handler, options) {
-		
-			this.addEvent(types, handler, Object.assign(APR.defaults(options, {}), {
-				'custom' : true
-			}));
+    }
 
-			return this;
+    defineProperties(Event, {
 
-		},
-		'removeEvent' : function (name, listenerName) {
+        'getAttachedEvents': function (element) {
 
-			this.eachEvent(function (handler, id) {
+            return store(element).attachedEvents;
 
-				if (handler.name === name && typeof listenerName === 'undefined' || APR.getFunctionName(handler.originalListener) === listenerName) {
-					this.removeListener(handler.originalListener);
-				}
+        }
 
-			});
+    });
 
-			return this;
+    defineProperties(Event.prototype, {
 
-		},
-		'removeListener' : function (listener) {
+        'addEvent': (function () {
 
-			var id = _(listener).id;
+            var DEFAULT_OPTIONS = {
+                'useCapture': false,
+                'once': false,
+                'detail': null,
+                'bubbles': void 0,
+                'throttle': void 0,
+                'cloned': void 0,
+                'custom': void 0,
+                'filter': null,
+                'originalListener': void 0
+            };
 
-			ArrayProto.forEach.call(this, function (element) {
+            return function (names, handler, options) {
 
-				var handler = APREvent.getAttachedEvents(element)[id];
+                var instance = this;
+                var listener = (function () {
 
-				element.removeEventListener(handler.type, handler.listener, handler.options.useCapture);
-				
-				delete _(element).attachedEvents[id];
+                    var throttleStore = {};
 
-			});
+                    return function (e) {
 
-			delete _(listener).id;
+                        var params = options.detail;
+                        var filter = options.filter;
+                        var once = options.once;
+                        var throttle = options.throttle;
+                        var eventType = e.type;
 
-			return this;
-		},
-		'cloneEvents' : function (target) {
-			
-			var aprTarget = new APREvent(target);
+                        if (typeof filter === 'function' && !filter.call(this, e, params)) {
 
-			this.eachEvent(function (handler, id) {
+                            return;
 
-				aprTarget.addEvent(handler.name, handler.originalListener, APR.assign(handler.options, {
-					'cloned' : true
-				}));
+                        }
 
-			});
-			
-			return this;
+                        if (isEventTypeIncluded(once, eventType)) {
 
-		},
-		'eachEvent' : function (handler) {
-			
-			ArrayProto.forEach.call(this, function (element) {
-				APR.eachProperty(APREvent.getAttachedEvents(element), handler, element);
-			});
+                            instance.removeListener(handler);
 
-			return this;
-		},
-		'triggerEvent' : function (type, params) {
+                        }
 
-			this.eachEvent(function (handler, namespacedType) {
+                        if (typeof throttle !== 'undefined') {
 
-				var customEvent;
+                            if (check(throttle, {})) {
 
-				if (namespacedType !== type) {
-					return;
-				}
+                                throttle = throttle[eventType];
 
-				customEvent = new CustomEvent(type, Object.assign({}, handler.options, {'detail' : params}));
+                            }
+                            else if (isEventTypeIncluded(throttle, eventType)) {
 
-				if (handler.hasNamespace && !handler.options.custom) {
-					handler.listener.call(this, customEvent);
-				}
-				else {
-					this.dispatchEvent(customEvent);
-				}
+                                throttle = true;
 
-			});
+                            }
 
-			return this;
+                            doThrottle(throttle, handler.bind(this, e, params), throttleStore);
 
-		},
-		'addGlobalEvent' : (function () {
+                        }
+                        else {
 
-			var NON_BUBBLING_TO_BUBBLING = {
-				'focus' : 'focusin',
-				'blur' : 'focusout',
-				'mouseenter' : 'mouseover',
-				'mouseleave' : 'mouseout'
-			};
-			var NON_BUBBLING_EVENTS = ['load', 'unload', 'abort', 'error'];
-			
-			return function (eventNames, events, options) {
+                            handler.call(this, e, params);
 
-				if (!APR.isKeyValueObject(events)) {
-					throw new TypeError('"' + events + '" must be a key-value object.');
-				}
+                        }
 
-				options = APR.defaults(options, {});
+                    };
 
-				APR.defaults(eventNames, [eventNames]).forEach(function (eventName) {
+                })();
 
-					if (!options.force && APR.inArray(NON_BUBBLING_EVENTS, eventName)) {
-						throw new TypeError(eventName + ' doesn\'t bubble, but you can attach it anyway adding {force: true} (in the "options" parameter).');
-					}
-					
-					this.addEvent(NON_BUBBLING_TO_BUBBLING[eventName] || eventName, function (e, params) {
+                options = Object.assign({}, DEFAULT_OPTIONS, options);
 
-						var somethingMatched = false;
-						var triggerOptions = _.getReservedOptions(options.trigger);
-						var triggerTargets = triggerOptions[e.type] ? APR.getElements(triggerOptions[e.type], this) : [e.target];
+                if (typeof options.bubbles === 'boolean') {
 
-						triggerTargets.forEach(function (target) {
+                    options.useCapture = !options.bubbles;
 
-							APR.getRemoteParent(target, function () {
+                }
 
-								APR.eachProperty(events, function (handler, selector) {
+                defaults(names, [names]).forEach(function (name) {
 
-									if (this.matches && this.matches(selector)) {
-										somethingMatched = true;
-										handler.call(this, e, params);
-									}
+                    var type = (isEventTypeIncluded(options.custom, name)
+                        ? name
+                        : name.slice(name.lastIndexOf('.') + 1)
+                    );
+                    var id = name;
 
-								}, this);
+                    [].forEach.call(this, function (element) {
 
-								return false;
+                        if (store(handler).id === id && store(element).attachedEvents[id]) {
 
-							}, this, true);
+                            return;
 
-						}, this);
+                        }
 
-						if (!somethingMatched && typeof events.elsewhere === 'function') {
-							events.elsewhere.call(this, e, params);
-						}
+                        store(handler).id = id;
 
-					}, Object.assign(options, {
-						'bubbles' : true
-					}));
+                        element.addEventListener(type, listener, options.useCapture);
 
-				}, this);
+                        store(element).attachedEvents[id] = {
+                            'type': type,
+                            'name': name,
+                            'hasNamespace': type !== name,
+                            'originalListener': options.originalListener || handler,
+                            'listener': listener,
+                            'options': options
+                        };
 
-				return this;
+                        if (options.trigger) {
 
-			};
+                            this.triggerEvent(name, options.trigger);
 
-		})()
+                        }
 
-	}, {'constructor' : APREvent});
+                    }, this);
 
-	if (!APR.Event) {
-		APR.Event = APREvent;
-	}
+                }, this);
 
-});
+                return this;
+
+            };
+
+        })(),
+        'addCustomEvent': function (types, handler, options) {
+
+            this.addEvent(types, handler, Object.assign(defaults(options, {}), {
+                'custom': true
+            }));
+
+            return this;
+
+        },
+        /**
+         * NOTE: This function uses function.name internally; minification might
+         * introduce some bugs.
+         */
+        'removeEvent': function (name, listenerName) {
+
+            this.eachEvent(function (handler, id) {
+
+                if (handler.name === name && typeof listenerName === 'undefined'
+                    || handler.originalListener.name === listenerName) {
+
+                    this.removeListener(handler.originalListener);
+
+                }
+
+            });
+
+            return this;
+
+        },
+        'removeListener': function (listener) {
+
+            var id = store(listener).id;
+
+            [].forEach.call(this, function (element) {
+
+                var handler = Event.getAttachedEvents(element)[id];
+
+                element.removeEventListener(handler.type, handler.listener, handler.options.useCapture);
+
+                delete store(element).attachedEvents[id];
+
+            });
+
+            delete store(listener).id;
+
+            return this;
+
+        },
+        'cloneEvents': function (target) {
+
+            var justTarget = new Event(target);
+
+            this.eachEvent(function (handler, id) {
+
+                justTarget.addEvent(handler.name, handler.originalListener, Object.assign(handler.options, {
+                    'cloned': true
+                }));
+
+            });
+
+            return this;
+
+        },
+        'eachEvent': function (handler) {
+
+            [].forEach.call(this, function (element) {
+
+                eachProperty(Event.getAttachedEvents(element), handler, element);
+
+            });
+
+            return this;
+
+        },
+        'triggerEvent': function (type, params) {
+
+            this.eachEvent(function (handler, namespacedType) {
+
+                var customEvent;
+
+                if (namespacedType !== type) {
+
+                    return;
+
+                }
+
+                customEvent = new CustomEvent(type, Object.assign({}, handler.options, {'detail': params}));
+
+                if (handler.hasNamespace && !handler.options.custom) {
+
+                    handler.listener.call(this, customEvent);
+
+                }
+                else {
+
+                    this.dispatchEvent(customEvent);
+
+                }
+
+            });
+
+            return this;
+
+        },
+        'addGlobalEvent': (function () {
+
+            var NON_BUBBLING_TO_BUBBLING = {
+                'focus': 'focusin',
+                'blur': 'focusout',
+                'mouseenter': 'mouseover',
+                'mouseleave': 'mouseout'
+            };
+            var NON_BUBBLING_EVENTS = ['load', 'unload', 'abort', 'error'];
+
+            return function (eventNames, events, options) {
+
+                check.throwable(events, {});
+                options = defaults(options, {});
+
+                defaults(eventNames, [eventNames]).forEach(function (eventName) {
+
+                    if (!options.force && NON_BUBBLING_EVENTS.indexOf(eventName) > -1) {
+
+                        throw new TypeError(eventName + ' doesn\'t bubble, but ' +
+                            'you can attach it anyway adding {force: true} ' +
+                            '(in the "options" parameter).');
+
+                    }
+
+                    this.addEvent(NON_BUBBLING_TO_BUBBLING[eventName] || eventName, function (e, params) {
+
+                        var somethingMatched = false;
+                        var triggerOptions = defaults(options.trigger, {
+                            'addGlobalEvent': {}
+                        });
+                        var triggerTargets = (triggerOptions[e.type]
+                            ? findElements(triggerOptions[e.type], this)
+                            : [e.target]
+                        );
+
+                        triggerTargets.forEach(function (target) {
+
+                            getRemoteParent(target, function () {
+
+                                eachProperty(events, function (handler, selector) {
+
+                                    if (this.matches && this.matches(selector)) {
+
+                                        somethingMatched = true;
+                                        handler.call(this, e, params);
+
+                                    }
+
+                                }, this);
+
+                                return false;
+
+                            }, this, true);
+
+                        }, this);
+
+                        if (!somethingMatched && typeof events.elsewhere === 'function') {
+
+                            events.elsewhere.call(this, e, params);
+
+                        }
+
+                    }, Object.assign(options, {
+                        'bubbles': true
+                    }));
+
+                }, this);
+
+                return this;
+
+            };
+
+        })()
+
+    });
+
+    return Event;
+
+})();
+
+module.exports = Event;
