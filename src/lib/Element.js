@@ -156,7 +156,7 @@ var Element = (function () {
 
             });
             var text = stringParts[1] || '';
-            var element;
+            var jElement, element;
 
             /* eslint-disable padded-blocks */
             if (!tagName) {
@@ -164,12 +164,13 @@ var Element = (function () {
             }
             /* eslint-enable padded-blocks */
 
-            element = new Element(createElement(tagName, namespace));
+            jElement = new Element(createElement(tagName, namespace));
+            element = jElement.get();
 
             // FIX: Backreference didn't work on quotes.
             attributes = attributes.replace(/\[\s*([\w\-:]+)(\s*=\s*("([^"]*)"|'([^"]*)')\s*)?\]/g, function replaceAttribute (regexp, name, quoted, attributeValue, valueDoubleQuotes, valueSingleQuotes) {
 
-                element.setAttributes(toObjectLiteral([
+                jElement.setAttributes(toObjectLiteral([
                     name, attributeValue ? (valueDoubleQuotes || valueSingleQuotes) : true
                 ]), namespace);
 
@@ -179,7 +180,7 @@ var Element = (function () {
 
             attributes = attributes.replace(/\[\s*([\w-]+)\s*=\s*("(\{.+\})"|'(\{.+\})')\s*\]/, function replaceJSONAttribute (_, name, value, json) {
 
-                element.setAttributes(toObjectLiteral([
+                jElement.setAttributes(toObjectLiteral([
                     name, json
                 ]), namespace);
 
@@ -189,7 +190,7 @@ var Element = (function () {
 
             attributes = attributes.replace(/\.([\w-]+)/g, function replaceClass (_, name) {
 
-                element.get().classList.add(name);
+                element.classList.add(name);
 
                 return '';
 
@@ -197,15 +198,15 @@ var Element = (function () {
 
             attributes = attributes.replace(/#([\w-]+)/g, function replaceID (_, id) {
 
-                element.get().id = id;
+                element.id = id;
 
                 return '';
 
             }).trim();
 
-            element.setText(text);
+            jElement.setText(text);
 
-            return element.get();
+            return element;
 
         },
         'findAll': function (selector, parent) {
@@ -351,9 +352,9 @@ var Element = (function () {
 
             return getResults(this, function (target) {
 
-                var element = new Element(target);
+                var jElement = new Element(target);
 
-                return element.isVisible() && element.isInsideBounds(getWindowBounds());
+                return jElement.isVisible() && jElement.isInsideBounds(getWindowBounds());
 
             });
 
@@ -554,9 +555,9 @@ var Element = (function () {
 
             return new Element(getResults(this, function (target) {
 
-                var newElement = new Element(Element.createElement(tagName)).copy(target, copyOptions).get();
+                var jNewElement = new Element(Element.createElement(tagName)).copy(target, copyOptions).get();
 
-                return new Element(target).replaceWith(newElement).get();
+                return new Element(target).replaceWith(jNewElement).get();
 
             }));
 
