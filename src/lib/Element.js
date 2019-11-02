@@ -244,20 +244,9 @@ var Element = (function () {
 
             text = defaults(text, '');
 
-            [].forEach.call(this, function (element) {
-
-                if ('textContent' in element) {
-
-                    element.textContent = text;
-
-                }
-                else if ('innerText' in element) {
-
-                    element.innerText = text;
-
-                }
-
-            });
+            [].forEach.call(this,
+                function (element) { element.textContent = text; }
+            );
 
             return this;
 
