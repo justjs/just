@@ -1,5 +1,4 @@
 var Event = require('./Event');
-var toObjectLiteral = require('./toObjectLiteral');
 var isWindow = require('./isWindow');
 var defineProperties = require('./defineProperties');
 var findElements = require('./findElements');
@@ -143,70 +142,99 @@ var Element = (function () {
             'xbl': 'http://www.mozilla.org/xbl',
             'xul': 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul'
         }),
+        /**
+         * Create an element from a string.
+         *
+         * @param {!string} elementAsString - A css-selector like string.
+         *     I.e., any combination of:
+         *     - "tagName", "namespace:tagName", "tagName>tagName", ...
+         *     - "tagName[attribute]", "tagName[attribute=some value]", "tagName[attribute=\"value\"]", ...
+         *     - "tagName.class", ...
+         *     - "tagName#id", ...
+         *     - "tagName>>text", ...
+         *
+         * @example <caption>Create an Element.</caption>
+         * createElement('div'); // A &lt;div&gt;.
+         * createElement('something'); // A &lt;something&gt;.
+         *
+         * @example <caption>Create an Element within a namespace.</caption>
+         * createElement('svg'); // Element.NAMESPACES['svg'] is implied.
+         * createElement('http://www.w3.org/1999/xhtml:div'); // http://www.w3.org/1999/xhtml
+         *
+         * @example <caption>Create a Text Node.</caption>
+         * createElement('>text'); // Text Node with "text" as text.
+         *
+         * @example <caption>Create a nested Element.</caption>
+         * createElement('div>span'); // &lt;span&gt; within a &lt;div&gt;.
+         * createElement('div>div>span'); // &lt;span&gt; within a &lt;div&gt; within a &lt;div&gt;.
+         *
+         * @example <caption>Create nested Text Node. --Note the double ">".</caption>
+         * createElement('span>>text'); // Creates a &lt;span&gt; with "text" as text. Returns the Text Node.
+         * createElement('div>>span>b'); // Creates a &lt;div&gt; with "span>b" as text. Returns the Text Node.
+         *
+         * @example <caption>Create an Element with an id.</caption>
+         * createElement('div#id'); // &lt;div&gt; with "id" as id.
+         * createElement('div#id#id2'); // &lt;div&gt; with "id2" as id. (The latest takes precedence).
+         *
+         * @example <caption>Create an Element with a class.</caption>
+         * createElement('div.class'); // &lt;div&gt; with "class" as class name.
+         * createElement('div.class.class2'); // &lt;div&gt; with "class" and "class2" as classes.
+         *
+         * @example <caption>Create an Element with an attribute.</caption>
+         * createElement('div[hidden]'); // &lt;div&gt; with "hidden" as attribute.
+         * createElement('div[title="x"]'); // &lt;div&gt; with "title" (equal to "x") as attribute.
+         * createElement('div[title='single quotes']'); // &lt;div&gt; with "title" (equal to "single quotes") as attribute.
+         * createElement('div[title=without quotes]'); // &lt;div&gt; with "title" (equal to "without quotes") as attribute.
+         * createElement('div[title="x"][title="y"]'); // &lt;div&gt; with "title" (equal to "y") as attribute. (The latest takes precedence).
+         * createElement('a[xlink:href="url"]'); // &lt;a&gt; with "href" (of the "xlink" namespace, equal to "url") as attribute.
+         *
+         * @example <caption>Create nested Elements with custom specifications.</caption>
+         * createElement('div.parent#div.wrapper[data-tag="div"]>span#span[data-tag="span"]>>Some text.');
+         *
+         * @return {Node} The latest created Element.
+         */
         'createElement': function (elementAsString) {
 
-            var tagName = (elementAsString.match(/(^|\t+)[a-z0-9\s]+/i) || [''])[0].trim();
-            var stringParts = elementAsString.split('>');
-            var namespace = '';
-            var attributes = stringParts[0].replace(/:(\.*);/, function (_, ns) {
+            var specifications = defaults(elementAsString, '').split('>>');
+            var elementsSpecifications = specifications[0];
+            var elementText = specifications[1] || '';
+            var ElementProto = Element.prototype;
+            var deepestChild;
 
-                namespace = ns;
+            elementsSpecifications.split('>').forEach(function (specification) {
 
-                return '';
+                var tagName = specification.match(/^[^.#[]+/)[0];
+                var element = createElement(tagName);
 
-            });
-            var text = stringParts[1] || '';
-            var jElement, element;
+                specification.match(/(#[^#.[]+|\.[^#.[]+|\[[^\]]+\])/g).forEach(function (
+                    attribute) {
 
-            /* eslint-disable padded-blocks */
-            if (!tagName) {
-                return document.createTextNode(text);
-            }
-            /* eslint-enable padded-blocks */
+                    var attributes;
+                    var attributeParts, attributeName, attributeValue;
 
-            jElement = new Element(createElement(tagName, namespace));
-            element = jElement.get();
+                    if (attribute[0] === '#') { element.id = attribute.slice(1); }
+                    else if (attribute[0] === '.') { element.classList.add(attribute.slice(1)); }
+                    else /*if (attribute[0] === '[') */{
 
-            // FIX: Backreference didn't work on quotes.
-            attributes = attributes.replace(/\[\s*([\w\-:]+)(\s*=\s*("([^"]*)"|'([^"]*)')\s*)?\]/g, function replaceAttribute (regexp, name, quoted, attributeValue, valueDoubleQuotes, valueSingleQuotes) {
+                        attributeParts = attribute.split('=');
+                        attributeName = attributeParts[0];
+                        attributeValue = attributeParts[1];
+                        attributes[attributeName] = attributeValue;
 
-                jElement.setAttributes(toObjectLiteral([
-                    name, attributeValue ? (valueDoubleQuotes || valueSingleQuotes) : true
-                ]), namespace);
+                        ElementProto.setAttributes.call(element, attributes);
 
-                return '';
+                    }
 
-            }).trim();
+                });
 
-            attributes = attributes.replace(/\[\s*([\w-]+)\s*=\s*("(\{.+\})"|'(\{.+\})')\s*\]/, function replaceJSONAttribute (_, name, value, json) {
-
-                jElement.setAttributes(toObjectLiteral([
-                    name, json
-                ]), namespace);
-
-                return '';
+                if (deepestChild) { deepestChild.appendChild(element); }
+                deepestChild = element;
 
             });
 
-            attributes = attributes.replace(/\.([\w-]+)/g, function replaceClass (_, name) {
+            ElementProto.setText.call(deepestChild, elementText);
 
-                element.classList.add(name);
-
-                return '';
-
-            }).trim();
-
-            attributes = attributes.replace(/#([\w-]+)/g, function replaceID (_, id) {
-
-                element.id = id;
-
-                return '';
-
-            }).trim();
-
-            jElement.setText(text);
-
-            return element;
+            return deepestChild;
 
         },
         'findAll': function (selector, parent) {
