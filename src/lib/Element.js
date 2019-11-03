@@ -196,7 +196,7 @@ var Element = (function () {
          */
         'createElement': function (elementAsString) {
 
-            var specifications = defaults(elementAsString, '').split('>>');
+            var specifications = defaults(elementAsString, '').split(/(?:>>|^>)/);
             var elementsSpecifications = specifications[0];
             var elementText = specifications[1] || '';
             var ElementProto = Element.prototype;
@@ -204,11 +204,18 @@ var Element = (function () {
 
             elementsSpecifications.split('>').forEach(function (specification) {
 
+                // Split conflictive parts.
                 var tag = specification.split('[')[0];
+                // Split namespace:tagName.
                 var tagParts = tag.match(/(.+):(.+)/);
                 var tagNamespace = tagParts ? tagParts[1] : null;
-                var tagName = (tagParts ? tagParts[2] : tag).match(/^[^#.[]+/)[0];
-                var element = createElement(tagName, tagNamespace);
+                // Remove extra characters from the tag name, like: #id, .class, [attribute]...
+                var tagName = ((tagParts ? tagParts[2] : tag).match(/^[^#.[]+/) || [])[0];
+                var element;
+
+                if (!tagName) { return; }
+
+                element = createElement(tagName, tagNamespace);
 
                 (specification.match(/(#[^#.[]+|\.[^#.[]+|\[[^\]]+\])/g) || []).forEach(function (
                     attribute) {
@@ -220,12 +227,12 @@ var Element = (function () {
                     else if (attribute[0] === '.') { element.classList.add(attribute.slice(1)); }
                     else /*if (attribute[0] === '[') */{
 
-                        attributeParts = attribute.split('=');
-                        attributeName = attributeParts[0].split('[')[1];
-                        attributeValue = attributeParts[1].split(']')[0];
+                        attributeParts = attribute.match(/\[([^=]+)(?:=([^\]]*))?\]/);
+                        attributeName = attributeParts[1];
+                        attributeValue = (attributeParts[2] || '').replace(/(^['"]|['"]$)/g, '');
                         attributes[attributeName] = attributeValue;
 
-                        ElementProto.setAttributes.call(element, attributes);
+                        ElementProto.setAttributes.call([element], attributes);
 
                     }
 
@@ -235,8 +242,15 @@ var Element = (function () {
                 deepestChild = element;
 
             });
+            var textNode;
 
-            ElementProto.setText.call(deepestChild, elementText);
+            if (elementText) {
+
+                textNode = document.createTextNode(elementText);
+                if (deepestChild) { deepestChild.appendChild(textNode); }
+                deepestChild = textNode;
+
+            }
 
             return deepestChild;
 
@@ -408,12 +422,14 @@ var Element = (function () {
 
                 eachProperty(attributes, function (value, name) {
 
-                    var namespace = name.split(':')[0];
+                    var attributeParts = name.match(/(.+):(.+)/) || [];
+                    var namespace = attributeParts[1];
+                    var localName = attributeParts[2];
                     var namespaceURI = Element.namespaces[namespace];
 
                     /* eslint-disable padded-blocks */
                     if (namespaceURI) {
-                        this.setAttributeNS(namespaceURI, name.split(':')[1], value);
+                        this.setAttributeNS(namespaceURI, namespace + ':' + localName, value);
                     }
                     else {
                         this.setAttribute(name, value);

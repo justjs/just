@@ -50,9 +50,9 @@ describe('@lib/Element.js', function () {
 
             test.each([
                 ['div>span', [HTMLSpanElement, HTMLDivElement]],
-                ['div>div>span', [HTMLDivElement, HTMLDivElement, HTMLSpanElement]],
+                ['div>div>span', [HTMLSpanElement, HTMLDivElement, HTMLDivElement]],
                 ['span>>text', [Text, HTMLSpanElement], 'text'],
-                ['div>>span>b', [Text, HTMLSpanElement, HTMLDivElement], 'span>b']
+                ['div>>span>b', [Text, HTMLDivElement], 'span>b']
             ])('Should create a nested Node using %p.', function (nodeAsString, expectedInstances) {
 
                 var node = createElement(nodeAsString);
@@ -118,16 +118,16 @@ describe('@lib/Element.js', function () {
                     ],
                     [
                         [
-                            HTMLDivElement,
-                            'divID',
-                            'divClass',
-                            ['data-attribute', 'div']
-                        ],
-                        [
                             HTMLSpanElement,
                             'spanID',
                             'spanClass',
                             ['data-attribute', 'span']
+                        ],
+                        [
+                            HTMLDivElement,
+                            'divID',
+                            'divClass',
+                            ['data-attribute', 'div']
                         ]
                     ],
                     'Some text.'
@@ -136,6 +136,7 @@ describe('@lib/Element.js', function () {
                 elementsAsArray, children, text) {
 
                 var element = createElement(elementsAsArray.join('>'));
+                var currentElement = element;
 
                 expect(element.nodeValue || element.textContent).toBe(text);
 
@@ -148,10 +149,11 @@ describe('@lib/Element.js', function () {
                     var attributeName = attribute[0];
                     var attributeValue = attribute[1];
 
-                    expect(child).toBeInstanceOf(instance);
-                    expect(child.id).toBe(id);
-                    expect(child.className).toBe(className);
-                    expect(child.getAttribute(attributeName)).toBe(attributeValue);
+                    currentElement = currentElement.parentNode;
+                    expect(currentElement).toBeInstanceOf(instance);
+                    expect(currentElement.id).toBe(id);
+                    expect(currentElement.className).toBe(className);
+                    expect(currentElement.getAttribute(attributeName)).toBe(attributeValue);
 
                 });
 
