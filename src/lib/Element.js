@@ -20,7 +20,8 @@ var Element = (function () {
     };
     var createElement = function (tagName, namespace) {
 
-        var namespaceURI = Element.NAMESPACES[namespace] || Element.NAMESPACES[tagName = tagName.toLowerCase().trim()] || namespace;
+        var tag = tagName = tagName.toLowerCase().trim();
+        var namespaceURI = Element.NAMESPACES[namespace] || Element.NAMESPACES[tag] || namespace;
 
         return (namespaceURI
             ? document.createElementNS(namespaceURI, tagName)
@@ -203,13 +204,16 @@ var Element = (function () {
 
             elementsSpecifications.split('>').forEach(function (specification) {
 
-                var tagName = specification.match(/^[^.#[]+/)[0];
-                var element = createElement(tagName);
+                var tag = specification.split('[')[0];
+                var tagParts = tag.match(/(.+):(.+)/);
+                var tagNamespace = tagParts ? tagParts[1] : null;
+                var tagName = (tagParts ? tagParts[2] : tag).match(/^[^#.[]+/)[0];
+                var element = createElement(tagName, tagNamespace);
 
-                specification.match(/(#[^#.[]+|\.[^#.[]+|\[[^\]]+\])/g).forEach(function (
+                (specification.match(/(#[^#.[]+|\.[^#.[]+|\[[^\]]+\])/g) || []).forEach(function (
                     attribute) {
 
-                    var attributes;
+                    var attributes = {};
                     var attributeParts, attributeName, attributeValue;
 
                     if (attribute[0] === '#') { element.id = attribute.slice(1); }
@@ -217,8 +221,8 @@ var Element = (function () {
                     else /*if (attribute[0] === '[') */{
 
                         attributeParts = attribute.split('=');
-                        attributeName = attributeParts[0];
-                        attributeValue = attributeParts[1];
+                        attributeName = attributeParts[0].split('[')[1];
+                        attributeValue = attributeParts[1].split(']')[0];
                         attributes[attributeName] = attributeValue;
 
                         ElementProto.setAttributes.call(element, attributes);
