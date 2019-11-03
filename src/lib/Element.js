@@ -155,46 +155,46 @@ var Element = (function () {
          *     - "tagName>>text", ...
          *
          * @example <caption>Create an Element.</caption>
-         * createElement('div'); // A &lt;div&gt;.
-         * createElement('something'); // A &lt;something&gt;.
+         * create('div'); // A &lt;div&gt;.
+         * create('something'); // A &lt;something&gt;.
          *
          * @example <caption>Create an Element within a namespace.</caption>
-         * createElement('svg'); // Element.namespaces['svg'] is implied.
-         * createElement('http://www.w3.org/1999/xhtml:div'); // http://www.w3.org/1999/xhtml
+         * create('svg'); // Element.namespaces['svg'] is implied.
+         * create('http://www.w3.org/1999/xhtml:div'); // http://www.w3.org/1999/xhtml
          *
          * @example <caption>Create a Text Node.</caption>
-         * createElement('>text'); // Text Node with "text" as text.
+         * create('>text'); // Text Node with "text" as text.
          *
          * @example <caption>Create a nested Element.</caption>
-         * createElement('div>span'); // &lt;span&gt; within a &lt;div&gt;.
-         * createElement('div>div>span'); // &lt;span&gt; within a &lt;div&gt; within a &lt;div&gt;.
+         * create('div>span'); // &lt;span&gt; within a &lt;div&gt;.
+         * create('div>div>span'); // &lt;span&gt; within a &lt;div&gt; within a &lt;div&gt;.
          *
          * @example <caption>Create nested Text Node. --Note the double ">".</caption>
-         * createElement('span>>text'); // Creates a &lt;span&gt; with "text" as text. Returns the Text Node.
-         * createElement('div>>span>b'); // Creates a &lt;div&gt; with "span>b" as text. Returns the Text Node.
+         * create('span>>text'); // Creates a &lt;span&gt; with "text" as text. Returns the Text Node.
+         * create('div>>span>b'); // Creates a &lt;div&gt; with "span>b" as text. Returns the Text Node.
          *
          * @example <caption>Create an Element with an id.</caption>
-         * createElement('div#id'); // &lt;div&gt; with "id" as id.
-         * createElement('div#id#id2'); // &lt;div&gt; with "id2" as id. (The latest takes precedence).
+         * create('div#id'); // &lt;div&gt; with "id" as id.
+         * create('div#id#id2'); // &lt;div&gt; with "id2" as id. (The latest takes precedence).
          *
          * @example <caption>Create an Element with a class.</caption>
-         * createElement('div.class'); // &lt;div&gt; with "class" as class name.
-         * createElement('div.class.class2'); // &lt;div&gt; with "class" and "class2" as classes.
+         * create('div.class'); // &lt;div&gt; with "class" as class name.
+         * create('div.class.class2'); // &lt;div&gt; with "class" and "class2" as classes.
          *
          * @example <caption>Create an Element with an attribute.</caption>
-         * createElement('div[hidden]'); // &lt;div&gt; with "hidden" as attribute.
-         * createElement('div[title="x"]'); // &lt;div&gt; with "title" (equal to "x") as attribute.
-         * createElement('div[title='single quotes']'); // &lt;div&gt; with "title" (equal to "single quotes") as attribute.
-         * createElement('div[title=without quotes]'); // &lt;div&gt; with "title" (equal to "without quotes") as attribute.
-         * createElement('div[title="x"][title="y"]'); // &lt;div&gt; with "title" (equal to "y") as attribute. (The latest takes precedence).
-         * createElement('a[xlink:href="url"]'); // &lt;a&gt; with "href" (of the "xlink" namespace, equal to "url") as attribute.
+         * create('div[hidden]'); // &lt;div&gt; with "hidden" as attribute.
+         * create('div[title="x"]'); // &lt;div&gt; with "title" (equal to "x") as attribute.
+         * create('div[title='single quotes']'); // &lt;div&gt; with "title" (equal to "single quotes") as attribute.
+         * create('div[title=without quotes]'); // &lt;div&gt; with "title" (equal to "without quotes") as attribute.
+         * create('div[title="x"][title="y"]'); // &lt;div&gt; with "title" (equal to "y") as attribute. (The latest takes precedence).
+         * create('a[xlink:href="url"]'); // &lt;a&gt; with "href" (of the "xlink" namespace, equal to "url") as attribute.
          *
          * @example <caption>Create nested Elements with custom specifications.</caption>
-         * createElement('div.parent#div.wrapper[data-tag="div"]>span#span[data-tag="span"]>>Some text.');
+         * create('div.parent#div.wrapper[data-tag="div"]>span#span[data-tag="span"]>>Some text.');
          *
          * @return {Node} The latest created Element.
          */
-        'createElement': function (elementAsString) {
+        'create': function (elementAsString) {
 
             var specifications = defaults(elementAsString, '').split(/(?:>>|^>)/);
             var elementsSpecifications = specifications[0];
@@ -592,7 +592,7 @@ var Element = (function () {
 
             return new Element(getResults(this, function (target) {
 
-                var jNewElement = new Element(Element.createElement(tagName)).copy(target, copyOptions).get();
+                var jNewElement = new Element(Element.create(tagName)).copy(target, copyOptions).get();
 
                 return new Element(target).replaceWith(jNewElement).get();
 

@@ -16,13 +16,13 @@ describe('@lib/Element.js', function () {
 
         });
 
-        describe('createElement', function () {
+        describe('create', function () {
 
-            var createElement = Element.createElement;
+            var create = Element.create;
 
             it('Should create an Element.', function () {
 
-                expect(createElement('div')).toBeInstanceOf(HTMLDivElement);
+                expect(create('div')).toBeInstanceOf(HTMLDivElement);
 
             });
 
@@ -32,7 +32,7 @@ describe('@lib/Element.js', function () {
             ])('Should create an Element using %p within the %p namespace.', function (
                 elementAsString, expectedNamespace) {
 
-                var element = createElement(elementAsString);
+                var element = create(elementAsString);
 
                 expect(element.namespaceURI).toBe(expectedNamespace);
 
@@ -40,7 +40,7 @@ describe('@lib/Element.js', function () {
 
             it('Should create a Text Node.', function () {
 
-                var text = createElement('>text');
+                var text = create('>text');
 
                 expect(text).toBeInstanceOf(Node);
                 expect(text.nodeType).toBe(Node.TEXT_NODE);
@@ -55,7 +55,7 @@ describe('@lib/Element.js', function () {
                 ['div>>span>b', [Text, HTMLDivElement], 'span>b']
             ])('Should create a nested Node using %p.', function (nodeAsString, expectedInstances) {
 
-                var node = createElement(nodeAsString);
+                var node = create(nodeAsString);
                 var parentNode;
 
                 expectedInstances.forEach(function (expectedInstance) {
@@ -73,7 +73,7 @@ describe('@lib/Element.js', function () {
             ])('Should create an Element using %p, with %p as the id.', function (
                 elementAsString, expectedID) {
 
-                var element = createElement('div' + elementAsString);
+                var element = create('div' + elementAsString);
 
                 expect(element).toBeInstanceOf(HTMLDivElement);
                 expect(element.id).toBe(expectedID);
@@ -86,7 +86,7 @@ describe('@lib/Element.js', function () {
             ])('Should create an Element using %p, with %p as the class name.', function (
                 elementAsString, expectedClassName) {
 
-                var element = createElement('div' + elementAsString);
+                var element = create('div' + elementAsString);
 
                 expect(element).toBeInstanceOf(HTMLDivElement);
                 expect(element.className).toBe(expectedClassName);
@@ -102,7 +102,7 @@ describe('@lib/Element.js', function () {
             ])('Should create an Element using %p, with %p as attribute name and %p as attribute value.', function (
                 elementAsString, attributeName, attributeValue) {
 
-                var element = createElement('div' + elementAsString);
+                var element = create('div' + elementAsString);
 
                 expect(element).toBeInstanceOf(HTMLDivElement);
                 expect(element.getAttribute(attributeName)).toBe(attributeValue);
@@ -135,7 +135,7 @@ describe('@lib/Element.js', function () {
             ])('Should create nested Elements with custom specifications.', function (
                 elementsAsArray, children, text) {
 
-                var element = createElement(elementsAsArray.join('>'));
+                var element = create(elementsAsArray.join('>'));
                 var currentElement = element;
 
                 expect(element.nodeValue || element.textContent).toBe(text);
