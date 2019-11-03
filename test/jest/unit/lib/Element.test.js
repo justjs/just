@@ -4,6 +4,18 @@ describe('@lib/Element.js', function () {
 
     describe('Element', function () {
 
+        describe('namespaces', function () {
+
+            var namespaces = Element.namespaces;
+
+            it('Should not be frozen.', function () {
+
+                expect(Object.isFrozen(namespaces)).toBe(false);
+
+            });
+
+        });
+
         describe('createElement', function () {
 
             var createElement = Element.createElement;
@@ -15,7 +27,7 @@ describe('@lib/Element.js', function () {
             });
 
             test.each([
-                ['svg', Element.NAMESPACES.svg],
+                ['svg', Element.namespaces.svg],
                 ['http://www.w3.org/1999/xhtml:div', 'http://www.w3.org/1999/xhtml']
             ])('Should create an Element using %p within the %p namespace.', function (
                 elementAsString, expectedNamespace) {
@@ -180,13 +192,13 @@ describe('@lib/Element.js', function () {
 
             test.each([
                 // TODO: Use a non-deprecated attribute (xlink:href).
-                ['xlink:href', Element.NAMESPACES['xlink']]
+                ['xlink:href', Element.namespaces['xlink']]
             ])('Should set attributes with namespaces URIs.', function (
                 attributeName, namespace) {
 
                 var attributes = {};
                 var elementNS = document.createElementNS(
-                    Element.NAMESPACES['svg'],
+                    Element.namespaces['svg'],
                     'use'
                 );
                 var spy = jest.spyOn(elementNS, 'setAttributeNS');

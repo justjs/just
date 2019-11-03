@@ -21,7 +21,7 @@ var Element = (function () {
     var createElement = function (tagName, namespace) {
 
         var tag = tagName = tagName.toLowerCase().trim();
-        var namespaceURI = Element.NAMESPACES[namespace] || Element.NAMESPACES[tag] || namespace;
+        var namespaceURI = Element.namespaces[namespace] || Element.namespaces[tag] || namespace;
 
         return (namespaceURI
             ? document.createElementNS(namespaceURI, tagName)
@@ -131,9 +131,9 @@ var Element = (function () {
          * Namespace uris for known tags.
          *
          * @memberof just
-         * @type {Object.<element_tag, url>}
+         * @type {Object.<string, url>}
          */
-        'NAMESPACES': Object.freeze({
+        'namespaces': {
             'html': 'http://www.w3.org/1999/xhtml',
             'mathml': 'http://www.w3.org/1998/Math/MathML',
             'svg': 'http://www.w3.org/2000/svg',
@@ -142,7 +142,7 @@ var Element = (function () {
             'xmlns': 'http://www.w3.org/2000/xmlns/',
             'xbl': 'http://www.mozilla.org/xbl',
             'xul': 'http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul'
-        }),
+        },
         /**
          * Create an element from a string.
          *
@@ -159,7 +159,7 @@ var Element = (function () {
          * createElement('something'); // A &lt;something&gt;.
          *
          * @example <caption>Create an Element within a namespace.</caption>
-         * createElement('svg'); // Element.NAMESPACES['svg'] is implied.
+         * createElement('svg'); // Element.namespaces['svg'] is implied.
          * createElement('http://www.w3.org/1999/xhtml:div'); // http://www.w3.org/1999/xhtml
          *
          * @example <caption>Create a Text Node.</caption>
@@ -409,7 +409,7 @@ var Element = (function () {
                 eachProperty(attributes, function (value, name) {
 
                     var namespace = name.split(':')[0];
-                    var namespaceURI = Element.NAMESPACES[namespace];
+                    var namespaceURI = Element.namespaces[namespace];
 
                     /* eslint-disable padded-blocks */
                     if (namespaceURI) {
