@@ -149,4 +149,57 @@ describe('@lib/Element.js', function () {
 
     });
 
+    describe('Element.prototype', function () {
+
+        var ElementPrototype = Element.prototype;
+
+        describe('setAttributes', function () {
+
+            var setAttributes = ElementPrototype.setAttributes;
+
+            it('Should set multiple attributes to multiple elements.', function () {
+
+                var elements = [
+                    document.createElement('div'),
+                    document.createElement('div')
+                ];
+
+                setAttributes.call(elements, {
+                    'a': 'x',
+                    'b': 'y'
+                });
+
+                elements.forEach(function (element) {
+
+                    expect(element.getAttribute('a')).toBe('x');
+                    expect(element.getAttribute('b')).toBe('y');
+
+                });
+
+            });
+
+            test.each([
+                // TODO: Use a non-deprecated attribute (xlink:href).
+                ['xlink:href', Element.NAMESPACES['xlink']]
+            ])('Should set attributes with namespaces URIs.', function (
+                attributeName, namespace) {
+
+                var attributes = {};
+                var elementNS = document.createElementNS(
+                    Element.NAMESPACES['svg'],
+                    'use'
+                );
+                var spy = jest.spyOn(elementNS, 'setAttributeNS');
+
+                attributes[attributeName] = 'whatever';
+                setAttributes.call([elementNS], attributes);
+
+                expect(spy).toHaveBeenCalled();
+
+            });
+
+        });
+
+    });
+
 });
