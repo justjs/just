@@ -17,7 +17,7 @@ describe('@lib/Element.js', function () {
             test.each([
                 ['svg', Element.NAMESPACES.svg],
                 ['http://www.w3.org/1999/xhtml:div', 'http://www.w3.org/1999/xhtml']
-            ])('Should create an Element within a namespace.', function (
+            ])('Should create an Element using %p within the %p namespace.', function (
                 elementAsString, expectedNamespace) {
 
                 var element = createElement(elementAsString);
@@ -41,7 +41,7 @@ describe('@lib/Element.js', function () {
                 ['div>div>span', [HTMLDivElement, HTMLDivElement, HTMLSpanElement]],
                 ['span>>text', [Text, HTMLSpanElement], 'text'],
                 ['div>>span>b', [Text, HTMLSpanElement, HTMLDivElement], 'span>b']
-            ])('Should create a nested Node.', function (nodeAsString, expectedInstances) {
+            ])('Should create a nested Node using %p.', function (nodeAsString, expectedInstances) {
 
                 var node = createElement(nodeAsString);
                 var parentNode;
@@ -58,7 +58,7 @@ describe('@lib/Element.js', function () {
             test.each([
                 ['#id', 'id'],
                 ['#id#id2', 'id2']
-            ])('Should create an Element with %s as the id.', function (
+            ])('Should create an Element using %p, with %p as the id.', function (
                 elementAsString, expectedID) {
 
                 var element = createElement('div' + elementAsString);
@@ -71,7 +71,7 @@ describe('@lib/Element.js', function () {
             test.each([
                 ['.class', 'class'],
                 ['.class.class2', 'class class2']
-            ])('Should create an Element with %s as the class name.', function (
+            ])('Should create an Element using %p, with %p as the class name.', function (
                 elementAsString, expectedClassName) {
 
                 var element = createElement('div' + elementAsString);
@@ -87,7 +87,7 @@ describe('@lib/Element.js', function () {
                 ['[title=\'single quotes\']', 'title', 'single quotes'],
                 ['[title=without quotes]', 'title', 'without quotes'],
                 ['[title="x"][title="y"]', 'title', 'y']
-            ])('Should create %s with %s as attribute name and %s as attribute value.', function (
+            ])('Should create an Element using %p, with %p as attribute name and %p as attribute value.', function (
                 elementAsString, attributeName, attributeValue) {
 
                 var element = createElement('div' + elementAsString);
