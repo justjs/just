@@ -255,16 +255,22 @@ var Element = (function () {
             return deepestChild;
 
         },
-        'findAll': function (selector, parent) {
-
-            return findElements(selector, parent);
-
-        },
+        /**
+         * @namespace just.Element
+         * @borrows just.findElements as findAll
+         */
+        'findAll': findElements,
+        /**
+         * Find the first element using {@link just.findElements}.
+         *
+         * @returns {Element} The first element returned by {@link just.findElements}.
+         */
         'find': function (selector, parent) {
 
             return findElements(selector, parent)[0];
 
         }
+
     });
 
     Element.prototype = Object.assign(Object.create(Event.prototype), Element.prototype, {
