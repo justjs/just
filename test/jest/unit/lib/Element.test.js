@@ -1,4 +1,4 @@
-var Element = require('@lib/Element');
+var JElement = require('@lib/Element');
 
 describe('@lib/Element.js', function () {
 
@@ -6,7 +6,7 @@ describe('@lib/Element.js', function () {
 
         describe('namespaces', function () {
 
-            var namespaces = Element.namespaces;
+            var namespaces = JElement.namespaces;
 
             it('Should not be frozen.', function () {
 
@@ -18,7 +18,7 @@ describe('@lib/Element.js', function () {
 
         describe('create', function () {
 
-            var create = Element.create;
+            var create = JElement.create;
 
             it('Should create an Element.', function () {
 
@@ -27,7 +27,7 @@ describe('@lib/Element.js', function () {
             });
 
             test.each([
-                ['svg', Element.namespaces.svg],
+                ['svg', JElement.namespaces.svg],
                 ['http://www.w3.org/1999/xhtml:div', 'http://www.w3.org/1999/xhtml']
             ])('Should create an Element using %p within the %p namespace.', function (
                 elementAsString, expectedNamespace) {
@@ -165,12 +165,12 @@ describe('@lib/Element.js', function () {
 
     describe('Element.prototype', function () {
 
-        var ElementPrototype = Element.prototype;
+        var JElementPrototype = JElement.prototype;
 
         describe('setAttributes', function () {
 
-            var setAttributes = ElementPrototype.setAttributes;
-
+            var setAttributes = JElementPrototype.setAttributes;
+            console.log(Object.keys(JElement), Object.keys(JElement.prototype));
             it('Should set multiple attributes to multiple elements.', function () {
 
                 var elements = [
@@ -194,13 +194,13 @@ describe('@lib/Element.js', function () {
 
             test.each([
                 // TODO: Use a non-deprecated attribute (xlink:href).
-                ['xlink:href', Element.namespaces['xlink']]
+                ['xlink:href', JElement.namespaces['xlink']]
             ])('Should set attributes with namespaces URIs.', function (
                 attributeName, namespace) {
 
                 var attributes = {};
                 var elementNS = document.createElementNS(
-                    Element.namespaces['svg'],
+                    JElement.namespaces['svg'],
                     'use'
                 );
                 var spy = jest.spyOn(elementNS, 'setAttributeNS');

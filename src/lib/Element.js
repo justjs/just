@@ -1,4 +1,4 @@
-var Event = require('./Event');
+var JEvent = require('./Event');
 var isWindow = require('./isWindow');
 var defineProperties = require('./defineProperties');
 var findElements = require('./findElements');
@@ -7,7 +7,7 @@ var eachProperty = require('./eachProperty');
 var check = require('./check');
 var getRemoteParent = require('./getRemoteParent');
 var access = require('./access');
-var Element = (function () {
+var JElement = (function () {
 
     'use strict';
 
@@ -21,7 +21,7 @@ var Element = (function () {
     var createElement = function (tagName, namespace) {
 
         var tag = tagName = tagName.toLowerCase().trim();
-        var namespaceURI = Element.namespaces[namespace] || Element.namespaces[tag] || namespace;
+        var namespaceURI = JElement.namespaces[namespace] || JElement.namespaces[tag] || namespace;
 
         return (namespaceURI
             ? document.createElementNS(namespaceURI, tagName)
@@ -92,14 +92,24 @@ var Element = (function () {
 
     };
 
-    function Element (elements) {
+    /**
+     * Chainable methods for Elements.
+     *
+     * @namespace
+     * @memberof just
+     *
+     * @constructor
+     * @param {Element[]|just.Element|DOMString|undefined} elements - If given,
+     *     an array of elements, an instance of just.Element or a css selector.
+     */
+    function JElement (elements) {
 
         /* eslint-disable padded-blocks */
-        if (!(this instanceof Element)) {
-            return new Element(elements);
+        if (!(this instanceof JElement)) {
+            return new JElement(elements);
         }
 
-        if (elements instanceof Element) {
+        if (elements instanceof JElement) {
             return elements;
         }
 
@@ -107,7 +117,7 @@ var Element = (function () {
             elements = [];
         }
         else if (typeof elements === 'string') {
-            elements = Element.findAll(elements);
+            elements = JElement.findAll(elements);
         }
         else if (elements instanceof Node || isWindow(elements)) {
             elements = [elements];
@@ -116,16 +126,22 @@ var Element = (function () {
             throw new TypeError(elements + ' should be either an string, an array or a Node.');
         }
 
-        if (this.constructor === Element) {
+        if (this.constructor === JElement) {
             this.length = [].push.apply(this, elements);
         }
         /* eslint-enable padded-blocks */
 
-        Event.call(this);
+        JEvent.call(this);
 
     }
 
-    defineProperties(Element, {
+    JElement.prototype = Object.assign(
+        Object.create(JEvent.prototype),
+        JElement.prototype,
+        {'constructor': JElement}
+    );
+
+    defineProperties(JElement, {
 
         /**
          * Namespace uris for known tags.
@@ -196,10 +212,10 @@ var Element = (function () {
          */
         'create': function (elementAsString) {
 
+            var JElementProto = JElement.prototype;
             var specifications = defaults(elementAsString, '').split(/(?:>>|^>)/);
             var elementsSpecifications = specifications[0];
             var elementText = specifications[1] || '';
-            var ElementProto = Element.prototype;
             var deepestChild;
 
             elementsSpecifications.split('>').forEach(function (specification) {
@@ -232,7 +248,7 @@ var Element = (function () {
                         attributeValue = (attributeParts[2] || '').replace(/(^['"]|['"]$)/g, '');
                         attributes[attributeName] = attributeValue;
 
-                        ElementProto.setAttributes.call([element], attributes);
+                        JElementProto.setAttributes.call([element], attributes);
 
                     }
 
@@ -273,14 +289,14 @@ var Element = (function () {
 
     });
 
-    Element.prototype = Object.assign(Object.create(Event.prototype), Element.prototype, {
+    defineProperties(JElement.prototype, {
 
         'get': function (handler) {
 
             return getResults(this, function (element, i) {
 
                 return (typeof handler === 'function'
-                    ? handler.call(element, new Element(element), i, this)
+                    ? handler.call(element, new JElement(element), i, this)
                     : element
                 );
 
@@ -289,7 +305,9 @@ var Element = (function () {
         },
         'each': function (fn) {
 
-            return this.get(fn), this;
+            JElement.prototype.get.call(this, fn);
+
+            return this;
 
         },
         'setText': function (text) {
@@ -350,9 +368,11 @@ var Element = (function () {
         },
         'isInsideBounds': function (bounds) {
 
+            var JElementProto = JElement.prototype;
+
             return getResults(this, function (target) {
 
-                var elementBounds = new Element(target).getBounds();
+                var elementBounds = JElementProto.getBounds.call(target);
 
                 return (
                     elementBounds.bottom > 0
@@ -380,11 +400,14 @@ var Element = (function () {
         },
         'isVisible': function () {
 
+            var JElementProto = JElement.prototype;
+
             return getResults(this, function (element) {
 
                 var bounds = element.getBounds();
 
-                return !Element(element).isHidden() && !!(bounds.width || bounds.height);
+                return !JElementProto.isHidden.call(element)
+                    && !!(bounds.width || bounds.height);
 
             });
 
@@ -393,7 +416,7 @@ var Element = (function () {
 
             return getResults(this, function (target) {
 
-                var jElement = new Element(target);
+                var jElement = new JElement(target);
 
                 return jElement.isVisible() && jElement.isInsideBounds(getWindowBounds());
 
@@ -431,7 +454,7 @@ var Element = (function () {
                     var attributeParts = name.match(/(.+):(.+)/) || [];
                     var namespace = attributeParts[1];
                     var localName = attributeParts[2];
-                    var namespaceURI = Element.namespaces[namespace];
+                    var namespaceURI = JElement.namespaces[namespace];
 
                     /* eslint-disable padded-blocks */
                     if (namespaceURI) {
@@ -488,32 +511,35 @@ var Element = (function () {
         },
         'cloneAttributes': function (target) {
 
-            return this.setAttributes(
-                new Element(target).getAttributes()
+            return JElement.prototype.setAttributes.call(this,
+                new JElement(target).getAttributes()
             );
 
         },
         'find': function (selector) {
 
-            return new Element(getResults(this,
-                function (parent) { return Element.find(selector, parent); }
+            return new JElement(getResults(this,
+                function (parent) { return JElement.find(selector, parent); }
             ));
 
         },
         'findAll': function (selector) {
 
-            return new Element(getResults(this,
-                function (parent) { return Element.findAll(selector, parent); }
+            return new JElement(getResults(this,
+                function (parent) { return JElement.findAll(selector, parent); }
             ));
 
         },
-        'clone': function (options) {
+        'clone': function (opts) {
 
-            var deep = defaults((options = defaults(options, {})).deep, true);
+            var options = defaults(opts, {
+                'deep': true
+            });
+            var deep = options.deep;
 
-            return new Element(getResults(this, function (target) {
+            return new JElement(getResults(this, function (target) {
 
-                return new Element(target.cloneNode(deep)).copy(target, {
+                return new JElement(target.cloneNode(deep)).copy(target, {
                     'ignoreAttributes': true,
                     'ignoreText': true
                 }).get();
@@ -554,38 +580,41 @@ var Element = (function () {
         },
         'replaceWith': function (newElement) {
 
-            return new Element(getResults(this, function (target) {
+            return new JElement(getResults(this, function (target) {
 
                 target.parentNode.replaceChild(newElement, target);
 
                 return newElement;
 
-            }, Element));
+            }, JElement));
 
         },
-        'copy': function (target, options) {
+        'copy': function (target, opts) {
 
-            options = defaults(options, {});
+            var options = defaults(opts, {
+                'ignoreAttributes': false,
+                'ignoreEvents': false,
+                'ignoreProperties': false,
+                'ignoreText': false
+            });
 
-            [].forEach.call(this, function (element) {
-
-                element = Element(element);
+            JElement.each.call(this, function (jElement) {
 
                 /* eslint-disable padded-blocks */
                 if (!options.ignoreAttributes) {
-                    element.cloneAttributes(target);
+                    jElement.cloneAttributes(target);
                 }
 
                 if (!options.ignoreEvents) {
-                    element.cloneEvents(target);
+                    jElement.cloneEvents(target);
                 }
 
                 if (!options.ignoreProperties) {
-                    element.cloneProperties(target);
+                    jElement.cloneProperties(target);
                 }
 
                 if (!options.ignoreText) {
-                    element.setText(Element(target).getText());
+                    jElement.setText(Element(target).getText());
                 }
                 /* eslint-enable padded-blocks */
 
@@ -596,25 +625,24 @@ var Element = (function () {
         },
         'replaceTag': function (tagName, copyOptions) {
 
-            return new Element(getResults(this, function (target) {
+            return new JElement(getResults(this, function (target) {
 
-                var jNewElement = new Element(Element.create(tagName)).copy(target, copyOptions).get();
+                var jNewElement = new JElement(JElement.create(tagName)).copy(target, copyOptions).get();
 
-                return new Element(target).replaceWith(jNewElement).get();
+                return new JElement(target).replaceWith(jNewElement).get();
 
             }));
 
         },
         'getRemoteParent': function (fn) {
 
-            return new Element(getResults(this, function (element) {
+            return new JElement(getResults(this, function (element) {
 
                 return getRemoteParent(element, fn);
 
             }));
 
-        }
-    }, {
+        },
         'accessToProperty': function (path, fn) {
 
             [].forEach.call(this, function (element) {
@@ -628,40 +656,32 @@ var Element = (function () {
         },
         'setProperty': function (path, value) {
 
-            this.accessToProperty(path, function (v, k) {
-
-                v[k] = value;
-
-            });
+            JElement.prototype.accessToProperty.call(this, path,
+                function (v, k) { v[k] = value; }
+            );
 
             return this;
 
         },
         'getProperty': function (path) {
 
-            return this.accessToProperty(arguments, function (v, k, exists) {
-
-                return exists ? v[k] : void 0;
-
-            });
+            return JElement.prototype.accessToProperty.call(this, arguments,
+                function (v, k, exists) { return exists ? v[k] : void 0; }
+            );
 
         },
         'hasProperty': function (path) {
 
-            return this.accessToProperty(arguments, function (v, k, exists) {
-
-                return exists;
-
-            });
+            return JElement.prototype.accessToProperty.call(this, arguments,
+                function (v, k, exists) { return exists; }
+            );
 
         },
         'removeProperty': function (path) {
 
-            this.accessToProperty(arguments, function (v, k) {
-
-                delete v[k];
-
-            });
+            JElement.prototype.accessToProperty.call(this, arguments,
+                function (v, k) { delete v[k]; }
+            );
 
             return this;
 
@@ -688,10 +708,11 @@ var Element = (function () {
             return this;
 
         }
-    }, {'constructor': Element});
 
-    return Element;
+    });
+
+    return JElement;
 
 })();
 
-module.exports = Element;
+module.exports = JElement;
