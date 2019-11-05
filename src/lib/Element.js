@@ -7,17 +7,11 @@ var eachProperty = require('./eachProperty');
 var check = require('./check');
 var getRemoteParent = require('./getRemoteParent');
 var access = require('./access');
+var toObjectLiteral = require('./toObjectLiteral');
 var JElement = (function () {
 
     'use strict';
 
-    var getResults = function (array, fn) {
-
-        var results = [].map.call(array, fn, array);
-
-        return results.length === 1 ? results[0] : results;
-
-    };
     var createElement = function (tagName, namespace) {
 
         var tag = tagName = tagName.toLowerCase().trim();
@@ -96,11 +90,10 @@ var JElement = (function () {
      * Chainable methods for Elements.
      *
      * @namespace
-     * @memberof just
+     * @alias just.Element
      *
-     * @constructor
      * @param {Element[]|just.Element|DOMString|undefined} elements - If given,
-     *     an array of elements, an instance of just.Element or a css selector.
+     *     an array of elements, an instance of {@link just.Element} or a css selector.
      */
     function JElement (elements) {
 
@@ -141,7 +134,7 @@ var JElement = (function () {
         {'constructor': JElement}
     );
 
-    defineProperties(JElement, {
+    defineProperties(JElement, /** @lends just.Element */{
 
         /**
          * Namespace uris for known tags.
@@ -272,37 +265,60 @@ var JElement = (function () {
 
         },
         /**
-         * @namespace just.Element
+         * @mixin just
          * @borrows just.findElements as findAll
          */
         'findAll': findElements,
         /**
          * Find the first element using {@link just.findElements}.
          *
+         * @param {DOMString} selector
+         * @param {Node} parent
          * @returns {Element} The first element returned by {@link just.findElements}.
          */
-        'find': function (selector, parent) {
-
-            return findElements(selector, parent)[0];
-
-        }
+        'find': function (selector, parent) { return findElements(selector, parent)[0]; }
 
     });
 
-    defineProperties(JElement.prototype, {
+    defineProperties(JElement.prototype, /** @lends just.Element.prototype */{
 
+        /**
+         * A function to call on each element found.
+         * @typedef {function} just.Element#get_handler
+         * @this {Element}
+         * @param {just.Element} jElement - An instance of {@link just.Element}
+         *     with the current Element.
+         * @param {number} i - The current index.
+         * @param {*} this - The current context.
+         * @return {*}
+         */
+
+        /**
+         * Return all unwrapped elements.
+         *
+         * @param {just.Element#get_handler} - A function to call before values
+         *     get returned.
+         * @return {Element[]}
+         */
         'get': function (handler) {
 
-            return getResults(this, function (element, i) {
+            var isHandlerAFn = typeof handler === 'function';
 
-                return (typeof handler === 'function'
+            return [].map.call(this, function (element, i) {
+
+                return (isHandlerAFn
                     ? handler.call(element, new JElement(element), i, this)
                     : element
                 );
 
-            });
+            }, this);
 
         },
+        /**
+         * Same as {@link just.Element#get} but chainable.
+         * @param {just.Element#get_handler} fn
+         * @chainable
+         */
         'each': function (fn) {
 
             JElement.prototype.get.call(this, fn);
@@ -310,52 +326,54 @@ var JElement = (function () {
             return this;
 
         },
-        'setText': function (text) {
-
-            text = defaults(text, '');
-
-            [].forEach.call(this,
-                function (element) { element.textContent = text; }
-            );
-
-            return this;
-
-        },
-        'getText': function () {
-
-            return getResults(this, function (element) {
-
-                return (
-                    'textContent' in element ? element.textContent
-                    : 'innerText' in element ? element.innerText
-                    : ''
-                );
-
-            });
-
-        },
         /**
+         * Size of an Element.
          *
-         * @returns {Object} top, left, right, bottom,
-         *      width, height, x and y.
+         * @typedef {object} just.Element#sizeBounds
+         * @property {number} width
+         * @property {number} height
+         */
+
+        /**
+         * Position of an Element.
+         *
+         * @typedef {object} just.Element#positionBounds
+         * @property {number} top
+         * @property {number} left
+         * @property {number} right
+         * @property {number} bottom
+         * @property {number} x
+         * @property {number} y
+         */
+        /**
+         * Size and position of an Element.
+         *
+         * @typedef {object} just.Element#bounds
+         * @see {@link just.Element#positionBounds}.
+         * @see {@link just.Element#sizeBounds}.
+         */
+
+        /**
+         * Return the size and position of multiple elements.
+         * @returns {just.Element#bounds[]}
          */
         'getBounds': function () {
 
-            return getResults(this, function (element) {
+            return JElement(this).get(function () {
 
                 var bounds;
 
                 /* eslint-disable padded-blocks */
-                if (isWindow(element)) {
+                if (isWindow(this)) {
                     return getWindowBounds();
                 }
 
-                if (/^html$/i.test(element.tagName)) {
+                if (/^html$/i.test(this.tagName)) {
                     return getDocumentBounds();
                 }
                 /* eslint-enable padded-blocks */
 
-                try { bounds = element.getBoundingClientRect(); }
+                try { bounds = this.getBoundingClientRect(); }
                 catch (exception) { /* unspecified error IE11 (?) */ }
 
                 return createBounds(bounds, {
@@ -366,13 +384,17 @@ var JElement = (function () {
             });
 
         },
+        /**
+         * Check if the given <var>bounds</var> are within the given elements.
+         *
+         * @param {just.Element#bounds} bounds - The target position.
+         * @return {boolean[]}
+         */
         'isInsideBounds': function (bounds) {
 
-            var JElementProto = JElement.prototype;
+            return JElement(this).get(function (jElement) {
 
-            return getResults(this, function (target) {
-
-                var elementBounds = JElementProto.getBounds.call(target);
+                var elementBounds = jElement.getBounds();
 
                 return (
                     elementBounds.bottom > 0
@@ -384,52 +406,67 @@ var JElement = (function () {
             });
 
         },
-        'fitInBounds': function (bounds) {
+        /**
+         * Resize multiple elements to fit inside the given <var>sizeBounds</var>.
+         * @param {just.Element#sizeBounds} [sizeBounds={width: 0, height: 0}] - The maximum size.
+         * @chainable
+         */
+        'fitInBounds': function (sizeBounds) {
 
-            [].forEach.call(this, function (element) {
+            var maxSize = defaults(sizeBounds, {
+                'width': 0,
+                'height': 0
+            });
 
-                var ratio = Math.min(bounds.width / element.width, bounds.height / element.height);
+            return JElement(this).get(function () {
 
-                element.width *= ratio;
-                element.height *= ratio;
+                var ratio = Math.min(maxSize.width / this.width, maxSize.height / this.height);
+
+                this.width *= ratio;
+                this.height *= ratio;
 
             });
 
-            return this;
-
         },
+        /**
+         * Check if multiple elements are visible somewhere.
+         * @return {boolean[]}
+         */
         'isVisible': function () {
 
-            var JElementProto = JElement.prototype;
+            return JElement(this).get(function (jElement) {
 
-            return getResults(this, function (element) {
+                var bounds = jElement.getBounds();
 
-                var bounds = element.getBounds();
-
-                return !JElementProto.isHidden.call(element)
-                    && !!(bounds.width || bounds.height);
+                return !jElement.isHidden() && !!(bounds.width || bounds.height);
 
             });
 
         },
+        /**
+         * Check if multiple elements are inside the visible area.
+         * @return {boolean[]}
+         */
         'isOnScreen': function () {
 
-            return getResults(this, function (target) {
-
-                var jElement = new JElement(target);
+            return JElement(this).get(function (jElement) {
 
                 return jElement.isVisible() && jElement.isInsideBounds(getWindowBounds());
 
             });
 
         },
+        /**
+         * Return all the attributes of an Element for each given Element.
+         * @return {object[]}
+         */
         'getAttributes': function () {
 
-            return getResults(this, function (target) {
+            return JElement(this).get(function () {
 
                 var attributes = {};
 
-                eachProperty(target.attributes, function (attribute) {
+                eachProperty(this.attributes, function (attribute) {
 
                     var key = attribute.name || attribute.nodeName;
                     var value = attribute.value || attribute.nodeValue;
@@ -443,11 +480,18 @@ var JElement = (function () {
             });
 
         },
+        /**
+         * Set namespaced and normal attributes to each given element.
+         *
+         * @throw {TypeError} If <var>attributes</var> is not an object.
+         * @param {object} attributes
+         * @chainable
+         */
         'setAttributes': function (attributes) {
 
             check.throwable(attributes, {});
 
-            [].forEach.call(this, function (element) {
+            return JElement(this).each(function () {
 
                 eachProperty(attributes, function (value, name) {
 
@@ -465,16 +509,21 @@ var JElement = (function () {
                     }
                     /* eslint-enable padded-blocks */
 
-                }, element);
+                }, this);
 
             });
 
-            return this;
-
         },
+        /**
+         * Replace namespaced and normal attributes of multiple Elements.
+         *
+         * @param {object} attributes
+         * @param {boolean} [allowEmptyValues=false]
+         * @chainable
+         */
         'replaceAttributes': function (attributes, allowEmptyValues) {
 
-            [].forEach.call(this, function (element) {
+            return JElement(this).each(function (jElement) {
 
                 eachProperty(attributes, function (newName, name) {
 
@@ -482,54 +531,85 @@ var JElement = (function () {
 
                     if (!value && !allowEmptyValues) { return; }
 
-                    this.removeAttribute(name);
-                    this.setAttribute(newName, value);
+                    jElement.removeAttributes(name).setAttributes(
+                        toObjectLiteral([newName, value])
+                    );
 
-                }, element);
-
-            });
-
-            return this;
-
-        },
-        'removeAttributes': function (attribute) {
-
-            var attributes = [].slice.call(arguments);
-
-            [].forEach.call(this, function (element) {
-
-                attributes.forEach(function (name) {
-
-                    this.removeAttribute(name);
-
-                }, element);
+                }, this);
 
             });
 
-            return this;
+        },
+        /**
+         * Remove multiple attributes of multiple Elements.
+         *
+         * @param {Array} attributes - The name of the attributes.
+         * @chainable
+         */
+        'removeAttributes': function (attributes) {
+
+            attributes = defaults(attributes, [attributes]);
+
+            return JElement(this).each(function () {
+
+                attributes.forEach(
+                    function (name) { this.removeAttribute(name); },
+                    this
+                );
+
+            });
 
         },
+        /**
+         * Clone all attributes of a <var>target</var> and set them
+         * to multiple Elements.
+         *
+         * @param {Element} target
+         * @chainable
+         */
         'cloneAttributes': function (target) {
 
-            return JElement.prototype.setAttributes.call(this,
-                new JElement(target).getAttributes()
+            return JElement(this).setAttributes(
+                JElement(target).getAttributes()
             );
 
         },
+        /**
+         * Find the first child of multiple Elements that matches the given
+         * <var>selector</var>.
+         *
+         * @param {DOMString} selector - A css selector.
+         * @return {Element} The child of each element matching the given selector.
+         */
         'find': function (selector) {
 
-            return new JElement(getResults(this,
-                function (parent) { return JElement.find(selector, parent); }
-            ));
+            return JElement(this).get(
+                function () { return JElement.find(selector, this); }
+            );
 
         },
+        /**
+         * Find children of multiple Elements that match the given
+         * <var>selector</var>.
+         *
+         * @param {DOMString} selector - A css selector.
+         * @return {Element[]}
+         */
         'findAll': function (selector) {
 
-            return new JElement(getResults(this,
-                function (parent) { return JElement.findAll(selector, parent); }
-            ));
+            return JElement(this).get(
+                function () { return JElement.findAll(selector, this); }
+            );
 
         },
+        /**
+         * Clone multiple Elements and copy their events and properties
+         * attached via {@link just|Just}.
+         *
+         * @param {object} opts - Options
+         * @param {boolean} [opts.deep=true] - Argument for <var>Node.cloneDeep</var>.
+         * @return {Element[]}
+         */
         'clone': function (opts) {
 
             var options = defaults(opts, {
@@ -537,58 +617,81 @@ var JElement = (function () {
             });
             var deep = options.deep;
 
-            return new JElement(getResults(this, function (target) {
+            return JElement(this).get(function () {
 
-                return new JElement(target.cloneNode(deep)).copy(target, {
+                return JElement(this.cloneNode(deep)).copy(this, {
                     'ignoreAttributes': true,
                     'ignoreText': true
                 }).get();
 
-            }));
+            });
 
         },
+        /**
+         * Remove all given Elements.
+         * @chainable
+         */
         'remove': function () {
 
-            [].forEach.call(this,
-                function (target) { target.parentNode.removeChild(target); }
+            return JElement(this).each(
+                function () { this.parentNode.removeChild(this); }
             );
 
-            return this;
-
         },
+        /**
+         * Remove all children from multiple Elements.
+         * @chainable
+         */
         'removeChildren': function () {
 
-            [].forEach.call(this, function (target) {
+            return JElement(this).each(function () {
 
-                while (target.firstChild) {
-
-                    target.removeChild(target.firstChild);
-
-                }
+                while (this.firstChild) { this.removeChild(this.firstChild); }
 
             });
 
-            return this;
-
         },
+        /**
+         * Check if multiple Elements are hidden somewhere.
+         * @return {boolean[]}
+         */
         'isHidden': function () {
 
-            return getResults(this,
-                function (target) { return target.parentNode === null || target.getAttribute('hidden') !== null; }
-            );
+            return JElement(this).get(function () {
+
+                return this.parentNode === null
+                    || this.getAttribute('hidden') !== null;
+
+            });
 
         },
+        /**
+         * Replace each given Element with a new Element.
+         * @param {Element} newElement
+         * @return {Element[]} The new elements.
+         */
         'replaceWith': function (newElement) {
 
-            return new JElement(getResults(this, function (target) {
+            return JElement(this).get(function () {
 
-                target.parentNode.replaceChild(newElement, target);
+                this.parentNode.replaceChild(newElement, this);
 
                 return newElement;
 
-            }, JElement));
+            });
 
         },
+        /**
+         * Copy attributes, events, properties and text from <var>target</var>
+         * to each given Element.
+         * @param {Element} target
+         * @param {object} opts - Options
+         * @param {boolean} [opts.ignoreAttributes=false] - Don't copy attributes.
+         * @param {boolean} [opts.ignoreEvents=false] - Don't copy events attached via {@link just.Event}.
+         * @param {boolean} [opts.ignoreProperties=false] - Don't copy properties attached via {@link just.Element}.
+         * @param {boolean} [opts.ignoreText=false] - Don't copy text.
+         * @chainable
+         */
         'copy': function (target, opts) {
 
             var options = defaults(opts, {
@@ -598,7 +701,7 @@ var JElement = (function () {
                 'ignoreText': false
             });
 
-            JElement.each.call(this, function (jElement) {
+            return JElement(this).each(function (jElement) {
 
                 /* eslint-disable padded-blocks */
                 if (!options.ignoreAttributes) {
@@ -614,102 +717,161 @@ var JElement = (function () {
                 }
 
                 if (!options.ignoreText) {
-                    jElement.setText(Element(target).getText());
+                    jElement.textContent = target.textContent;
                 }
                 /* eslint-enable padded-blocks */
 
             });
 
-            return this;
+        },
+        /**
+         * Replace multiple Elements with a new {@link just.Element#copy} of each one.
+         *
+         * @param {string} tagName - The new tag name.
+         * @param {object} opts - Options
+         * @param {object} opts.copy - Options for {@link just.Element#copy}.
+         * @return {Element[]} The new elements.
+         */
+        'replaceTag': function (tagName, opts) {
+
+            var options = defaults(opts, {
+                'copy': {}
+            });
+
+            return JElement(this).get(function (jTarget) {
+
+                var newElement = JElement(JElement.create(tagName))
+                    .copy(this, options.copy)
+                    .get();
+
+                return jTarget.replaceWith(newElement).get();
+
+            });
 
         },
-        'replaceTag': function (tagName, copyOptions) {
-
-            return new JElement(getResults(this, function (target) {
-
-                var jNewElement = new JElement(JElement.create(tagName)).copy(target, copyOptions).get();
-
-                return new JElement(target).replaceWith(jNewElement).get();
-
-            }));
-
-        },
+        /**
+         * {@link getRemoteParent|Get remote parent} of each given element.
+         * @see {@link just.getRemoteParent}
+         * @param {Element[]} Parent nodes.
+         */
         'getRemoteParent': function (fn) {
 
-            return new JElement(getResults(this, function (element) {
-
-                return getRemoteParent(element, fn);
-
-            }));
-
-        },
-        'accessToProperty': function (path, fn) {
-
-            [].forEach.call(this, function (element) {
-
-                access(element.justElement, path, fn);
-
-            });
-
-            return this;
-
-        },
-        'setProperty': function (path, value) {
-
-            JElement.prototype.accessToProperty.call(this, path,
-                function (v, k) { v[k] = value; }
+            return JElement(this).get(
+                function () { return getRemoteParent(this, fn); }
             );
-
-            return this;
-
-        },
-        'getProperty': function (path) {
-
-            return JElement.prototype.accessToProperty.call(this, arguments,
-                function (v, k, exists) { return exists ? v[k] : void 0; }
-            );
-
-        },
-        'hasProperty': function (path) {
-
-            return JElement.prototype.accessToProperty.call(this, arguments,
-                function (v, k, exists) { return exists; }
-            );
-
-        },
-        'removeProperty': function (path) {
-
-            JElement.prototype.accessToProperty.call(this, arguments,
-                function (v, k) { delete v[k]; }
-            );
-
-            return this;
-
-        },
-        'getAllProperties': function () {
-
-            return getResults(this, function (element) {
-
-                return Object.assign({}, element.justElement);
-
-            });
-
-        },
-        'cloneProperties': function (target) {
-
-            var targetProperties = Object.assign({}, target.justElement);
-
-            [].forEach.call(this, function (element) {
-
-                Object.assign(element.justElement, targetProperties);
-
-            });
-
-            return this;
 
         }
 
     });
+
+    defineProperties(JElement.prototype, (function Properties () {
+
+        var propertyName = 'just.Element.Properties';
+
+        return /** @lends just.Element.prototype */{
+
+            /**
+             * {@link just.access|Access} to an scoped property within
+             * each given Element.
+             *
+             * @param {string[]} path - Property keys.
+             * @param {just.access~handler} fn - A handler for {@link just.access}.
+             */
+            'accessToProperty': function (path, fn) {
+
+                return JElement(this).get(function () {
+
+                    this[propertyName] = defaults(this[propertyName], {});
+                    access(this[propertyName], path, fn);
+
+                });
+
+            },
+            /**
+             * Set a scoped property on each given element.
+             *
+             * @param {string[]} path - Property keys.
+             * @param {*} value
+             */
+            'setProperty': function (path, value) {
+
+                JElement(this).accessToProperty(this, path,
+                    function (v, k) { v[k] = value; }
+                );
+
+                return this;
+
+            },
+            /**
+             * Return the scoped property value of multiple Elements.
+             *
+             * @param {string[]} path - Property keys.
+             * @return {Array}
+             */
+            'getProperty': function (path) {
+
+                return JElement(this).accessToProperty(path,
+                    function (v, k, exists) { return exists ? v[k] : void 0; }
+                );
+
+            },
+            /**
+             * Check on multiple Elements if an scoped property exists.
+             * @param {string[]} path - Property keys.
+             */
+            'hasProperty': function (path) {
+
+                return JElement(this).accessToProperty(path,
+                    function (v, k, exists) { return exists; }
+                );
+
+            },
+            /**
+             * Remove a scoped property from multiple Elements.
+             * @param {string[]} path - Property keys.
+             * @chainable
+             */
+            'removeProperty': function (path) {
+
+                JElement(this).accessToProperty(path,
+                    function (v, k) { delete v[k]; }
+                );
+
+                return this;
+
+            },
+            /**
+             * Return all scoped properties of each given Element.
+             * @return {Array}
+             */
+            'getAllProperties': function () {
+
+                return JElement(this).get(
+                    function () { return this[propertyName]; }
+                );
+
+            },
+            /**
+             * Clone all scoped properties of each given Element.
+             *
+             * @param {Element} target - The Element to copy properties from.
+             * @chainable
+             */
+            'cloneProperties': function (target) {
+
+                var targetProperties = Object.assign({}, target[propertyName]);
+
+                return JElement(this).each(function () {
+
+                    Object.assign(this[propertyName], targetProperties);
+
+                });
+
+            }
+
+        };
+
+    })());
 
     return JElement;
 

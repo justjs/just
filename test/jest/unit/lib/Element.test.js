@@ -170,7 +170,7 @@ describe('@lib/Element.js', function () {
         describe('setAttributes', function () {
 
             var setAttributes = JElementPrototype.setAttributes;
-            console.log(Object.keys(JElement), Object.keys(JElement.prototype));
+
             it('Should set multiple attributes to multiple elements.', function () {
 
                 var elements = [
