@@ -1,4 +1,3 @@
-var JEvent = require('./Event');
 var isWindow = require('./isWindow');
 var defineProperties = require('./defineProperties');
 var findElements = require('./findElements');
@@ -118,21 +117,14 @@ var JElement = (function () {
         else if (!Array.isArray(elements)) {
             throw new TypeError(elements + ' should be either an string, an array or a Node.');
         }
-
-        if (this.constructor === JElement) {
-            this.length = [].push.apply(this, elements);
-        }
         /* eslint-enable padded-blocks */
 
-        JEvent.call(this);
+        /** @member {number} */
+        this.length = [].push.apply(this, elements);
+        /** @member {string} */
+        this.propertyScopeName = 'just.Element.Property';
 
     }
-
-    JElement.prototype = Object.assign(
-        Object.create(JEvent.prototype),
-        JElement.prototype,
-        {'constructor': JElement}
-    );
 
     defineProperties(JElement, /** @lends just.Element */{
 
@@ -429,6 +421,19 @@ var JElement = (function () {
 
         },
         /**
+         * Check if multiple elements are inside the visible area.
+         * @return {boolean[]}
+         */
+        'isOnScreen': function () {
+
+            return JElement(this).get(function (jElement) {
+
+                return jElement.isVisible() && jElement.isInsideBounds(getWindowBounds());
+
+            });
+
+        },
+        /**
          * Check if multiple elements are visible somewhere.
          * @return {boolean[]}
          */
@@ -444,14 +449,188 @@ var JElement = (function () {
 
         },
         /**
-         * Check if multiple elements are inside the visible area.
+         * Check if multiple Elements are hidden somewhere.
          * @return {boolean[]}
          */
-        'isOnScreen': function () {
+        'isHidden': function () {
 
-            return JElement(this).get(function (jElement) {
+            return JElement(this).get(function () {
 
-                return jElement.isVisible() && jElement.isInsideBounds(getWindowBounds());
+                return this.parentNode === null
+                    || this.getAttribute('hidden') !== null;
+
+            });
+
+        },
+        /**
+         * Find the first child of multiple Elements that matches the given
+         * <var>selector</var>.
+         *
+         * @param {DOMString} selector - A css selector.
+         * @return {Element} The child of each element matching the given selector.
+         */
+        'find': function (selector) {
+
+            return JElement(this).get(
+                function () { return JElement.find(selector, this); }
+            );
+
+        },
+        /**
+         * Find children of multiple Elements that match the given
+         * <var>selector</var>.
+         *
+         * @param {DOMString} selector - A css selector.
+         * @return {Element[]}
+         */
+        'findAll': function (selector) {
+
+            return JElement(this).get(
+                function () { return JElement.findAll(selector, this); }
+            );
+
+        },
+        /**
+         * {@link getRemoteParent|Get remote parent} of each given element.
+         * @see {@link just.getRemoteParent}
+         * @param {Element[]} Parent nodes.
+         */
+        'getRemoteParent': function (fn) {
+
+            return JElement(this).get(
+                function () { return getRemoteParent(this, fn); }
+            );
+
+        },
+        /**
+         * Remove all given Elements.
+         * @chainable
+         */
+        'remove': function () {
+
+            return JElement(this).each(
+                function () { this.parentNode.removeChild(this); }
+            );
+
+        },
+        /**
+         * Remove all children from multiple Elements.
+         * @chainable
+         */
+        'removeChildren': function () {
+
+            return JElement(this).each(function () {
+
+                while (this.firstChild) { this.removeChild(this.firstChild); }
+
+            });
+
+        },
+        /**
+         * Replace multiple Elements with a new {@link just.Element#copy} of each one.
+         *
+         * @param {string} tagName - The new tag name.
+         * @param {object} opts - Options
+         * @param {object} opts.copy - Options for {@link just.Element#copy}.
+         * @return {Element[]} The new elements.
+         */
+        'replaceTag': function (tagName, opts) {
+
+            var options = defaults(opts, {
+                'copy': {}
+            });
+
+            return JElement(this).get(function (jTarget) {
+
+                var newElement = JElement(JElement.create(tagName))
+                    .copy(this, options.copy)
+                    .get();
+
+                return jTarget.replaceWith(newElement).get();
+
+            });
+
+        },
+        /**
+         * Replace each given Element with a new Element.
+         * @param {Element} newElement
+         * @return {Element[]} The new elements.
+         */
+        'replaceWith': function (newElement) {
+
+            return JElement(this).get(function () {
+
+                this.parentNode.replaceChild(newElement, this);
+
+                return newElement;
+
+            });
+
+        },
+        /**
+         * Copy attributes, events, properties and text from <var>target</var>
+         * to each given Element.
+         * @param {Element} target
+         * @param {object} opts - Options
+         * @param {boolean} [opts.ignoreAttributes=false] - Don't copy attributes.
+         * @param {boolean} [opts.ignoreEvents=false] - Don't copy events attached via {@link just.Event}.
+         * @param {boolean} [opts.ignoreProperties=false] - Don't copy properties attached via {@link just.Element}.
+         * @param {boolean} [opts.ignoreText=false] - Don't copy text.
+         * @chainable
+         */
+        'copy': function (target, opts) {
+
+            var options = defaults(opts, {
+                'ignoreAttributes': false,
+                'ignoreEvents': false,
+                'ignoreProperties': false,
+                'ignoreText': false
+            });
+
+            return JElement(this).each(function (jElement) {
+
+                /* eslint-disable padded-blocks */
+                if (!options.ignoreAttributes) {
+                    jElement.cloneAttributes(target);
+                }
+
+                if (!options.ignoreEvents) {
+                    jElement.cloneEvents(target);
+                }
+
+                if (!options.ignoreProperties) {
+                    jElement.cloneProperties(target);
+                }
+
+                if (!options.ignoreText) {
+                    jElement.textContent = target.textContent;
+                }
+                /* eslint-enable padded-blocks */
+
+            });
+
+        },
+        /**
+         * Clone multiple Elements and copy their events and properties
+         * attached via {@link just|Just}.
+         *
+         * @param {object} opts - Options
+         * @param {boolean} [opts.deep=true] - Argument for <var>Node.cloneDeep</var>.
+         * @return {Element[]}
+         */
+        'clone': function (opts) {
+
+            var options = defaults(opts, {
+                'deep': true
+            });
+            var deep = options.deep;
+
+            return JElement(this).get(function () {
+
+                return JElement(this.cloneNode(deep)).copy(this, {
+                    'ignoreAttributes': true,
+                    'ignoreText': true
+                }).get();
 
             });
 
@@ -575,303 +754,110 @@ var JElement = (function () {
 
         },
         /**
-         * Find the first child of multiple Elements that matches the given
-         * <var>selector</var>.
+         * {@link just.access|Access} to an scoped property within
+         * each given Element.
          *
-         * @param {DOMString} selector - A css selector.
-         * @return {Element} The child of each element matching the given selector.
+         * @param {string[]} path - Property keys.
+         * @param {just.access~handler} fn - A handler for {@link just.access}.
          */
-        'find': function (selector) {
+        'accessToProperty': function (path, fn) {
 
-            return JElement(this).get(
-                function () { return JElement.find(selector, this); }
-            );
-
-        },
-        /**
-         * Find children of multiple Elements that match the given
-         * <var>selector</var>.
-         *
-         * @param {DOMString} selector - A css selector.
-         * @return {Element[]}
-         */
-        'findAll': function (selector) {
-
-            return JElement(this).get(
-                function () { return JElement.findAll(selector, this); }
-            );
-
-        },
-        /**
-         * Clone multiple Elements and copy their events and properties
-         * attached via {@link just|Just}.
-         *
-         * @param {object} opts - Options
-         * @param {boolean} [opts.deep=true] - Argument for <var>Node.cloneDeep</var>.
-         * @return {Element[]}
-         */
-        'clone': function (opts) {
-
-            var options = defaults(opts, {
-                'deep': true
-            });
-            var deep = options.deep;
+            var scopeName = this.propertyScopeName;
 
             return JElement(this).get(function () {
 
-                return JElement(this.cloneNode(deep)).copy(this, {
-                    'ignoreAttributes': true,
-                    'ignoreText': true
-                }).get();
+                this[scopeName] = defaults(this[scopeName], {});
+                access(this[scopeName], path, fn);
 
             });
 
         },
         /**
-         * Remove all given Elements.
-         * @chainable
+         * Set a scoped property on each given element.
+         *
+         * @param {string[]} path - Property keys.
+         * @param {*} value
          */
-        'remove': function () {
+        'setProperty': function (path, value) {
 
-            return JElement(this).each(
-                function () { this.parentNode.removeChild(this); }
+            JElement(this).accessToProperty(this, path,
+                function (v, k) { v[k] = value; }
+            );
+
+            return this;
+
+        },
+        /**
+         * Return the scoped property value of multiple Elements.
+         *
+         * @param {string[]} path - Property keys.
+         * @return {Array}
+         */
+        'getProperty': function (path) {
+
+            return JElement(this).accessToProperty(path,
+                function (v, k, exists) { return exists ? v[k] : void 0; }
             );
 
         },
         /**
-         * Remove all children from multiple Elements.
+         * Check on multiple Elements if an scoped property exists.
+         * @param {string[]} path - Property keys.
+         */
+        'hasProperty': function (path) {
+
+            return JElement(this).accessToProperty(path,
+                function (v, k, exists) { return exists; }
+            );
+
+        },
+        /**
+         * Remove a scoped property from multiple Elements.
+         * @param {string[]} path - Property keys.
          * @chainable
          */
-        'removeChildren': function () {
+        'removeProperty': function (path) {
+
+            JElement(this).accessToProperty(path,
+                function (v, k) { delete v[k]; }
+            );
+
+            return this;
+
+        },
+        /**
+         * Return all scoped properties of each given Element.
+         * @return {Array}
+         */
+        'getAllProperties': function () {
+
+            var scopeName = this.propertyScopeName;
+
+            return JElement(this).get(
+                function () { return this[scopeName]; }
+            );
+
+        },
+        /**
+         * Clone all scoped properties of each given Element.
+         *
+         * @param {Element} target - The Element to copy properties from.
+         * @chainable
+         */
+        'cloneProperties': function (target) {
+
+            var scopeName = this.propertyScopeName;
+            var targetProperties = Object.assign({}, target[scopeName]);
 
             return JElement(this).each(function () {
 
-                while (this.firstChild) { this.removeChild(this.firstChild); }
+                Object.assign(this[scopeName], targetProperties);
 
             });
-
-        },
-        /**
-         * Check if multiple Elements are hidden somewhere.
-         * @return {boolean[]}
-         */
-        'isHidden': function () {
-
-            return JElement(this).get(function () {
-
-                return this.parentNode === null
-                    || this.getAttribute('hidden') !== null;
-
-            });
-
-        },
-        /**
-         * Replace each given Element with a new Element.
-         * @param {Element} newElement
-         * @return {Element[]} The new elements.
-         */
-        'replaceWith': function (newElement) {
-
-            return JElement(this).get(function () {
-
-                this.parentNode.replaceChild(newElement, this);
-
-                return newElement;
-
-            });
-
-        },
-        /**
-         * Copy attributes, events, properties and text from <var>target</var>
-         * to each given Element.
-         * @param {Element} target
-         * @param {object} opts - Options
-         * @param {boolean} [opts.ignoreAttributes=false] - Don't copy attributes.
-         * @param {boolean} [opts.ignoreEvents=false] - Don't copy events attached via {@link just.Event}.
-         * @param {boolean} [opts.ignoreProperties=false] - Don't copy properties attached via {@link just.Element}.
-         * @param {boolean} [opts.ignoreText=false] - Don't copy text.
-         * @chainable
-         */
-        'copy': function (target, opts) {
-
-            var options = defaults(opts, {
-                'ignoreAttributes': false,
-                'ignoreEvents': false,
-                'ignoreProperties': false,
-                'ignoreText': false
-            });
-
-            return JElement(this).each(function (jElement) {
-
-                /* eslint-disable padded-blocks */
-                if (!options.ignoreAttributes) {
-                    jElement.cloneAttributes(target);
-                }
-
-                if (!options.ignoreEvents) {
-                    jElement.cloneEvents(target);
-                }
-
-                if (!options.ignoreProperties) {
-                    jElement.cloneProperties(target);
-                }
-
-                if (!options.ignoreText) {
-                    jElement.textContent = target.textContent;
-                }
-                /* eslint-enable padded-blocks */
-
-            });
-
-        },
-        /**
-         * Replace multiple Elements with a new {@link just.Element#copy} of each one.
-         *
-         * @param {string} tagName - The new tag name.
-         * @param {object} opts - Options
-         * @param {object} opts.copy - Options for {@link just.Element#copy}.
-         * @return {Element[]} The new elements.
-         */
-        'replaceTag': function (tagName, opts) {
-
-            var options = defaults(opts, {
-                'copy': {}
-            });
-
-            return JElement(this).get(function (jTarget) {
-
-                var newElement = JElement(JElement.create(tagName))
-                    .copy(this, options.copy)
-                    .get();
-
-                return jTarget.replaceWith(newElement).get();
-
-            });
-
-        },
-        /**
-         * {@link getRemoteParent|Get remote parent} of each given element.
-         * @see {@link just.getRemoteParent}
-         * @param {Element[]} Parent nodes.
-         */
-        'getRemoteParent': function (fn) {
-
-            return JElement(this).get(
-                function () { return getRemoteParent(this, fn); }
-            );
 
         }
 
     });
-
-    defineProperties(JElement.prototype, (function Properties () {
-
-        var propertyName = 'just.Element.Properties';
-
-        return /** @lends just.Element.prototype */{
-
-            /**
-             * {@link just.access|Access} to an scoped property within
-             * each given Element.
-             *
-             * @param {string[]} path - Property keys.
-             * @param {just.access~handler} fn - A handler for {@link just.access}.
-             */
-            'accessToProperty': function (path, fn) {
-
-                return JElement(this).get(function () {
-
-                    this[propertyName] = defaults(this[propertyName], {});
-                    access(this[propertyName], path, fn);
-
-                });
-
-            },
-            /**
-             * Set a scoped property on each given element.
-             *
-             * @param {string[]} path - Property keys.
-             * @param {*} value
-             */
-            'setProperty': function (path, value) {
-
-                JElement(this).accessToProperty(this, path,
-                    function (v, k) { v[k] = value; }
-                );
-
-                return this;
-
-            },
-            /**
-             * Return the scoped property value of multiple Elements.
-             *
-             * @param {string[]} path - Property keys.
-             * @return {Array}
-             */
-            'getProperty': function (path) {
-
-                return JElement(this).accessToProperty(path,
-                    function (v, k, exists) { return exists ? v[k] : void 0; }
-                );
-
-            },
-            /**
-             * Check on multiple Elements if an scoped property exists.
-             * @param {string[]} path - Property keys.
-             */
-            'hasProperty': function (path) {
-
-                return JElement(this).accessToProperty(path,
-                    function (v, k, exists) { return exists; }
-                );
-
-            },
-            /**
-             * Remove a scoped property from multiple Elements.
-             * @param {string[]} path - Property keys.
-             * @chainable
-             */
-            'removeProperty': function (path) {
-
-                JElement(this).accessToProperty(path,
-                    function (v, k) { delete v[k]; }
-                );
-
-                return this;
-
-            },
-            /**
-             * Return all scoped properties of each given Element.
-             * @return {Array}
-             */
-            'getAllProperties': function () {
-
-                return JElement(this).get(
-                    function () { return this[propertyName]; }
-                );
-
-            },
-            /**
-             * Clone all scoped properties of each given Element.
-             *
-             * @param {Element} target - The Element to copy properties from.
-             * @chainable
-             */
-            'cloneProperties': function (target) {
-
-                var targetProperties = Object.assign({}, target[propertyName]);
-
-                return JElement(this).each(function () {
-
-                    Object.assign(this[propertyName], targetProperties);
-
-                });
-
-            }
-
-        };
-
-    })());
 
     return JElement;
 
