@@ -511,7 +511,7 @@ var JElement = (function () {
             }
 
             if (!options.ignoreProperties) {
-                JElement.cloneProperties(element, target);
+                JElement.cloneScopedProperties(element, target);
             }
 
             if (!options.ignoreText) {
@@ -643,6 +643,109 @@ var JElement = (function () {
 
             JElement.setAttributes(this, JElement.getAttributes(target));
 
+        },
+        /**
+         * {@link just.access|Access} to an scoped property within
+         * each given Element.
+         *
+         * @method
+         * @param {Element} element
+         * @param {string[]} path - Property keys. Use an empty array to access to everything.
+         * @param {just.access~handler} fn - A handler for {@link just.access}.
+         * @return {undefined}
+         */
+        'accessToScopedProperty': function accessToScopedElementProperty (element, path, fn) {
+
+            var scope = 'just.Element.Property';
+
+            access(element, [scope].concat(path), fn);
+
+        },
+        /**
+         * Set a scoped property on each given element.
+         *
+         * @method
+         * @param {Element} element
+         * @param {string[]} path - Property keys.
+         * @param {*} value
+         * @return {undefined}
+         */
+        'setScopedProperty': function setScopedElementProperty (element, path, value) {
+
+            JElement.accessToScopedProperty(this, path,
+                function (v, k) { v[k] = value; }
+            );
+
+        },
+        /**
+         * Return the scoped property value of multiple Elements.
+         *
+         * @method
+         * @param {Element} element
+         * @param {string[]} path - Property keys.
+         * @return {Array|undefined} The value of the property or `undefined`.
+         */
+        'getScopedProperty': function getScopedElementProperty (element, path) {
+
+            return JElement.accessToScopedProperty(element, path,
+                function (v, k, exists) { return exists ? v[k] : void 0; }
+            );
+
+        },
+        /**
+         * Check on multiple Elements if an scoped property exists.
+         *
+         * @method
+         * @param {Element} element
+         * @param {string[]} path - Property keys.
+         * @return {boolean}
+         */
+        'hasScopedProperty': function containsScopedElementProperty (element, path) {
+
+            return JElement.accessToScopedProperty(element, path,
+                function (v, k, exists) { return exists; }
+            );
+
+        },
+        /**
+         * Remove a scoped property from multiple Elements.
+         *
+         * @method
+         * @param {Element} element
+         * @param {string[]} path - Property keys.
+         * @return {undefined}
+         */
+        'removeScopedProperty': function removeScopedElementProperty (element, path) {
+
+            JElement.accessToScopedProperty(element, path,
+                function (v, k) { delete v[k]; }
+            );
+
+        },
+        /**
+         * Return all scoped properties of each given Element.
+         *
+         * @method
+         * @param {Element} element
+         * @return {Array}
+         */
+        'getAllScopedProperties': function getAllScopedProperties (element) {
+
+            return JElement.getScopedProperty(element, []);
+
+        },
+        /**
+         * Clone all scoped properties of each given Element.
+         *
+         * @method
+         * @param {Element} element
+         * @param {Element} target - The Element to copy properties from.
+         * @return {undefined}
+         */
+        'cloneScopedProperties': function cloneScopedElementProperties (element, target) {
+
+            JElement.setProperty(element, [], JElement.getAllProperties(target));
+
         }
 
     });
@@ -682,181 +785,86 @@ var JElement = (function () {
 
         },
         /**
-         * Same as {@link just.Element#get} but chainable.
+         * @see Same as {@link just.Element#get} but chainable.
+         * @method
          * @chainable
          */
         'each': chain(JElement.prototype.get, {'thisAsArg': -1}),
         /**
-         * Same as {@link just.Element.find} but chainable.
-         * @chainable
+         * Find one child for each element of <var>this</var>. <p>Chainable.</p>
+         * @type {just.Element.find}
          */
         'find': get(JElement.find, {'thisAsArg': 1}),
         /**
-         * Find children of multiple Elements that match the given
-         * <var>selector</var>.
-         *
-         * @param {DOMString} selector - A css selector.
-         * @return {just.Element}
+         * Find all children for each element of <var>this</var>. <p>Chainable.</p>
+         * @type {just.Element.findAll}
          */
         'findAll': get(JElement.findAll, {'thisAsArg': 1}),
         /**
-         * Remove all given Elements.
-         * @return {just.Element} The old element.
+         * Remove each element of <var>this</var>. <p>Chainable.</p>
+         * @type {just.Element.remove}
          */
         'remove': get(JElement.remove),
         /**
-         * Same as {@link just.Element.removeChildren} but chainable.
-         * @chainable
+         * Remove all children for each element of <var>this</var>. <p>Chainable.</p>
+         * @type {just.Element.removeChildren}
          */
         'removeChildren': chain(JElement.removeChildren),
         /**
-         * Replace each given Element with a new Element.
-         *
-         * @param {Element} newElement
-         * @return {just.Element} The new elements.
+         * Replace each element of <var>this</var> with new elements. <p>Chainable.</p>
+         * @type {just.Element.replace}
          */
         'replaceWith': get(JElement.replace),
         /**
-         * Copy attributes, events, properties and text from <var>target</var>
-         * to each given Element.
-         *
-         * @param {Element} target
-         * @param {object} opts - Options
-         * @param {boolean} [opts.ignoreAttributes=false] - Don't copy attributes.
-         * @param {boolean} [opts.ignoreEvents=false] - Don't copy events attached via {@link just.Event}.
-         * @param {boolean} [opts.ignoreProperties=false] - Don't copy properties attached via {@link just.Element}.
-         * @param {boolean} [opts.ignoreText=false] - Don't copy text.
-         * @chainable
+         * Copy each element of <var>this</var>. <p>Chainable.</p>
+         * @type {just.Element.copy}
          */
         'copy': chain(JElement.copy),
         /**
-         * Clone multiple Elements and copy their events and properties
-         * attached via {@link just|Just}.
-         *
-         * @param {object} opts - Options
-         * @param {boolean} [opts.deep=true] - Argument for <var>Node.cloneDeep</var>.
-         * @return {just.Element}
+         * Clone each element of <var>this</var>. <p>Chainable.</p>
+         * @type {just.Element.clone}
          */
         'clone': get(JElement.clone),
         /**
-         * Set namespaced and normal attributes to each given element.
-         *
-         * @throw {TypeError} If <var>attributes</var> is not an object.
-         * @param {object} attributes
-         * @chainable
+         * Set attributes of each element of <var>this</var>. <p>Chainable.</p>
+         * @type {just.Element.setAttributes}
          */
         'setAttributes': chain(JElement.setAttributes),
         /**
-         * Replace namespaced and normal attributes of multiple Elements.
-         *
-         * @param {object} attributes
-         * @param {boolean} [allowEmptyValues=false]
-         * @chainable
+         * Replace attributes of each element of <var>this</var>. <p>Chainable.</p>
+         * @type {just.Element.replaceAttributes}
          */
         'replaceAttributes': chain(JElement.replaceAttributes),
         /**
-         * Remove multiple attributes of multiple Elements.
-         *
-         * @param {string[]} attributes - The name of the attributes.
-         * @chainable
+         * Remove attributes of each element of <var>this</var>. <p>Chainable.</p>
+         * @type {just.Element.removeAttributes}
          */
         'removeAttributes': chain(JElement.removeAttributes),
         /**
-         * Clone all attributes of a <var>target</var> and set them
-         * to multiple Elements.
-         *
-         * @param {Element} target
-         * @chainable
+         * Clone all attributes for each element of <var>this</var>. <p>Chainable.</p>
+         * @type {just.Element.cloneAttributes}
          */
         'cloneAttributes': chain(JElement.cloneAttributes),
         /**
-         * {@link just.access|Modify} an scoped property within
-         * each given Element.
-         *
-         * @param {string[]} path - Property keys. Use an empty array to access to everything.
-         * @param {just.access~handler} fn - A handler for {@link just.access}.
-         * @chainable
+         * Access to scoped property for each element of <var>this</var>. <p>Chainable.</p>
+         * @type {just.Element.accessToScopedProperty}
          */
-        'accessToProperty': chain(function (path, fn) {
-
-            var scope = 'just.Element.Property';
-
-            access(this, [scope].concat(path), fn);
-
-        }),
+        'accessToProperty': chain(JElement.accessToScopedProperty),
         /**
-         * Set a scoped property on each given element.
-         *
-         * @param {string[]} path - Property keys.
-         * @param {*} value
-         * @chainable
+         * Set an scoped property for each element of <var>this</var>. <p>Chainable.</p>
+         * @type {just.Element.setScopedProperty}
          */
-        'setProperty': chain(function (path, value) {
-
-            JElement.prototype.accessToProperty.call(this, path,
-                function (v, k) { v[k] = value; }
-            );
-
-        }),
+        'setProperty': chain(JElement.setScopedProperty),
         /**
-         * Return the scoped property value of multiple Elements.
-         *
-         * @param {string[]} path - Property keys.
-         * @return {Array|undefined} The value of the property or `undefined`.
+         * Remove an scoped property for each element of <var>this</var>. <p>Chainable.</p>
+         * @type {just.Element.removeScopedProperty}
          */
-        'getProperty': get(function (path) {
-
-            return JElement.prototype.accessToProperty.call(this, path,
-                function (v, k, exists) { return exists ? v[k] : void 0; }
-            );
-
-        }),
+        'removeProperty': chain(JElement.removeScopedProperty),
         /**
-         * Check on multiple Elements if an scoped property exists.
-         * @param {string[]} path - Property keys.
-         * @return {boolean}
+         * Clone scoped properties for each element of <var>this</var>. <p>Chainable.</p>
+         * @type {just.Element.cloneScopedProperties}
          */
-        'hasProperty': get(function (path) {
-
-            return JElement.prototype.accessToProperty.call(this, path,
-                function (v, k, exists) { return exists; }
-            );
-
-        }),
-        /**
-         * Remove a scoped property from multiple Elements.
-         * @param {string[]} path - Property keys.
-         * @chainable
-         */
-        'removeProperty': chain(function (path) {
-
-            JElement.prototype.accessToProperty.call(this, path,
-                function (v, k) { delete v[k]; }
-            );
-
-        }),
-        /**
-         * Return all scoped properties of each given Element.
-         * @return {Array}
-         */
-        'getAllProperties': get(
-            function () { return JElement.prototype.getProperty.call(this, []); }
-        ),
-        /**
-         * Clone all scoped properties of each given Element.
-         *
-         * @param {Element} target - The Element to copy properties from.
-         * @chainable
-         */
-        'cloneProperties': chain(function (target) {
-
-            var JElementProto = JElement.prototype;
-
-            JElementProto.setProperty.call(this, [],
-                JElementProto.getAllProperties.call(target)
-            );
-
-        })
+        'cloneProperties': chain(JElement.cloneScopedProperties)
 
     });
 
