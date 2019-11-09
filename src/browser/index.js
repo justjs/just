@@ -1,3 +1,4 @@
+// just remove-from-bundle
 require([
     '../lib/access',
     '../lib/prop',

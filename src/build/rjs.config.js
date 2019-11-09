@@ -34,7 +34,7 @@ module.exports = {
     },
     'onBuildWrite': function (moduleName, path, contents) {
 
-        if (/index/.test(moduleName)) { return ''; }
+        if (/just.* remove-from-(build|bundle)/i.test(contents)) { return ''; }
 
         return removeCjsThings(contents).trim() + '\n';
 
