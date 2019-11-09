@@ -1,0 +1,77 @@
+#!/bin/bash
+
+ROOT="${BASH_SOURCE%/*}/.." # Source: https://stackoverflow.com/a/12694189
+VERSION=$1
+PUBLIC_DIR='docs/public'
+DESTINATION_DIR="$PUBLIC_DIR/$VERSION"
+
+cd "$ROOT"
+
+if [ -z "$VERSION" ]; then
+
+	echo "[Docs] You should provide the version to document."
+	exit 1
+
+fi
+
+copyStaticFiles () {
+
+	echo "[Docs] Copying the contents of docs/static to $DESTINATION_DIR"
+	mkdir -p "$DESTINATION_DIR"
+	cp docs/static/* "$DESTINATION_DIR" -R
+
+	echo "[Docs] Copying docs/index.html to $PUBLIC_DIR/index.html"
+	cp docs/index.html "$PUBLIC_DIR/index.html"
+
+}
+
+getAvailableVersions () {
+
+	local availableVersions=()
+	local version
+
+	for dirname in $(ls -d "$PUBLIC_DIR"/*/); do
+		version=${dirname::-1}
+		availableVersions+=${version/$PUBLIC_DIR\//}
+	done
+
+	echo "${availableVersions[@]}"
+
+}
+
+replaceStaticFileVars () {
+
+	local FILENAME=$1
+	local availableVersions=`getAvailableVersions`
+	local replacedText
+
+	echo "[Docs] Replacing vars in $FILENAME"
+
+	while read line; do
+
+		replacedText=${line//\%\{version\}\%/$VERSION}
+		replacedText=${replacedText//\%\{available\-versions\}\%/$availableVersions}
+
+		echo "$replacedText"
+
+	done < "$FILENAME" > "$FILENAME.temp"
+
+	mv "$FILENAME.temp" "$FILENAME"
+
+}
+
+document () {
+
+	local BUILD_NAME=$1
+	local DESTINATION="$DESTINATION_DIR/$BUILD_NAME"
+
+	echo "[Docs] Generating docs at $DESTINATION"
+	npm run doc:jsdoc -- "dist/$BUILD_NAME" -d "$DESTINATION"
+
+}
+
+copyStaticFiles
+replaceStaticFileVars "$DESTINATION_DIR/index.html"
+replaceStaticFileVars "$PUBLIC_DIR/index.html"
+document browser
+document server

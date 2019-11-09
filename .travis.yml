@@ -3,31 +3,41 @@ node_js:
   - "node"
 install:
   - npm ci
+stages:
+  - name: test
+    if: branch = master
+  - name: deploy-gh
+    if: tag =~ ^v.+@origin$
+  - name: release-npm
+    if: tag =~ ^v.+@origin$
 jobs:
     include:
-      - stage: "Test"
-        branches:
-          only:
-            - master
-        script:
-          - "npm test"
-      - stage: "Deploy to Github Pages"
+      - stage: test
+        script: "npm test"
+      - stage: deploy-gh
+        name: "Deploy to Github Pages"
+        script: bash bin/document "$TRAVIS_TAG"
         deploy:
+          local_dir: docs/public
+          target_branch: gh-pages
+          repo: justjs/justjs.github.io
           provider: pages
           github_token: $GITHUB_TOKEN
           skip_cleanup: true
           keep_history: true
           on:
-            branch: /^releases\//
-            condition: "$TRAVIS_TAG =~ v.+"
-      - stage: "Release to NPM"
+            tags: true
+            all_branches: true
+      - stage: release-npm
+        name: "Release to NPM"
+        script: skip
         deploy:
           provider: npm
           email: $NPM_EMAIL
           api_key: $NPM_TOKEN
           skip_cleanup: true
           on:
-            branch: /^releases\//
-            condition: "$TRAVIS_TAG =~ v.+"
+            tags: true
+            all_branches: true
 notifications:
   email: false
