@@ -46,12 +46,12 @@ var logSize = function (filepath, minFilepath) {
     ].join('\n'));
 
 };
-var bundle = function concatenate (build) {
+var bundle = function concatenate (directory, filename) {
 
     var fileConfig = Object.assign({}, rjsConfig, {
-        'name': 'index',
-        'out': 'dist/' + build + '/just.js',
-        'baseUrl': './src/' + build
+        'name': filename.replace(/\.js$/i, ''),
+        'out': path.join('./dist', directory, filename),
+        'baseUrl': path.join('./src', directory)
     });
 
     requirejs.optimize(fileConfig, function minify () {
@@ -77,19 +77,19 @@ var bundle = function concatenate (build) {
     });
 
 };
-var copyExtraFiles = function (build) {
+var copyExtraFiles = function (baseDirectory) {
 
-    var dir = './src/' + build;
-    var outDir = './dist/' + build;
+    var directory = path.join('./src/', baseDirectory);
+    var outDirectory = path.join('./dist/', baseDirectory);
 
     ['polyfills.min.js'].forEach(function (filename) {
 
-        var file = dir + '/' + filename;
-        var out = outDir + '/' + filename;
+        var file = path.join(directory, filename);
+        var out = path.join(outDirectory, filename);
 
         if (fs.existsSync(file)) {
 
-            fs.mkdirSync(outDir, {'recursive': true});
+            fs.mkdirSync(outDirectory, {'recursive': true});
             fs.copyFileSync(file, out);
             logSize(out, out);
 
@@ -99,9 +99,12 @@ var copyExtraFiles = function (build) {
 
 };
 
-['browser', 'server'].forEach(function (build) {
+['browser/core', 'server/core'].forEach(function (filepathRelativeToSrc) {
 
-    copyExtraFiles(build);
-    bundle(build);
+    var filename = ((filepathRelativeToSrc.match(/\/([^/]*)$/) || [])[1] || 'index').replace(/(?:\.js)?$/, '.js');
+    var directory = path.dirname(filepathRelativeToSrc);
+
+    copyExtraFiles(directory);
+    bundle(directory, filename);
 
 });

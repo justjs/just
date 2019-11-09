@@ -1,10 +1,10 @@
 var fs = require('fs');
 var pkg = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
 var bundleFilepathsRelativeToRoot = [
-    'dist/server/just.js',
-    'dist/server/just.min.js',
-    'dist/browser/just.js',
-    'dist/browser/just.min.js'
+    'dist/server/core.js',
+    'dist/server/core.min.js',
+    'dist/browser/core.js',
+    'dist/browser/core.min.js'
 ];
 var bundles = bundleFilepathsRelativeToRoot.map(
     function (filepath) { return require('@' + filepath); }

@@ -3,9 +3,9 @@
   "title": "Just",
   "version": "1.0.0-dev",
   "description": "The core for all your javascript proyects.",
-  "main": "dist/server/just.min.js",
+  "main": "dist/server/core.min.js",
   "private": true,
-  "browser": "dist/browser/just.min.js",
+  "browser": "dist/browser/core.min.js",
   "scripts": {
     "start": "npm run dev",
     "dev": "npm run test:dev",

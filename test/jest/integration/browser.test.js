@@ -1,7 +1,7 @@
 var fs = require('fs');
-var browserBundle = require('@dist/browser/just.js');
+var core = require('@dist/browser/core.js').just;
 
-describe('Browser bundle', function () {
+describe('@dist/browser/core.js', function () {
 
     test.each([
         ['access'],
@@ -40,7 +40,7 @@ describe('Browser bundle', function () {
         ['toObj']
     ])('Should contain %p as a property.', function (property) {
 
-        expect(browserBundle.just).toHaveProperty(property);
+        expect(core).toHaveProperty(property);
 
     });
 

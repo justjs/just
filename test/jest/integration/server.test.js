@@ -1,6 +1,6 @@
-var serverBundle = require('@dist/server/just.js');
+var core = require('@dist/server/core.js').just;
 
-describe('Server bundle', function () {
+describe('@dist/server/core.js', function () {
 
     test.each([
         ['access'],
@@ -24,7 +24,7 @@ describe('Server bundle', function () {
         ['toObj']
     ])('Should contain %p as a property.', function (property) {
 
-        expect(serverBundle.just).toHaveProperty(property);
+        expect(core).toHaveProperty(property);
 
     });
 
