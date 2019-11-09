@@ -15,6 +15,7 @@
     "test:integration": "npm run test:jest -- test/jest/integration",
     "test:dev": "WATCHING=true npm run test -- --watch --coverage",
     "test:jest": "jest -c test/jest/config.js",
+    "doc": "jsdoc  -o docs/public",
     "lint": "eslint",
     "style": "npm run lint -- --fix",
     "pretest": "npm run lint -- . --cache",
@@ -33,7 +34,7 @@
     "helpers"
   ],
   "files": [
-    "dist/*.js"
+    "dist/**/*.js"
   ],
   "author": "Alexis Puga Ruíz",
   "license": "BSD-3-Clause",
