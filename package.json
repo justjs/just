@@ -17,6 +17,7 @@
     "test:jest": "jest -c test/jest/config.js",
     "doc": "./bin/document",
     "doc:jsdoc": "jsdoc -c docs/jsdoc.config.json",
+    "doc:dev": "webpack-dev-server --config docs/webpack.dev.js",
     "lint": "eslint",
     "style": "npm run lint -- --fix",
     "pretest": "npm run lint -- . --cache",
@@ -49,7 +50,10 @@
     "jest": "^24.9.0",
     "jsdoc": "^3.6.3",
     "requirejs": "^2.3.6",
-    "uglify-js": "^3.6.3"
+    "uglify-js": "^3.6.3",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.9.0"
   },
   "dependencies": {}
 }
