@@ -21,6 +21,7 @@ h1, h2 {
 	display: table;
 	background: linear-gradient(to right, #3b1154, #272342);
 	border-spacing: 2em;
+	table-layout: fixed;
 }
 
 #home > * {

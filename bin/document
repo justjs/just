@@ -1,18 +1,15 @@
 #!/bin/bash
 
-ROOT="${BASH_SOURCE%/*}/.." # Source: https://stackoverflow.com/a/12694189
 VERSION=$1
+ROOT="${BASH_SOURCE%/*}/.." # Source: https://stackoverflow.com/a/12694189
 PUBLIC_DIR='docs/public'
 DESTINATION_DIR="$PUBLIC_DIR/$VERSION"
 
 cd "$ROOT"
 
-if [ -z "$VERSION" ]; then
-
-	echo "[Docs] You should provide the version to document."
-	exit 1
-
-fi
+isValidVersion () {
+	[[ "$1" =~ ^v[0-9] ]]
+}
 
 copyStaticFiles () {
 
@@ -31,8 +28,14 @@ getAvailableVersions () {
 	local version
 
 	for dirname in $(ls -d "$PUBLIC_DIR"/*/); do
-		version=${dirname::-1}
-		availableVersions+=${version/$PUBLIC_DIR\//}
+
+		version=${dirname::-1} # Remove last slash.
+		version=${version/$PUBLIC_DIR\//}
+
+		if isValidVersion "$version"; then
+			availableVersions+=("$version")
+		fi
+
 	done
 
 	echo "${availableVersions[@]}"
@@ -69,6 +72,13 @@ document () {
 	npm run doc:jsdoc -- "dist/$BUILD_NAME" -d "$DESTINATION"
 
 }
+
+if ! isValidVersion "$VERSION"; then
+
+	echo "[Docs] You should provide a release tag."
+	exit 1
+
+fi
 
 copyStaticFiles
 replaceStaticFileVars "$DESTINATION_DIR/index.html"
