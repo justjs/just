@@ -11,14 +11,21 @@ isValidVersion () {
 	[[ "$1" =~ ^v[0-9] ]]
 }
 
+copyContents () {
+
+	local FROM=$1
+	local TO=$2
+
+	echo "[Docs] Copying the contents of $FROM to $TO"
+	mkdir -p "$TO"
+	cp "$FROM"/* "$TO" -R
+
+}
+
 copyStaticFiles () {
 
-	echo "[Docs] Copying the contents of docs/static to $DESTINATION_DIR"
-	mkdir -p "$DESTINATION_DIR"
-	cp docs/static/* "$DESTINATION_DIR" -R
-
-	echo "[Docs] Copying docs/index.html to $PUBLIC_DIR/index.html"
-	cp docs/index.html "$PUBLIC_DIR/index.html"
+	copyContents docs/static/versioned "$DESTINATION_DIR"
+	copyContents docs/static/non-versioned "$PUBLIC_DIR"
 
 }
 

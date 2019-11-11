@@ -1,13 +1,13 @@
 * {
-  border: 0;
+	border: 0;
 	margin: 0;
 	padding: 0;
 }
 
 body {
 	line-height: 1.5;
-  font-family: sans;
-  text-align: left;
+	font-family: sans;
+	text-align: left;
 }
 
 h1, h2 {
