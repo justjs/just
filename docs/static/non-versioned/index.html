@@ -1,14 +1,98 @@
 <!DOCTYPE html>
-<html data-available-versions='%{available-versions}%'>
+<html>
 <head>
 	<meta charset='utf-8'/>
-	<title>Just js - Available versions</title>
-	<link rel='stylesheet' href='/css/justjs.css'/>
+	<title>Just js - The core for all your js projects.</title>
+	<link rel='shortcut icon' type='image/png' href='img/favicon-16x16.png'/>
+	<link rel='stylesheet' href='css/justjs.css'/>
+	<link rel='stylesheet' href='css/index.css'/>
 </head>
 <body>
+	<header id='banner' role='banner'>
+		<div id='logo'>
+			<a href='https://justjs.github.io'>
+				<img src='img/logo-white-256x256.png' alt='Logo' width='256' height='256'/>
+			</a>
+		</div>
+		<p>The core for all your javascript projects.</p>
+	</header>
 	<main role='main'>
-		<ol class='available-versions-list'></ol>
+		<header>
+			<h1>JustJs</h1>
+		</header>
+		<div class='content-wrapper'>
+			<p><b>JustJs</b> is a set of common heavily-used utilities/helpers for javascript environments. The goal is to collect the most used code throughout developments in javascript without compromising bundle size.</p>
+		</div>
+		<section id='usage'>
+			<header>
+				<h2>Usage</h2>
+			</header>
+			<div class='content-wrapper'>
+				<p><b>JustJs</b> is available on npm for server usage and distributed over a CDN for browser usage.</p>
+				<figure>
+					<figcaption>Usage on browser</figcaption>
+					<p>Include the following anywhere on your HTML:</p>
+					<code>
+						&lt;script src='https://cdn.jsdelivr.net/npm/justjs@version/dist/bundle' async&gt;&lt;/script&gt;
+					</code>
+					<p>And replace <var>version</var> with <a href='#available-versions'>any of these versions</a> and <var>bundle</var> with <a href='#available-bundles'>any of these bundles</a>.</p>
+				</figure>
+				<figure>
+					<figcaption>Usage on server</figcaption>
+					<p>Install it via <code>npm i just</code> or <code>yarn add just</code>.</p>
+				</figure>
+			</div>
+		</section>
+		<section id='available-versions'>
+			<header>
+				<h2>Available versions</h2>
+			</header>
+			<div class='content-wrapper'>
+				<p><b>JustJs</b> come on multiple bundles:</p>
+				<figure id='available-bundles'>
+					<figcaption>Available bundles</figcaption>
+					<dl>
+						<dt>core</dt>
+						<dd>Things you need for small/static websites or complements for large developments.</dd>
+						<dt>Element</dt>
+						<dd>Things you need for dynamic websites where you integrate some other tools but you don't want to use the full library.</dd>
+						<dt>full</dt>
+						<dd>The full suite to develop a medium/large website.</dd>
+					</dl>
+				</figure>
+				<figure id='available-versions'>
+					<figcaption>Available versions</figcaption>
+					<table>
+						<thead>
+							<tr>
+								<th>Version</th>
+								<th>Docs</th>
+								<th>Source code</th>
+								<th>Downloads</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td><a href='v1.0.0/index.html'>v1.0.0</a></td>
+								<td><a href='v1.0.0/browser/index.html'>Browser</a>/<a href='v1.0.0/server/index.html'>Server</a></td>
+								<td><a href=''>Github</a></td>
+								<td><a href=''>CDN</a>/<a href=''>NPM</a></td>
+							</tr>
+						</tbody>
+					</table>
+				</figure>
+			</div>
+		</section>
+		<section id='history'>
+			<header>
+				<h2>History</h2>
+			</header>
+			<div class='content-wrapper'>
+				<p><b>JustJs</b> was initially called <b>APR</b> and it was born as a close-source project some years ago. —When IE8 was a thing and you had to decide whether to still targeting IE6 or go straight into IE8.</p>
+				<p>The main goal of <b>APR</b> was to ship it together as a suite (<a href=''><b>APR-suite</b></a>) within every site I'd developed. However, I let that idea vanish away and I decided to rename the project to <b>JustJs</b> and released it as an open-source project on <a href=''>Github</a> to let other people use it. —In fact, <b>APR-suite</b> is still being renamed, rewritten, and added to <b>JustJs</b>.</p>
+				<p>Now, after some time, I'm proud to say that <b>JustJs</b> is still the most used library throughout my developments and it's being more active than ever...</p>
+			</div>
+		</section>
 	</main>
-	<script src='js/index.js' async></script>
 </body>
 </html>

@@ -6,17 +6,19 @@
 
 body {
 	line-height: 1.5;
-	font-family: sans;
+	font-family: monospace;
 	text-align: left;
+	font-size: 150%;
 }
 
 h1, h2 {
-	font-size: 200%;
+	font-size: 100%;
+	text-transform: uppercase;
 }
 
 a {
 	text-decoration: unset;
-	color: #8c84a7;
+	color: #3b1154;
 }
 
 a:hover {
