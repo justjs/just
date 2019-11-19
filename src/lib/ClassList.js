@@ -10,10 +10,12 @@ var defineProperties = require('./defineProperties');
  * @param {Element} element - The target.
  *
  * @example
+ * let force;
+ *
  * ClassList(button)
  *     .add('a', 'b', 'c')
  *     .remove('b')
- *     .toggle('c', (let force = true))
+ *     .toggle('c', (force = true))
  *     .replace('a', 'z')
  *     .contains('b'); // false
  */
