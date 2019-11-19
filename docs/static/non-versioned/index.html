@@ -29,58 +29,75 @@
 			</header>
 			<div class='content-wrapper'>
 				<p><b>JustJs</b> is available on npm for server usage and distributed over a CDN for browser usage.</p>
-				<figure>
-					<figcaption>Usage on browser</figcaption>
-					<p>Include the following anywhere on your HTML:</p>
-					<code>
-						&lt;script src='https://cdn.jsdelivr.net/npm/justjs@version/dist/bundle' async&gt;&lt;/script&gt;
-					</code>
-					<p>And replace <var>version</var> with <a href='#available-versions'>any of these versions</a> and <var>bundle</var> with <a href='#available-bundles'>any of these bundles</a>.</p>
+				<h3>Browser</h3>
+				<p>To use the latest version of <b>JustJs</b>' core over a CDN, include the following anywhere on your HTML:</p>
+				<code>
+					&lt;script src='https://cdn.jsdelivr.net/npm/justjs@v1.0.0/dist/browser/core.min.js' async&gt;&lt;/script&gt;
+				</code>
+				<p>Then, if you want, you can replace "v1.0.0" with <a href='#available-versions'>any of these versions</a> and/or "core.min.js" with <a href='#available-bundles-browser'>any of these files</a>.</p>
+				<h3>Server</h3>
+				<p>To use the latest version of <b>JustJs</b> on a server, install it <a href='#installation-via-npm'>via npm</a> or <a href='#installation-via-yarn'>via yarn</a>:</p>
+				<figure id='installation-via-npm'>
+					<figcaption>Installation via npm</figcaption>
+					<code>npm i just</code>
 				</figure>
-				<figure>
-					<figcaption>Usage on server</figcaption>
-					<p>Install it via <code>npm i just</code> or <code>yarn add just</code>.</p>
+				<figure id='installation-via-yarn'>
+					<figcaption>Installation via yarn</figcaption>
+					<code>yarn add just</code>
 				</figure>
 			</div>
 		</section>
-		<section id='available-versions'>
+		<section id='available-flavors'>
 			<header>
-				<h2>Available versions</h2>
+				<h2>Available flavors</h2>
 			</header>
 			<div class='content-wrapper'>
-				<p><b>JustJs</b> come on multiple bundles:</p>
-				<figure id='available-bundles'>
-					<figcaption>Available bundles</figcaption>
+				<p><b>JustJs</b> releases multiple bundles under the same repository, so that some bundles might not be available on older versions. For example: "basic.min.js" won't be available until v1.x.0, but you can use "core.min.js" since v1.0.0.</p>
+				<figure id='available-bundles-browser'>
+					<figcaption>Available bundles for browser</figcaption>
 					<dl>
-						<dt>core</dt>
-						<dd>Things you need for small/static websites or complements for large developments.</dd>
-						<dt>Element</dt>
-						<dd>Things you need for dynamic websites where you integrate some other tools but you don't want to use the full library.</dd>
-						<dt>full</dt>
-						<dd>The full suite to develop a medium/large website.</dd>
+						<div>
+							<dt>core[.min].js <span class='footnote'>[Since v1.0.0]</span></dt>
+							<dd>Things you need for small/static websites.</dd>
+						</div>
+						<div>
+							<dt>basic[.min].js <span class='footnote'>[Under development]</span></dt>
+							<dd>Things you need for dynamic websites where you integrate some other tools but you don't want to use the full library.</dd>
+						</div>
+						<div>
+							<dt>just[.min].js <span class='footnote'>[Under development]</span></dt>
+							<dd>The full suite to develop a medium/large website.</dd>
+						</div>
 					</dl>
 				</figure>
-				<figure id='available-versions'>
-					<figcaption>Available versions</figcaption>
-					<table>
-						<thead>
-							<tr>
-								<th>Version</th>
-								<th>Docs</th>
-								<th>Source code</th>
-								<th>Downloads</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td><a href='v1.0.0/index.html'>v1.0.0</a></td>
-								<td><a href='v1.0.0/browser/index.html'>Browser</a>/<a href='v1.0.0/server/index.html'>Server</a></td>
-								<td><a href=''>Github</a></td>
-								<td><a href=''>CDN</a>/<a href=''>NPM</a></td>
-							</tr>
-						</tbody>
-					</table>
+				<figure id='available-bundles-server'>
+					<figcaption>Available bundles for server</figcaption>
+					<dl>
+						<div>
+							<dt>core[.min].js <span class='footnote'>[Since v1.0.0]</span></dt>
+							<dd>Useful helpers for large developments.</dd>
+						</div>
+					</dl>
 				</figure>
+				<table id='available-versions'>
+					<caption>Available versions</caption>
+					<thead>
+						<tr>
+							<th>Version</th>
+							<th>Docs</th>
+							<th>Source code</th>
+							<th>Downloads</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><a href='v1.0.0/index.html'>v1.0.0</a></td>
+							<td><a href='v1.0.0/browser/index.html'>Browser</a>/<a href='v1.0.0/server/index.html'>Server</a></td>
+							<td><a href=''>Github</a></td>
+							<td><a href=''>CDN</a>/<a href=''>NPM</a></td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
 		</section>
 		<section id='history'>

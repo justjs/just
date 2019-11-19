@@ -61,6 +61,10 @@ figure {
 	padding-left: 5%;
 }
 
+dt {
+	font-weight: bolder;
+}
+
 caption,
 figcaption {
 	font-weight: bolder;
@@ -71,4 +75,22 @@ figcaption {
 code {
 	background: #f3f3f3;
 	padding: .25em 1em;
+	display: table;
+}
+
+dl > div {
+	padding: 2em 0;
+}
+
+.footnote {
+	font-size: 80%;
+	vertical-align: bottom;
+	color: #5d6177;
+}
+
+@media all and (max-width: 1200px) {
+	#banner {
+		margin-top: 0;
+		max-width: unset;
+	}
 }
