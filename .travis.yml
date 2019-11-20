@@ -19,7 +19,7 @@ jobs:
         script: bash bin/document "$TRAVIS_TAG"
         deploy:
           local_dir: docs/public
-          target_branch: gh-pages
+          target_branch: master
           repo: justjs/justjs.github.io
           provider: pages
           github_token: $GITHUB_TOKEN
