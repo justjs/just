@@ -49,18 +49,41 @@ getAvailableVersions () {
 
 }
 
+getSortedArray () {
+
+	# Based on https://stackoverflow.com/a/11789688
+	IFS=$'\n'
+	local ARRAY=$1
+	local sorted=($(sort <<<"${ARRAY[*]}"))
+
+	unset IFS
+	echo "${sorted[@]}"
+
+}
+
 replaceStaticFileVars () {
 
 	local FILENAME=$1
 	local availableVersions=`getAvailableVersions`
-	local replacedText
+	local availableVersionsAsc=`getSortedArray $availableVersions`
+	local availableVersionsTable=`./docs/tmpl/available-versions-table $availableVersionsAsc`
+	local latestVersion=${availableVersionsAsc[${#availableVersionsAsc[@]} - 1]}
+	local browserExampleFilename="dist/browser/core.min.js"
+	local browserExampleUrl="https://cdn.jsdelivr.net/npm/@just-js/just/@$latestVersion/$browserExampleFilename"
+	local browserExampleSri=`./bin/generateSRI "$browserExampleFilename"`
 
 	echo "[Docs] Replacing vars in $FILENAME"
 
 	while read line; do
 
+		# TODO: Replace all in once.
 		replacedText=${line//\%\{version\}\%/$VERSION}
 		replacedText=${replacedText//\%\{available\-versions\}\%/$availableVersions}
+		replacedText=${replacedText//\%\{available\-versions-table\}\%/$availableVersionsTable}
+		replacedText=${replacedText//\%\{sri\}\%/$sri}
+		replacedText=${replacedText//\%\{latest\-version\}\%/$latestVersion}
+		replacedText=${replacedText//\%\{browser-example-url\}\%/$browserExampleUrl}
+		replacedText=${replacedText//\%\{browser-example-sri\}\%/$browserExampleSri}
 
 		echo "$replacedText"
 

@@ -32,9 +32,9 @@
 				<h3>Browser</h3>
 				<p>To use the latest version of <b>JustJs</b>' core over a CDN, include the following anywhere on your HTML:</p>
 				<code>
-					&lt;script src='https://cdn.jsdelivr.net/npm/justjs@v1.0.0/dist/browser/core.min.js' async&gt;&lt;/script&gt;
+					&lt;script src="%{browser-example-url}%" integrity="%{browser-example-sri}%' crossorigin="anonymous" async&gt;&lt;/script&gt;
 				</code>
-				<p>Then, if you want, you can replace "v1.0.0" with <a href='#available-versions'>any of these versions</a> and/or "core.min.js" with <a href='#available-bundles-browser'>any of these files</a>.</p>
+				<p>Then, if you want, you can replace "%{latest-version}%" with <a href='#available-versions'>any of these versions</a> and/or "core.min.js" with <a href='#available-bundles-browser'>any of these files</a>.</p>
 				<h3>Server</h3>
 				<p>To use the latest version of <b>JustJs</b> on a server, install it <a href='#installation-via-npm'>via npm</a> or <a href='#installation-via-yarn'>via yarn</a>:</p>
 				<figure id='installation-via-npm'>
@@ -79,25 +79,7 @@
 						</div>
 					</dl>
 				</figure>
-				<table id='available-versions'>
-					<caption>Available versions</caption>
-					<thead>
-						<tr>
-							<th>Version</th>
-							<th>Docs</th>
-							<th>Source code</th>
-							<th>Downloads</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td><a href='v1.0.0/index.html'>v1.0.0</a></td>
-							<td><a href='v1.0.0/browser/index.html'>Browser</a>/<a href='v1.0.0/server/index.html'>Server</a></td>
-							<td><a href=''>Github</a></td>
-							<td><a href=''>CDN</a>/<a href=''>NPM</a></td>
-						</tr>
-					</tbody>
-				</table>
+				%{available-versions-table}%
 			</div>
 		</section>
 		<section id='history'>
