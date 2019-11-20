@@ -7,9 +7,9 @@ stages:
   - name: test
     if: branch = master
   - name: deploy-gh
-    if: tag =~ ^v\d.+
+    if: tag =~ ^v[0-9].+
   - name: release-npm
-    if: tag =~ ^v\d.+
+    if: tag =~ ^v[0-9].+
 jobs:
     include:
       - stage: test
