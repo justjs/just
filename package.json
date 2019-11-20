@@ -42,7 +42,7 @@
   "author": "Alexis Puga Ruíz",
   "license": "BSD-3-Clause",
   "devDependencies": {
-    "@alexispuga/jsdoc-template": "^1.1.0-rc.1",
+    "@alexispuga/jsdoc-template": "^1.1.0",
     "eslint": "^6.5.1",
     "eslint-config-justjs": "github:justjs/eslint-config-justjs#v0.1.0",
     "eslint-plugin-es5": "^1.4.1",
