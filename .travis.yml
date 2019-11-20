@@ -16,7 +16,7 @@ jobs:
         script: "npm test"
       - stage: deploy-gh
         name: "Deploy to Github Pages"
-        script: bash "npm run doc $TRAVIS_TAG"
+        script: npm run doc -- "$TRAVIS_TAG"
         deploy:
           local_dir: docs/public
           target_branch: staging
