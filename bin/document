@@ -74,6 +74,10 @@ document () {
 
 	local BUILD_NAME=$1
 	local DESTINATION="$DESTINATION_DIR/$BUILD_NAME"
+	
+	if [ ! -d "dist" ]; then
+		npm run build
+	fi
 
 	echo "[Docs] Generating docs at $DESTINATION"
 	npm run doc:jsdoc -- "dist/$BUILD_NAME" -d "$DESTINATION"
