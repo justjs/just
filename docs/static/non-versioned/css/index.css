@@ -14,14 +14,19 @@ td, th {
 
 main,
 #banner {
-	max-width: 1024px;
 	margin: auto;
-	padding: 5em 0;
 	width: 100%;
 	box-sizing: border-box;
 }
 
+main {
+	max-width: 1024px;
+	padding: 10em 5em;
+}
+
 #banner {
+	padding: 5em;
+	max-width: 1240px;
 	padding-top: 13em;
 	text-align: center;
 	margin-top: 3em;
@@ -35,29 +40,23 @@ main,
 	margin-bottom: 5em;
 }
 
-.content-wrapper {
-	padding: 8em 5% 10em 5%;
-}
-
-#banner,
-main header > * {
+#banner {
 	background: black;
 	color: white;
 } 
 
-main header {
+section {
+	margin-top: 10em;
+	padding: 10em 0;
 	border-top: 1px solid #ededed;
 }
 
-main header > * {
-	padding: 0 1em;
-	display: table;
-	margin-left: auto;
+main header {
+	margin-bottom: 5rem;
 }
 
 figure {
 	border-left: 1px solid #ededed;
-	margin-left: calc(-5% - 2px);
 	padding-left: 5%;
 }
 
