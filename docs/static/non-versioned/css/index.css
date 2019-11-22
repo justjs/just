@@ -2,15 +2,10 @@ table {
     text-align: left;
     border-spacing: 0;
     width: 100%;
-    box-shadow: 0 0 5px rgba(0, 0, 0, .1);
 }
 
 .table-wrapper {
 	box-shadow: 0 0 5px rgba(0, 0, 0, .1);
-}
-
-.table-wrapper > table {
-	box-shadow: unset;
 }
 
 .table-wrapper caption {
@@ -73,7 +68,7 @@ h3, h4 {
 }
 
 figure {
-	box-shadow: 0 0 5px rgba(0, 0, 0, .1);
+	background: #f6f6f6;
 	padding: 5%;
 	display: inline-block;
 	vertical-align: top;
@@ -91,7 +86,7 @@ figcaption {
 }
 
 code {
-	background: #f3f3f3;
+	background: #f6f6f6;
 	padding: .25em 1em;
 	display: table;
 }
@@ -149,5 +144,47 @@ dl > div:last-child {
 
 	#installation-via-yarn {
 		float: unset;
+	}
+}
+
+@media all and (max-width: 720px) {
+	body {
+		font-size: 125%;
+	}
+
+	main {
+		padding: 5em 2em;
+	}
+
+	figure {
+		display: block;
+		margin: auto;
+	}
+
+	figure:nth-child(2n+1) {
+		margin-left: -2em;
+	}
+
+	figure:nth-child(2n) {
+		margin-left: auto;
+		margin-right: -2em;
+	}
+
+	.table-wrapper {
+		margin-right: -2em;
+	}
+
+	.code-wrapper {
+		/*margin-right: -2em;*/
+		margin: 0 -2em;
+	}
+
+	.table-wrapper {
+		padding: 2em 0;
+	}
+
+	figure,
+	.code-wrapper code {
+		padding: 2em;
 	}
 }
