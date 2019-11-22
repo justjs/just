@@ -4,6 +4,6 @@ if [ "$NODE_ENV" = 'production' ]; then
 	git fetch --tags
 fi
 
-AVAILABLE_TAGS=(`git tag -l v[0-9]*`)
+AVAILABLE_TAGS=(`git tag -l v[0-9].[0-9].[0-9]`)
 
 echo "${AVAILABLE_TAGS[@]/v/}"
