@@ -1,14 +1,15 @@
 #!/bin/bash
 
-VERSION=$1
+TAG="$1"
+VERSION="${TAG/v/}"
 ROOT="${BASH_SOURCE%/*}/.." # Source: https://stackoverflow.com/a/12694189
 PUBLIC_DIR='docs/public'
-DESTINATION_DIR="$PUBLIC_DIR/$VERSION"
+DESTINATION_DIR="$PUBLIC_DIR/$TAG"
 AVAILABLE_VERSIONS=(`./bin/get-available-versions`)
 
 cd "$ROOT"
 
-isValidVersion () {
+isValidTag () {
 	[[ "$1" =~ ^v[0-9] ]]
 }
 
@@ -48,6 +49,7 @@ replaceStaticFileVars () {
 
 		# TODO: Replace all in once.
 		replacedText=${line//\%\{version\}\%/$VERSION}
+		replacedText=${replacedText//\%\{tag\}\%/$TAG}
 		replacedText=${replacedText//\%\{available\-versions\}\%/$AVAILABLE_VERSIONS}
 		replacedText=${replacedText//\%\{available\-versions-table\}\%/$availableVersionsTable}
 		replacedText=${replacedText//\%\{sri\}\%/$sri}
@@ -77,7 +79,7 @@ document () {
 
 }
 
-if ! isValidVersion "$VERSION"; then
+if ! isValidTag "$TAG"; then
 
 	echo "[Docs] You should provide a release tag."
 	exit 1
