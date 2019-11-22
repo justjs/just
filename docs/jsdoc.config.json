@@ -8,11 +8,11 @@
     		"siteName": "Just js",
     		"tags": {
     			"head": [
-                    "<link rel='shortcut icon' type='image/png' href='../img/favicon-16x16.png'/>",
+                    "<link rel='shortcut icon' type='image/png' href='/img/favicon-16x16.png'/>",
     				"<link rel='stylesheet' href='../css/jsdoc.css'/>"
     			],
     			"header": [
-    				"<div id='logo'><a href='https://justjs.github.io'><img src='../img/logo-white-64x64.png' width='64' height='64' alt='Logo'/></a></div>"
+    				"<div id='logo'><a href='https://justjs.github.io'><img src='/img/logo-white-64x64.png' width='64' height='64' alt='Logo'/></a></div>"
     			]
     		}
     	}

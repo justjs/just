@@ -1,23 +1,5 @@
-#page-header,
-#page-header-opener.is-active {
-	background: #3b1154;
-}
-
-#content-nav li:not(.is-active),
-#page-header,
-#page-header a,
-#page-header h3 {
-	color: #6d638f;
-}
-
-#page-header-opener
-#content-title,
-#page-header :focus,
-#page-header a:hover,
-#page-header a b,
-#page-header li.is-active a,
-#page-title a {
-	color: white;
+a {
+	color: #3b1154;
 }
 
 #logo img {

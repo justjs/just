@@ -26,10 +26,12 @@
 }
 
 #instructions li {
-	font-size: 125%;
 	display: inline-block;
 	vertical-align: middle;
-	font-weight: bolder;
+}
+
+#home a {
+	color: #9ba0b3;
 }
 
 #instructions li:not(:first-child) {
