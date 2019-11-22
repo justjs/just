@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [ "$NODE_ENV" = 'production' ]; then
+	git fetch --tags
+fi
+
+git tag -l v[0-9]*

@@ -4,6 +4,7 @@ VERSION=$1
 ROOT="${BASH_SOURCE%/*}/.." # Source: https://stackoverflow.com/a/12694189
 PUBLIC_DIR='docs/public'
 DESTINATION_DIR="$PUBLIC_DIR/$VERSION"
+AVAILABLE_VERSIONS=(`./bin/getAvailableVersions`)
 
 cd "$ROOT"
 
@@ -29,21 +30,13 @@ copyStaticFiles () {
 
 }
 
-getAvailableVersions () {
-
-	git fetch --tags
-	git tag -l v[0-9]*
-
-}
-
 replaceStaticFileVars () {
 
 	local FILENAME="$1"
-	local availableVersions=(`getAvailableVersions`)
 	# Next line based on:
 	# - Sort array: https://stackoverflow.com/a/11789688
 	# - Sort by version: https://stackoverflow.com/a/4495368
-	local availableVersionsDesc=(`IFS=$'\n' && sort -t. -k 1.2,1nr -k 2,2nr -k 3,3nr -k 4,4nr <<< "${availableVersions[*]}" && unset IFS`)
+	local availableVersionsDesc=(`IFS=$'\n' && sort -t. -k 1.2,1nr -k 2,2nr -k 3,3nr -k 4,4nr <<< "${AVAILABLE_VERSIONS[*]}" && unset IFS`)
 	local availableVersionsTable=`./docs/tmpl/available-versions-table "${availableVersionsDesc[@]}"`
 	local latestVersion="${availableVersionsDesc[0]}"
 	local browserExampleFilename="dist/browser/core.min.js"
@@ -55,7 +48,7 @@ replaceStaticFileVars () {
 
 		# TODO: Replace all in once.
 		replacedText=${line//\%\{version\}\%/$VERSION}
-		replacedText=${replacedText//\%\{available\-versions\}\%/$availableVersions}
+		replacedText=${replacedText//\%\{available\-versions\}\%/$AVAILABLE_VERSIONS}
 		replacedText=${replacedText//\%\{available\-versions-table\}\%/$availableVersionsTable}
 		replacedText=${replacedText//\%\{sri\}\%/$sri}
 		replacedText=${replacedText//\%\{latest\-version\}\%/$latestVersion}
