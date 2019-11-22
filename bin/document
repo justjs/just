@@ -4,7 +4,7 @@ VERSION=$1
 ROOT="${BASH_SOURCE%/*}/.." # Source: https://stackoverflow.com/a/12694189
 PUBLIC_DIR='docs/public'
 DESTINATION_DIR="$PUBLIC_DIR/$VERSION"
-AVAILABLE_VERSIONS=(`./bin/getAvailableVersions`)
+AVAILABLE_VERSIONS=(`./bin/get-available-versions`)
 
 cd "$ROOT"
 
@@ -41,7 +41,7 @@ replaceStaticFileVars () {
 	local latestVersion="${availableVersionsDesc[0]}"
 	local browserExampleFilename="dist/browser/core.min.js"
 	local browserExampleUrl="https://cdn.jsdelivr.net/npm/@just-js/just/@$latestVersion/$browserExampleFilename"
-	local browserExampleSri=`./bin/generateSRI "$browserExampleFilename"`
+	local browserExampleSri=`./bin/generate-sri "$browserExampleFilename"`
 	echo "[Docs] Replacing vars in $FILENAME"
 
 	while read line; do
