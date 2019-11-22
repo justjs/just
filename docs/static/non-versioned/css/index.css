@@ -2,10 +2,19 @@ table {
     text-align: left;
     border-spacing: 0;
     width: 100%;
+    box-shadow: 0 0 5px rgba(0, 0, 0, .1);
 }
 
-thead {
-    background: #f3f3f3;
+.table-wrapper {
+	box-shadow: 0 0 5px rgba(0, 0, 0, .1);
+}
+
+.table-wrapper > table {
+	box-shadow: unset;
+}
+
+.table-wrapper caption {
+	padding: 1em 2em 0 2em;
 }
 
 td, th {
@@ -37,7 +46,7 @@ main {
 }
 
 .content-wrapper > *:not(:last-child) {
-	margin-bottom: 5em;
+	margin-bottom: 2em;
 }
 
 #banner {
@@ -46,18 +55,27 @@ main {
 } 
 
 section {
-	margin-top: 10em;
 	padding: 10em 0;
 	border-top: 1px solid #ededed;
 }
 
 main header {
-	margin-bottom: 5rem;
+	margin-bottom: 5em;
+}
+
+main > .content-wrapper {
+	margin-bottom: 10em;
+}
+
+h3, h4 {
+	margin-top: 5em;
 }
 
 figure {
-	border-left: 1px solid #ededed;
-	padding-left: 5%;
+	box-shadow: 0 0 5px rgba(0, 0, 0, .1);
+	padding: 3em;
+	display: inline-block;
+	vertical-align: top;
 }
 
 dt {
@@ -77,8 +95,17 @@ code {
 	display: table;
 }
 
-dl > div {
+.code-wrapper,
+.table-wrapper {
+	overflow: auto;
+}
+
+dl > div:not(:last-child) {
 	padding: 2em 0;
+}
+
+dl > div:last-child {
+	padding-top: 2em;
 }
 
 .footnote {
@@ -87,9 +114,17 @@ dl > div {
 	color: #5d6177;
 }
 
+#installation-via-yarn {
+	float: right;
+}
+
 @media all and (max-width: 1200px) {
 	#banner {
 		margin-top: 0;
 		max-width: unset;
+	}
+
+	#installation-via-yarn {
+		float: unset;
 	}
 }
