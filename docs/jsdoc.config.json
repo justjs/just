@@ -12,7 +12,7 @@
     				"<link rel='stylesheet' href='../css/jsdoc.css'/>"
     			],
     			"header": [
-    				"<div id='logo'><a href='https://justjs.github.io'><img src='/img/logo-white-64x64.png' width='64' height='64' alt='Logo'/></a></div>"
+    				"<div id='logo'><a href='https://justjs.github.io'><img src='/img/logo-white-64x64.png' alt='Logo' srcset='img/logo-white-128x128.png 2x'/></a></div>"
     			]
     		}
     	}
