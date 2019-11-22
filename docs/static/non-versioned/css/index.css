@@ -30,13 +30,14 @@ main,
 
 main {
 	max-width: 1024px;
-	padding: 10em 5em;
+	padding: 10em 5%;
 }
 
 #banner {
-	padding: 5em;
+	padding: 5em 5%;
 	max-width: 1240px;
 	padding-top: 13em;
+	padding-top: 25vh;
 	text-align: center;
 	margin-top: 3em;
 }
@@ -73,7 +74,7 @@ h3, h4 {
 
 figure {
 	box-shadow: 0 0 5px rgba(0, 0, 0, .1);
-	padding: 3em;
+	padding: 5%;
 	display: inline-block;
 	vertical-align: top;
 }
