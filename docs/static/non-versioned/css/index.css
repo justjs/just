@@ -118,6 +118,28 @@ dl > div:last-child {
 	float: right;
 }
 
+#contentinfo {
+	background: black;
+	color: white;
+	padding: 2em;
+	text-align: center;
+}
+
+#contentinfo li {
+	display: inline-block;
+	vertical-align: middle;
+	position: relative;
+	margin-right: 1em;
+}
+
+#contentinfo li::before {
+	content: '• ';
+}
+
+#contentinfo a {
+	color: white;
+}
+
 @media all and (max-width: 1200px) {
 	#banner {
 		margin-top: 0;
