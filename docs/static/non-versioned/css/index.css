@@ -25,7 +25,7 @@ main,
 
 main {
 	max-width: 1024px;
-	padding: 10em 5%;
+	padding: 10% 5%;
 }
 
 #banner {
@@ -51,7 +51,7 @@ main {
 } 
 
 section {
-	padding: 10em 0;
+	padding: 15% 0;
 	border-top: 1px solid #ededed;
 }
 
@@ -60,11 +60,11 @@ main header {
 }
 
 main > .content-wrapper {
-	margin-bottom: 10em;
+	margin-bottom: 15%;
 }
 
 h3, h4 {
-	margin-top: 5em;
+	margin-top: 10%;
 }
 
 figure {
