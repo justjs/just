@@ -1,3 +1,13 @@
+@font-face {
+	font-family: 'SpaceMono';
+	src: url('/font/SpaceMono-Regular.ttf') format('truetype');
+}
+
+body[data-theme='light'] {
+	color: #110d15;
+	background: #fbfbfb;
+}
+
 * {
 	border: 0;
 	margin: 0;
@@ -5,21 +15,77 @@
 }
 
 body {
-	line-height: 1.5;
-	font-family: monospace;
+	line-height: 1.8;
+	font-family: helvetica, arial, sans-serif;
 	text-align: left;
-	font-size: 150%;
+	font-size: 125%;
+	overflow-x: hidden;
 }
 
-h1, h2, h3, h4, h5, h6 { font-family: arial; }
-h1, h2 { font-size: 2rem; }
+h1, h2, h3, h4, h5, h6, figcaption, caption, th, #contentinfo, #banner, code { font-family: 'SpaceMono', 'Courier New', Courier, monospace; font-weight: bolder; }
+h1, h2 { font-size: 2.5rem; }
 h3, h4 { font-size: 1.5rem; }
+
+#contentinfo, #banner, a, code {
+	font-weight: normal;
+	font-style: normal;
+}
+
+dt {
+	font-weight: bolder;
+}
 
 a {
 	text-decoration: unset;
-	color: #3b1154;
+	color: #54184d;
 }
 
 a:hover {
 	text-decoration: underline;
+}
+
+table {
+    text-align: left;
+    border-spacing: 0;
+    width: 100%;
+}
+
+td, th {
+    padding: .5em 2em;
+}
+
+main header {
+	margin-bottom: 10%;
+}
+
+main > .content-wrapper {
+	margin-bottom: 15%;
+}
+
+h3, h4 {
+	margin-top: 3em;
+	margin-bottom: 1em !important;
+}
+
+figure {
+	box-shadow: 0 0 5px rgba(0, 0, 0, .1);
+	padding: 5%;
+	display: inline-block;
+	vertical-align: top;
+}
+
+caption,
+figcaption {
+	text-align: left;
+	margin-bottom: 1em;
+}
+
+code {
+	background: rgba(0, 0, 0, .03);
+	padding: .25em 1em;
+	display: table;
+}
+
+dl > div {
+	margin-top: 2em;
 }
