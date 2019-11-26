@@ -16,20 +16,15 @@ body[data-theme='light'] {
 
 body {
 	line-height: 1.8;
-	font-family: helvetica, arial, sans-serif;
+	font-family: 'Courier New', 'SpaceMono', monospace;
 	text-align: left;
 	font-size: 125%;
 	overflow-x: hidden;
 }
 
-h1, h2, h3, h4, h5, h6, figcaption, caption, th, #contentinfo, #banner, code { font-family: 'SpaceMono', 'Courier New', Courier, monospace; font-weight: bolder; }
+h1, h2, h3, h4, h5, h6, figcaption, caption, th, code { letter-spacing: unset; font-family: 'SpaceMono', 'Courier New', monospace; font-weight: bolder; }
 h1, h2 { font-size: 2.5rem; }
 h3, h4 { font-size: 1.5rem; }
-
-#contentinfo, #banner, a, code {
-	font-weight: normal;
-	font-style: normal;
-}
 
 dt {
 	font-weight: bolder;
@@ -54,12 +49,13 @@ td, th {
     padding: .5em 2em;
 }
 
-main header {
+section > header {
 	margin-bottom: 10%;
 }
 
-main > .content-wrapper {
-	margin-bottom: 15%;
+section > header > * {
+	display: inline-block;
+	vertical-align: baseline;
 }
 
 h3, h4 {
@@ -81,11 +77,16 @@ figcaption {
 }
 
 code {
-	background: rgba(0, 0, 0, .03);
+	font-weight: normal;
+	background: rgba(0, 0, 0, .025);
 	padding: .25em 1em;
 	display: table;
 }
 
 dl > div {
 	margin-top: 2em;
+}
+
+pre {
+	font: inherit;
 }

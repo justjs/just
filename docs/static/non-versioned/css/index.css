@@ -6,32 +6,17 @@
 	padding: 1em 2em 0 2em;
 }
 
-main {
-	max-width: 1024px;
-	padding: 10% 5%;
-}
-
 section {
-	padding: 10% 0;
-	border-top: 1px dashed #ededed;
-}
-
-main,
-#banner {
+	padding: 5% 0;
+	max-width: 920px;
 	margin: auto;
 	width: 100%;
 	box-sizing: border-box;
+	border-top: 1px dashed #ededed;
 }
 
-#banner {
-	padding: 5em 5%;
-	max-width: 1240px;
-	padding-top: 13em;
-	padding-top: 25vh;
-	text-align: center;
-	margin-top: 3em;
-	background: linear-gradient(to bottom right, #3d1854, #54184d);
-	color: white;
+main {
+	padding: 10% 5%;
 }
 
 #logo {
@@ -59,7 +44,7 @@ main,
 }
 
 #contentinfo {
-	background: linear-gradient(to top left, #3d1854, #54184d);
+	background: black;
 	color: white;
 	padding: 2em;
 	text-align: center;
@@ -80,20 +65,17 @@ main,
 	color: white;
 }
 
-@media all and (max-width: 1200px) {
-	#banner {
-		margin-top: 0;
-		max-width: unset;
-	}
-}
-
 @media all and (max-width: 720px) {
 	body {
 		font-size: 100%;
 	}
 
-	main {
+	section {
 		padding: 2em;
+	}
+
+	section header {
+		margin-bottom: 3em;
 	}
 
 	figure {
@@ -123,8 +105,7 @@ main,
 		margin: 0 -2em;
 	}
 
-	figure,
-	.code-wrapper code {
+	figure {
 		padding: 2em;
 	}
 }

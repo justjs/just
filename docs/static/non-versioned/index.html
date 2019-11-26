@@ -3,45 +3,40 @@
 <head>
 	<meta charset='utf-8'/>
 	<title>Just js - The core for all your js projects.</title>
-	<link rel='apple-touch-icon-precomposed' sizes='57x57' href='/img/apple-touch-icon-57x57.png' />
-	<link rel='apple-touch-icon-precomposed' sizes='114x114' href='/img/apple-touch-icon-114x114.png' />
-	<link rel='apple-touch-icon-precomposed' sizes='72x72' href='/img/apple-touch-icon-72x72.png' />
-	<link rel='apple-touch-icon-precomposed' sizes='144x144' href='/img/apple-touch-icon-144x144.png' />
-	<link rel='apple-touch-icon-precomposed' sizes='60x60' href='/img/apple-touch-icon-60x60.png' />
-	<link rel='apple-touch-icon-precomposed' sizes='120x120' href='/img/apple-touch-icon-120x120.png' />
-	<link rel='apple-touch-icon-precomposed' sizes='76x76' href='/img/apple-touch-icon-76x76.png' />
-	<link rel='apple-touch-icon-precomposed' sizes='152x152' href='/img/apple-touch-icon-152x152.png' />
-	<link rel='icon' type='image/png' href='/img/favicon-196x196.png' sizes='196x196' />
-	<link rel='icon' type='image/png' href='/img/favicon-96x96.png' sizes='96x96' />
-	<link rel='icon' type='image/png' href='/img/favicon-32x32.png' sizes='32x32' />
-	<link rel='icon' type='image/png' href='/img/favicon-16x16.png' sizes='16x16' />
-	<link rel='icon' type='image/png' href='/img/favicon-128x128.png' sizes='128x128' />
-	<meta name='application-name' content='JustJs' />
-	<meta name='msapplication-TileColor' content='#3b1154' />
-	<meta name='msapplication-TileImage' content='/img/mstile-144x144.png' />
-	<meta name='msapplication-square70x70logo' content='/img/mstile-70x70.png' />
-	<meta name='msapplication-square150x150logo' content='/img/mstile-150x150.png' />
-	<meta name='msapplication-wide310x150logo' content='/img/mstile-310x150.png' />
-	<meta name='msapplication-square310x310logo' content='/img/mstile-310x310.png' />
-
+	<link rel="apple-touch-icon-precomposed" sizes="57x57" href="/img/apple-touch-icon-57x57.png" />
+	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="/img/apple-touch-icon-114x114.png" />
+	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="/img/apple-touch-icon-72x72.png" />
+	<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/img/apple-touch-icon-144x144.png" />
+	<link rel="apple-touch-icon-precomposed" sizes="60x60" href="/img/apple-touch-icon-60x60.png" />
+	<link rel="apple-touch-icon-precomposed" sizes="120x120" href="/img/apple-touch-icon-120x120.png" />
+	<link rel="apple-touch-icon-precomposed" sizes="76x76" href="/img/apple-touch-icon-76x76.png" />
+	<link rel="apple-touch-icon-precomposed" sizes="152x152" href="/img/apple-touch-icon-152x152.png" />
+	<link rel="icon" type="image/png" href="/img/favicon-196x196.png" sizes="196x196" />
+	<link rel="icon" type="image/png" href="/img/favicon-96x96.png" sizes="96x96" />
+	<link rel="icon" type="image/png" href="/img/favicon-32x32.png" sizes="32x32" />
+	<link rel="icon" type="image/png" href="/img/favicon-16x16.png" sizes="16x16" />
+	<link rel="icon" type="image/png" href="/img/favicon-128x128.png" sizes="128x128" />
+	<meta name="application-name" content="JustJs" />
+	<meta name="msapplication-TileColor" content="#3b1154" />
+	<meta name="msapplication-TileImage" content="/img/mstile-144x144.png" />
+	<meta name="msapplication-square70x70logo" content="/img/mstile-70x70.png" />
+	<meta name="msapplication-square150x150logo" content="/img/mstile-150x150.png" />
+	<meta name="msapplication-wide310x150logo" content="/img/mstile-310x150.png" />
+	<meta name="msapplication-square310x310logo" content="/img/mstile-310x310.png" />
 	<meta name='viewport' content='width=device-width, initial-scale=1'/>
 	<link rel='stylesheet' href='css/justjs.css'/>
 </head>
 <body data-theme='light'>
-	<header id='banner' role='banner'>
-		<div id='logo'>
-			<a href='https://justjs.github.io'>
-				<img src='img/logo-white-256x256.png' alt='Logo' srcset='img/logo-white-512x512.png 2x'/>
-			</a>
-		</div>
-		<p>The core for all your javascript projects.</p>
-	</header>
 	<main role='main'>
 		<header>
-			<h1>JustJs</h1>
+			<div id='logo'>
+				<a href='https://justjs.github.io'>
+					<img src='img/logo-black-256x256.png' alt='Logo' srcset='img/logo-black-512x512.png 2x'/>
+				</a>
+			</div>
 		</header>
 		<div class='content-wrapper'>
-			<p><b>JustJs</b> is a set of common heavily-used utilities/helpers for javascript environments. The goal is to collect the most used code throughout developments in javascript without compromising bundle size.</p>
+			<p><b>JustJs</b> is a set of common heavily-used utilities/helpers for javascript environments. Our goal is to collect the most used code throughout developments in javascript without compromising bundle size.</p>
 		</div>
 		<section id='usage'>
 			<header>
@@ -52,7 +47,12 @@
 				<h3>Browser</h3>
 				<p>To use the latest version of <b>JustJs</b>' core over a CDN, include the following anywhere on your HTML:</p>
 				<div class='code-wrapper'>
-					<code>&lt;script src="%{browser-example-url}%" integrity="%{browser-example-sri}%' crossorigin="anonymous" async&gt;&lt;/script&gt;</code>
+					<code><pre>&lt;script
+					src="%{browser-example-url}%"
+					integrity="%{browser-example-sri}%'
+					crossorigin="anonymous"
+					async&gt;
+					&lt;/script&gt;</pre></code>
 				</div>
 				<p>Then, you can replace <em>core.min.js</em> with <a href='#available-bundles-browser'>any of these files</a> and/or <em>%{latest-version}%</em> with <a href='#available-versions'>any of these versions</a>.</p>
 				<h3>Server</h3>
