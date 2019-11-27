@@ -12,19 +12,29 @@ section {
 	margin: auto;
 	width: 100%;
 	box-sizing: border-box;
-	border-top: 1px dashed #ededed;
+}
+
+#contentinfo {
+	margin-top: 5%;
 }
 
 main {
-	padding: 10% 5%;
+	padding: 5%;
 }
 
-#logo {
-	margin-bottom: 7em;
+main > .content-wrapper {
+	font-size: 200%;
+	max-width: 920px;
+	margin: auto;
+	padding: 5em 0;
 }
 
 .content-wrapper > *:not(:last-child) {
 	margin-bottom: 2em;
+}
+
+.code-wrapper code {
+	padding: 2em;
 }
 
 .code-wrapper,
@@ -36,7 +46,7 @@ main {
 .footnote {
 	font-size: 80%;
 	vertical-align: bottom;
-	color: #5d6177;
+	color: darkgoldenrod;
 }
 
 #installation-via-yarn {
@@ -71,6 +81,10 @@ main {
 	}
 
 	section {
+		padding: 2em 0;
+	}
+
+	main {
 		padding: 2em;
 	}
 
@@ -97,7 +111,7 @@ main {
 	}
 
 	.table-wrapper {
-		margin-right: -2em;
+		margin: 0 -2em;
 	}
 
 	.code-wrapper {

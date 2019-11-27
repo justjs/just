@@ -27,16 +27,27 @@
 	<link rel='stylesheet' href='css/justjs.css'/>
 </head>
 <body data-theme='light'>
+	<!--<header id='banner' role='banner'>
+		<div id='logo'>
+			<a href='https://justjs.github.io'>
+				<img src='img/favicon.ico' alt='Logo' srcset='img/favicon-128x128.png 2x'/>
+			</a>
+		</div>
+		<nav>
+			<ul>
+				<li><a href='#usage'>Usage</a></li>
+				<li><a href='#flavors'>Flavors</a></li>
+				<li><a href='#versioning'>Versioning</a></li>
+				<li><a href='#history'>History</a></li>
+			</ul>
+		</nav>
+	</header>-->
 	<main role='main'>
 		<header>
-			<div id='logo'>
-				<a href='https://justjs.github.io'>
-					<img src='img/logo-black-256x256.png' alt='Logo' srcset='img/logo-black-512x512.png 2x'/>
-				</a>
-			</div>
+			<h1>JustJs</h1>
 		</header>
 		<div class='content-wrapper'>
-			<p><b>JustJs</b> is a set of common heavily-used utilities/helpers for javascript environments. Our goal is to collect the most used code throughout developments in javascript without compromising bundle size.</p>
+			<p><dfn title='JustJs'>Heavily-used helpers for javascript environments.</dfn></p>
 		</div>
 		<section id='usage'>
 			<header>
@@ -67,13 +78,12 @@
 				</figure>
 			</div>
 		</section>
-		<section id='about-bundles'>
+		<section id='flavors'>
 			<header>
-				<h2>About bundles</h2>
+				<h2>Flavors</h2>
 			</header>
 			<div class='content-wrapper'>
-				<p><b>JustJs</b> releases multiple files under the same repository, so that some files might not be available on older versions. For example: "basic.min.js" won't be available until v1.x.0, but you can use "core.min.js" since v1.0.0.</p>
-				<p>To use <b>JustJs</b>, you should choose any of the following files:</p>
+				<p><b>JustJs</b> distributes multiple files when a new version is released, therefore you should pick the one that better suits your needs...</p>
 				<figure id='available-bundles-browser'>
 					<figcaption>Available bundles for browser</figcaption>
 					<dl>
@@ -104,7 +114,7 @@
 						</div>
 					</dl>
 				</figure>
-				<p>Then, you are ready to choose the version...</p>
+				<p>If you don't know what to choose, "core.min.js" is always a good option...</p>
 			</div>
 		</section>
 		<section id='versioning'>
@@ -114,7 +124,7 @@
 			<div class='content-wrapper'>
 				<p><b>JustJs</b> follows the <a href='https://semver.org/' target='_blank' rel='noopener noreferrer'>Semantic Versioning Specification (SemVer)</a> to version each release. However, we tag the release prepending "v" to the version.</p>
 				<p>Usually, you should avoid using release-candidates (those releases that include "-rc" on the version) and use a previous/next version instead, since those are used for testing purposes and removed after a release is no longer a candidate.</p>
-				<p>If you need more information about a certain version, check the source code on Github.</p>
+				<p>If you need more information about a certain version, please check the source code on Github.</p>
 				<div class='table-wrapper'>
 					%{available-versions-table}%
 				</div>

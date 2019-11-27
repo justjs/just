@@ -4,7 +4,7 @@
 }
 
 body[data-theme='light'] {
-	color: #110d15;
+	color: black;
 	background: #fbfbfb;
 }
 
@@ -23,8 +23,13 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6, figcaption, caption, th, code { letter-spacing: unset; font-family: 'SpaceMono', 'Courier New', monospace; font-weight: bolder; }
-h1, h2 { font-size: 2.5rem; }
-h3, h4 { font-size: 1.5rem; }
+h1, h2 { font-size: 2.25em; }
+h3, h4 { font-size: 1.25em; }
+
+dfn {
+	font-family: 'SpaceMono', 'Courier New', monospace;
+	font-style: normal;
+}
 
 dt {
 	font-weight: bolder;
@@ -61,6 +66,15 @@ section > header > * {
 h3, h4 {
 	margin-top: 3em;
 	margin-bottom: 1em !important;
+	color: darkgoldenrod;
+}
+
+h3::before, h4::before {
+	content: '[';
+}
+
+h3::after, h4::after  {
+	content: ']';
 }
 
 figure {
@@ -78,7 +92,8 @@ figcaption {
 
 code {
 	font-weight: normal;
-	background: rgba(0, 0, 0, .025);
+	background: gold;
+	color: black;
 	padding: .25em 1em;
 	display: table;
 }
@@ -89,4 +104,8 @@ dl > div {
 
 pre {
 	font: inherit;
+}
+
+img {
+	display: table;
 }
