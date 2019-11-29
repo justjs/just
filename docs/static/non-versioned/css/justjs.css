@@ -1,6 +1,6 @@
 @font-face {
 	font-family: 'SpaceMono';
-	src: url('/font/SpaceMono-Regular.ttf') format('truetype');
+	src: url('/font/spacemono/SpaceMono-Regular.ttf') format('truetype');
 }
 
 body[data-theme='light'] {
