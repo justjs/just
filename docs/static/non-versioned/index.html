@@ -3,26 +3,75 @@
 <head>
 	<meta charset='utf-8'/>
 	<title>Just js - The core for all your js projects.</title>
-	<link rel='shortcut icon' type='image/png' href='img/favicon-16x16.png'/>
+	<link rel='preload' href='/font/spacemono/SpaceMono-Regular.ttf' as='font' />
+	<link rel='preload' href='css/justjs.css' as='style'/>
+	<link rel='preload' href='css/index.css' as='style'/>
+	<link rel='preconnect' href='https://travis-ci.org/' crossorigin />
+	<link rel='dns-prefetch' href='https://travis-ci.org/' crossorigin />
+	<link rel="apple-touch-icon-precomposed" sizes="57x57" href="/img/apple-touch-icon-57x57.png" />
+	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="/img/apple-touch-icon-114x114.png" />
+	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="/img/apple-touch-icon-72x72.png" />
+	<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/img/apple-touch-icon-144x144.png" />
+	<link rel="apple-touch-icon-precomposed" sizes="60x60" href="/img/apple-touch-icon-60x60.png" />
+	<link rel="apple-touch-icon-precomposed" sizes="120x120" href="/img/apple-touch-icon-120x120.png" />
+	<link rel="apple-touch-icon-precomposed" sizes="76x76" href="/img/apple-touch-icon-76x76.png" />
+	<link rel="apple-touch-icon-precomposed" sizes="152x152" href="/img/apple-touch-icon-152x152.png" />
+	<link rel="icon" type="image/png" href="/img/favicon-196x196.png" sizes="196x196" />
+	<link rel="icon" type="image/png" href="/img/favicon-96x96.png" sizes="96x96" />
+	<link rel="icon" type="image/png" href="/img/favicon-32x32.png" sizes="32x32" />
+	<link rel="icon" type="image/png" href="/img/favicon-16x16.png" sizes="16x16" />
+	<link rel="icon" type="image/png" href="/img/favicon-128x128.png" sizes="128x128" />
+	<meta name="application-name" content="JustJs" />
+	<meta name="msapplication-TileColor" content="#3b1154" />
+	<meta name="msapplication-TileImage" content="/img/mstile-144x144.png" />
+	<meta name="msapplication-square70x70logo" content="/img/mstile-70x70.png" />
+	<meta name="msapplication-square150x150logo" content="/img/mstile-150x150.png" />
+	<meta name="msapplication-wide310x150logo" content="/img/mstile-310x150.png" />
+	<meta name="msapplication-square310x310logo" content="/img/mstile-310x310.png" />
+	<meta name='viewport' content='width=device-width, initial-scale=1'/>
 	<link rel='stylesheet' href='css/justjs.css'/>
-	<link rel='stylesheet' href='css/index.css'/>
 </head>
-<body>
-	<header id='banner' role='banner'>
-		<div id='logo'>
-			<a href='https://justjs.github.io'>
-				<img src='img/logo-white-256x256.png' alt='Logo' width='256' height='256'/>
-			</a>
-		</div>
-		<p>The core for all your javascript projects.</p>
-	</header>
+<body data-theme='light'>
 	<main role='main'>
-		<header>
-			<h1>JustJs</h1>
-		</header>
-		<div class='content-wrapper'>
-			<p><b>JustJs</b> is a set of common heavily-used utilities/helpers for javascript environments. The goal is to collect the most used code throughout developments in javascript without compromising bundle size.</p>
+		<div id='home'>
+			<div class='content-wrapper'>
+				<h1>JustJs</h1>
+				<p><dfn title='JustJs'>Heavily-used helpers for javascript environments.</dfn></p>
+			</div>
 		</div>
+		<div id='banner' role='banner'>
+			<div class='logo'>
+				<a href='https://justjs.github.io' id='banner-logo-link'>
+					<img src='img/favicon-32x32.png' alt='Logo' srcset='img/apple-touch-icon-72x72.png 2x' />
+				</a>
+			</div>
+			<nav id='page-nav'>
+				<ul>
+					<li><a href='#state'>State</a></li>
+					<li><a href='#usage'>Usage</a></li>
+					<li><a href='#flavors'>Flavors</a></li>
+					<li><a href='#versioning'>Versioning</a></li>
+					<li><a href='#history'>History</a></li>
+				</ul>
+			</nav>
+		</div>
+		<section id='state'>
+			<header>
+				<h2>State <a href='https://travis-ci.org/justjs/just' target='_blank' rel='noopener noreferrer' id='travis-badge-link'></a></h2>
+			</header>
+			<div class='content-wrapper'>
+				<dl>
+					<div>
+						<dt>Latest version:</dt>
+						<dd><a href='/%{tag}%/index.html'>%{tag}%</a></p></dd>
+					</div>
+					<div>
+						<dt>Released versions:</dt>
+						<dd><a href='#available-versions'>Check</a></dd>
+					</div>
+				</dl>
+			</div>
+		</section>
 		<section id='usage'>
 			<header>
 				<h2>Usage</h2>
@@ -31,33 +80,38 @@
 				<p><b>JustJs</b> is available on npm for server usage and distributed over a CDN for browser usage.</p>
 				<h3>Browser</h3>
 				<p>To use the latest version of <b>JustJs</b>' core over a CDN, include the following anywhere on your HTML:</p>
-				<code>
-					&lt;script src='https://cdn.jsdelivr.net/npm/justjs@v1.0.0/dist/browser/core.min.js' async&gt;&lt;/script&gt;
-				</code>
-				<p>Then, if you want, you can replace "v1.0.0" with <a href='#available-versions'>any of these versions</a> and/or "core.min.js" with <a href='#available-bundles-browser'>any of these files</a>.</p>
+				<div class='code-wrapper'>
+					<code><pre>&lt;script
+					src="%{browser-example-url}%"
+					integrity="%{browser-example-sri}%'
+					crossorigin="anonymous"
+					async&gt;
+					&lt;/script&gt;</pre></code>
+				</div>
+				<p>Then, you can replace <em>core.min.js</em> with <a href='#available-bundles-browser'>any of these files</a> and/or <em>%{latest-version}%</em> with <a href='#available-versions'>any of these versions</a>.</p>
 				<h3>Server</h3>
 				<p>To use the latest version of <b>JustJs</b> on a server, install it <a href='#installation-via-npm'>via npm</a> or <a href='#installation-via-yarn'>via yarn</a>:</p>
 				<figure id='installation-via-npm'>
 					<figcaption>Installation via npm</figcaption>
-					<code>npm i just</code>
+					<code>npm i @just-js/just</code>
 				</figure>
 				<figure id='installation-via-yarn'>
 					<figcaption>Installation via yarn</figcaption>
-					<code>yarn add just</code>
+					<code>yarn add @just-js/just</code>
 				</figure>
 			</div>
 		</section>
-		<section id='available-flavors'>
+		<section id='flavors'>
 			<header>
-				<h2>Available flavors</h2>
+				<h2>Flavors</h2>
 			</header>
 			<div class='content-wrapper'>
-				<p><b>JustJs</b> releases multiple bundles under the same repository, so that some bundles might not be available on older versions. For example: "basic.min.js" won't be available until v1.x.0, but you can use "core.min.js" since v1.0.0.</p>
+				<p><b>JustJs</b> distributes multiple files when a new version is released, therefore you should pick the one that better suits your needs...</p>
 				<figure id='available-bundles-browser'>
 					<figcaption>Available bundles for browser</figcaption>
 					<dl>
 						<div>
-							<dt>core[.min].js <span class='footnote'>[Since v1.0.0]</span></dt>
+							<dt>core[.min].js <span class='footnote'>[Default]</span><span class='footnote'>[Since v1.0.0]</span></dt>
 							<dd>Things you need for small/static websites.</dd>
 						</div>
 						<div>
@@ -68,36 +122,35 @@
 							<dt>just[.min].js <span class='footnote'>[Under development]</span></dt>
 							<dd>The full suite to develop a medium/large website.</dd>
 						</div>
+						<div>
+							<dt>polyfills.min.js <span class='footnote'>[Since v1.0.0]</span><span class='footnote'>[optional]</span></dt>
+							<dd>Some basic/important polyfills to add IE9+ support.</dd>
+						</div>
 					</dl>
 				</figure>
 				<figure id='available-bundles-server'>
 					<figcaption>Available bundles for server</figcaption>
 					<dl>
 						<div>
-							<dt>core[.min].js <span class='footnote'>[Since v1.0.0]</span></dt>
+							<dt>core[.min].js <span class='footnote'>[Default]</span><span class='footnote'>[Since v1.0.0]</span></dt>
 							<dd>Useful helpers for large developments.</dd>
 						</div>
 					</dl>
 				</figure>
-				<table id='available-versions'>
-					<caption>Available versions</caption>
-					<thead>
-						<tr>
-							<th>Version</th>
-							<th>Docs</th>
-							<th>Source code</th>
-							<th>Downloads</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td><a href='v1.0.0/index.html'>v1.0.0</a></td>
-							<td><a href='v1.0.0/browser/index.html'>Browser</a>/<a href='v1.0.0/server/index.html'>Server</a></td>
-							<td><a href=''>Github</a></td>
-							<td><a href=''>CDN</a>/<a href=''>NPM</a></td>
-						</tr>
-					</tbody>
-				</table>
+				<p>If you don't know what to choose, "core.min.js" is always a good option...</p>
+			</div>
+		</section>
+		<section id='versioning'>
+			<header>
+				<h2>Versioning</h2>
+			</header>
+			<div class='content-wrapper'>
+				<p><b>JustJs</b> follows the <a href='https://semver.org/' target='_blank' rel='noopener noreferrer'>Semantic Versioning Specification (SemVer)</a> to version each release. However, we tag the release prepending "v" to the version.</p>
+				<p>Usually, you should avoid using release-candidates (those releases that include "-rc" on the version) and use a previous/next version instead, since those are used for testing purposes and removed after a release is no longer a candidate.</p>
+				<p>If you need more information about a certain version, please check the source code on Github.</p>
+				<div class='table-wrapper'>
+					%{available-versions-table}%
+				</div>
 			</div>
 		</section>
 		<section id='history'>
@@ -111,5 +164,32 @@
 			</div>
 		</section>
 	</main>
+	<footer id='contentinfo' role='contentinfo'>
+		<ul>
+			<li><a href='https://github.com/justjs/just'>Contribute</a></li>
+			<li><a href='https://github.com/justjs/just/issues'>Report an issue</a></li>
+		</ul>
+		<br>
+		<small>© Copyright 2019 <a href='https://github.com/AlexisPuga' rel='noopener noreferrer' target='_blank'>Alexis Puga</a> and <a href='https://github.com/justjs/just/graphs/contributors' target='_blank' rel='noopener noreferrer'>contributors</a>. <a href='https://github.com/justjs/just' target='_blank' rel='noopener noreferrer'>JustJs</a> is released under the <a href='https://github.com/justjs/just/blob/master/LICENSE' target='_blank' rel='noopener noreferrer'>BSD 3-Clause License</a>.</small>
+	</footer>
+	<link rel='stylesheet' href='css/index.css'/>
+	<script>
+		window.onload = function () {
+			[{
+				'src': 'https://travis-ci.org/justjs/just.svg?branch=master',
+				'alt': 'Build Status',
+				'targetSelector': '#travis-badge-link'
+			}].forEach(function (opts) {
+				var img = new Image();
+				var target = document.querySelector(opts.targetSelector);
+
+				img.onload = (function (container) {
+					return function () { container.appendChild(this); }; 
+				})(target);
+				img.src = opts.src;
+				img.alt = opts.alt;
+			});
+		};
+	</script>
 </body>
 </html>

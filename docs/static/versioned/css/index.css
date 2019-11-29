@@ -1,41 +1,58 @@
-#home {
-	color: white;
+html, body, main {
 	width: 100%;
-	height: 100vh;
-	display: table;
-	background: linear-gradient(to right, #3b1154, #272342);
-	border-spacing: 2em;
-	table-layout: fixed;
+	height: 100%;
+	position: relative;
 }
 
-#home > * {
-	height: 100%;
-	vertical-align: middle;
-	display: table-cell;
+body {
+	display: table;
 	text-align: center;
 }
 
-#home > header {
-	padding-right: 2em;
-	text-align: right;
+main {
+	display: table-cell;
+	vertical-align: middle;
+	padding: 5%;
+}
+
+main > header {
+	padding-bottom: 5%;
 }
 
 #instructions {
-	text-align: left;
-	padding-left: 2em;
+	border-top: 2px solid #ededed;
 }
 
-#instructions li {
-	font-size: 125%;
-	display: inline-block;
-	vertical-align: middle;
+#instructions p {
 	font-weight: bolder;
 }
 
-#instructions li:not(:first-child) {
-	margin-left: 2em;
+#instructions > * {
+	text-align: left;
 }
 
-#instructions h2:not(:first-child) {
-	margin-top: 1em;
+.nav-section {
+	display: inline-block;
+	vertical-align: top;
+	padding: 5%;
+}
+
+@media all and (max-width: 1024px) {
+	main {
+		padding: 2em;
+	}
+
+	.nav-section {
+		display: block;
+		padding: 2em 0;
+	}
+
+	.nav-section li {
+		display: inline-block;
+		vertical-align: middle;
+	}
+
+	.nav-section li:not(:last-child) {
+		margin-right: 1em;
+	}
 }

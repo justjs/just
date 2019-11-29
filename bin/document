@@ -1,13 +1,15 @@
 #!/bin/bash
 
-VERSION=$1
+TAG="$1"
+VERSION="${TAG/v/}"
 ROOT="${BASH_SOURCE%/*}/.." # Source: https://stackoverflow.com/a/12694189
 PUBLIC_DIR='docs/public'
-DESTINATION_DIR="$PUBLIC_DIR/$VERSION"
+DESTINATION_DIR="$PUBLIC_DIR/$TAG"
+AVAILABLE_VERSIONS=(`./bin/get-available-versions`)
 
 cd "$ROOT"
 
-isValidVersion () {
+isValidTag () {
 	[[ "$1" =~ ^v[0-9] ]]
 }
 
@@ -29,38 +31,31 @@ copyStaticFiles () {
 
 }
 
-getAvailableVersions () {
-
-	local availableVersions=()
-	local version
-
-	for dirname in $(ls -d "$PUBLIC_DIR"/*/); do
-
-		version=${dirname::-1} # Remove last slash.
-		version=${version/$PUBLIC_DIR\//}
-
-		if isValidVersion "$version"; then
-			availableVersions+=("$version")
-		fi
-
-	done
-
-	echo "${availableVersions[@]}"
-
-}
-
 replaceStaticFileVars () {
 
-	local FILENAME=$1
-	local availableVersions=`getAvailableVersions`
-	local replacedText
-
+	local FILENAME="$1"
+	# Next line based on:
+	# - Sort array: https://stackoverflow.com/a/11789688
+	# - Sort by version: https://stackoverflow.com/a/4495368
+	local availableVersionsDesc=(`IFS=$'\n' && sort -t. -k 1.2,1nr -k 2,2nr -k 3,3nr -k 4,4nr <<< "${AVAILABLE_VERSIONS[*]}" && unset IFS`)
+	local availableVersionsTable=`./docs/tmpl/available-versions-table "${availableVersionsDesc[@]}"`
+	local latestVersion="${availableVersionsDesc[0]}"
+	local browserExampleFilename="dist/browser/core.min.js"
+	local browserExampleUrl="https://cdn.jsdelivr.net/npm/@just-js/just/@$latestVersion/$browserExampleFilename"
+	local browserExampleSri=`./bin/generate-sri "$browserExampleFilename"`
 	echo "[Docs] Replacing vars in $FILENAME"
 
 	while read line; do
 
+		# TODO: Replace all in once.
 		replacedText=${line//\%\{version\}\%/$VERSION}
-		replacedText=${replacedText//\%\{available\-versions\}\%/$availableVersions}
+		replacedText=${replacedText//\%\{tag\}\%/$TAG}
+		replacedText=${replacedText//\%\{available\-versions\}\%/$AVAILABLE_VERSIONS}
+		replacedText=${replacedText//\%\{available\-versions-table\}\%/$availableVersionsTable}
+		replacedText=${replacedText//\%\{sri\}\%/$sri}
+		replacedText=${replacedText//\%\{latest\-version\}\%/$latestVersion}
+		replacedText=${replacedText//\%\{browser-example-url\}\%/$browserExampleUrl}
+		replacedText=${replacedText//\%\{browser-example-sri\}\%/$browserExampleSri}
 
 		echo "$replacedText"
 
@@ -84,7 +79,7 @@ document () {
 
 }
 
-if ! isValidVersion "$VERSION"; then
+if ! isValidTag "$TAG"; then
 
 	echo "[Docs] You should provide a release tag."
 	exit 1

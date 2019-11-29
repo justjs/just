@@ -1,27 +1,24 @@
-#page-header,
-#page-header-opener.is-active {
-	background: #3b1154;
-}
-
-#content-nav li:not(.is-active),
-#page-header,
-#page-header a,
-#page-header h3 {
-	color: #6d638f;
-}
-
-#page-header-opener
-#content-title,
-#page-header :focus,
-#page-header a:hover,
-#page-header a b,
-#page-header li.is-active a,
-#page-title a {
-	color: white;
+a {
+	color: #54184d;
 }
 
 #logo img {
 	display: table;
 	margin: auto;
 	padding: 60px 0;
+}
+
+td.description {
+	min-width: 20em;
+}
+
+@media all and (max-width: 767px) {
+	h1, h2 {
+		font-size: 150%;
+		margin-bottom: 1em;
+	}
+
+	.signature {
+		font-size: 1rem;
+	}
 }

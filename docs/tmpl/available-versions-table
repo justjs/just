@@ -1,0 +1,41 @@
+#!/bin/bash
+
+AVAILABLE_VERSIONS=("$@")
+
+table=$'
+<table id='available-versions'>
+	<caption>Available versions</caption>
+	<thead>
+		<tr>
+			<th>Version</th>
+			<th>Docs</th>
+			<th>Source code</th>
+			<th>Downloads</th>
+		</tr>
+	</thead>
+	<tbody>
+		$rows
+	</tbody>
+</table>'
+rows=()
+
+for version in "${AVAILABLE_VERSIONS[@]}"; do
+	
+	tag="v$version"
+	githubLink="https://github.com/justjs/just/releases/tag/$tag"
+	cdnLink="https://cdn.jsdelivr.net/npm/@just-js/just@$version/dist/browser/"
+	npmLink="https://www.npmjs.com/package/@just-js/just/v/$version"
+
+	rows+=($'
+	<tr>
+		<td><a href="'"$tag"'/index.html">'"$version"'</a></td>
+		<td><a href="'"$tag"'/browser/index.html">Browser</a>/<a href="'"$tag"'/server/index.html">Server</a></td>
+		<td><a href="'"$githubLink"'" target="_blank" rel="noopener noreferrer">Github</a></td>
+		<td><a href="'"$cdnLink"'" target="_blank" rel="noopener noreferrer">CDN</a>/<a href="'"$npmLink"'" target="_blank" rel="noopener noreferrer">NPM</a></td>
+	</tr>')
+
+done
+
+table=${table/\$rows/${rows[@]}}
+
+echo "$table"

@@ -1,26 +1,119 @@
+@font-face {
+	font-family: 'SpaceMono';
+	src: url('/font/spacemono/SpaceMono-Regular.ttf') format('truetype');
+}
+
+body[data-theme='light'] {
+	color: black;
+	background: #fbfbfb;
+}
+
 * {
 	border: 0;
 	margin: 0;
 	padding: 0;
 }
 
-body {
-	line-height: 1.5;
-	font-family: monospace;
-	text-align: left;
-	font-size: 150%;
+html {
+	background: rgba(0, 0, 0, .03);
 }
 
-h1, h2 {
-	font-size: 100%;
-	text-transform: uppercase;
+body {
+	line-height: 1.8;
+	font-family: 'Courier New', 'SpaceMono', monospace;
+	text-align: left;
+	font-size: 125%;
+	overflow-x: hidden;
+	max-width: 1920px;
+	margin: auto;
+}
+
+h1, h2, h3, h4, h5, h6, figcaption, caption, th, code { letter-spacing: unset; font-family: 'SpaceMono', 'Courier New', monospace; font-weight: bolder; }
+h1, h2 { font-size: 2.15em; }
+h3, h4 { font-size: 1.25em; }
+
+dfn {
+	font-family: 'SpaceMono', 'Courier New', monospace;
+	font-style: normal;
+}
+
+li {
+	list-style: none;
+}
+
+dt {
+	font-weight: bolder;
 }
 
 a {
 	text-decoration: unset;
-	color: #3b1154;
+	color: #54184d;
 }
 
 a:hover {
 	text-decoration: underline;
+}
+
+table {
+    text-align: left;
+    border-spacing: 0;
+    width: 100%;
+}
+
+td, th {
+    padding: .5em 2em;
+}
+
+section {
+	padding: 5em 5% 0 5%;
+	margin: auto;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+section > header {
+	margin-bottom: 10%;
+}
+
+h3, h4 {
+	margin-top: 3em;
+	margin-bottom: 1em !important;
+}
+
+figure {
+	border: 2px solid #ededed;
+	padding: 5%;
+	display: inline-block;
+	vertical-align: top;
+}
+
+caption,
+figcaption {
+	text-align: left;
+	margin-bottom: 1em;
+}
+
+code {
+	font-weight: normal;
+	background: rgba(0, 0, 0, .03);
+	color: black;
+	padding: .25em 1em;
+	display: table;
+}
+
+dl > div {
+	margin-top: 2em;
+}
+
+pre {
+	font: inherit;
+}
+
+.logo img {
+	display: table;
+	margin: auto;
+}
+
+nav li {
+	font-weight: bolder;
 }
