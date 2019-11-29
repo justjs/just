@@ -7,12 +7,11 @@
 }
 
 section {
-	padding: 5em 5% 0 5%;
 	max-width: 55em;
-	margin: auto;
-	width: 100%;
-	box-sizing: border-box;
 }
+
+h1, h2 { font-size: 2.15em; }
+h3, h4 { font-size: 1.25em; }
 
 #contentinfo {
 	margin-top: 10%;
@@ -72,7 +71,6 @@ main,
 #page-nav li {
 	display: inline-block;
 	vertical-align: middle;
-	font-weight: bolder;
 }
 
 #banner .logo {

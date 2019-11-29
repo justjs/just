@@ -29,33 +29,38 @@
 </head>
 <body>
 	<main role='main'>
-		<section id='home'>
-			<header>
-				<div id='logo'>
-					<a href='/'>
-						<img src='/img/logo-white-256x256.png' alt='Logo' srcset='/img/logo-white-512x512.png 2x'/>
-					</a>
-				</div>
-				<p><a href='https://github.com/justjs/just/releases/tag/%{tag}%' target='_blank' rel='noopener noreferrer'>%{tag}%</a></p>
-			</header>
-			<nav id='instructions' role='navigation'>
-				<h2>Download it</h2>
+		<header>
+			<div class='logo'>
+				<a href='/'>
+					<img src='/img/favicon-256x256.png' alt='Logo' srcset='/img/favicon-512x512.png 2x'/>
+				</a>
+			</div>
+			<br>
+			<p><a href='https://github.com/justjs/just/releases/tag/%{tag}%' target='_blank' rel='noopener noreferrer'>%{tag}%</a></p>
+		</header>
+		<nav id='instructions' role='navigation'>
+			<div class='nav-section'>
+				<p>Download it:</p>
 				<ul>
 					<li><a href='https://github.com/justjs/just/releases/tag/%{tag}%' target='_blank' rel='noopener noreferrer'>Github</a></li>
 					<li><a href='https://cdn.jsdelivr.net/npm/@just-js/just@%{version}%/dist/browser/' target='_blank' rel='noopener noreferrer'>CDN</a></li>
 					<li><a href='https://www.npmjs.com/package/@just-js/just/v/%{version}%' target='_blank' rel='noopener noreferrer'>NPM</a></li>
 				</ul>
-				<h2>Check the docs</h2>
+			</div>
+			<div class='nav-section'>
+				<p>Check the docs:</p>
 				<ul>
 					<li><a href='browser/index.html'>Browser</a></li>
 					<li><a href='server/index.html'>Server</a></li>
 				</ul>
-				<h2>Visit us</h2>
+			</div>
+			<div class='nav-section'>
+				<p>Visit us:</p>
 				<ul>
 					<li><a href='https://github.com/justjs' target='_blank' rel='noopener noreferrer'>on Github</a></li>
 				</ul>
-			</nav>
-		</section>
+			</div>
+		</nav>
 	</main>
 </body>
 </html>

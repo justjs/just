@@ -37,6 +37,10 @@ dfn {
 	font-style: normal;
 }
 
+li {
+	list-style: none;
+}
+
 dt {
 	font-weight: bolder;
 }
@@ -60,13 +64,15 @@ td, th {
     padding: .5em 2em;
 }
 
-section > header {
-	margin-bottom: 10%;
+section {
+	padding: 5em 5% 0 5%;
+	margin: auto;
+	width: 100%;
+	box-sizing: border-box;
 }
 
-section > header > * {
-	display: inline-block;
-	vertical-align: baseline;
+section > header {
+	margin-bottom: 10%;
 }
 
 h3, h4 {
@@ -106,4 +112,8 @@ pre {
 img {
 	display: table;
 	margin: auto;
+}
+
+nav li {
+	font-weight: bolder;
 }
