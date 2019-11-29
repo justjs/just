@@ -31,17 +31,18 @@
 		<div id='home'>
 			<div class='content-wrapper'>
 				<h1>JustJs</h1>
-				<p><dfn title='JustJs'>Heavily-used helpers for javascript environments.</dfn></p>			
+				<p><dfn title='JustJs'>Heavily-used helpers for javascript environments.</dfn></p>
 			</div>
 		</div>
 		<div id='banner' role='banner'>
 			<div class='logo'>
-				<a href='https://justjs.github.io'>
-					<img src='img/favicon-32x32.png' alt='Logo' srcset='img/apple-touch-icon-72x72.png 2x'/>
+				<a href='https://justjs.github.io' id='banner-logo-link'>
+					<img src='img/favicon-32x32.png' alt='Logo' srcset='img/apple-touch-icon-72x72.png 2x' />
 				</a>
 			</div>
 			<nav id='page-nav'>
 				<ul>
+					<li><a href='#state'>State</a></li>
 					<li><a href='#usage'>Usage</a></li>
 					<li><a href='#flavors'>Flavors</a></li>
 					<li><a href='#versioning'>Versioning</a></li>
@@ -49,6 +50,23 @@
 				</ul>
 			</nav>
 		</div>
+		<section id='state'>
+			<header>
+				<h2>State <a href='https://travis-ci.org/justjs/just' target='_blank' rel='noopener noreferrer' id='travis-badge-link'></a></h2>
+			</header>
+			<div class='content-wrapper'>
+				<dl>
+					<div>
+						<dt>Latest version:</dt>
+						<dd><a href='/%{tag}%/index.html'>%{tag}%</a></p></dd>
+					</div>
+					<div>
+						<dt>Released versions:</dt>
+						<dd><a href='#available-versions'>Check</a></dd>
+					</div>
+				</dl>
+			</div>
+		</section>
 		<section id='usage'>
 			<header>
 				<h2>Usage</h2>
@@ -150,5 +168,23 @@
 		<small>© Copyright 2019 <a href='https://github.com/AlexisPuga' rel='noopener noreferrer' target='_blank'>Alexis Puga</a> and <a href='https://github.com/justjs/just/graphs/contributors' target='_blank' rel='noopener noreferrer'>contributors</a>. Released under the <a href='https://github.com/justjs/just/blob/master/LICENSE' target='_blank' rel='noopener noreferrer'>BSD 3-Clause License</a>.</small>
 	</footer>
 	<link rel='stylesheet' href='css/index.css'/>
+	<script>
+		window.onload = function () {
+			[{
+				'src': 'https://travis-ci.org/justjs/just.svg?branch=master',
+				'alt': 'Build Status',
+				'targetSelector': '#travis-badge-link'
+			}].forEach(function (opts) {
+				var img = new Image();
+				var target = document.querySelector(opts.targetSelector);
+
+				img.onload = (function (container) {
+					return function () { container.appendChild(this); }; 
+				})(target);
+				img.src = opts.src;
+				img.alt = opts.alt;
+			});
+		};
+	</script>
 </body>
 </html>

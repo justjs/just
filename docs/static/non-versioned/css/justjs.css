@@ -109,7 +109,7 @@ pre {
 	font: inherit;
 }
 
-img {
+.logo img {
 	display: table;
 	margin: auto;
 }
