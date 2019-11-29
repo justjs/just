@@ -23,7 +23,7 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6, figcaption, caption, th, code { letter-spacing: unset; font-family: 'SpaceMono', 'Courier New', monospace; font-weight: bolder; }
-h1, h2 { font-size: 2.25em; }
+h1, h2 { font-size: 2.15em; }
 h3, h4 { font-size: 1.25em; }
 
 dfn {
@@ -66,19 +66,10 @@ section > header > * {
 h3, h4 {
 	margin-top: 3em;
 	margin-bottom: 1em !important;
-	color: darkgoldenrod;
-}
-
-h3::before, h4::before {
-	content: '[';
-}
-
-h3::after, h4::after  {
-	content: ']';
 }
 
 figure {
-	box-shadow: 0 0 5px rgba(0, 0, 0, .1);
+	border: 2px solid #ededed;
 	padding: 5%;
 	display: inline-block;
 	vertical-align: top;
@@ -92,7 +83,7 @@ figcaption {
 
 code {
 	font-weight: normal;
-	background: gold;
+	background: rgba(0, 0, 0, .03);
 	color: black;
 	padding: .25em 1em;
 	display: table;
