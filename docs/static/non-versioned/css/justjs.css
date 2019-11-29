@@ -14,12 +14,18 @@ body[data-theme='light'] {
 	padding: 0;
 }
 
+html {
+	background: rgba(0, 0, 0, .03);
+}
+
 body {
 	line-height: 1.8;
 	font-family: 'Courier New', 'SpaceMono', monospace;
 	text-align: left;
 	font-size: 125%;
 	overflow-x: hidden;
+	max-width: 1920px;
+	margin: auto;
 }
 
 h1, h2, h3, h4, h5, h6, figcaption, caption, th, code { letter-spacing: unset; font-family: 'SpaceMono', 'Courier New', monospace; font-weight: bolder; }
@@ -99,4 +105,5 @@ pre {
 
 img {
 	display: table;
+	margin: auto;
 }

@@ -8,9 +8,10 @@
 
 section {
 	padding: 5em 5% 0 5%;
-	max-width: 920px;
+	max-width: 55em;
 	margin: auto;
 	width: 100%;
+	box-sizing: border-box;
 }
 
 #contentinfo {
@@ -23,20 +24,15 @@ main {
 
 #home {
 	height: 100vh;
+	max-height: 1080px;
 	display: table;
 	width: 100%;
 	margin: auto;
-	text-align: center;
+	text-align: left;
 	position: relative;
-	background: #452653;
-	color: white;
-}
-
-h1 {
-	position: absolute;
-	top: 0;
-	left: 0;
-	padding: 5%;
+	margin-top: -2em;
+	padding: 0 5%;
+	box-sizing: border-box;
 }
 
 main,
@@ -45,7 +41,7 @@ main,
 }
 
 #home > .content-wrapper {
-	font-size: 200%;
+	font-size: 150%;
 	display: table-cell;
 	vertical-align: middle;
 	height: 100%;
@@ -62,9 +58,10 @@ main,
 	box-sizing: border-box;
 	white-space: nowrap;
 	z-index: 999;
-	box-shadow: 0 0 5px rgba(0, 0, 0, .1);
+	box-shadow: 0 2px 2px rgba(0, 0, 0, .05);
 	overflow-y: hidden;
 	padding: 0 2em;
+	margin-top: -2em;
 }
 
 #banner > * {
@@ -78,7 +75,7 @@ main,
 	font-weight: bolder;
 }
 
-#logo {
+#banner .logo {
 	padding: 1em 2em 1em 0;
 }
 
@@ -91,7 +88,7 @@ main,
 	padding: 1em;
 }
 
-.content-wrapper > *:not(:last-child) {
+section .content-wrapper > *:not(:last-child) {
 	margin-bottom: 2em;
 }
 
@@ -108,7 +105,7 @@ main,
 .footnote {
 	font-size: 80%;
 	vertical-align: bottom;
-	color: darkgoldenrod;
+	color: #81858e;
 }
 
 #installation-via-yarn {
@@ -143,12 +140,10 @@ main,
 		scroll-behavior: smooth;
 	}
 
-	h1,
 	#home,
 	section {
 		padding-left: 2em;
 		padding-right: 2em;
-		box-sizing: border-box;
 	}
 
 	section header {
@@ -174,7 +169,7 @@ main,
 	}
 
 	.table-wrapper {
-		margin: 0 -2em;
+		margin-right: -2em;
 	}
 
 	.code-wrapper {
@@ -192,9 +187,5 @@ main,
 
 	#banner {
 		display: block;
-	}
-
-	h1 {
-		padding: 2rem;
 	}
 }
