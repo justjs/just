@@ -27,15 +27,22 @@ var Docs = (function () {
 
     }
 
-    function stopServing (done) { liveServer.shutdown(); done(); }
-    function watch (done) { gulp.watch(['docs/static', 'docs/tmpl', 'bin'], {'ignoreInitial': false}, document); }
+    function stopServing (done) {
 
-    return {
-        'default': gulp.series(serve, watch, stopServing),
-        'watch': watch,
-        'document': document
-    };
+        liveServer.shutdown(); done();
+
+    }
+
+    function watch (done) {
+
+        gulp.watch(['docs/static', 'docs/tmpl', 'bin'], {
+            'ignoreInitial': false
+        }, document);
+
+    }
+
+    return gulp.series(serve, watch, stopServing);
 
 })();
 
-exports.default = Docs.default;
+exports.default = Docs;
