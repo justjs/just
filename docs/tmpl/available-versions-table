@@ -27,7 +27,7 @@ for version in "${AVAILABLE_VERSIONS[@]}"; do
 	npmLink="https://www.npmjs.com/package/@just-js/just/v/$version"
 
 	rows+=($'
-	<tr>
+	<tr class="'$([[ "$version" =~ rc ]] && echo "release-candidate" || echo "release")'">
 		<td><a href="'"$tag"'/index.html">'"$version"'</a></td>
 		<td><a href="'"$tag"'/browser/index.html">Browser</a>/<a href="'"$tag"'/server/index.html">Server</a></td>
 		<td><a href="'"$githubLink"'" target="_blank" rel="noopener noreferrer">Github</a></td>
