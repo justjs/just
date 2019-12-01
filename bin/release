@@ -1,0 +1,36 @@
+#!/bin/bash
+
+ROOT="${BASH_SOURCE%/*}/.." # Source: https://stackoverflow.com/a/12694189
+NEW_VERSION="$1"
+
+cd "$ROOT"
+
+release () {
+
+	local version="$1"
+	local commitMessage="$version"$'\n\n'
+
+	for file in `find ./dist -maxdepth 2 -type f`; do
+
+		commitMessage+=$'\nFile: '"$file"
+		commitMessage+=$'\nIntegrity: '`./bin/generate-sri "$file"`
+		commitMessage+=$'\n'
+
+	done
+
+	commitMessage+=$'\nChanges:\n'
+	# Source: https://stackoverflow.com/a/31719777
+	commitMessage+=$''`git log --oneline $(git describe --tags --abbrev=0 @^)..@`
+
+	npm version "$version" -m "$commitMessage"
+
+}
+
+if [[ ! "$NEW_VERSION" =~ ^[0-9]\. ]]; then
+
+	echo "You should provide a valid version."
+	exit 1
+
+fi
+
+release "$NEW_VERSION"
