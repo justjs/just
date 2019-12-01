@@ -132,6 +132,10 @@ section .content-wrapper > *:not(:last-child) {
 	color: white;
 }
 
+.release-candidate {
+	opacity: .5;
+}
+
 @media all and (max-width: 720px) {
 	body {
 		font-size: 100%;
