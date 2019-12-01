@@ -24,7 +24,8 @@
     "style": "npm run lint -- --fix",
     "pretest": "npm run lint -- . --cache",
     "precommit": "npm run test",
-    "prepack": "npm run build"
+    "prepack": "npm run build",
+    "release": "./bin/release"
   },
   "repository": {
     "type": "git",
