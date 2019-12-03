@@ -62,6 +62,10 @@
 			<div class='content-wrapper'>
 				<dl>
 					<div>
+						<dt>Test coverage:</dt>
+						<dd><a href='https://coveralls.io/github/justjs/just?branch=master' target='_blank' rel='noopener noreferrer' id='coveralls-badge-link'></a></dd>
+					</div>
+					<div>
 						<dt>Latest version:</dt>
 						<dd><a href='/%{tag}%/index.html'>%{tag}%</a></p></dd>
 					</div>
@@ -179,6 +183,10 @@
 				'src': 'https://travis-ci.org/justjs/just.svg?branch=master',
 				'alt': 'Build Status',
 				'targetSelector': '#travis-badge-link'
+			}, {
+				'src': 'https://coveralls.io/repos/github/justjs/just/badge.svg?branch=master',
+				'alt': 'Coverage Status',
+				'targetSelector': '#coveralls-badge-link'
 			}].forEach(function (opts) {
 				var img = new Image();
 				var target = document.querySelector(opts.targetSelector);

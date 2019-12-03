@@ -1,4 +1,4 @@
-# Just [![Build Status](https://travis-ci.org/justjs/just.svg?branch=master)](https://travis-ci.org/justjs/just)
+# Just [![Build Status](https://travis-ci.org/justjs/just.svg?branch=master)](https://travis-ci.org/justjs/just) [![Coverage Status](https://coveralls.io/repos/github/justjs/just/badge.svg?branch=master)](https://coveralls.io/github/justjs/just?branch=master)
 
 *The core for all your javascript projects.*
 

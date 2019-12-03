@@ -13,7 +13,8 @@ stages:
 jobs:
     include:
       - stage: test
-        script: "npm test"
+        name: "Test and upload coverage to Coveralls"
+        script: "npm run test:coverage:coveralls"
       - stage: deploy-gh
         name: "Deploy to Github Pages"
         script: NODE_ENV=production npm run doc -- "$TRAVIS_TAG"
