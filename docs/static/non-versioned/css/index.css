@@ -136,6 +136,15 @@ section .content-wrapper > *:not(:last-child) {
 	opacity: .5;
 }
 
+.badge-link:empty::before {
+	content: '[Loading...]';
+	font-size: 1rem;
+}
+
+#status-badges {
+	float: right;
+}
+
 @media all and (max-width: 720px) {
 	body {
 		font-size: 100%;
