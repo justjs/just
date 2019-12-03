@@ -17,6 +17,8 @@
     "test:integration": "npm run test:jest -- test/jest/integration",
     "test:dev": "WATCHING=true npm run test -- --watch --coverage",
     "test:jest": "jest -c test/jest/config.js",
+    "test:coverage": "npm run test -- --coverage",
+    "test:coverage:coveralls": "npm run test:coverage && cat ./coverage/lcov.info | coveralls",
     "doc": "./bin/document",
     "doc:jsdoc": "jsdoc -c docs/jsdoc.config.json",
     "doc:dev": "gulp",
@@ -45,6 +47,7 @@
   "license": "BSD-3-Clause",
   "devDependencies": {
     "@alexispuga/jsdoc-template": "^1.1.0",
+    "coveralls": "^3.0.9",
     "eslint": "^6.5.1",
     "eslint-config-justjs": "github:justjs/eslint-config-justjs#v0.1.0",
     "eslint-plugin-es5": "^1.4.1",
