@@ -9,6 +9,7 @@ module.exports = {
     'globalSetup': '<rootDir>/test/jest/setup.js',
     'globalTeardown': '<rootDir>/test/jest/teardown.js',
     'testURL': 'http://localhost:7890',
+    'coverageReporters': ['lcov', 'text-summary'],
     'testEnvironmentOptions': {
         'resources': 'usable'
     }

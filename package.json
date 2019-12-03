@@ -15,7 +15,7 @@
     "test": "npm run test:unit -- --ci",
     "test:unit": "npm run test:jest -- test/jest/unit",
     "test:integration": "npm run test:jest -- test/jest/integration",
-    "test:dev": "WATCHING=true npm run test -- --watch --coverage",
+    "test:dev": "WATCHING=true npm run test -- --watch --coverage --coverageReporters=text",
     "test:jest": "jest -c test/jest/config.js",
     "test:coverage": "npm run test -- --coverage",
     "test:coverage:coveralls": "npm run test:coverage && cat ./coverage/lcov.info | coveralls",
