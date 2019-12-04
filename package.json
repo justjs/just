@@ -1,7 +1,7 @@
 {
   "name": "@just-js/just",
   "title": "Just js",
-  "version": "1.0.0-rc.10",
+  "version": "1.0.0-rc.11",
   "description": "The core for all your javascript proyects.",
   "main": "dist/server/core.min.js",
   "browser": "dist/browser/core.min.js",
