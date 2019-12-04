@@ -32,6 +32,7 @@ main {
 	margin-top: -2em;
 	padding: 0 5%;
 	box-sizing: border-box;
+	text-align: center;
 }
 
 main,
@@ -111,7 +112,7 @@ section .content-wrapper > *:not(:last-child) {
 }
 
 #contentinfo {
-	background: #452653;
+	background: #3c224f;
 	color: white;
 	padding: 2em;
 	text-align: center;
