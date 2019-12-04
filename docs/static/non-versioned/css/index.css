@@ -141,7 +141,7 @@ section .content-wrapper > *:not(:last-child) {
 	font-size: 1rem;
 }
 
-#status-badges {
+#travis-badge-link {
 	float: right;
 }
 
