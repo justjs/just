@@ -20,7 +20,7 @@ html {
 
 body {
 	line-height: 1.8;
-	font-family: 'Courier New', 'SpaceMono', monospace;
+	font-family: 'DejaVu Sans Mono', 'Liberation Mono', 'Consolas', 'Ubuntu Mono', 'Courier New', 'andale mono', 'lucida console', 'SpaceMono', monospace;
 	text-align: left;
 	font-size: 125%;
 	overflow-x: hidden;
@@ -32,7 +32,8 @@ h1, h2, h3, h4, h5, h6, figcaption, caption, th, code { letter-spacing: unset; f
 h1, h2 { font-size: 2.15em; }
 h3, h4 { font-size: 1.25em; }
 
-dfn {
+dfn,
+nav a {
 	font-family: 'SpaceMono', 'Courier New', monospace;
 	font-style: normal;
 }
