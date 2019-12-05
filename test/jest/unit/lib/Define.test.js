@@ -1,3 +1,10 @@
+var onDocumentReady = (function () {
+
+    jest.mock('@lib/onDocumentReady');
+
+    return require('@lib/onDocumentReady');
+
+})();
 var Define = require('@lib/Define');
 var helpers = require('@test/helpers');
 
@@ -335,7 +342,7 @@ describe('@lib/Define.js', function () {
 
         document.body.appendChild(element);
 
-        Define.init(); // This is called when Define loads.
+        Define.init(); // This is called when the document is ready.
 
         Define('on-load-main', 'index', function () {
 
@@ -348,6 +355,12 @@ describe('@lib/Define.js', function () {
         });
 
     }, 5000);
+
+    it('Should init when the document is ready.', function () {
+
+        expect(onDocumentReady).toHaveBeenCalled();
+
+    });
 
 });
 

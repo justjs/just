@@ -32,6 +32,7 @@ require([
     '../lib/toJSON',
     '../lib/toObjectLiteral',
     '../lib/toObj',
+    '../lib/onDocumentReady',
     '../lib/Define',
     '../lib/Def'
 ]);
