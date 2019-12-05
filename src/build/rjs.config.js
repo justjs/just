@@ -1,7 +1,6 @@
 /**
  * @file Common configurations for the requirejs optimizer (r.js).
  */
-var fs = require('fs');
 var config = require('./config.js');
 var removeCjsThings = function (contents) {
 
@@ -26,11 +25,12 @@ module.exports = {
     'wrap': {
         'start': [
             config.banner,
-            config.wrapper.start,
-            removeCjsThings(fs.readFileSync('./src/lib/core.js')).trim(),
-            config.metadata
-        ].join('\n') + '\n\n',
-        'end': config.wrapper.end
+            config.wrapper.start
+        ].join('\n') + '\n',
+        'end': [
+            config.metadata,
+            config.wrapper.end
+        ].join('\n')
     },
     'onBuildWrite': function (moduleName, path, contents) {
 

@@ -17,7 +17,7 @@ function addEventListener (elements, eventNames, listener, options) {
     if (!Array.isArray(eventNames)) { eventNames = [eventNames]; }
     if (elements && !('length' in elements)) { elements = [elements]; }
 
-    Array.from((elements = elements || []), function (element) {
+    [].slice.call((elements = elements || [])).forEach(function (element) {
 
         eventNames.forEach(function (eventName) {
 

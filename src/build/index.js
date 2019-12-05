@@ -82,7 +82,7 @@ var copyExtraFiles = function (baseDirectory) {
     var directory = path.join('./src/', baseDirectory);
     var outDirectory = path.join('./dist/', baseDirectory);
 
-    ['polyfills.min.js'].forEach(function (filename) {
+    ['polyfills-es5.min.js'].forEach(function (filename) {
 
         var file = path.join(directory, filename);
         var out = path.join(outDirectory, filename);
