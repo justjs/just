@@ -6,6 +6,7 @@ var check = require('./check');
 var findElements = require('./findElements');
 var stringToJSON = require('./stringToJSON');
 var defaults = require('./defaults');
+var onDocumentReady = require('./onDocumentReady');
 var Define = (function () {
 
     'use strict';
@@ -274,7 +275,7 @@ var Define = (function () {
 
     }
 
-    return defineProperties(Define, /** @lends just.Define */{
+    defineProperties(Define, /** @lends just.Define */{
 
         /**
          * Finds {@link just.Define.files|files} within the document, adds them, and
@@ -520,8 +521,10 @@ var Define = (function () {
 
     });
 
+    return Define;
+
 })();
 
-setTimeout(Define.init);
+onDocumentReady(Define.init);
 
 module.exports = Define;
