@@ -52,11 +52,11 @@ describe('Core', function () {
 
 });
 
-describe('@dist/browser/polyfills.min.js', function () {
+describe('@dist/browser/polyfills-es5.min.js', function () {
 
     it('Should distribute minified polyfills apart.', function () {
 
-        expect(fs.existsSync('./dist/browser/polyfills.min.js')).toBe(true);
+        expect(fs.existsSync('./dist/browser/polyfills-es5.min.js')).toBe(true);
 
     });
 

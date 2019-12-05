@@ -1,5 +1,6 @@
 // just remove-from-bundle
 require([
+    '../lib/core',
     '../lib/access',
     '../lib/prop',
     '../lib/check',

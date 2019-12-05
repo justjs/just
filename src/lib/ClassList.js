@@ -46,7 +46,7 @@ defineProperties(ClassList, /** @lends just.ClassList */{
      */
     'apply': function (element, methodName, methodArgs) {
 
-        var args = typeof methodArgs === 'number' ? [methodArgs] : Array.from(methodArgs);
+        var args = typeof methodArgs === 'number' ? [methodArgs] : [].slice.call(methodArgs);
         var classList = element.classList;
 
         if (/(?:add|remove)/.test(methodName)) {
