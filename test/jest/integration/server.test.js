@@ -1,30 +1,35 @@
-var core = require('@dist/server/core.js').just;
+/** @jest-environment node */
 
-describe('@dist/server/core.js', function () {
+describe('Core', function () {
 
     test.each([
-        ['access'],
-        ['prop'],
-        ['check'],
-        ['is'],
-        ['defaults'],
-        ['from'],
-        ['defineProperties'],
-        ['defProps'],
-        ['defineProperty'],
-        ['defProp'],
-        ['eachProperty'],
-        ['eachProp'],
-        ['isEmptyObject'],
-        ['emptyObj'],
-        ['parseUrl'],
-        ['stringToJSON'],
-        ['toJSON'],
-        ['toObjectLiteral'],
-        ['toObj']
-    ])('Should contain %p as a property.', function (property) {
+        ['@dist/server/core.js'],
+        ['@dist/server/core.min.js']
+    ])('%s should contain all members.', function (src) {
 
-        expect(core).toHaveProperty(property);
+        var core = require(src).just;
+
+        expect(core).toEqual(expect.objectContaining({
+            'access': expect.any(Function),
+            'prop': expect.any(Function),
+            'check': expect.any(Function),
+            'is': expect.any(Function),
+            'defaults': expect.any(Function),
+            'from': expect.any(Function),
+            'defineProperties': expect.any(Function),
+            'defProps': expect.any(Function),
+            'defineProperty': expect.any(Function),
+            'defProp': expect.any(Function),
+            'eachProperty': expect.any(Function),
+            'eachProp': expect.any(Function),
+            'isEmptyObject': expect.any(Function),
+            'emptyObj': expect.any(Function),
+            'parseUrl': expect.any(Function),
+            'stringToJSON': expect.any(Function),
+            'toJSON': expect.any(Function),
+            'toObjectLiteral': expect.any(Function),
+            'toObj': expect.any(Function)
+        }));
 
     });
 
