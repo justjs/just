@@ -46,6 +46,28 @@ var logSize = function (filepath, minFilepath) {
     ].join('\n'));
 
 };
+var minify = function uglify (filename, out) {
+
+    fs.readFile(filename, function (error, file) {
+
+        var code = file + '';
+        var result = UglifyJS.minify(code, uglifyJsConfig);
+
+        if (!out) { out = filename.replace('.js', '.min.js'); }
+        if (result.error) { throw error; }
+
+        (result.warnings || []).forEach(
+            function (warning) { console.log(warning); }
+        );
+
+
+        fs.writeFileSync(out, result.code, 'utf8');
+
+        logSize(filename, out);
+
+    });
+
+};
 var bundle = function concatenate (directory, filename) {
 
     var fileConfig = Object.assign({}, rjsConfig, {
@@ -54,27 +76,7 @@ var bundle = function concatenate (directory, filename) {
         'baseUrl': path.join('./src', directory)
     });
 
-    requirejs.optimize(fileConfig, function minify () {
-
-        fs.readFile(fileConfig.out, function (error, file) {
-
-            var code = file + '';
-            var result = UglifyJS.minify(code, uglifyJsConfig);
-            var minFilepath = fileConfig.out.replace('.js', '.min.js');
-
-            if (result.error) { throw error; }
-
-            (result.warnings || []).forEach(
-                function (warning) { console.log(warning); }
-            );
-
-            fs.writeFileSync(minFilepath, result.code, 'utf8');
-
-            logSize(fileConfig.out, minFilepath);
-
-        });
-
-    });
+    requirejs.optimize(fileConfig, function () { minify(fileConfig.out); });
 
 };
 var copyExtraFiles = function (baseDirectory) {
@@ -91,7 +93,7 @@ var copyExtraFiles = function (baseDirectory) {
 
             fs.mkdirSync(outDirectory, {'recursive': true});
             fs.copyFileSync(file, out);
-            logSize(out, out);
+            minify(out, out);
 
         }
 
