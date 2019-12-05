@@ -7,8 +7,6 @@ require([
     '../lib/ClassList',
     '../lib/defaults',
     '../lib/from',
-    '../lib/Define',
-    '../lib/Def',
     '../lib/defineProperties',
     '../lib/defProps',
     '../lib/defineProperty',
@@ -34,5 +32,6 @@ require([
     '../lib/toJSON',
     '../lib/toObjectLiteral',
     '../lib/toObj',
-    '../lib/onDocumentReady'
+    '../lib/Define',
+    '../lib/Def'
 ]);
