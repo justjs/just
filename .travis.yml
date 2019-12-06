@@ -20,7 +20,7 @@ jobs:
         script: NODE_ENV=production npm run doc -- "$TRAVIS_TAG"
         deploy:
           local_dir: docs/public
-          target_branch: master
+          target_branch: staging
           repo: justjs/justjs.github.io
           provider: pages
           github_token: $GITHUB_TOKEN
