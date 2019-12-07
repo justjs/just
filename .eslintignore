@@ -1,0 +1,5 @@
+*.min.js
+
+/test/server/public/**/*.js
+/test/jest/setup.js
+/test/jest/teardown.js

@@ -1,0 +1,33 @@
+language: node_js
+node_js:
+  - "node"
+install:
+  - npm ci
+jobs:
+    include:
+      - stage: "Test"
+        branches:
+          only:
+            - master
+        script:
+          - "npm test"
+      - stage: "Deploy to Github Pages"
+        deploy:
+          provider: pages
+          github_token: $GITHUB_TOKEN
+          skip_cleanup: true
+          keep_history: true
+          on:
+            branch: /^releases\//
+            condition: "$TRAVIS_TAG =~ v.+"
+      - stage: "Release to NPM"
+        deploy:
+          provider: npm
+          email: $NPM_EMAIL
+          api_key: $NPM_TOKEN
+          skip_cleanup: true
+          on:
+            branch: /^releases\//
+            condition: "$TRAVIS_TAG =~ v.+"
+notifications:
+  email: false

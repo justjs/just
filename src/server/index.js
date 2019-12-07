@@ -1,0 +1,21 @@
+require([
+    '../lib/access',
+    '../lib/prop',
+    '../lib/check',
+    '../lib/is',
+    '../lib/defaults',
+    '../lib/from',
+    '../lib/defineProperties',
+    '../lib/defProps',
+    '../lib/defineProperty',
+    '../lib/defProp',
+    '../lib/eachProperty',
+    '../lib/eachProp',
+    '../lib/isEmptyObject',
+    '../lib/emptyObj',
+    '../lib/parseUrl',
+    '../lib/stringToJSON',
+    '../lib/toJSON',
+    '../lib/toObjectLiteral',
+    '../lib/toObj'
+]);
