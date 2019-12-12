@@ -23,8 +23,8 @@ module.exports = {
             'if (typeof define === \'function\' && define.amd) { ' +
                 'define(\'just\', [], fn); ' +
             '} ' +
-            'else if (typeof exports === \'object\' && Object(module).exports) {' +
-                'exports.just = fn(); ' +
+            'else if (typeof module === \'object\' && module.exports) {' +
+                'module.exports = fn(); ' +
             '} ' +
             'else { ' +
                 'this.just = fn(); ' +
@@ -33,5 +33,5 @@ module.exports = {
         ('\n' + fs.readFileSync('src/lib/shims.min.js', 'utf8')).replace(/\n/g, '\n\t'),
         'end': 'return just; });'
     },
-    'metadata': 'set(\'version\', \'' + pkg.version + '\');'
+    'metadata': 'set(\'version\', \'' + pkg.version + '\'); set(\'just\', just);'
 };
