@@ -33,4 +33,13 @@ describe('Core', function () {
 
     });
 
+    test.each([
+        ['@dist/server/core.js'],
+        ['@dist/server/core.min.js']
+    ])('Should return "just"', function (src) {
+
+        expect(require(src)).toBe(require(src).just);
+
+    });
+
 });

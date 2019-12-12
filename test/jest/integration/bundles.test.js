@@ -24,9 +24,9 @@ describe('Bundles', function () {
 
     });
 
-    test.each(bundles)('Should not contain a reference to itself.', function (bundle) {
+    test.each(bundles)('Should contain a reference to itself.', function (bundle) {
 
-        expect(bundle.just).not.toHaveProperty('just');
+        expect(bundle.just).toHaveProperty('just');
 
     });
 
