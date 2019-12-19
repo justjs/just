@@ -362,6 +362,23 @@ describe('@lib/Define.js', function () {
 
     });
 
+    it('Should log exceptions when something in your code fails.', function (done) {
+
+        jest.spyOn(console, 'error').mockImplementation(function (e) {
+
+            expect(e).toBe(3);
+            done();
+
+        });
+
+        Define('b', [], function () {
+
+            throw 3;
+
+        });
+
+    });
+
 });
 
 afterAll(function () {
