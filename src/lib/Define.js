@@ -38,6 +38,11 @@ var Define = (function () {
      *
      *         <li>Anonymous modules are not allowed.</li>
      *     </ul>
+     *     <h3>Debugging errors in your code might be difficult:</h3>
+     *     <p>Since v1.0.0-rc.18, every exception that occur in your code will
+     *     be outputed to console via console.error. If someday you found an error,
+     *     make sure to check the last exception first, in order to solve it, because
+     *     that might be the problem.</p>
      * </aside>
      *
      * @class
@@ -134,11 +139,22 @@ var Define = (function () {
 
         if (someModule.handler) {
 
-            someModule.returnedValue = someModule.handler.apply(null,
-                someModule.dependencies.map(
-                    function (dependency) { return dependency.returnedValue; }
-                )
-            );
+            try {
+
+                someModule.returnedValue = someModule.handler.apply(null,
+                    someModule.dependencies.map(
+                        function (dependency) { return dependency.returnedValue; }
+                    )
+                );
+
+            }
+            catch (exception) {
+
+                console.error(exception);
+
+                return false;
+
+            }
 
         }
 
