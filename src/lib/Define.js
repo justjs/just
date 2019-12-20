@@ -23,6 +23,10 @@ var Define = (function () {
      *
      * <br/>
      * <aside class='note'>
+     *     <h3>just.Define might not be suitable for production:</h3>
+     *     <p>Although tests pass everytime, sometimes an error in your code might
+     *     cause dependency errors even when you solve the problem. Please, use it at
+     *     your own risk.</p>
      *     <h3>A few things to consider: </h3>
      *     <ul>
      *         <li>This is not intended to be AMD compliant.</li>
