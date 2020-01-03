@@ -1,544 +1,269 @@
-var defineProperties = require('./defineProperties');
-var access = require('./access');
-var eachProperty = require('./eachProperty');
-var loadElement = require('./loadElement');
-var check = require('./check');
+/** globals Promise */
 var findElements = require('./findElements');
 var stringToJSON = require('./stringToJSON');
-var defaults = require('./defaults');
+var loadElement = require('./loadElement');
+var eachProperty = require('./eachProperty');
+var defineProperties = require('./defineProperties');
 var onDocumentReady = require('./onDocumentReady');
+var parseUrl = require('./parseUrl');
+var access = require('./access');
 var Define = (function () {
 
-    'use strict';
+    var modules = {};
+    var timeout;
 
-    var STATE_NON_CALLED = 0;
-    var STATE_CALLING = 1;
-    var STATE_CALLED = 2;
-    var root = window;
-    var definedModules = {};
+    function defineAlias (id, alias) {
 
-    /**
-     * A module loader: it loads {@link just.Define~file|files} in order (when needed) and
-     * execute them when all his dependencies became available.
-     *
-     * <br/>
-     * <aside class='note'>
-     *     <h3>just.Define might not be suitable for production:</h3>
-     *     <p>Although tests pass everytime, sometimes an error in your code might
-     *     cause dependency errors even when you solve the problem. Please, use it at
-     *     your own risk.</p>
-     *     <h3>A few things to consider: </h3>
-     *     <ul>
-     *         <li>This is not intended to be AMD compliant.</li>
-     *
-     *         <li>This does not check file contents, so it won't check if the
-     *             file defines an specific id.</li>
-     *
-     *         <li>Urls passed as dependencies are considered ids, so they must
-     *             be aliased first in order to be loaded.</li>
-     *
-     *         <li><var>require</var>, <var>module</var> and <var>exports</var>
-     *             are not present in this loader.</li>
-     *
-     *         <li>Anonymous modules are not allowed.</li>
-     *     </ul>
-     *     <h3>Debugging errors in your code might be difficult:</h3>
-     *     <p>Since v1.0.0-rc.18, every exception that occur in your code will
-     *     be outputed to console via console.error. If someday you found an error,
-     *     make sure to check the last exception first, in order to solve it, because
-     *     that might be the problem.</p>
-     * </aside>
-     *
-     * @class
-     * @memberof just
-     * @param {!string} id - The module id.
-     * @param {string[]|string} dependencyIDs - Required module ids.
-     * @param {*} value - The module value.
-     *
-     * @example
-     * var files = just.Define.findInDocument('data-files');
-     * var fileIDs = Object.keys(files);
-     *
-     * just.Define.load(files);
-     * just.Define('some id', fileIDs, function (file1, file2, ...) {
-     *     // Loads after all ids have been defined.
-     * });
-     */
+        return new Define(alias, [id], function (value) { return value; });
+
+    }
+
+    function loadModule (id, onLoad) {
+
+        var isKnownUrl = id in Define.urls;
+        var knownUrl = Define.urls[id];
+        var global = Define.globals[id];
+        var url = isKnownUrl ? knownUrl : id;
+        var URL = parseUrl(url);
+        var urlExtension = (URL.pathname.match(/\.(.+)$/) || ['js'])[0];
+        var type = (/css$/i.test(urlExtension) ? 'link' : 'script');
+        var listener = (typeof onLoad === 'function'
+            ? onLoad
+            : function (e) { if (e.type === 'error') { throw new Error('Error loading ' + url); } }
+        );
+
+        if (url in modules) { return false; }
+        if (url !== id) { defineAlias(id, url); }
+        if (typeof global === 'string') { defineAlias(url, global); }
+
+        return loadElement(type, url, function (e) {
+
+            var global = Define.globals[id];
+            var nonScript = Define.nonScripts[id];
+
+            if (e.type !== 'error') {
+
+                if (id in Define.globals) { new Define(id, [], typeof global !== 'string' ? global : access(window, global.split('.'))); }
+                if (id in Define.nonScripts) { new Define(id, [], nonScript); }
+
+            }
+
+            listener.call(this, e);
+
+        }, function (similarScript) {
+
+            if (similarScript) { return false; }
+            if (type !== 'script' && !(id in Define.nonScripts)) { Define.nonScripts[id] = this; }
+
+            document.head.appendChild(this);
+
+            return true;
+
+        });
+
+    }
+
+    function getModule (id) {
+
+        return (!isModuleDefined(id) && id in Define.urls
+            ? (loadModule(id), null)
+            : modules[id]
+        ) || null;
+
+    }
+
+    function getModules (ids) {
+
+        return ids.map(function (id) { return getModule(id); });
+
+    }
+
+    function wasCalled (module) {
+
+        return Object(module).state === Define.STATE_CALLED;
+
+    }
+
+    function wereCalled (modules) {
+
+        return modules.every(function (module) { return wasCalled(module); });
+
+    }
+
+    function callModule (module) {
+
+        var handler = module.handler;
+        var dependencies = module.dependencies;
+        var args;
+
+        if (wasCalled(module)) { return false; }
+
+        module.state = Define.STATE_NON_CALLED;
+
+        if (wereCalled(dependencies)) {
+
+            args = dependencies.map(function (d) { return d.returnedValue; });
+            module.state = Define.STATE_CALLING;
+            module.returnedValue = handler.apply(module, args);
+            module.state = Define.STATE_CALLED;
+
+            return true;
+
+        }
+
+        return false;
+
+    }
+
+    function clearModules () {
+
+        modules = {};
+
+    }
+
+    function clearModule (id) {
+
+        delete modules[id];
+
+    }
+
+    function clear () {
+
+        Define.globals = {};
+        Define.nonScripts = {};
+        Define.urls = {};
+        clearModules();
+
+    }
+
+    function isValidID (id) {
+
+        return id && typeof id === 'string';
+
+    }
+
+    function isModuleDefined (id) {
+
+        return id in modules;
+
+    }
+
     function Define (id, dependencyIDs, value) {
 
-        var handler;
+        var hasRecursiveDependencies, hasCircularDependencies;
 
-        /* eslint-disable padded-blocks */
-        if (!(this instanceof Define)) {
-            return new Define(id, dependencyIDs, value);
-        }
+        if (!(this instanceof Define)) { return new Define(id, dependencyIDs, value); }
+        if (!isValidID(id)) { throw new TypeError('The id must be a non-empty string.'); }
 
-        if (typeof id !== 'string') {
-            throw new TypeError('The id must be a string');
-        }
-        /* eslint-enable padded-blocks */
-
-        if ((typeof value === 'undefined' && !check(dependencyIDs, []))
-			|| typeof dependencyIDs === 'function') {
+        if (typeof value === 'undefined') {
 
             value = arguments[1];
             dependencyIDs = [];
 
         }
+        else if (dependencyIDs && !Array.isArray(dependencyIDs)) {
 
-        if (typeof value === 'function') { handler = value; }
+            dependencyIDs = [dependencyIDs];
+
+        }
+        else if (!dependencyIDs) {
+
+            dependencyIDs = [];
+
+        }
+
+        if (dependencyIDs.some(
+            function (id) { return !isValidID(id); }
+        )) { throw new TypeError('If present, the ids for the dependencies must be non-empty strings.'); }
+
+        hasCircularDependencies = dependencyIDs.some(function (dID) { return dID === id; });
+        hasRecursiveDependencies = dependencyIDs.some(function (dID) {
+
+            return (Object(modules[dID]).dependencyIDs || []).some(
+                function (ddID) { return ddID === id; }
+            );
+
+        });
+
+        if (hasCircularDependencies
+            || hasRecursiveDependencies) { throw new TypeError('Neither circular nor recursive dependencies are supported yet.'); }
+
+        modules[id] = this;
 
         defineProperties(this, {
-
             'id': id,
-            'dependencyIDs': normalizeIDs(dependencyIDs),
-            'handler': handler,
+            'handler': (typeof value === 'function'
+                ? value
+                : function () { return value; }
+            ),
+            'dependencyIDs': dependencyIDs,
+            'dependencies': {
+                'get': function () { return getModules(this.dependencyIDs); }
+            },
             'state': {
-                'value': STATE_NON_CALLED,
+                'value': Define.STATE_DEFINED,
                 'writable': true
             },
             'returnedValue': {
-                'value': handler ? void 0 : value,
+                'value': (typeof value === 'function' ? this : value),
                 'writable': true
             }
-
         });
 
-        setModule(id, this);
+        (function updateModules () {
 
-        updateModules();
+            clearTimeout(timeout);
 
-    }
+            timeout = setTimeout(function () {
 
-    function setModule (id, theModule) { return definedModules[id] = theModule; }
-    function getModule (id) { return definedModules[id]; }
-    function hasModule (id) { return id in definedModules; }
+                eachProperty(modules, function (module) {
 
-    function callModule (someModule) {
-
-        var dependencies;
-
-        if (someModule.state === STATE_CALLED) { return true; }
-
-        someModule.state = STATE_CALLING;
-
-        /* istanbul ignore else */
-        if (!someModule.dependencies) {
-
-            dependencies = someModule.dependencyIDs.map(
-                function (dependencyID) { return getModule(dependencyID); }
-            );
-
-            if (dependencies.some(
-                function (dependency) { return !dependency || dependency.state === STATE_NON_CALLED; }
-            )) {
-
-                return false;
-
-            }
-
-            someModule.dependencies = dependencies;
-
-        }
-
-        if (someModule.handler) {
-
-            try {
-
-                someModule.returnedValue = someModule.handler.apply(null,
-                    someModule.dependencies.map(
-                        function (dependency) { return dependency.returnedValue; }
-                    )
-                );
-
-            }
-            catch (exception) {
-
-                console.error(exception);
-
-                return false;
-
-            }
-
-        }
-
-        someModule.state = STATE_CALLED;
-
-        return true;
-
-    }
-
-    function updateModules () {
-
-        clearTimeout(updateModules.timeout);
-
-        updateModules.timeout = setTimeout(function () {
-
-            var nonReadyModules = [];
-            var somethingNewWasCalled = false;
-
-            eachProperty(definedModules, function (someModule, id) {
-
-                /* eslint-disable padded-blocks */
-                if (!someModule || someModule.state === STATE_CALLED) {
-                    return;
-                }
-
-                if (callModule(someModule)) {
-                    somethingNewWasCalled = true;
-                }
-                else {
-                    nonReadyModules.push(someModule);
-                }
-                /* eslint-enable padded-blocks */
-
-            });
-
-            /* eslint-disable padded-blocks */
-            if (somethingNewWasCalled) {
-                return updateModules();
-            }
-
-            if (nonReadyModules.length) {
-                return false;
-            }
-            /* eslint-enable padded-blocks */
-
-            return true;
-
-        }, 0);
-
-    }
-
-    function loadModuleByID (moduleID, listener) {
-
-        var urlParts = (Define.files[moduleID] || '').split(/\s+/);
-        var eventListener = defaults(listener, function setUrlAsAlias (error, data) {
-
-            var id = data.id;
-            var givenUrl = data.url;
-            var loadedUrl = this.src;
-
-            /* istanbul ignore else */
-            if (!getModule(loadedUrl) && id !== loadedUrl && id !== givenUrl) {
-
-                new Define(loadedUrl, [id],
-                    function (theModule) { return theModule; }
-                );
-
-            }
-
-        });
-        var url = urlParts[1];
-        var tagName = urlParts[0];
-
-        /* eslint-disable padded-blocks */
-        if (!(moduleID in Define.files)) {
-            throw new TypeError(moduleID + ' must be added to "files".');
-        }
-        /* eslint-enable padded-blocks */
-
-        if (!url) {
-
-            url = urlParts[0];
-            tagName = 'script';
-
-        }
-
-        loadElement(tagName, url, function (event) {
-
-            var globals = Define.globals;
-            var error = (event.type === 'error'
-                ? new Error('Error loading the following url: ' + this.src)
-                : null
-            );
-
-            if (moduleID in globals && !getModule(moduleID)) {
-
-                new Define(moduleID, defaults(globals[moduleID], function () {
-
-                    return access(root, globals[moduleID].split('.'), null, {
-                        'mutate': true
-                    });
-
-                }));
-
-            }
-
-            eventListener.call(this, error, {
-                'event': event,
-                'id': moduleID,
-                'url': url
-            });
-
-        });
-
-    }
-
-    function normalizeIDs (ids) {
-
-        if (check(ids, null, void 0)) { ids = []; }
-
-        return defaults(ids, [ids]).map(function (value) {
-
-            var id = check.throwable(value, 'string');
-
-            if (!hasModule(id) && id in Define.files) {
-
-                loadModuleByID(id);
-
-            }
-
-            return id;
-
-        });
-
-    }
-
-    defineProperties(Define, /** @lends just.Define */{
-
-        /**
-         * Finds {@link just.Define.files|files} within the document, adds them, and
-         * if some is called "main", it loads it.
-         * <br/>
-         * <aside class='note'>
-         *     <h3>Note</h3>
-         *     <p>This function is called when the file is loaded.</p>
-         * </aside>
-         *
-         * @function
-         * @chainable
-         */
-        'init': function () {
-
-            var files = Define.findInDocument('data-just-Define');
-
-            Define.addFiles(files).load(Object.keys(files));
-
-            return Define;
-
-        },
-
-        /**
-         * A function to be called when the {@link just.Define~file|file} load.
-         *
-         * @typedef {function} just.Define~load_listener
-         * @param {!Error} error - An error if the url is not being loaded.
-         * @param {!object} data - Some metadata.
-         * @param {!Event} data.event - The triggered event: "load" or "error".
-         * @param {!just.Define~id} data.moduleID - The id passed to {@link just.Define}.
-         * @param {!url} data.url - The loaded url.
-         */
-
-        /**
-         * A function to load {@link just.Define~file|files} by ids.
-         *
-         * @function
-         * @param {just.Define~file_id|just.Define~file_id[]|Object.<
-         *     just.Define~file_id,
-         *     just.Define~load_listener
-         * >} value - {@link just.Define~file_id|File ids}.
-         * @chainable
-         */
-        'load': function (value) {
-
-            if (check(value, {})) {
-
-                eachProperty(check.throwable(value, {}), function (listener, id) {
-
-                    loadModuleByID(id, check.throwable(listener, Function, null, void 0));
+                    if (callModule(module)) { return updateModules(), true; }
 
                 });
 
-            }
-            else if (check(value, [], 'string')) {
+            });
 
-                defaults(value, [value]).forEach(
-                    function (id) { loadModuleByID(id); }
-                );
+        })();
 
-            }
-            else {
+    }
 
-                check.throwable(value, {}, [], 'string');
-
-            }
-
-            return Define;
-
-        },
-
-        /**
-         * An alias for a url.
-         *
-         * @typedef {string} just.Define~file_id
-         */
-
-        /**
-         * Any element that references an external source, like an
-         * &lt;script&gt; or a &lt;link&gt;.
-         *
-         * @typedef {string} just.Define~file
-         */
-
-        /**
-         * A url, or a tag name with a url splitted by an space.
-         *
-         * By default, "http://..." is the same as "script http://..."
-         *
-         * @typedef {string} just.Define~files_expression
-         *
-         * @example <caption>A url</caption>
-         * "http://..."
-         *
-         * @example <caption>A tag name with a url.</caption>
-         * "link /index.css"; // Note the space in between.
-         */
-
-        /**
-         * Aliases for urls.
-         *
-         * @type {Object.<
-         *     just.Define~file_id,
-         *     just.Define~files_expression
-         * >}
-         */
-        'files': {
+    defineProperties(Define, {
+        'STATE_DEFINED': -1,
+        'STATE_NON_CALLED': 0,
+        'STATE_CALLING': 1,
+        'STATE_CALLED': 2,
+        'urls': {
             'value': {},
             'writable': true
         },
-
-        /**
-         * A function that returns the module value or a string
-         * splitted by '.' that will be {@link just~access|accessed}
-         * from <var>window</var>.
-         *
-         * @typedef {string|function} just.Define~globals_expression
-         *
-         * @example <caption>A function.</caption>
-         * function () { return 1; } // The module value is 1.
-         *
-         * @example <caption>A string.</caption>
-         * "a.b"; // accesses to window, then window.a,
-         *        // and then returns window.a.b
-         */
-
-        /**
-         * Aliases for ids.
-         *
-         * @type {Object.<
-         *     just.Define~id,
-         *     just.Define~globals_expression
-         * >}
-         */
+        'nonScripts': {
+            'value': {},
+            'writable': true
+        },
         'globals': {
             'value': {},
             'writable': true
         },
+        'isDefined': isModuleDefined,
+        'load': loadModule,
+        'clear': clear,
+        'clearModules': clearModules,
+        'clearModule': clearModule,
+        'init': function () { return Define.loadFromDocument('data-just-Define'); },
+        'loadFromDocument': function (attributeName) {
 
-        /**
-         * Assigns values to {@link just.Define.globals|the globals property}.
-         *
-         * @function
-         * @chainable
-         * @param {just.Define.globals} value - {@link just.Define.globals|Globals}.
-         */
-        'addGlobals': function (value) {
+            findElements('*[' + attributeName + ']').forEach(function (json) {
 
-            Object.assign(Define.globals, value);
+                Object.assign(Define.urls, stringToJSON(json));
 
-            return Define;
+                if ('main' in Define.urls) { loadModule('main'); }
 
-        },
-
-        /**
-         * Assigns values to {@link just.Define.files|the files property}.
-         *
-         * @function
-         * @chainable
-         * @param {just.Define.files} value - {@link just.Define.files|Files}.
-         */
-        'addFiles': function (value) {
-
-            Object.assign(Define.files, value);
+            });
 
             return Define;
-
-        },
-
-        /**
-         * Checks if module has been defined.
-         *
-         * @function
-         * @param {just.Define~id} id - The id passed to {@link just.Define}.
-         * @return {boolean} `true` if defined, `false` otherwise.
-         */
-        'isDefined': hasModule,
-
-        /**
-         * Removes all defined modules.
-         *
-         * @function
-         * @chainable
-         */
-        'clean': function () {
-
-            definedModules = {};
-
-            return Define;
-
-        },
-
-        /**
-         * Finds {@link just.Define.files|files} within the document
-         * by selecting all the elements that contain an specific
-         * attribute and parsing that attribute as a JSON.
-         * <br/>
-         * <aside class='note'>
-         *     <h3>Note</h3>
-         * 	   <p>Values within brackets will be replaced with
-         *     actual attributes for that element.</p>
-         *     <p>I.e.: &lt;span a='123' data-files='{"[a]456": "[a]456"}'&gt;&lt;/span&gt;
-         *     will become: {123456: '123456'}</p>
-         * </aside>
-         *
-         * @function
-         * @param {string} attributeName - The attribute which defines the
-         *     {@link just.Define.files|files} to be loaded.
-         * @param {Element} [container=document]
-         *
-         * @example
-         * // Considering the following document:
-         * < body>
-         *     < div id='a' data-files='{"[id]": "link a.css"}'>< /div>
-         *     < script src='b.js' data-files='{"b": "script [src]"}'>< /script>
-         * < /body>
-         *
-         * // then, in js:
-         * findInDocument('data-files');
-         * // Should return {a: 'link a.css', b: 'script b.js'}.
-         *
-         * @return {!just.Define.files}
-         */
-        'findInDocument': function (attributeName, container) {
-
-            var files = {};
-
-            findElements('*[' + attributeName + ']', container).forEach(function (element) {
-
-                var attribute = element.getAttribute(attributeName) + '';
-                var files = stringToJSON(attribute.replace(/\[([^\]]+)\]/ig,
-                    function (_, key) { return element.getAttribute(key); }
-                ));
-
-                Object.assign(this, files);
-
-            }, files);
-
-            return files;
 
         }
-
     });
 
     return Define;
