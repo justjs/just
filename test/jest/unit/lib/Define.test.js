@@ -1,6 +1,75 @@
+var onDocumentReady = (jest.mock('@lib/onDocumentReady'), require('@lib/onDocumentReady'));
 var Define = require('@lib/Define');
+var removeElements = function () {
 
-describe.only('@lib/Define', function () {
+    var selector = [].slice.call(arguments).join(', ');
+
+    [].slice.call(document.querySelectorAll(selector)).forEach(function (element) {
+
+        element.parentNode.removeChild(element);
+
+    });
+
+};
+
+beforeAll(function () {
+
+    window.Define = Define;
+
+});
+
+afterAll(function () {
+
+    delete window.Define;
+
+});
+
+beforeEach(function () {
+
+    Define.clear();
+
+});
+
+describe('@lib/Define', function () {
+
+    it('Should allow calling Define without "new".', function () {
+
+        expect(Define('id')).toBeInstanceOf(Define);
+
+    });
+
+    test.each([
+        [void 0],
+        [''],
+        [null]
+    ])('Should throw if the given id is %o.', function (id) {
+
+        expect(function () { Define(id); }).toThrow(TypeError);
+
+    });
+
+    test.each([
+        // Using arrays as values.
+        [[void 0]],
+        [['']],
+        [[null]]
+    ])('Should throw if some dependency-id is %o.', function (dependencyIDs) {
+
+        expect(function () { Define('id', dependencyIDs, function () {}); }).toThrow(TypeError);
+
+    });
+
+    test.each([
+        // Using non-arrays as values
+        [void 0],
+        [null],
+        [0],
+        ['']
+    ])('Should not throw if some dependency-id is %o.', function (dependencyIDs) {
+
+        expect(function () { Define('id', dependencyIDs, function () {}); }).not.toThrow(TypeError);
+
+    });
 
     it('Should call a module.', function (done) {
 
@@ -33,7 +102,51 @@ describe.only('@lib/Define', function () {
 
     });
 
-    it('Should call a module with a circular dependency.', function (done) {
+    it('Should ignore the third argument if the second is not an array.', function (done) {
+
+        Define('non-array', done);
+
+    });
+
+    it('Should convert non-array dependencies to arrays.', function (done) {
+
+        Define('dependency', 'value');
+        Define('non-array-to-array', 'dependency', function (value) {
+
+            expect(value).toBe('value');
+            done();
+
+        });
+
+    });
+
+    it('Should load dependencies when required.', function (done) {
+
+        var time = new Date().getTime();
+
+        setTimeout(function () { Define('idle', true); }, 1000);
+
+        Define('only-when-needed', ['idle'], function (value) {
+
+            expect(value).toBe(true);
+            expect(+new Date() - time).toBeGreaterThan(1000);
+            done();
+
+        });
+
+    }, 5000);
+
+    it('Should throw if a circular dependency is present.', function () {
+
+        expect(function () {
+
+            Define('id', ['id'], function () {});
+
+        }).toThrow(TypeError);
+
+    });
+
+    xit('Should call a module with a circular dependency.', function (done) {
 
         var spy = jest.fn(function (someModule) {
 
@@ -49,7 +162,18 @@ describe.only('@lib/Define', function () {
 
     });
 
-    it('Should call recursive dependencies.', function (done) {
+    it('Should throw if some dependency is recursive.', function () {
+
+        expect(function () {
+
+            Define('a', ['b'], function () {});
+            Define('b', ['a'], function () {});
+
+        }).toThrow(TypeError);
+
+    });
+
+    xit('Should call recursive dependencies.', function (done) {
 
         var fn1 = jest.fn(function (r2) {
 
@@ -73,5 +197,246 @@ describe.only('@lib/Define', function () {
         expect.assertions(4);
 
     }, 3000);
+
+    describe('Define.clear', function () {
+
+        it('Should remove all saved data.', function () {
+
+            Define.urls['a'] = 'b';
+            Define.nonScripts['a'] = 'b';
+            Define.globals['a'] = 'b';
+
+            Define('a', 1);
+            expect(Define.isDefined('a')).toBe(true);
+
+            Define.clear();
+
+            expect(Define.urls).not.toHaveProperty('a');
+            expect(Define.nonScripts).not.toHaveProperty('a');
+            expect(Define.globals).not.toHaveProperty('a');
+            expect(Define.isDefined('a')).toBe(false);
+
+        });
+
+    });
+
+    describe('Define.clearModule', function () {
+
+        it('Should clear a module by a given id.', function () {
+
+            Define('a');
+            expect(Define.isDefined('a')).toBe(true);
+
+            Define.clearModule('a');
+            expect(Define.isDefined('a')).toBe(false);
+
+        });
+
+    });
+
+    describe('Define.isDefined', function () {
+
+        it('Should check if a module was previously defined.', function () {
+
+            Define.clearModule('a');
+            expect(Define.isDefined('a')).toBe(false);
+
+            Define('a');
+            expect(Define.isDefined('a')).toBe(true);
+
+        });
+
+    });
+
+    describe('Define.clearModules', function () {
+
+        it('Should remove all modules.', function () {
+
+            Define('a', 'defined');
+
+            expect(Define.isDefined('a')).toBe(true);
+            Define.clearModules();
+            expect(Define.isDefined('a')).toBe(false);
+
+        });
+
+    });
+
+    describe('Define.load', function () {
+
+        it('Should call a function on file load.', function (done) {
+
+            var url = '/assets/Define/load.js';
+
+            removeElements('script[src="' + url + '"]');
+
+            Define.load(url, function (e) {
+
+                expect(this).toBeInstanceOf(HTMLElement);
+                expect(e).toBeInstanceOf(Event);
+                done();
+
+            });
+
+        });
+
+        it('Should define a given url as an alias.', function (done) {
+
+            var url = '/assets/Define/load-alias.js';
+            var alias = 'alias';
+
+            removeElements('script[src="' + url + '"]');
+            Define.urls[alias] = url;
+            Define.load(alias);
+
+            Define('url-as-alias', [url, alias], function (a, b) {
+
+                expect(a).toBe(b);
+                done();
+
+            });
+
+        });
+
+        it('Should define a given global as an alias.', function (done) {
+
+            var global = 'some.string';
+            var url = '/assets/Define/load-global.js';
+
+            removeElements('script[src="' + url + '"]');
+            Define.globals[url] = global;
+            Define.load(url);
+
+            Define('global-as-alias', [url, global], function (a, b) {
+
+                expect(a).toBe(b);
+                done();
+
+            });
+
+        });
+
+        it('Should define a global on file load.', function (done) {
+
+            var url = '/assets/Define/load-global.js';
+
+            removeElements('script[src="' + url + '"]');
+            Define.globals[url] = 'some.global.in.window';
+            Define.load(url);
+
+            Define('global', [url], function (value) {
+
+                expect(value).toBe('defined');
+                done();
+
+            });
+
+        });
+
+        it('Should define a value for a non-script file.', function (done) {
+
+            var url = '/assets/Define/load-style.css';
+            var nonScriptValue = 'some value';
+
+            removeElements('link[href="' + url + '"]');
+            Define.nonScripts[url] = nonScriptValue;
+            Define.load(url);
+
+            Define('non-script', [url], function (value) {
+
+                expect(value).toBe(nonScriptValue);
+                done();
+
+            });
+
+        });
+
+        it('Should load scripts.', function (done) {
+
+            var url = '/assets/Define/load-script.js';
+
+            removeElements('script[src="' + url + '"]');
+
+            Define.load(url, function () {
+
+                expect(this).toBeInstanceOf(HTMLScriptElement);
+                done();
+
+            });
+
+        });
+
+        it('Should load styles.', function (done) {
+
+            var url = '/assets/Define/load-style.css';
+
+            removeElements('link[href="' + url + '"]');
+
+            Define.load(url, function () {
+
+                expect(this).toBeInstanceOf(HTMLLinkElement);
+                done();
+
+            });
+
+        });
+
+    });
+
+    describe('Define.findUrlsInDocument', function () {
+
+        it('Should replace `[attribute-name]` with the value of the attribute ' +
+            'when finding elements in document.', function () {
+
+            var element = document.createElement('div');
+
+            element.setAttribute('data-entry', 'main');
+            element.setAttribute('data-just-Define', JSON.stringify({
+                'entry: [data-entry]': '/assets/Define-test-[data-entry].js'
+            }));
+
+            document.body.appendChild(element);
+
+            expect(Define.findUrlsInDocument('data-just-Define')).toMatchObject({
+                'entry: main': '/assets/Define-test-main.js'
+            });
+
+        });
+
+    });
+
+    describe('Define.init', function () {
+
+        it('Should find file ids in document and load them.', function (done) {
+
+            var urls = {
+                'main': '/assets/Define/init.js',
+                'index': '/assets/Define/init.js'
+            };
+            var element = document.createElement('div');
+
+            removeElements(
+                'script[src="' + urls.main + '"]',
+                'script[src="' + urls.index + '"]'
+            );
+            element.setAttribute('data-just-Define', JSON.stringify(urls));
+            document.body.appendChild(element);
+
+            expect(onDocumentReady).toHaveBeenCalled(); // This is called when the document is ready.
+
+            Define.clear();
+            Define.init();
+
+            expect(Define.urls).toMatchObject(urls);
+            /**
+             * var spy = jest.spyOn(Define, 'load');
+             * expect(Define.load).toHaveBeenCalledTimes(1);
+             * expect(Define.load).toHaveBeenCalledWith('main');
+             */
+            Define('init', ['index'], done);
+
+        }, 5000);
+
+    });
 
 });

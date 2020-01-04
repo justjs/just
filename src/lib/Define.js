@@ -250,18 +250,63 @@ var Define = (function () {
         'clear': clear,
         'clearModules': clearModules,
         'clearModule': clearModule,
-        'init': function () { return Define.loadFromDocument('data-just-Define'); },
-        'loadFromDocument': function (attributeName) {
+        'init': function loadUrlsFromDocument () {
 
-            findElements('*[' + attributeName + ']').forEach(function (json) {
+            var urls = Define.findUrlsInDocument('data-just-Define');
 
-                Object.assign(Define.urls, stringToJSON(json));
+            Object.assign(Define.urls, urls);
 
-                if ('main' in Define.urls) { loadModule('main'); }
+            if ('main' in Define.urls) { Define.load('main'); }
 
-            });
+        },
 
-            return Define;
+        /**
+         * Finds {@link just.Define.urls|urls} within the document
+         * by selecting all the elements that contain an specific
+         * attribute and parsing that attribute as a JSON.
+         * <br/>
+         * <aside class='note'>
+         *     <h3>Note</h3>
+         *     <p>Values within brackets will be replaced with
+         *     actual attributes for that element.</p>
+         *     <p>I.e.: &lt;span a='123' data-urls='{"[a]456": "[a]456"}'&gt;&lt;/span&gt;
+         *     will become: {123456: '123456'}</p>
+         * </aside>
+         *
+         * @function
+         * @param {string} attributeName - The attribute which defines the
+         *     {@link just.Define.urls|urls} to be loaded.
+         * @param {Element} [container=document]
+         *
+         * @example
+         * // Considering the following document:
+         * < body>
+         *     < div id='a' data-urls='{"[id]": "link a.css"}'>< /div>
+         *     < script src='b.js' data-urls='{"b": "script [src]"}'>< /script>
+         * < /body>
+         *
+         * // then, in js:
+         * findUrlsInDocument('data-urls');
+         * // Should return {a: 'link a.css', b: 'script b.js'}.
+         *
+         * @return {!just.Define.urls}
+         */
+        'findUrlsInDocument': function (attributeName, container) {
+
+            var urls = {};
+
+            findElements('*[' + attributeName + ']', container).forEach(function (element) {
+
+                var attribute = element.getAttribute(attributeName) + '';
+                var urls = stringToJSON(attribute.replace(/\[([^\]]+)\]/ig,
+                    function (_, key) { return element.getAttribute(key); }
+                ));
+
+                Object.assign(this, urls);
+
+            }, urls);
+
+            return urls;
 
         }
     });

@@ -1,0 +1,1 @@
+window.Define('alias', [], function () {});
