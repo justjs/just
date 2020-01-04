@@ -136,17 +136,7 @@ describe('@lib/Define', function () {
 
     }, 5000);
 
-    it('Should throw if a circular dependency is present.', function () {
-
-        expect(function () {
-
-            Define('id', ['id'], function () {});
-
-        }).toThrow(TypeError);
-
-    });
-
-    xit('Should call a module with a circular dependency.', function (done) {
+    it('Should call a module with a circular dependency.', function (done) {
 
         var spy = jest.fn(function (someModule) {
 
@@ -162,18 +152,7 @@ describe('@lib/Define', function () {
 
     });
 
-    it('Should throw if some dependency is recursive.', function () {
-
-        expect(function () {
-
-            Define('a', ['b'], function () {});
-            Define('b', ['a'], function () {});
-
-        }).toThrow(TypeError);
-
-    });
-
-    xit('Should call recursive dependencies.', function (done) {
+    it('Should call recursive dependencies.', function (done) {
 
         var fn1 = jest.fn(function (r2) {
 
@@ -186,7 +165,7 @@ describe('@lib/Define', function () {
         var fn2 = jest.fn(function (r1) {
 
             expect(fn2).toHaveBeenCalledTimes(1);
-            expect(r1).toBe(1);
+            expect(r1).toBeInstanceOf(Define);
 
             return 2;
 
@@ -194,7 +173,13 @@ describe('@lib/Define', function () {
 
         Define('recursive-1', ['recursive-2'], fn1);
         Define('recursive-2', ['recursive-1'], fn2);
-        expect.assertions(4);
+        Define('recursives', ['recursive-1', 'recursive-2'], function (r1, r2) {
+
+            expect(r1).toBe(1);
+            expect(r2).toBe(2);
+            done();
+
+        });
 
     }, 3000);
 
