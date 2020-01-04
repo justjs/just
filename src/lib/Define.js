@@ -1,4 +1,3 @@
-/** globals Promise */
 var findElements = require('./findElements');
 var stringToJSON = require('./stringToJSON');
 var loadElement = require('./loadElement');
@@ -29,7 +28,7 @@ var Define = (function () {
         var type = (/css$/i.test(urlExtension) ? 'link' : 'script');
         var listener = (typeof onLoad === 'function'
             ? onLoad
-            : function (e) { if (e.type === 'error') { throw new Error('Error loading ' + url); } }
+            : function (e) { if (e.type === 'error') { Define.handleError.call(null, new Error('Error loading ' + url)); } }
         );
 
         if (url in modules) { return false; }
@@ -94,6 +93,7 @@ var Define = (function () {
 
         var handler = module.handler;
         var dependencies = module.dependencies;
+        var errorHandlerResult;
         var isEveryDependencyWaiting;
         var args;
 
@@ -108,35 +108,20 @@ var Define = (function () {
 
             args = dependencies.map(function (d) { return d.returnedValue; });
             module.state = Define.STATE_CALLING;
-            module.returnedValue = handler.apply(module, args);
+
+            try { module.returnedValue = handler.apply(module, args); }
+            catch (exception) { errorHandlerResult = Define.handleError.call(module, exception); }
+
             module.state = Define.STATE_CALLED;
 
-            return true;
+            return (typeof errorHandlerResult === 'boolean'
+                ? errorHandlerResult
+                : true
+            );
 
         }
 
         return false;
-
-    }
-
-    function clearModules () {
-
-        modules = {};
-
-    }
-
-    function clearModule (id) {
-
-        delete modules[id];
-
-    }
-
-    function clear () {
-
-        Define.globals = {};
-        Define.nonScripts = {};
-        Define.urls = {};
-        clearModules();
 
     }
 
@@ -152,6 +137,48 @@ var Define = (function () {
 
     }
 
+    /**
+     * A module loader: it loads files when needed and
+     * execute them when all his dependencies became available.
+     *
+     * <br/>
+     * <aside class='note'>
+     *     <h3>A few things to consider: </h3>
+     *     <ul>
+     *         <li>This is not intended to be AMD compliant.</li>
+     *
+     *         <li>This does not check file contents, so it won't check if the
+     *             file defines an specific id.</li>
+     *
+     *         <li>Urls passed as dependencies are considered ids, so they must
+     *             be defined in {@link just.Define.urls} in order to be loaded.</li>
+     *
+     *         <li><var>require</var>, <var>module</var> and <var>exports</var>
+     *             are not present in this loader.</li>
+     *
+     *         <li>Recursive and circular dependencies pass a recursive module
+     *            as argument within another recursive module (instead of the returned value).
+     *            Please, avoid using them or use them carefully.</li>
+     *
+     *         <li>Anonymous modules are not allowed.</li>
+     *     </ul>
+     * </aside>
+     *
+     * @class
+     * @memberof just
+     * @param {!string} id - The module id.
+     * @param {string[]|string} dependencyIDs - Required module ids.
+     * @param {*} value - The module value.
+     *
+     * @example
+     * var files = just.Define.findInDocument('data-files');
+     * var fileIDs = Object.keys(files);
+     *
+     * just.Define.load(files);
+     * just.Define('some id', fileIDs, function (file1, file2, ...) {
+     *     // Loads after all ids have been defined.
+     * });
+     */
     function Define (id, dependencyIDs, value) {
 
         if (!(this instanceof Define)) { return new Define(id, dependencyIDs, value); }
@@ -218,28 +245,187 @@ var Define = (function () {
 
     }
 
-    defineProperties(Define, {
+    defineProperties(Define, /** @lends just.Define */{
+        /**
+         * The initial value for all defined modules.
+         *
+         * @property {number}
+         * @readOnly
+         */
         'STATE_DEFINED': -1,
+        /**
+         * The value for all modules that had been queued
+         * prior to be called.
+         *
+         * @property {number}
+         * @readOnly
+         */
         'STATE_NON_CALLED': 0,
+        /**
+         * The value for all modules that are being called.
+         *
+         * @property {number}
+         * @readOnly
+         */
         'STATE_CALLING': 1,
+        /**
+         * The value for all modules that were called.
+         *
+         * @property {number}
+         * @readOnly
+         */
         'STATE_CALLED': 2,
+        /**
+         * An writable object literal containing alias for keys and
+         * urls as values.<br/>
+         *
+         * If you need to load files when you require some id,
+         * you need to specify those urls here. If you do so, you
+         * must {@link just.Define|Define} that id/url within that file.
+         *
+         * @example
+         * // index.js
+         * Define.urls['b'] = 'js/b.js';
+         * Define('a', ['b'], function (b) {
+         *     // b === 1; > true
+         * });
+         *
+         * // js/b.js
+         * Define('b', 1); // or: Define('js/b.js', 1);
+         *
+         * @example <caption>Using multiple ids with the same url</caption>
+         * // index.js
+         * Object.assign(Define.urls, {
+         *     'foo': 'js/index.js',
+         *     'bar': 'js/index.js'
+         * });
+         *
+         * Define('foo-bar', ['foo', 'bar'], function () {
+         *     // Will load js/index.js once.
+         * });
+         *
+         * // js/index.js
+         * Define('foo', 1);
+         * Define('bar', 1);
+         *
+         * @property {!object.<just.Define~id, url>}
+         */
         'urls': {
             'value': {},
             'writable': true
         },
+        /**
+         * A writable object literal that contains values for non script
+         * resources, like css. Since {@link just.Define|Define} won't
+         * check for file contents when loads a new file, you must add
+         * the value here.
+         *
+         * @example
+         * Define.nonScripts['/css/index.css'] = function () {};
+         * Define('load css', ['/css/index.css'], function (css) {
+         *     // by default, `css` is an HTMLElement (the link element that loaded the file).
+         *     // but for now, `css` is a function.
+         * });
+         *
+         * @property {!object.<just.Define~id, *>}
+         */
         'nonScripts': {
             'value': {},
             'writable': true
         },
+        /**
+         * A writable object literal that contains all the values that
+         * will be defined when a file loads.<br/>
+         *
+         * Note: If the value for the global is a string, the property
+         * will be accessed from window. I.e.:<br/>
+         * <var>'some.property'</var> will access to <var>window.some.property</var>.
+         *
+         * @example
+         * // index.js
+         * Define.globals['just'] = 1;
+         * Define('index', ['just'], function (just) {
+         *     // just === 1; > true
+         * });
+         *
+         * @example <caption>Using a string.</caption>
+         * // index.js
+         * window.just = {Define: 1};
+         * Define.globals['Define'] = 'just.Define';
+         * Define('index', ['Define'], function (Define) {
+         *     // Define === 1; > true
+         * });
+         *
+         * @property {!object.<just.Define~id, *>}
+         */
         'globals': {
             'value': {},
             'writable': true
         },
+        /**
+         * Check if a module is defined.
+         *
+         * @function
+         * @return {boolean}
+         */
         'isDefined': isModuleDefined,
+        /**
+         * Load a module explicitly.
+         *
+         * @function
+         * @param {url|just.Define~id} id - Some url or an alias defined in {@link just.Define.urls}.
+         * @param {?function} onLoad - Some listener to call when the function loads.
+         */
         'load': loadModule,
-        'clear': clear,
-        'clearModules': clearModules,
-        'clearModule': clearModule,
+        /**
+         * Empty all internal variables and writable properties.
+         *
+         * @function
+         */
+        'clear': function () {
+
+            Define.globals = {};
+            Define.nonScripts = {};
+            Define.urls = {};
+            Define.clearModules();
+
+        },
+        /**
+         * Remove all modules.
+         *
+         * @function
+         */
+        'clearModules': function () { modules = {}; },
+        /**
+         * Remove some module.
+         *
+         * @function
+         * @param {just.Define~id} id - The id for the module.
+         */
+        'clearModule': function (id) { delete modules[id]; },
+        /**
+         * A function to be called when an async error occur.
+         *
+         * @function
+         * @param {*} exception - Some throwable exception.
+         * @this just.Define
+         * @return {boolean} <var>true</var> if you want to keep updating modules.
+         */
+        'handleError': {
+            'value': function (exception) { console.error(exception); },
+            'writable': true
+        },
+        /**
+         * Finds {@link just.Define.urls|urls} within the document, adds them, and
+         * if some is called "main", it loads it.<br/>
+         *
+         * <aside class='note'>
+         *     <h3>Note</h3>
+         *     <p>This function is called when the file is loaded.</p>
+         * </aside>
+         *
+         * @function
+         */
         'init': function loadUrlsFromDocument () {
 
             var urls = Define.findUrlsInDocument('data-just-Define');
