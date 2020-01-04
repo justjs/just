@@ -424,4 +424,37 @@ describe('@lib/Define', function () {
 
     });
 
+    describe('Define.handleError', function () {
+
+        it('Should output an exception to console.', function (done) {
+
+            var mock = jest.spyOn(console, 'error').mockImplementation(function (e) {
+
+                expect(e).toBeInstanceOf(Error);
+                mock.mockRestore();
+                done();
+
+            });
+
+            Define('throw', [], function () { throw new Error(); });
+
+        });
+
+        it('Should allow to handle exceptions manually.', function (done) {
+
+            var mock = jest.fn(function () {
+
+                expect(mock).toHaveBeenCalled();
+                mock.mockRestore();
+                done();
+
+            });
+
+            Define.handleError = mock;
+            Define('throw', [], function () { throw new Error(); });
+
+        });
+
+    });
+
 });
