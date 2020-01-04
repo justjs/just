@@ -94,13 +94,17 @@ var Define = (function () {
 
         var handler = module.handler;
         var dependencies = module.dependencies;
+        var isEveryDependencyWaiting;
         var args;
 
         if (wasCalled(module)) { return false; }
 
         module.state = Define.STATE_NON_CALLED;
+        isEveryDependencyWaiting = dependencies.every(
+            function (d) { return d && d.state !== Define.STATE_DEFINED; }
+        );
 
-        if (wereCalled(dependencies)) {
+        if (wereCalled(dependencies) || isEveryDependencyWaiting) {
 
             args = dependencies.map(function (d) { return d.returnedValue; });
             module.state = Define.STATE_CALLING;
@@ -150,8 +154,6 @@ var Define = (function () {
 
     function Define (id, dependencyIDs, value) {
 
-        var hasRecursiveDependencies, hasCircularDependencies;
-
         if (!(this instanceof Define)) { return new Define(id, dependencyIDs, value); }
         if (!isValidID(id)) { throw new TypeError('The id must be a non-empty string.'); }
 
@@ -175,18 +177,6 @@ var Define = (function () {
         if (dependencyIDs.some(
             function (id) { return !isValidID(id); }
         )) { throw new TypeError('If present, the ids for the dependencies must be non-empty strings.'); }
-
-        hasCircularDependencies = dependencyIDs.some(function (dID) { return dID === id; });
-        hasRecursiveDependencies = dependencyIDs.some(function (dID) {
-
-            return (Object(modules[dID]).dependencyIDs || []).some(
-                function (ddID) { return ddID === id; }
-            );
-
-        });
-
-        if (hasCircularDependencies
-            || hasRecursiveDependencies) { throw new TypeError('Neither circular nor recursive dependencies are supported yet.'); }
 
         modules[id] = this;
 
