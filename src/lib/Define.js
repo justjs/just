@@ -403,6 +403,7 @@ var Define = (function () {
          * Empty all internal variables and writable properties.
          *
          * @function
+         * @chainable
          */
         'clear': function () {
 
@@ -411,6 +412,8 @@ var Define = (function () {
             Define.urls = {};
             Define.handleError = defaultErrorHandler;
             Define.clearModules();
+
+            return Define;
 
         },
         /**
