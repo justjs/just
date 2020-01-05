@@ -18,9 +18,7 @@ function check (value, otherValues) {
 
     return [].slice.call(arguments, 1).some(function (otherValue, i) {
 
-        if ([value, otherValue].some(
-            function (v) { return v === null || v === void 0; }
-        )) {
+        if ([value, otherValue].some(function (v) { return v === null || v === void 0; })) {
 
             return otherValue === value;
 
@@ -55,12 +53,22 @@ defineProperties(check, /** @lends just.check */{
     'throwable': function (value, otherValues) {
 
         var args = [].slice.call(arguments);
-        var throwableMessage = (!(Object(this) instanceof String) ? (value +
-            ' must be like one of the following values: ' +
-            args.slice(1).map(function (v) { return v + ''; }).join(', ')
-        ) : this);
+        var throwableMessage = this;
 
-        if (!check.apply(this, args)) { throw new TypeError(throwableMessage); }
+        if (!check.apply(this, args)) {
+
+            if (!(throwableMessage instanceof String)) {
+
+                throwableMessage = (value
+                    + ' must be like one of the following values: '
+                    + args.slice(1).map(function (v) { return v + ''; }).join(', ')
+                );
+
+            }
+
+            throw new TypeError(throwableMessage);
+
+        }
 
         return value;
 
