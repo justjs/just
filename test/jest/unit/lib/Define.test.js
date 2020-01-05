@@ -174,6 +174,45 @@ describe('@lib/Define', function () {
 
     }, 3000);
 
+    describe('Define.configure', function () {
+
+        it('Should assign properties to Define.', function () {
+
+            var urls = {
+                'a': 'b'
+            };
+            var globals = {
+                'a': 'b'
+            };
+
+            Define.clear();
+            Define.configure({
+                'urls': urls,
+                'globals': globals,
+                'random value': 1
+            });
+            expect(Define.urls).toMatchObject(urls);
+            expect(Define.globals).toMatchObject(globals);
+            expect(Define).toHaveProperty('random value');
+
+            expect(function () {
+
+                Define.configure({
+                    'load': 1
+                });
+
+            }).toThrow(); // 'load' is not writable.
+
+        });
+
+        it('Should be chainable.', function () {
+
+            expect(Define.configure()).toBe(Define);
+
+        });
+
+    });
+
     describe('Define.clear', function () {
 
         it('Should remove all saved data.', function () {

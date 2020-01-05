@@ -379,6 +379,27 @@ var Define = (function () {
          */
         'load': loadModule,
         /**
+         * Configure any writable option in {@link just.Define} using an object.
+         *
+         * @example
+         * Define.configure({
+         *     'urls': {}, // Same as Define.urls = {}
+         *     'handleError': function () {}, // Same as Define.handleError = function () {}
+         *     'load': 1 // Same as Define.load = 1 > throws Define.load is read-only.
+         * })('id', [], function () {}); // Define afterwards.
+         *
+         * @function
+         * @param {!object} properties - Writable properties from {@link just.Define}.
+         * @chainable
+         */
+        'configure': function (properties) {
+
+            Object.assign(Define, properties);
+
+            return Define;
+
+        },
+        /**
          * Empty all internal variables and writable properties.
          *
          * @function
