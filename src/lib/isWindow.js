@@ -10,7 +10,7 @@
  */
 function isWindow (object) {
 
-    return !!(object === window
+    return Boolean(object === window
 		|| object instanceof Object
 		&& object.document
 		&& object.setInterval
