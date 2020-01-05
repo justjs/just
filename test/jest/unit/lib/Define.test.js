@@ -1,16 +1,7 @@
 var onDocumentReady = (jest.mock('@lib/onDocumentReady'), require('@lib/onDocumentReady'));
 var Define = require('@lib/Define');
-var removeElements = function () {
-
-    var selector = [].slice.call(arguments).join(', ');
-
-    [].slice.call(document.querySelectorAll(selector)).forEach(function (element) {
-
-        element.parentNode.removeChild(element);
-
-    });
-
-};
+var helpers = require('@test/helpers.js');
+var removeElements = helpers.removeElements;
 
 beforeAll(function () {
 
