@@ -289,6 +289,12 @@ describe('@lib/Define', function () {
 
         });
 
+        it('Should be chainable.', function () {
+
+            expect(Define.clearModules()).toBe(Define);
+
+        });
+
     });
 
     describe('Define.load', function () {
