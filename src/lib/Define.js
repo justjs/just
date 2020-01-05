@@ -9,6 +9,7 @@ var access = require('./access');
 var Define = (function () {
 
     var modules = {};
+    var defaultErrorHandler = function (exception) { console.error(exception); };
     var timeout;
 
     function defineAlias (id, alias) {
@@ -387,6 +388,7 @@ var Define = (function () {
             Define.globals = {};
             Define.nonScripts = {};
             Define.urls = {};
+            Define.handleError = defaultErrorHandler;
             Define.clearModules();
 
         },
@@ -412,7 +414,7 @@ var Define = (function () {
          * @return {boolean} <var>true</var> if you want to keep updating modules.
          */
         'handleError': {
-            'value': function (exception) { console.error(exception); },
+            'value': defaultErrorHandler,
             'writable': true
         },
         /**
