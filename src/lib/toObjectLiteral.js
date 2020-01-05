@@ -14,16 +14,17 @@ function toObjectLiteral (array) {
 
     var objectLiteral = {};
 
-    /* eslint-disable padded-blocks */
     if (check(array, {}, null)) {
+
         return Object.assign({}, array);
+
     }
 
     if (!check(array, [])) {
-        throw new TypeError(array + ' must be either ' +
-			'null, an object literal or an Array.');
+
+        throw new TypeError(array + ' must be either null, an object literal or an Array.');
+
     }
-    /* eslint-enable padded-blocks */
 
     array.forEach(function (subArray) {
 
