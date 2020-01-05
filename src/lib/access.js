@@ -85,12 +85,18 @@
  */
 function access (object, path, handler, opts) {
 
-    var options = Object.assign({}, {
+    var options = Object.assign({
         'override': true,
         'mutate': false
     }, opts);
-    var properties = Array.isArray(path) ? path : [path];
-    var initialObject = options.mutate ? object : Object.assign({}, object);
+    var properties = (Array.isArray(path)
+        ? path
+        : [path]
+    );
+    var initialObject = (options.mutate
+        ? object
+        : Object.assign({}, object)
+    );
     var currentObject = initialObject;
     var isNewProperty = false;
     var lastKey = properties[properties.length - 1];
@@ -98,23 +104,22 @@ function access (object, path, handler, opts) {
 
     properties.slice(0, -1).forEach(function (key, i) {
 
-        if (!(currentObject[key] instanceof Object)) {
+        var value = currentObject[key];
 
-            if (typeof currentObject[key] !== 'undefined'
-                && currentObject[key] !== null
-                && !options.override) {
+        if (!(value instanceof Object)) {
 
-                throw new TypeError('The value of "' + key +
-                    '" is not an object.');
+            if (typeof value !== 'undefined' && value !== null && !options.override) {
+
+                throw new TypeError(key + ' is not an object.');
 
             }
 
             isNewProperty = true;
-            currentObject[key] = {};
+            currentObject[key] = value = {};
 
         }
 
-        currentObject = currentObject[key];
+        currentObject = value;
 
     });
 
