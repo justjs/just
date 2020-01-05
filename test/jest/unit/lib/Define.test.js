@@ -408,6 +408,17 @@ describe('@lib/Define', function () {
 
     });
 
+    describe('Define#load', function () {
+
+        it('Should load a module, fail silently and be chainable.', function () {
+
+            // TODO: Spy loadModule.
+            expect(Define('id', 1).load('/assets/Define/load.js')).toBeInstanceOf(Define);
+
+        });
+
+    });
+
     describe('Define.findUrlsInDocument', function () {
 
         it('Should replace `[attribute-name]` with the value of the attribute ' +

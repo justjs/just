@@ -489,6 +489,22 @@ var Define = (function () {
         }
     });
 
+    defineProperties(Define.prototype, /** @lends just.Define# */{
+        /**
+         * Same as {@link Define.load}, but chainable.
+         *
+         * @function
+         * @chainable
+         */
+        'load': function () {
+
+            loadModule.apply(null, [].slice.call(arguments));
+
+            return this;
+
+        }
+    });
+
     return Define;
 
 })();
