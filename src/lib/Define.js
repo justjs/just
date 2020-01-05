@@ -228,21 +228,17 @@ var Define = (function () {
             }
         });
 
-        (function updateModules () {
+        clearTimeout(timeout);
 
-            clearTimeout(timeout);
+        timeout = setTimeout(function updateModules () {
 
-            timeout = setTimeout(function () {
+            eachProperty(modules, function (module) {
 
-                eachProperty(modules, function (module) {
-
-                    if (callModule(module)) { return updateModules(), true; }
-
-                });
+                if (callModule(module)) { return updateModules(), true; }
 
             });
 
-        })();
+        });
 
     }
 
