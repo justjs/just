@@ -57,26 +57,18 @@ var eachProperty = require('./eachProperty');
  */
 function defaults (value, defaultValue, opts) {
 
-    var options = Object.assign({}, {
+    var options = Object.assign({
         'ignoreDefaultKeys': false,
         'checkLooks': true,
         'checkDeepLooks': true,
         'ignoreNull': false
     }, opts);
 
-    /* eslint-disable padded-blocks */
-    if (options.ignoreNull && defaultValue === null && value !== void 0) {
-        return value;
-    }
-    /* eslint-enable padded-blocks */
+    if (options.ignoreNull && defaultValue === null && value !== void 0) { return value; }
 
     if (options.checkLooks) {
 
-        /* eslint-disable padded-blocks */
-        if (!check(value, defaultValue)) {
-            return defaultValue;
-        }
-        /* eslint-enable padded-blocks */
+        if (!check(value, defaultValue)) { return defaultValue; }
 
         if (check(value, {}) && options.checkDeepLooks) {
 
