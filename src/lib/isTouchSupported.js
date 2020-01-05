@@ -8,7 +8,7 @@
  */
 function isTouchSupported () {
 
-    return !!('ontouchstart' in document.body
+    return Boolean('ontouchstart' in document.body
 		|| window.navigator.maxTouchPoints > 0
 		|| window.navigator.msMaxTouchPoints > 0
 		|| 'DocumentTouch' in window
