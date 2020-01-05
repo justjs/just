@@ -420,8 +420,9 @@ var Define = (function () {
          * Remove all modules.
          *
          * @function
+         * @chainable
          */
-        'clearModules': function () { modules = {}; },
+        'clearModules': function () { return (modules = {}), this; },
         /**
          * Remove some module.
          *
