@@ -23,8 +23,10 @@ function ClassList (element) {
 
     if (!(this instanceof ClassList)) { return new ClassList(element); }
 
-    /** @member {Element} */
-    this.element = element;
+    defineProperties(this, /** @lends just.ClassList# */{
+        /** @member {!Element} */
+        'element': element
+    });
 
 }
 
@@ -46,7 +48,10 @@ defineProperties(ClassList, /** @lends just.ClassList */{
      */
     'apply': function (element, methodName, methodArgs) {
 
-        var args = typeof methodArgs === 'number' ? [methodArgs] : [].slice.call(methodArgs);
+        var args = (typeof methodArgs === 'number'
+            ? [methodArgs]
+            : [].slice.call(methodArgs)
+        );
         var classList = element.classList;
 
         if (/(?:add|remove)/.test(methodName)) {
@@ -126,20 +131,12 @@ defineProperties(ClassList.prototype, /** @lends just.ClassList.prototype */{
      * @alias Element.classList.contains
      * @return {boolean}
      */
-    'contains': function () {
-
-        return ClassList.apply(this.element, 'contains', arguments);
-
-    },
+    'contains': function () { return ClassList.apply(this.element, 'contains', arguments); },
     /**
      * @alias Element.classList.item
      * @return {?string}
      */
-    'item': function () {
-
-        return ClassList.apply(this.element, 'item', arguments);
-
-    }
+    'item': function () { return ClassList.apply(this.element, 'item', arguments); }
 
 });
 
