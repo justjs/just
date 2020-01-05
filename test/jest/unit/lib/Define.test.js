@@ -178,11 +178,18 @@ describe('@lib/Define', function () {
 
         it('Should remove all saved data.', function () {
 
-            Define.urls['a'] = 'b';
-            Define.nonScripts['a'] = 'b';
-            Define.globals['a'] = 'b';
+            var someObject = {'a': 'b'};
+
+            Define.urls = someObject;
+            Define.nonScripts = someObject;
+            Define.globals = someObject;
+            Define.handleError = null;
 
             Define('a', 1);
+            expect(Define.urls).toMatchObject(someObject);
+            expect(Define.nonScripts).toMatchObject(someObject);
+            expect(Define.globals).toMatchObject(someObject);
+            expect(Define.handleError).toBe(null);
             expect(Define.isDefined('a')).toBe(true);
 
             Define.clear();
@@ -190,6 +197,7 @@ describe('@lib/Define', function () {
             expect(Define.urls).not.toHaveProperty('a');
             expect(Define.nonScripts).not.toHaveProperty('a');
             expect(Define.globals).not.toHaveProperty('a');
+            expect(Define.handleError).not.toBe(null);
             expect(Define.isDefined('a')).toBe(false);
 
         });
