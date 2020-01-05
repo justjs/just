@@ -16,14 +16,10 @@ var defaults = require('./defaults');
  */
 function LocalStorage (consent, isExplicit) {
 
-    /* eslint-disable padded-blocks */
-    if (!(this instanceof LocalStorage)) {
-        return new LocalStorage(consent, isExplicit);
-    }
-    /* eslint-enable padded-blocks */
+    if (!(this instanceof LocalStorage)) { return new LocalStorage(consent, isExplicit); }
 
     defineProperties(this, {
-        'consent': !!consent,
+        'consent': Boolean(consent),
         'isExplicit': defaults(isExplicit, typeof consent !== 'undefined')
     });
 
@@ -41,9 +37,7 @@ defineProperties(LocalStorage, /** @lends just.LocalStorage */{
     'DNT': {
         'get': function DNT () {
 
-            var dnt = [
-                navigator.doNotTrack, navigator.msDoNotTrack, window.doNotTrack
-            ];
+            var dnt = [navigator.doNotTrack, navigator.msDoNotTrack, window.doNotTrack];
             var consent = ',' + dnt + ',';
 
             return (/,(yes|1),/i.test(consent)
@@ -116,11 +110,7 @@ defineProperties(LocalStorage.prototype, /** @lends just.LocalStorage.prototype 
     'setCookie': function setCookie (name, value, opts) {
 
         var cookie = '';
-        var set = function (k, v) {
-
-            cookie += k + (typeof v !== 'undefined' ? '=' + v : '') + '; ';
-
-        };
+        var set = function (k, v) { cookie += k + (typeof v !== 'undefined' ? '=' + v : '') + '; '; };
         var options = defaults(opts, {
             'secure': location.protocol === 'https:'
         });
