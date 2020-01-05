@@ -292,17 +292,20 @@ describe('@lib/Define', function () {
 
         });
 
-        it('Should define a global on file load.', function (done) {
+        test.each([
+            ['some.global.in.window', 'defined'],
+            [null, null]
+        ])('Should define a global using %o on file load.', function (value, result, done) {
 
             var url = '/assets/Define/load-global.js';
 
             removeElements('script[src="' + url + '"]');
-            Define.globals[url] = 'some.global.in.window';
+            Define.globals[url] = value;
             Define.load(url);
 
             Define('global', [url], function (value) {
 
-                expect(value).toBe('defined');
+                expect(value).toBe(result);
                 done();
 
             });
