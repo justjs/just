@@ -32,26 +32,21 @@
 function eachProperty (object, fn, thisArg, opts) {
 
     var properties = Object(object);
-    var options = Object.assign({}, {
+    var options = Object.assign({
         'addNonOwned': false
     }, opts);
     var wasInterrupted = false;
-    var k;
+    var key;
 
-    /* eslint-disable padded-blocks */
-    if (typeof fn !== 'function') {
-        throw new TypeError(fn + ' is not a function.');
-    }
-    /* eslint-enable padded-blocks */
+    if (typeof fn !== 'function') { throw new TypeError(fn + ' is not a function.'); }
 
-    for (k in properties) {
+    for (key in properties) {
 
         if (wasInterrupted) { break; }
 
-        if (options.addNonOwned || ({}).hasOwnProperty.call(properties, k)) {
+        if (options.addNonOwned || ({}).hasOwnProperty.call(properties, key)) {
 
-            wasInterrupted = !!fn.call(thisArg, properties[k], k,
-                properties);
+            wasInterrupted = Boolean(fn.call(thisArg, properties[key], key, properties));
 
         }
 
