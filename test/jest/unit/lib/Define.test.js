@@ -270,6 +270,22 @@ describe('@lib/Define', function () {
 
         });
 
+        xit('Should call Define.handleError if some element fails loading.', function (done) {
+
+            var Define = require('@lib/Define');
+
+            Define.handleError = function (e) {
+
+                expect(e).toBeInstanceOf(Error);
+                expect(this).toBe(null);
+                done();
+
+            };
+
+            Define.load('some url');
+
+        });
+
         it('Should call a function on file load.', function (done) {
 
             var url = '/assets/Define/load.js';
