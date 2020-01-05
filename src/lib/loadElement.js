@@ -32,7 +32,7 @@ var defineProperties = require('./defineProperties');
  * @throws document.createElement exception or TypeError if <var>url</var> is missing.
  * @param {!element_tag} tag - A tag name.
  * @param {!url} url - The url of the file.
- * @param {just.loadElement~handler} [handler=appendToHead]
+ * @param {just.loadElement~handler} [handler]
  *     If it's a function: it will be triggered
  *     (without appending the element),
  *     otherwise: the element will be appended to
@@ -47,34 +47,20 @@ function loadElement (tag, url, listener, handler) {
     var attribute = loadElement.nonSrcAttributes[tag] || 'src';
     var element = document.createElement(tag);
     var parsedUrl = parseUrl(url);
-    var selectors = [
-        tag +'[' + attribute + '="' + url + '"]',
-        tag + '[' + attribute + '="' + parsedUrl.href + '"]'
-    ];
-    var elementFound = findElements(selectors.join(','))[0] || null;
-    var intercept = typeof handler === 'function' ? handler : function appendToHead (elementFound, url) {
+    var selectors = [url, parsedUrl.href].map(function (url) { return tag + '[' + attribute + '="' + url + '"]'; });
+    var similarElement = findElements(selectors.join(','))[0] || null;
+    var isValidUrl = typeof url === 'string' && url.trim() !== '';
+    var isLinkElement;
+    var isCrossOriginResource;
 
-        if (!elementFound) { document.head.appendChild(this); }
+    if (!isValidUrl) { throw new TypeError(url + ' is not a valid url.'); }
 
-        return this;
+    isLinkElement = element instanceof HTMLLinkElement;
+    isCrossOriginResource = parsedUrl.origin !== window.location.origin
+        && ['video', 'img', 'script', 'link'].indexOf(tag) >= 0;
 
-    };
-
-    if (!url || typeof url !== 'string') { throw new TypeError(url + ' is not a valid url.'); }
-
-    if (tag === 'link') {
-
-        // Default attributes:
-        element.rel = 'stylesheet';
-
-    }
-
-    if (parsedUrl.origin !== window.location.origin
-        && ['video', 'img', 'script', 'link'].indexOf(tag) >= 0) {
-
-        element.setAttribute('crossorigin', 'anonymous');
-
-    }
+    if (isLinkElement) { element.rel = 'stylesheet'; }
+    if (isCrossOriginResource) { element.crossOrigin = 'anonymous'; }
 
     if (typeof listener === 'function') {
 
@@ -90,7 +76,10 @@ function loadElement (tag, url, listener, handler) {
 
     element[attribute] = url;
 
-    return intercept.call(element, elementFound, url);
+    if (typeof handler === 'function') { return handler.call(element, similarElement, url); }
+    if (!similarElement) { document.head.appendChild(element); }
+
+    return this;
 
 }
 
