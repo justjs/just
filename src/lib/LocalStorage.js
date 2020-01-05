@@ -204,6 +204,7 @@ defineProperties(LocalStorage.prototype, /** @lends just.LocalStorage.prototype 
 
         }
 
+        /* istanbul ignore next */
         return true;
 
     }
