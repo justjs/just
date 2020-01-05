@@ -453,14 +453,17 @@ var Define = (function () {
          * </aside>
          *
          * @function
+         * @chainable
          */
         'init': function loadUrlsFromDocument () {
 
-            var urls = Define.findUrlsInDocument('data-just-Define');
-
-            Object.assign(Define.urls, urls);
+            Define.configure({
+                'urls': Define.findUrlsInDocument('data-just-Define')
+            });
 
             if ('main' in Define.urls) { Define.load('main'); }
+
+            return Define;
 
         },
 

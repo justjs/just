@@ -500,7 +500,7 @@ describe('@lib/Define', function () {
 
     describe('Define.init', function () {
 
-        it('Should find file ids in document and load them.', function (done) {
+        it('Should find urls in the document and load "main" only.', function (done) {
 
             var urls = {
                 'main': '/assets/Define/init.js',
@@ -529,6 +529,12 @@ describe('@lib/Define', function () {
             Define('init', ['index'], done);
 
         }, 5000);
+
+        it('Should be chainable.', function () {
+
+            expect(Define.init()).toBe(Define);
+
+        });
 
     });
 
