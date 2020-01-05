@@ -33,19 +33,9 @@ function getRemoteParent (childNode, fn, rootContainer, includeChild) {
     var currentNode = childNode;
     var deepLevel = 0;
 
-    /* eslint-disable padded-blocks */
-    if (typeof fn !== 'function') {
-        throw new TypeError(fn + ' is not a function.');
-    }
-
-    if (!(childNode instanceof Node)) {
-        throw new TypeError('The child isn\'t an instance of a Node.');
-    }
-
-    if (!(rootContainer instanceof Node)) {
-        rootContainer = document.documentElement;
-    }
-    /* eslint-enable padded-blocks */
+    if (typeof fn !== 'function') { throw new TypeError(fn + ' is not a function.'); }
+    if (!(childNode instanceof Node)) { throw new TypeError('The child isn\'t an instance of a Node.'); }
+    if (!(rootContainer instanceof Node)) { rootContainer = document.documentElement; }
 
     while (currentNode) {
 
@@ -56,11 +46,7 @@ function getRemoteParent (childNode, fn, rootContainer, includeChild) {
 
         }
 
-        /* eslint-disable padded-blocks */
-        if (currentNode === rootContainer) {
-            return null;
-        }
-        /* eslint-enable padded-blocks */
+        if (currentNode === rootContainer) { return null; }
 
         currentNode = currentNode.parentNode;
         deepLevel++;
