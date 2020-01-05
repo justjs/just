@@ -428,8 +428,9 @@ var Define = (function () {
          *
          * @function
          * @param {just.Define~id} id - The id for the module.
+         * @chainable
          */
-        'clearModule': function (id) { delete modules[id]; },
+        'clearModule': function (id) { return (delete modules[id]), this; },
         /**
          * A function to be called when an async error occur.
          *

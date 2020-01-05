@@ -261,6 +261,12 @@ describe('@lib/Define', function () {
 
         });
 
+        it('Should be chainable.', function () {
+
+            expect(Define.clearModule()).toBe(Define);
+
+        });
+
     });
 
     describe('Define.isDefined', function () {
