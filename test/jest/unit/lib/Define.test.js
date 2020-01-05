@@ -240,6 +240,28 @@ describe('@lib/Define', function () {
 
     describe('Define.load', function () {
 
+        it('Should return `true` if the value module is being loaded, ' +
+            '`true` otherwise.', function () {
+
+            var url = '/assets/Define/load.js';
+            var clear = function () {
+
+                Define.clear();
+                removeElements('script[src="' + url + '"]');
+
+            };
+
+            clear();
+            expect(Define.load(url)).toBe(true);
+            expect(Define.load(url)).toBe(false);
+
+            clear();
+            expect(Define.load(url)).toBe(true);
+            Define(url);
+            expect(Define.load(url)).toBe(false);
+
+        });
+
         it('Should call a function on file load.', function (done) {
 
             var url = '/assets/Define/load.js';
