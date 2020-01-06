@@ -18,6 +18,20 @@ var Define = (function () {
 
     }
 
+    function defineKnownValues (id) {
+
+        var global = Define.globals[id];
+        var nonScript = Define.nonScripts[id];
+
+        if (!isModuleDefined(id)) {
+
+            if (id in Define.globals) { new Define(id, [], typeof global !== 'string' ? global : access(window, global.split('.'))); }
+            if (id in Define.nonScripts) { new Define(id, [], nonScript); }
+
+        }
+
+    }
+
     function loadModule (id, onLoad) {
 
         var isKnownUrl = id in Define.urls;
@@ -38,15 +52,7 @@ var Define = (function () {
 
         return loadElement(type, url, function (e) {
 
-            var global = Define.globals[id];
-            var nonScript = Define.nonScripts[id];
-
-            if (e.type !== 'error') {
-
-                if (id in Define.globals) { new Define(id, [], typeof global !== 'string' ? global : access(window, global.split('.'))); }
-                if (id in Define.nonScripts) { new Define(id, [], nonScript); }
-
-            }
+            if (e.type !== 'error') { defineKnownValues(id); }
 
             listener.call(this, e);
 
@@ -315,7 +321,10 @@ var Define = (function () {
          * A writable object literal that contains values for non script
          * resources, like css. Since {@link just.Define|Define} won't
          * check for file contents when loads a new file, you must add
-         * the value here.
+         * the value here.</br>
+         *
+         * Note: If a module is defined with the same id, the module will take
+         * precedence.
          *
          * @example
          * Define.nonScripts['/css/index.css'] = function () {};
@@ -336,7 +345,10 @@ var Define = (function () {
          *
          * Note: If the value for the global is a string, the property
          * will be accessed from window. I.e.:<br/>
-         * <var>'some.property'</var> will access to <var>window.some.property</var>.
+         * <var>'some.property'</var> will access to <var>window.some.property</var>.<br/>
+         *
+         * Note 2: If a module is defined with the same id, the module will take
+         * precedence.
          *
          * @example
          * // index.js

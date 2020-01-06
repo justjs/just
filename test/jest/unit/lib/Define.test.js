@@ -174,6 +174,35 @@ describe('@lib/Define', function () {
 
     }, 3000);
 
+    test.each([
+        ['globals'],
+        ['nonScripts']
+    ])('Should not override a module when Define.%s is defined.', function (propertyName, done) {
+
+        Define('id', null);
+        Define[propertyName]['id'] = window;
+        Define('require id', ['id'], function (id) {
+
+            expect(id).toBe(null); // Define takes precendence over members.
+            done();
+
+        });
+
+    });
+
+    it('Should not override a module when a non-script value is defined.', function (done) {
+
+        Define('id', null);
+        Define.nonScripts['id'] = window;
+        Define('require id', ['id'], function (id) {
+
+            expect(id).toBe(null); // Define takes precendence over Define-nonScript
+            done();
+
+        });
+
+    });
+
     describe('Define.configure', function () {
 
         it('Should assign properties to Define.', function () {
