@@ -46,7 +46,6 @@ var Define = (function () {
             : function (e) { if (e.type === 'error') { Define.handleError.call(null, new Error('Error loading ' + url)); } }
         );
 
-        if (url in modules) { return false; }
         if (url !== id) { defineAlias(id, url); }
         if (typeof global === 'string') { defineAlias(url, global); }
 
