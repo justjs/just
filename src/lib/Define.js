@@ -9,7 +9,7 @@ var access = require('./access');
 var Define = (function () {
 
     var modules = {};
-    var defaultErrorHandler = function (exception) { console.error(exception); };
+    var defaultErrorHandler = function (exception) { throw exception; };
     var timeout;
 
     function defineAlias (id, alias) {

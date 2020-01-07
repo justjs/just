@@ -203,6 +203,21 @@ describe('@lib/Define', function () {
 
     });
 
+    it('Should call Define.handleError when an exception is thrown.', function (done) {
+
+        var mock = jest.spyOn(Define, 'handleError').mockImplementation(function (e) {
+
+            expect(e).toBeInstanceOf(Error);
+            expect(this).toBeInstanceOf(Define);
+            mock.mockRestore();
+            done();
+
+        });
+
+        Define('throw', [], function () { throw new Error(); });
+
+    });
+
     describe('Define.configure', function () {
 
         it('Should assign properties to Define.', function () {
@@ -569,17 +584,9 @@ describe('@lib/Define', function () {
 
     describe('Define.handleError', function () {
 
-        it('Should output an exception to console.', function (done) {
+        it('Should throw exceptions by default.', function () {
 
-            var mock = jest.spyOn(console, 'error').mockImplementation(function (e) {
-
-                expect(e).toBeInstanceOf(Error);
-                mock.mockRestore();
-                done();
-
-            });
-
-            Define('throw', [], function () { throw new Error(); });
+            expect(function () { Define.handleError(new Error()); }).toThrow();
 
         });
 
