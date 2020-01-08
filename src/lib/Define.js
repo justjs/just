@@ -14,51 +14,71 @@ var Define = (function () {
 
     function defineAlias (id, alias) {
 
-        return new Define(alias, [id], function (value) { return value; });
+        if (isModuleDefined(alias)) { return false; }
+
+        new Define(alias, [id], function (value) { return value; });
+
+        return true;
 
     }
 
-    function defineKnownValues (id) {
+    function defineGlobal (id) {
 
         var global = Define.globals[id];
+        var value = global;
+
+        if (!(id in Define.globals) || isModuleDefined(id)) { return false; }
+        if (typeof global === 'string') { value = function () { return access(window, global.split('.')); }; }
+
+        new Define(id, [], value);
+
+        return true;
+
+    }
+
+    function defineNonScript (id) {
+
         var nonScript = Define.nonScripts[id];
+        var value = nonScript;
 
-        if (!isModuleDefined(id)) {
+        if (!(id in Define.nonScripts) || isModuleDefined(id)) { return false; }
 
-            if (id in Define.globals) { new Define(id, [], typeof global !== 'string' ? global : access(window, global.split('.'))); }
-            if (id in Define.nonScripts) { new Define(id, [], nonScript); }
+        new Define(id, [], value);
 
-        }
+        return true;
+
+    }
+
+    function defineKnownModule (id) {
+
+        if (id in Define.nonScripts) { return defineNonScript(id); }
+        else if (id in Define.globals) { return defineGlobal(id); }
+
+        return false;
 
     }
 
     function loadModule (id, onLoad) {
 
-        var isKnownUrl = id in Define.urls;
-        var knownUrl = Define.urls[id];
-        var global = Define.globals[id];
-        var url = isKnownUrl ? knownUrl : id;
+        var url = id in Define.urls ? Define.urls[id] : id;
         var URL = parseUrl(url);
         var urlExtension = (URL.pathname.match(/\.(.+)$/) || ['js'])[0];
         var type = (/css$/i.test(urlExtension) ? 'link' : 'script');
-        var listener = (typeof onLoad === 'function'
-            ? onLoad
-            : function (e) { if (e.type === 'error') { Define.handleError.call(null, new Error('Error loading ' + url)); } }
-        );
 
         if (url !== id) { defineAlias(id, url); }
-        if (typeof global === 'string') { defineAlias(url, global); }
 
         return loadElement(type, url, function (e) {
 
-            if (e.type !== 'error') { defineKnownValues(id); }
+            var isError = Object(e).type === 'error';
 
-            listener.call(this, e);
+            if (!isError) { defineKnownModule(id); }
+            if (typeof onLoad === 'function') { return onLoad.call(this, e); }
+            if (isError) { Define.handleError.call(null, new Error('Error loading ' + url)); }
 
         }, function (similarScript) {
 
-            if (similarScript) { return false; }
             if (type !== 'script' && !(id in Define.nonScripts)) { Define.nonScripts[id] = this; }
+            if (similarScript) { return false; }
 
             document.head.appendChild(this);
 
@@ -70,10 +90,11 @@ var Define = (function () {
 
     function getModule (id) {
 
-        return (!isModuleDefined(id) && id in Define.urls
-            ? (loadModule(id), null)
-            : modules[id]
-        ) || null;
+        if (!isModuleDefined(id) && id in Define.urls) { return loadModule(id), null; }
+
+        defineKnownModule(id);
+
+        return modules[id] || null;
 
     }
 
