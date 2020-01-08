@@ -234,6 +234,25 @@ describe('@lib/Define', function () {
         });
 
     });
+
+    it('Should prefer non-script values over globals.', function (done) {
+
+        var id = 'id';
+        var global = function () { return 'some global'; };
+        var nonScript = 'some non-script';
+
+        Define.globals[id] = global;
+        Define.nonScripts[id] = nonScript;
+
+        Define('get known value', [id], function (value) {
+
+            expect(value).toBe(nonScript);
+            done();
+
+        });
+
+    });
+
     it('Should call Define.handleError when an exception is thrown.', function (done) {
 
         var mock = jest.spyOn(Define, 'handleError').mockImplementation(function (e) {
