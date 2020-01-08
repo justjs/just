@@ -203,6 +203,37 @@ describe('@lib/Define', function () {
 
     });
 
+    it('Should define globals.', function (done) {
+
+        var id = 'id';
+        var global = function () { return 'some global'; };
+
+        Define.globals[id] = global;
+
+        Define('get global', [id], function (value) {
+
+            expect(value).toBe('some global');
+            done();
+
+        });
+
+    });
+
+    it('Should define non-script values.', function (done) {
+
+        var id = 'id';
+        var nonScript = function () { return 'some non-script'; };
+
+        Define.nonScripts[id] = nonScript;
+
+        Define('get non-script value', [id], function (value) {
+
+            expect(value).toBe('some non-script');
+            done();
+
+        });
+
+    });
     it('Should call Define.handleError when an exception is thrown.', function (done) {
 
         var mock = jest.spyOn(Define, 'handleError').mockImplementation(function (e) {
@@ -413,24 +444,6 @@ describe('@lib/Define', function () {
             Define.load(alias);
 
             Define('url-as-alias', [url, alias], function (a, b) {
-
-                expect(a).toBe(b);
-                done();
-
-            });
-
-        });
-
-        it('Should define a given global as an alias.', function (done) {
-
-            var global = 'some.string';
-            var url = '/assets/Define/load-global.js';
-
-            removeElements('script[src="' + url + '"]');
-            Define.globals[url] = global;
-            Define.load(url);
-
-            Define('global-as-alias', [url, global], function (a, b) {
 
                 expect(a).toBe(b);
                 done();
