@@ -370,6 +370,9 @@ var Define = (function () {
          * Note 2: If a module is defined with the same id, the module will take
          * precedence.
          *
+         * Note 3: If a non-script is defined with the same id, a non-script value
+         * will take precedence.
+         *
          * @example
          * // index.js
          * Define.globals['just'] = 1;
