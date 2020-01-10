@@ -204,12 +204,55 @@ var Define = (function () {
      * @param {*} value - The module value.
      *
      * @example
-     * var files = just.Define.findInDocument('data-files');
-     * var fileIDs = Object.keys(files);
+     * // https://some.cdn/js/just.js
+     * window.just = {'Define': function () {}};
      *
-     * just.Define.load(files);
-     * just.Define('some id', fileIDs, function (file1, file2, ...) {
-     *     // Loads after all ids have been defined.
+     * &lt;!DOCTYPE html>
+     * &lt;html data-just-Define='{"main": "/js/main.js"}'>
+     * &lt;head>
+     *    &lt;title>Test</title>
+     *    &lt;script src='https://some.cdn/js/just.js' async></script>
+     * &lt;/head>
+     * &lt;body>
+     * &lt;/body>
+     * &lt;/html>
+     *
+     * // /js/main.js
+     * just.configure({
+     *    'globals': {
+     *        // Set justJs to window.just
+     *        'justJs': 'just'
+     *    },
+     *    'urls': {
+     *        // Load "/css/index.css" when "index.css" is required.
+     *        'index.css': '/css/index.css'
+     *    },
+     *    'nonScripts': {
+     *        // Call when "main.html" is required.
+     *        'main.html': function () { return '<main></main>'; }
+     *    }
+     * });
+     *
+     * // Load when document, justJs and index.css are ready:
+     * just.Define('main', ['justJs', 'index.css'], function (j) {
+     *
+     *    if (j.supportsTouch()) {
+     *        j.Define('mobile', 'https://example/m');
+     *        return;
+     *    }
+     *
+     *    j.Define('non-mobile', ['main.html']);
+     *
+     * });
+     *
+     * // Call only if j.supportsTouch()
+     * just.Define(['mobile'], function (url) {
+     *    window.redirect = url;
+     * });
+     *
+     * // Call when main.html is ready.
+     * just.Define(['non-mobile'], function (html) {
+     *    document.body.innerHTML = html;
      * });
      */
     function Define (id, dependencyIDs, value) {
