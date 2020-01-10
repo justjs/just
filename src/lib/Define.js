@@ -135,10 +135,10 @@ var Define = (function () {
 
         if (wereCalled(dependencies) || isEveryDependencyWaiting) {
 
-            args = dependencies.map(function (d) { return d.returnedValue; });
+            args = dependencies.map(function (d) { return d.exports; });
             module.state = Define.STATE_CALLING;
 
-            try { module.returnedValue = handler.apply(module, args); }
+            try { module.exports = handler.apply(module, args); }
             catch (exception) { errorHandlerResult = Define.handleError.call(module, exception); }
 
             module.state = Define.STATE_CALLED;
@@ -250,7 +250,7 @@ var Define = (function () {
                 'value': Define.STATE_DEFINED,
                 'writable': true
             },
-            'returnedValue': {
+            'exports': {
                 'value': (typeof value === 'function' ? this : value),
                 'writable': true
             }
