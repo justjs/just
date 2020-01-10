@@ -23,42 +23,86 @@ beforeEach(function () {
 
 describe('@lib/Define', function () {
 
-    it('Should allow calling Define without "new".', function () {
+    it('Should work as expected.', function () {
 
-        expect(Define('id')).toBeInstanceOf(Define);
+        var fn = function someFunction () {};
 
-    });
+        // Usage without "new".
+        expect(Define('id', [], function () {})).toBeInstanceOf(Define);
 
-    test.each([
-        [void 0],
-        [''],
-        [null]
-    ])('Should throw if the given id is %o.', function (id) {
+        // Invalid ids:
+        expect(function () { Define('', [], fn); }).toThrow();
+        expect(function () { Define(' ', [], fn); }).toThrow();
+        expect(function () { Define(0, [], fn); }).toThrow();
+        expect(function () { Define(fn, [], fn); }).toThrow();
+        expect(function () { Define(null, [], fn); }).not.toThrow();
+        expect(function () { Define(void 0, [], fn); }).not.toThrow();
 
-        expect(function () { Define(id); }).toThrow(TypeError);
+        // 0 arguments:
+        expect(function () { Define(); }).toThrow();
 
-    });
+        // 1 argument:
+        expect(function () { Define('id'); }).not.toThrow(); // Only id as string.
+        expect(function () { Define(null); }).toThrow(); // Only id as empty.
+        expect(function () { Define(['a', 'b']); }).toThrow(); // Only dependencies.
+        expect(function () { Define(fn); }).not.toThrow(); // Only value as function.
 
-    test.each([
-        // Using arrays as values.
-        [[void 0]],
-        [['']],
-        [[null]]
-    ])('Should throw if some dependency-id is %o.', function (dependencyIDs) {
+        expect(Define('id').id).toBe('id');
+        expect(Define('id').dependencyIDs).toMatchObject([]);
+        expect(Define('id').exports).toBe(void 0);
 
-        expect(function () { Define('id', dependencyIDs, function () {}); }).toThrow(TypeError);
+        expect(Define(fn).handler).toBe(fn);
+        expect(Define(fn).dependencyIDs).toMatchObject([]);
+        expect(Define(fn).exports).toBeInstanceOf(Define);
 
-    });
+        // 2 arguments:
+        expect(function () { Define([null], fn); }).toThrow(); // Invalid dependencies.
 
-    test.each([
-        // Using non-arrays as values
-        [void 0],
-        [null],
-        [0],
-        ['']
-    ])('Should not throw if some dependency-id is %o.', function (dependencyIDs) {
+        expect(Define('id', ['a', 'b']).id).toBe('id');
+        expect(Define('id', ['a', 'b']).dependencyIDs).toMatchObject([]);
+        expect(Define('id', ['a', 'b']).exports).toMatchObject(['a', 'b']);
 
-        expect(function () { Define('id', dependencyIDs, function () {}); }).not.toThrow(TypeError);
+        expect(Define('id', null).id).toBe('id');
+        expect(Define('id', null).dependencyIDs).toMatchObject([]);
+        expect(Define('id', null).exports).toBe(null);
+
+        expect(Define('id', fn).id).toBe('id');
+        expect(Define('id', fn).handler).toBe(fn);
+        expect(Define('id', fn).dependencyIDs).toMatchObject([]);
+        expect(Define('id', fn).exports).toBeInstanceOf(Define);
+
+        expect(Define(['a', 'b'], fn).handler).toBe(fn);
+        expect(Define(['a', 'b'], fn).dependencyIDs).toMatchObject(['a', 'b']);
+        expect(Define(['a', 'b'], fn).exports).toBeInstanceOf(Define);
+
+        expect(Define(null, fn).handler).toBe(fn);
+        expect(Define(null, fn).dependencyIDs).toMatchObject([]);
+        expect(Define(null, fn).exports).toBeInstanceOf(Define);
+
+        expect(Define(void 0, fn).handler).toBe(fn);
+        expect(Define(void 0, fn).dependencyIDs).toMatchObject([]);
+        expect(Define(void 0, fn).exports).toBeInstanceOf(Define);
+
+        // 3 arguments:
+        expect(function () { Define(null, null, 'value'); }).toThrow(); // Only non-function as value.
+        expect(function () { Define(null, null, fn); }).not.toThrow(); // only function as value.
+
+        expect(Define('id', ['a', 'b'], fn).id).toBe('id');
+        expect(Define('id', ['a', 'b'], fn).handler).toBe(fn);
+        expect(Define('id', ['a', 'b'], fn).dependencyIDs).toMatchObject(['a', 'b']);
+        expect(Define('id', ['a', 'b'], fn).exports).toBeInstanceOf(Define);
+
+        expect(Define('id', 'dependency', 'value').id).toBe('id');
+        expect(Define('id', 'dependency', 'value').exports).toBe('value');
+        expect(Define('id', 'dependency', 'value').dependencyIDs).toMatchObject(['dependency']);
+
+        expect(Define('id', null, 'value').id).toBe('id');
+        expect(Define('id', null, 'value').exports).toBe('value');
+        expect(Define('id', null, 'value').dependencyIDs).toMatchObject([]);
+
+        expect(Define('id', ['a', 'b'], void 0).id).toBe('id');
+        expect(Define('id', ['a', 'b'], void 0).exports).toBe(void 0);
+        expect(Define('id', ['a', 'b'], void 0).dependencyIDs).toMatchObject(['a', 'b']);
 
     });
 
@@ -90,12 +134,6 @@ describe('@lib/Define', function () {
             done();
 
         });
-
-    });
-
-    it('Should ignore the third argument if the second is not an array.', function (done) {
-
-        Define('non-array', done);
 
     });
 

@@ -156,13 +156,19 @@ var Define = (function () {
 
     function isValidID (id) {
 
-        return id && typeof id === 'string';
+        return typeof id === 'string' && id.trim() !== '';
 
     }
 
     function isModuleDefined (id) {
 
         return id in modules;
+
+    }
+
+    function isNullOrUndefined (value) {
+
+        return value === null || typeof value === 'undefined';
 
     }
 
@@ -188,14 +194,12 @@ var Define = (function () {
      *         <li>Recursive and circular dependencies pass a recursive module
      *            as argument within another recursive module (instead of the returned value).
      *            Please, avoid using them or use them carefully.</li>
-     *
-     *         <li>Anonymous modules are not allowed.</li>
      *     </ul>
      * </aside>
      *
      * @class
      * @memberof just
-     * @param {!string} id - The module id.
+     * @param {?string} id - The module id.
      * @param {string[]|string} dependencyIDs - Required module ids.
      * @param {*} value - The module value.
      *
@@ -210,29 +214,58 @@ var Define = (function () {
      */
     function Define (id, dependencyIDs, value) {
 
-        if (!(this instanceof Define)) { return new Define(id, dependencyIDs, value); }
-        if (!isValidID(id)) { throw new TypeError('The id must be a non-empty string.'); }
+        if (!arguments.length || typeof value !== 'function' && [id, dependencyIDs].every(
+            function (value) { return isNullOrUndefined(value); }
+        )) {
 
-        if (typeof value === 'undefined') {
+            throw new TypeError('Not enough arguments.');
+
+        }
+
+        if (arguments.length === 2) {
 
             value = arguments[1];
-            dependencyIDs = [];
+
+            if (Array.isArray(arguments[0])) {
+
+                dependencyIDs = arguments[0];
+                id = void 0;
+
+            }
+            else {
+
+                dependencyIDs = void 0;
+
+            }
 
         }
-        else if (dependencyIDs && !Array.isArray(dependencyIDs)) {
+        else if (arguments.length === 1) {
 
-            dependencyIDs = [dependencyIDs];
+            if (typeof arguments[0] === 'function') {
+
+                value = arguments[0];
+                id = void 0;
+                dependencyIDs = void 0;
+
+            }
 
         }
-        else if (!dependencyIDs) {
 
-            dependencyIDs = [];
+        if (!isValidID(id)) {
+
+            if (isNullOrUndefined(id)) { id = Math.random().toString(); }
+            else { throw new TypeError('The given id (' + id + ') is invalid.'); }
 
         }
+
+        if (isNullOrUndefined(dependencyIDs)) { dependencyIDs = []; }
+        else if (!Array.isArray(dependencyIDs)) { dependencyIDs = [dependencyIDs]; }
 
         if (dependencyIDs.some(
             function (id) { return !isValidID(id); }
-        )) { throw new TypeError('If present, the ids for the dependencies must be non-empty strings.'); }
+        )) { throw new TypeError('If present, the ids for the dependencies must be valid ids.'); }
+
+        if (!(this instanceof Define)) { return new Define(id, dependencyIDs, value); }
 
         modules[id] = this;
 
