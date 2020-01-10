@@ -173,8 +173,7 @@ var Define = (function () {
     }
 
     /**
-     * A module loader: it loads files when needed and
-     * execute them when all his dependencies became available.
+     * Define a value after all dependencies became available.
      *
      * <br/>
      * <aside class='note'>
@@ -186,10 +185,10 @@ var Define = (function () {
      *             file defines an specific id.</li>
      *
      *         <li>Urls passed as dependencies are considered ids, so they must
-     *             be defined in {@link just.Define.urls} in order to be loaded.</li>
+     *             be defined in {@link just.Define.urls} in order to be loaded first.</li>
      *
      *         <li><var>require</var>, <var>module</var> and <var>exports</var>
-     *             are not present in this loader.</li>
+     *             are not present in this loader, but you can emulate them.</li>
      *
      *         <li>Recursive and circular dependencies pass a recursive module
      *            as argument within another recursive module (instead of the returned value).
@@ -207,15 +206,16 @@ var Define = (function () {
      * // https://some.cdn/js/just.js
      * window.just = {'Define': function () {}};
      *
-     * &lt;!DOCTYPE html>
-     * &lt;html data-just-Define='{"main": "/js/main.js"}'>
-     * &lt;head>
-     *    &lt;title>Test</title>
-     *    &lt;script src='https://some.cdn/js/just.js' async></script>
-     * &lt;/head>
-     * &lt;body>
-     * &lt;/body>
-     * &lt;/html>
+     * // index.html
+     * < !DOCTYPE html>
+     * < html data-just-Define='{"main": "/js/main.js"}'>
+     * < head>
+     *    < title>Test</title>
+     *    < script src='https://some.cdn/js/just.js' async></script>
+     * < /head>
+     * < body>
+     * < /body>
+     * < /html>
      *
      * // /js/main.js
      * just.configure({
@@ -350,7 +350,7 @@ var Define = (function () {
         /**
          * The initial value for all defined modules.
          *
-         * @property {number}
+         * @type {number}
          * @readOnly
          */
         'STATE_DEFINED': -1,
@@ -358,21 +358,21 @@ var Define = (function () {
          * The value for all modules that had been queued
          * prior to be called.
          *
-         * @property {number}
+         * @type {number}
          * @readOnly
          */
         'STATE_NON_CALLED': 0,
         /**
          * The value for all modules that are being called.
          *
-         * @property {number}
+         * @type {number}
          * @readOnly
          */
         'STATE_CALLING': 1,
         /**
          * The value for all modules that were called.
          *
-         * @property {number}
+         * @type {number}
          * @readOnly
          */
         'STATE_CALLED': 2,
@@ -380,9 +380,12 @@ var Define = (function () {
          * A list of urls that will be used (instead of ids) to load
          * files before defining globals or non-script values.<br/>
          *
-         * If you need to load files when you require some id,
-         * you need to specify those urls here. If you do so, you
-         * must {@link just.Define|Define} that id/url within that file.
+         * <aside class='note'>
+         *     <h3>Note:</h3>
+         *     <p>If you need to load files when you require some id,
+         *        you need to specify those urls here. If you do so, you
+         *        must {@link just.Define|Define} that id/url within that file.</p>
+         * </aside>
          *
          * @example
          * // js/b.js
@@ -409,7 +412,7 @@ var Define = (function () {
          *     // Will load js/index.js once.
          * });
          *
-         * @property {!object.<just.Define~id, url>}
+         * @type {!object.<just.Define~id, url>}
          */
         'urls': {
             'value': {},
@@ -421,8 +424,11 @@ var Define = (function () {
          * check for file contents when loads a new file, you must add
          * the value here.</br>
          *
-         * Note: If a module is defined with the same id, the module will take
-         * precedence.
+         * <aside class='note'>
+         *     <h3>Note:</h3>
+         *     <p>If a module is defined with the same id, the module will take
+         *     precedence.</p>
+         * </aside>
          *
          * @example
          * Define.nonScripts['/css/index.css'] = function () {};
@@ -431,7 +437,7 @@ var Define = (function () {
          *     // but for now, `css` is a function since the id wasn't defined in Define.urls
          * });
          *
-         * @property {!object.<just.Define~id, *>}
+         * @type {!object.<just.Define~id, *>}
          */
         'nonScripts': {
             'value': {},
@@ -441,15 +447,19 @@ var Define = (function () {
          * A writable object literal that contains all the values that
          * will be defined when required.<br/>
          *
-         * Note: If the value for the global is a string, the property
-         * will be accessed from window. I.e.:<br/>
-         * <var>'some.property'</var> will access to <var>window.some.property</var>.<br/>
-         *
-         * Note 2: If a module is defined with the same id, the module will take
-         * precedence.
-         *
-         * Note 3: If a non-script is defined with the same id, a non-script value
-         * will take precedence.
+         * <aside class='note'>
+         *     <h3>Notes:</h3>
+         *     <ul>
+         *         <li>If the value for the global is a string, the property
+         *             will be accessed from window. I.e.:
+         *             <var>'some.property'</var> will access to <var>window.some.property</var>.
+         *         </li>
+         *         <li>If a module is defined with the same id, the module will take
+         *             precedence.</li>
+         *         <li>If a non-script is defined with the same id, a non-script value
+         *          will take precedence.</li>
+         *     </ul>
+         * </aside>
          *
          * @example
          * // index.js
@@ -477,7 +487,7 @@ var Define = (function () {
          *     // just === {Define: 1};
          * });
          *
-         * @property {!object.<just.Define~id, *>}
+         * @type {!object.<just.Define~id, *>}
          */
         'globals': {
             'value': {},
