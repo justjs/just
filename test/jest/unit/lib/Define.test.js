@@ -268,6 +268,40 @@ describe('@lib/Define', function () {
 
     });
 
+    it('Should define a global after the file that contains it have been loaded.', function (done) {
+
+        var url = '/assets/Define/load-global.js';
+        var id = url;
+        // TODO: Mock loadElement in here.
+
+        Define.urls[id] = url;
+        Define.globals[id] = 'some.global.in.window';
+        Define('global', [id], function (value) {
+
+            expect(value).toBe('defined');
+            done();
+
+        });
+
+    });
+
+    it('Should define a non-script value after the file that contains it have been loaded.', function (done) {
+
+        var url = '/assets/Define/load-style.css';
+        var id = url;
+        // TODO: Mock loadElement in here.
+
+        Define.urls[id] = url;
+        Define.nonScripts[id] = 'some value';
+        Define('global', [id], function (value) {
+
+            expect(value).toBe('some value');
+            done();
+
+        });
+
+    });
+
     describe('Define.configure', function () {
 
         it('Should assign properties to Define.', function () {
@@ -423,8 +457,6 @@ describe('@lib/Define', function () {
 
         xit('Should call Define.handleError if some element fails loading.', function (done) {
 
-            var Define = require('@lib/Define');
-
             Define.handleError = function (e) {
 
                 expect(e).toBeInstanceOf(Error);
@@ -536,6 +568,17 @@ describe('@lib/Define', function () {
                 done();
 
             });
+
+        });
+
+        it('Should set the given id as a url.', function () {
+
+            var url = '/assets/Define/load.js';
+
+            Define.clear();
+            Define.load(url);
+
+            expect(Define.urls[url]).toBe(url);
 
         });
 

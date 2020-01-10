@@ -49,9 +49,12 @@ var Define = (function () {
 
     }
 
-    function defineKnownModule (id) {
+    function defineKnownModule (id, isLoaded) {
 
-        if (id in Define.nonScripts) { return defineNonScript(id); }
+        if (isModuleDefined(id)) { return false; }
+
+        if (id in Define.urls && !isLoaded) { return loadModule(id); }
+        else if (id in Define.nonScripts) { return defineNonScript(id); }
         else if (id in Define.globals) { return defineGlobal(id); }
 
         return false;
@@ -65,13 +68,14 @@ var Define = (function () {
         var urlExtension = (URL.pathname.match(/\.(.+)$/) || ['js'])[0];
         var type = (/css$/i.test(urlExtension) ? 'link' : 'script');
 
+        if (!(id in Define.urls)) { Define.urls[id] = url; }
         if (url !== id) { defineAlias(id, url); }
 
         return loadElement(type, url, function (e) {
 
             var isError = Object(e).type === 'error';
 
-            if (!isError) { defineKnownModule(id); }
+            if (!isError) { defineKnownModule(id, true); }
             if (typeof onLoad === 'function') { return onLoad.call(this, e); }
             if (isError) { Define.handleError.call(null, new Error('Error loading ' + url)); }
 
@@ -89,8 +93,6 @@ var Define = (function () {
     }
 
     function getModule (id) {
-
-        if (!isModuleDefined(id) && id in Define.urls) { return loadModule(id), null; }
 
         defineKnownModule(id);
 
@@ -299,24 +301,28 @@ var Define = (function () {
          */
         'STATE_CALLED': 2,
         /**
-         * An writable object literal containing alias for keys and
-         * urls as values.<br/>
+         * A list of urls that will be used (instead of ids) to load
+         * files before defining globals or non-script values.<br/>
          *
          * If you need to load files when you require some id,
          * you need to specify those urls here. If you do so, you
          * must {@link just.Define|Define} that id/url within that file.
          *
          * @example
+         * // js/b.js
+         * Define('b', 1); // or: Define('js/b.js', 1);
+         *
          * // index.js
          * Define.urls['b'] = 'js/b.js';
          * Define('a', ['b'], function (b) {
          *     // b === 1; > true
          * });
          *
-         * // js/b.js
-         * Define('b', 1); // or: Define('js/b.js', 1);
-         *
          * @example <caption>Using multiple ids with the same url</caption>
+         * // js/index.js
+         * Define('foo', 1);
+         * Define('bar', 1);
+         *
          * // index.js
          * Object.assign(Define.urls, {
          *     'foo': 'js/index.js',
@@ -326,10 +332,6 @@ var Define = (function () {
          * Define('foo-bar', ['foo', 'bar'], function () {
          *     // Will load js/index.js once.
          * });
-         *
-         * // js/index.js
-         * Define('foo', 1);
-         * Define('bar', 1);
          *
          * @property {!object.<just.Define~id, url>}
          */
@@ -350,7 +352,7 @@ var Define = (function () {
          * Define.nonScripts['/css/index.css'] = function () {};
          * Define('load css', ['/css/index.css'], function (css) {
          *     // by default, `css` is an HTMLElement (the link element that loaded the file).
-         *     // but for now, `css` is a function.
+         *     // but for now, `css` is a function since the id wasn't defined in Define.urls
          * });
          *
          * @property {!object.<just.Define~id, *>}
@@ -361,7 +363,7 @@ var Define = (function () {
         },
         /**
          * A writable object literal that contains all the values that
-         * will be defined when a file loads.<br/>
+         * will be defined when required.<br/>
          *
          * Note: If the value for the global is a string, the property
          * will be accessed from window. I.e.:<br/>
@@ -386,6 +388,17 @@ var Define = (function () {
          * Define.globals['Define'] = 'just.Define';
          * Define('index', ['Define'], function (Define) {
          *     // Define === 1; > true
+         * });
+         *
+         * @example <caption>Defining a global after a file load.</caption>
+         * // https://some.cdn/js/just.js
+         * window.just = {Define: 1};
+         *
+         * // main.js
+         * Define.globals['JustJs'] = 'just';
+         * Define.urls['JustJs'] = 'https://some.cdn/js/just.js';
+         * Define('main', ['JustJs'], function (just) {
+         *     // just === {Define: 1};
          * });
          *
          * @property {!object.<just.Define~id, *>}
