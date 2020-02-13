@@ -1,5 +1,3 @@
-var then = require('./then');
-
 /**
  * Call a function when the HTML document has been loaded.
  * Source: http://youmightnotneedjquery.com/#ready
@@ -8,7 +6,7 @@ var then = require('./then');
  */
 function onDocumentReady (fn) {
 
-    if (document.readyState !== 'loading') { return then(fn)(), void 0; }
+    if (document.readyState !== 'loading') { return setTimeout(fn), void 0; }
 
     document.addEventListener('DOMContentLoaded', function onDocumentReady () {
 

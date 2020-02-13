@@ -17,8 +17,11 @@ describe('@lib/onDocumentReady', function () {
     ])('Should call the given function if the document is not loading.', function (
         readyState, shouldBeCalled) {
 
-        var fn = jest.fn(function () { expect(fn).toHaveBeenCalled(); });
+        var fn = jest.fn();
         var readyStateMock = mockReadyState(readyState);
+        var setTimeoutMock = jest.spyOn(window, 'setTimeout').mockImplementation(
+            function (cb) { expect(cb).toBe(fn); }
+        );
 
         expect.assertions(1);
 
@@ -27,6 +30,7 @@ describe('@lib/onDocumentReady', function () {
         if (!shouldBeCalled) { expect(fn).not.toHaveBeenCalled(); }
 
         readyStateMock.mockRestore();
+        setTimeoutMock.mockRestore();
 
     });
 
