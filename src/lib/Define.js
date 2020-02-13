@@ -6,11 +6,11 @@ var defineProperties = require('./defineProperties');
 var onDocumentReady = require('./onDocumentReady');
 var parseUrl = require('./parseUrl');
 var access = require('./access');
-var then = require('./then');
 var Define = (function () {
 
     var modules = {};
     var defaultErrorHandler = function (exception) { throw exception; };
+    var timeout;
 
     function defineAlias (id, alias) {
 
@@ -332,7 +332,9 @@ var Define = (function () {
             }
         });
 
-        then.throttle(function updateModules () {
+        clearTimeout(timeout);
+
+        timeout = setTimeout(function updateModules () {
 
             eachProperty(modules, function (module) {
 
@@ -340,7 +342,7 @@ var Define = (function () {
 
             });
 
-        })();
+        });
 
     }
 
