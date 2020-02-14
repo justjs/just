@@ -60,7 +60,6 @@ var minify = function uglify (filename, out) {
             function (warning) { console.log(warning); }
         );
 
-
         fs.writeFileSync(out, result.code, 'utf8');
 
         logSize(filename, out);
@@ -79,21 +78,26 @@ var bundle = function concatenate (directory, filename) {
     requirejs.optimize(fileConfig, function () { minify(fileConfig.out); });
 
 };
-var copyExtraFiles = function (baseDirectory) {
+var copyExtraFiles = function (baseDirectory, files, opts) {
 
+    var options = Object.assign({
+        'minify': false
+    }, opts);
     var directory = path.join('./src/', baseDirectory);
     var outDirectory = path.join('./dist/', baseDirectory);
 
-    ['polyfills-es5.min.js'].forEach(function (filename) {
+    files.forEach(function (filepath) {
 
-        var file = path.join(directory, filename);
+        var filename = path.basename(filepath);
+        var file = path.join(directory, filepath);
         var out = path.join(outDirectory, filename);
 
         if (fs.existsSync(file)) {
 
             fs.mkdirSync(outDirectory, {'recursive': true});
             fs.copyFileSync(file, out);
-            minify(out, out);
+
+            if (options.minify) { minify(out, out); }
 
         }
 
@@ -101,12 +105,41 @@ var copyExtraFiles = function (baseDirectory) {
 
 };
 
-['browser/core', 'server/core'].forEach(function (filepathRelativeToSrc) {
+['browser/core.js', 'server/index.js'].forEach(function (filepathRelativeToSrc) {
 
     var filename = ((filepathRelativeToSrc.match(/\/([^/]*)$/) || [])[1] || 'index').replace(/(?:\.js)?$/, '.js');
     var directory = path.dirname(filepathRelativeToSrc);
+    var filepath = path.resolve(path.join('src/', filepathRelativeToSrc).replace(/(?:\.js)?$/, '.js'));
+    var out = path.join('dist/', directory, filename);
+    var tempFilepath;
 
-    copyExtraFiles(directory);
-    bundle(directory, filename);
+    if (/browser/i.test(filepath)) {
+
+        copyExtraFiles(directory, ['polyfills-es5.min.js'], {'minify': true});
+        bundle(directory, filename);
+
+    }
+    else if (/server/i.test(filepath)) {
+
+        tempFilepath = filepath.replace('index', 'exports.temp');
+
+        fs.writeFileSync(
+            tempFilepath,
+            (fs.readFileSync(filepath) + '')
+                .replace(/[^,{]+:\s*require\(([^)]+)\)/g,
+                    function ($0, quotedSrc) { return quotedSrc.replace(/(['"])(?:\.js)?$/, '.js$1'); }
+                )
+                .replace(/= \{/, '= [')
+                .replace(/\n?\};/, '];'),
+            'utf8'
+        );
+
+        copyExtraFiles(directory, require(tempFilepath));
+        fs.unlinkSync(tempFilepath);
+        copyExtraFiles(directory, [filename]);
+
+        fs.writeFileSync(out, (fs.readFileSync(out) + '').replace(/\.{2}\/lib\//g, './'), 'utf8');
+
+    }
 
 });
