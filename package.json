@@ -5,6 +5,7 @@
   "description": "The core for all your javascript proyects.",
   "main": "dist/server/index.js",
   "browser": "dist/browser/core.min.js",
+  "homepage": "https://justjs.github.io",
   "publishConfig": {
     "access": "public"
   },
