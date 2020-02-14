@@ -1,44 +1,47 @@
 /** @jest-environment node */
 
-describe('Core', function () {
+describe('Server', function () {
 
-    test.each([
-        ['@dist/server/core.js'],
-        ['@dist/server/core.min.js']
-    ])('%s should contain all members.', function (src) {
+    var members = [
+        ['core', expect.any(Object)],
+        ['access', expect.any(Function)],
+        ['prop', expect.any(Function)],
+        ['check', expect.any(Function)],
+        ['is', expect.any(Function)],
+        ['defaults', expect.any(Function)],
+        ['from', expect.any(Function)],
+        ['defineProperties', expect.any(Function)],
+        ['defProps', expect.any(Function)],
+        ['defineProperty', expect.any(Function)],
+        ['defProp', expect.any(Function)],
+        ['eachProperty', expect.any(Function)],
+        ['eachProp', expect.any(Function)],
+        ['isEmptyObject', expect.any(Function)],
+        ['emptyObj', expect.any(Function)],
+        ['stringToJSON', expect.any(Function)],
+        ['toJSON', expect.any(Function)],
+        ['toObjectLiteral', expect.any(Function)],
+        ['toObj', expect.any(Function)]
+    ];
 
-        var core = require(src).just;
+    test.each(members)('Should export %s', function (memberName, expected) {
 
-        expect(core).toEqual(expect.objectContaining({
-            'access': expect.any(Function),
-            'prop': expect.any(Function),
-            'check': expect.any(Function),
-            'is': expect.any(Function),
-            'defaults': expect.any(Function),
-            'from': expect.any(Function),
-            'defineProperties': expect.any(Function),
-            'defProps': expect.any(Function),
-            'defineProperty': expect.any(Function),
-            'defProp': expect.any(Function),
-            'eachProperty': expect.any(Function),
-            'eachProp': expect.any(Function),
-            'isEmptyObject': expect.any(Function),
-            'emptyObj': expect.any(Function),
-            'parseUrl': expect.any(Function),
-            'stringToJSON': expect.any(Function),
-            'toJSON': expect.any(Function),
-            'toObjectLiteral': expect.any(Function),
-            'toObj': expect.any(Function)
-        }));
+        var member = require('@dist/server/' + memberName + '.js');
+
+        expect(member).toEqual(expected);
 
     });
 
-    test.each([
-        ['@dist/server/core.js'],
-        ['@dist/server/core.min.js']
-    ])('Should return "just"', function (src) {
+    describe('index', function () {
 
-        expect(require(src)).toBe(require(src).just);
+        var just = require('@dist/server');
+
+        test.each(members)('Should contain %s', function (memberName, expected) {
+
+            expect(just).toHaveProperty(memberName);
+            expect(just[memberName]).toEqual(expected);
+
+        });
 
     });
 
