@@ -23,7 +23,7 @@ jobs:
           target_branch: staging
           repo: justjs/justjs.github.io
           provider: pages
-          github_token: $GITHUB_TOKEN
+          token: $GITHUB_TOKEN
           cleanup: true
           keep_history: true
           on:
