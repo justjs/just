@@ -44,7 +44,11 @@
   "files": [
     "dist/**/*.js"
   ],
-  "author": "Alexis Puga Ruíz",
+  "author": {
+    "name": "Alexis Puga",
+    "email": "alexispuga@pm.me",
+    "url": "https://github.com/AlexisPuga"
+  },
   "license": "BSD-3-Clause",
   "devDependencies": {
     "@alexispuga/jsdoc-template": "^1.1.0",
