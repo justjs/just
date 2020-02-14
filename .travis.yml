@@ -24,7 +24,7 @@ jobs:
           repo: justjs/justjs.github.io
           provider: pages
           github_token: $GITHUB_TOKEN
-          skip_cleanup: true
+          cleanup: true
           keep_history: true
           on:
             tags: true
@@ -36,7 +36,7 @@ jobs:
           provider: npm
           email: $NPM_EMAIL
           api_key: $NPM_TOKEN
-          skip_cleanup: true
+          cleanup: true
           on:
             tags: true
             all_branches: true
