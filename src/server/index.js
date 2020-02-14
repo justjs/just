@@ -1,3 +1,4 @@
+/** @file Exports utilities for node js. */
 module.exports = {
     'core': require('../lib/core'),
     'access': require('../lib/access'),
