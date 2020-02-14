@@ -3,7 +3,7 @@
   "title": "Just js",
   "version": "1.0.0-dev",
   "description": "The core for all your javascript proyects.",
-  "main": "dist/server/core.min.js",
+  "main": "dist/server/index.js",
   "browser": "dist/browser/core.min.js",
   "publishConfig": {
     "access": "public"
