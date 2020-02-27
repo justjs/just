@@ -118,6 +118,32 @@ var Define = (function () {
 
     }
 
+    function hasID (id, module) {
+
+        return Object(module).id === id;
+
+    }
+
+    function hasCircularDependencies (module) {
+
+        return module && module.dependencies.some(
+            hasID.bind(null, module.id)
+        );
+
+    }
+
+    function hasRecursiveDependencies (module) {
+
+        return module && module.dependencies.some(function (d) {
+
+            return d && d.dependencies.some(
+                hasID.bind(null, this.id)
+            );
+
+        }, module);
+
+    }
+
     function callModule (module) {
 
         var handler = module.handler;
@@ -133,7 +159,10 @@ var Define = (function () {
             function (d) { return d && d.state !== Define.STATE_DEFINED; }
         );
 
-        if (wereCalled(dependencies) || isEveryDependencyWaiting) {
+        if (wereCalled(dependencies) || isEveryDependencyWaiting && (
+            hasCircularDependencies(module)
+            || hasRecursiveDependencies(module)
+        )) {
 
             args = dependencies.map(function (d) { return d.exports; });
             module.state = Define.STATE_CALLING;
