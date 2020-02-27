@@ -680,6 +680,8 @@ describe('@lib/Define', function () {
                 'entry: main': '/assets/Define-test-main.js'
             });
 
+            document.body.removeChild(element);
+
         });
 
     });
