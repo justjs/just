@@ -604,7 +604,7 @@ var Define = (function () {
         },
         /**
          * Finds {@link just.Define.urls|urls} within the document, adds them, and
-         * if some is called "main", it loads it.<br/>
+         * loads them.<br/>
          *
          * <aside class='note'>
          *     <h3>Note</h3>
@@ -620,7 +620,7 @@ var Define = (function () {
                 'urls': Define.findUrlsInDocument('data-just-Define')
             });
 
-            if ('main' in Define.urls) { Define.load('main'); }
+            eachProperty(Define.urls, function (url, id) { Define.load(id); });
 
             return Define;
 
