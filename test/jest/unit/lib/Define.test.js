@@ -688,17 +688,17 @@ describe('@lib/Define', function () {
 
     describe('Define.init', function () {
 
-        it('Should find urls in the document and load "main" only.', function (done) {
+        it('Should find urls in the document and load them.', function (done) {
 
             var urls = {
-                'main': '/assets/Define/init.js',
-                'index': '/assets/Define/init.js'
+                'init': '/assets/Define/init.js',
+                'init2': '/assets/Define/init2.js'
             };
             var element = document.createElement('div');
 
             removeElements(
-                'script[src="' + urls.main + '"]',
-                'script[src="' + urls.index + '"]'
+                'script[src="' + urls.init + '"]',
+                'script[src="' + urls.init2 + '"]'
             );
             element.setAttribute('data-just-Define', JSON.stringify(urls));
             document.body.appendChild(element);
@@ -711,10 +711,10 @@ describe('@lib/Define', function () {
             expect(Define.urls).toMatchObject(urls);
             /**
              * var spy = jest.spyOn(Define, 'load');
-             * expect(Define.load).toHaveBeenCalledTimes(1);
-             * expect(Define.load).toHaveBeenCalledWith('main');
+             * expect(Define.load).toHaveBeenCalledTimes(2);
+             * expect(Define.load).toHaveBeenCalledWith('init', 'init2');
              */
-            Define('init', ['index'], done);
+            Define('main', ['init', 'init2'], done);
 
         }, 5000);
 

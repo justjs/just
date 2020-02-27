@@ -1,5 +1,1 @@
-window.Define('main', [], function () {
-
-    window.Define('index', [], function () {});
-
-});
+window.Define('init', [], function () {});
