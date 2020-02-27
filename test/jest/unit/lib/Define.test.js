@@ -185,7 +185,6 @@ describe('@lib/Define', function () {
 
         var fn1 = jest.fn(function (r2) {
 
-            expect(fn1).toHaveBeenCalledTimes(1);
             expect(r2).toBe(2);
 
             return 1;
@@ -193,7 +192,6 @@ describe('@lib/Define', function () {
         });
         var fn2 = jest.fn(function (r1) {
 
-            expect(fn2).toHaveBeenCalledTimes(1);
             expect(r1).toBeInstanceOf(Define);
 
             return 2;
@@ -204,8 +202,12 @@ describe('@lib/Define', function () {
         Define('recursive-2', ['recursive-1'], fn2);
         Define('recursives', ['recursive-1', 'recursive-2'], function (r1, r2) {
 
+            expect(fn1).toHaveBeenCalledTimes(1);
+            expect(fn2).toHaveBeenCalledTimes(1);
+
             expect(r1).toBe(1);
             expect(r2).toBe(2);
+
             done();
 
         });
