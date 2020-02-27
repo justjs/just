@@ -342,6 +342,33 @@ describe('@lib/Define', function () {
 
     });
 
+    it('Should call non-ready modules only if those modules contain ' +
+        'recursive/circular dependencies. Fixes #1.', function (done) {
+
+        Define('a', ['c'], function (c) {
+
+            expect(c).toBe('c');
+
+            return 'a';
+
+        });
+
+        Define('b', ['a'], function (a) {
+
+            expect(a).toBe('a');
+            expect.assertions(2);
+            done();
+
+        });
+
+        Define('c', function () {
+
+            return 'c';
+
+        });
+
+    });
+
     describe('Define.configure', function () {
 
         it('Should assign properties to Define.', function () {
