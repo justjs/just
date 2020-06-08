@@ -415,6 +415,44 @@ describe('@lib/Define', function () {
 
         });
 
+        it('Should load an element with custom attributes.', function (done) {
+
+            var id = 'using an object with "src"';
+            var url = '/assets/Define/load-script.js';
+            var attributes = {
+                'src': url,
+                'id': 'custom-script'
+            };
+
+            removeElements(
+                '[src="' + url + '"]',
+                '[href="' + url + '"]'
+            );
+
+            Define.urls[id] = attributes;
+            Define.load(id, function () {
+
+                var element = this;
+                var name;
+
+                expect(element.tagName.toLowerCase()).toBe('script');
+
+                for (name in attributes) {
+
+                    if (({}).hasOwnProperty.call(attributes, name)) {
+
+                        expect(element.getAttribute(name)).toBe(attributes[name]);
+
+                    }
+
+                }
+
+                done();
+
+            });
+
+        });
+
     });
 
     describe('Define.configure', function () {
