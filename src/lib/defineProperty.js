@@ -1,5 +1,3 @@
-var eachProperty = require('./eachProperty');
-
 /**
  * Alternative to <var>Object.defineProperty</var> with more enhancements.
  *
@@ -30,8 +28,17 @@ function defineProperty (object, key, value) {
         'get': void 0,
         'set': void 0
     });
+    var someDescriptor;
+    var k;
 
-    if (!eachProperty(defaultDescriptors, function (v, key) { return key in descriptor; })) {
+    for (k in defaultDescriptors) {
+
+        if (({}).hasOwnProperty.call(defaultDescriptors, k)
+            && k in descriptor) { someDescriptor = true; }
+
+    }
+
+    if (!someDescriptor) {
 
         descriptor = {
             'value': value
