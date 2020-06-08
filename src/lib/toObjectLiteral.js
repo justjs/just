@@ -1,8 +1,10 @@
 var check = require('./check');
+var deprecate = require('./deprecate');
 
 /**
  * Converts <code>[[k0, v0], {k1: v1}]</code> to <code>{k0: v0, k1: v1}</code>.
  *
+ * @deprecated since 1.0.0-rc.22
  * @namespace
  * @memberof just
  * @param {!object[]|!object} array - An array containing sub-arrays
@@ -13,6 +15,10 @@ var check = require('./check');
 function toObjectLiteral (array) {
 
     var objectLiteral = {};
+
+    deprecate('.toObjectLiteral()', 'warning', {
+        'since': '1.0.0-rc.22'
+    });
 
     if (check(array, {}, null)) {
 
