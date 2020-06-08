@@ -1,5 +1,4 @@
 var defineProperty = require('./defineProperty');
-var eachProperty = require('./eachProperty');
 
 /**
  * Alternative to <var>Object.defineProperties</var>.
@@ -13,11 +12,18 @@ var eachProperty = require('./eachProperty');
  */
 function defineProperties (object, properties) {
 
-    eachProperty(properties, function (value, key) {
+    var key, value;
 
-        defineProperty(object, key, value);
+    for (key in properties) {
 
-    });
+        if (({}).hasOwnProperty.call(properties, key)) {
+
+            value = properties[key];
+            defineProperty(object, key, value);
+
+        }
+
+    }
 
     return object;
 
