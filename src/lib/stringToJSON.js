@@ -20,7 +20,7 @@ function stringToJSON (string) {
 
     var json;
 
-    if (!/\{.+\}/.test(string)) { return {}; }
+    if (!/(?:^\{|\}$)/.test(String(string).trim())) { return {}; }
 
     json = parseJSON(string) || {};
 

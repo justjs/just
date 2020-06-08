@@ -21,4 +21,10 @@ describe('@lib/stringToJSON.js', function () {
 
     });
 
+    it('Should parse line breaks too.', function () {
+
+        expect(stringToJSON('{\n"a": 1\n}')).toMatchObject({'a': 1});
+
+    });
+
 });
