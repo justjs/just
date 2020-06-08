@@ -12,6 +12,7 @@ describe('Core', function () {
         var core = require(src).just;
 
         expect(core).toEqual(expect.objectContaining({
+            'deprecate': expect.any(Function),
             'access': expect.any(Function),
             'prop': expect.any(Function),
             'check': expect.any(Function),
