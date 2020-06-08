@@ -77,7 +77,9 @@ var Define = (function () {
         );
         var URL = parseUrl(url);
         var urlExtension = (URL.pathname.match(/\.(.+)$/) || ['js'])[0];
-        var type = ('src' in urlDetailsObject
+        var type = ('tagName' in urlDetailsObject
+            ? urlDetailsObject.tagName
+            : 'src' in urlDetailsObject
             ? 'script'
             : 'href' in urlDetailsObject
             ? 'link'
@@ -99,7 +101,7 @@ var Define = (function () {
 
             eachProperty(extraElementAttributes, function setAttributes (value, name) {
 
-                if (['href', 'src'].indexOf(name) === -1) { this.setAttribute(name, value); }
+                if (['tagName', 'href', 'src'].indexOf(name) === -1) { this.setAttribute(name, value); }
 
             }, this);
 
@@ -477,6 +479,18 @@ var Define = (function () {
          *
          * Define(['id'], function () {
          *     // Will load a <script> with the given attributes ("integrity", "crossorigin", ...).
+         * });
+         *
+         * @example <caption>Since v1.0.0-rc.23: Load a custom element.</caption>
+         * Object.assign(Define.urls, {
+         *     'id': {
+         *         'tagName': 'iframe',
+         *         'src': 'https://example.org'
+         *     }
+         * });
+         *
+         * Define(['id'], function () {
+         *     // Will load an <iframe> with the given attributes.
          * });
          *
          * @type {!object.<just.Define~id, url>|!object.<just.Define~id, object.<elementAttributes>>}

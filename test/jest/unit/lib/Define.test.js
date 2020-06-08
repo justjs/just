@@ -453,6 +453,47 @@ describe('@lib/Define', function () {
 
         });
 
+        it('Should load a custom element with custom attributes ' +
+            'using the tagName property.', function (done) {
+
+            var id = 'using an object with "tagName"';
+            var url = '/assets/Define/load-script.js';
+            var attributes = {
+                'src': url,
+                'tagName': 'iframe',
+                'id': 'custom-element'
+            };
+
+            removeElements(
+                '[src="' + url + '"]',
+                '[href="' + url + '"]'
+            );
+
+            Define.urls[id] = attributes;
+            Define.load(id, function () {
+
+                var element = this;
+                var name, value;
+
+                expect(element.tagName.toLowerCase()).toBe('iframe');
+
+                for (name in attributes) {
+
+                    if (({}).hasOwnProperty.call(attributes, name)) {
+
+                        value = (name === 'tagName' ? null : attributes[name]);
+                        expect(element.getAttribute(name)).toBe(value);
+
+                    }
+
+                }
+
+                done();
+
+            });
+
+        });
+
     });
 
     describe('Define.configure', function () {
