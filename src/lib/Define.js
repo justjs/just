@@ -63,10 +63,26 @@ var Define = (function () {
 
     function loadModule (id, onLoad) {
 
-        var url = id in Define.urls ? Define.urls[id] : id;
+        var urlDetails = Define.urls[id];
+        var urlDetailsObject = Object(urlDetails);
+        var extraElementAttributes = (typeof urlDetails === 'object'
+            ? urlDetailsObject
+            : null
+        );
+        var url = (typeof urlDetails === 'object'
+            ? urlDetailsObject.src || urlDetailsObject.href
+            : typeof urlDetails === 'string'
+            ? urlDetails
+            : id
+        );
         var URL = parseUrl(url);
         var urlExtension = (URL.pathname.match(/\.(.+)$/) || ['js'])[0];
-        var type = (/css$/i.test(urlExtension) ? 'link' : 'script');
+        var type = ('src' in urlDetailsObject
+            ? 'script'
+            : 'href' in urlDetailsObject
+            ? 'link'
+            : (/css$/i.test(urlExtension) ? 'link' : 'script')
+        );
 
         if (!(id in Define.urls)) { Define.urls[id] = url; }
         if (url !== id) { defineAlias(id, url); }
@@ -80,6 +96,12 @@ var Define = (function () {
             if (isError) { Define.handleError.call(null, new Error('Error loading ' + url)); }
 
         }, function (similarScript) {
+
+            eachProperty(extraElementAttributes, function setAttributes (value, name) {
+
+                if (['href', 'src'].indexOf(name) === -1) { this.setAttribute(name, value); }
+
+            }, this);
 
             if (type !== 'script' && !(id in Define.nonScripts)) { Define.nonScripts[id] = this; }
             if (similarScript) { return false; }
@@ -414,6 +436,8 @@ var Define = (function () {
          *     <p>If you need to load files when you require some id,
          *        you need to specify those urls here. If you do so, you
          *        must {@link just.Define|Define} that id/url within that file.</p>
+         *     <p>Starting from v1.0.0-rc.23, you can pass an object to specify
+         *        the attributes for the loaded element.</p>
          * </aside>
          *
          * @example
@@ -441,7 +465,21 @@ var Define = (function () {
          *     // Will load js/index.js once.
          * });
          *
-         * @type {!object.<just.Define~id, url>}
+         * @example <caption>Since v1.0.0-rc.23: Adding custom attributes to the loaded element.</caption>
+         * Object.assign(Define.urls, {
+         *     'id': {
+         *         'src': 'https://some.cdn.com',
+         *         'integrity': 'sha512-...',
+         *         'crossorigin': '',
+         *         'data-some-other': 'attribute'
+         *     }
+         * });
+         *
+         * Define(['id'], function () {
+         *     // Will load a <script> with the given attributes ("integrity", "crossorigin", ...).
+         * });
+         *
+         * @type {!object.<just.Define~id, url>|!object.<just.Define~id, object.<elementAttributes>>}
          */
         'urls': {
             'value': {},
