@@ -1,11 +1,11 @@
 var toJSON = require('@lib/toJSON');
-var stringToJSON = require('@lib/stringToJSON');
+var parseJSON = require('@lib/parseJSON');
 
 describe('@lib/toJSON.js', function () {
 
-    it('Should be an alias of stringToJSON.', function () {
+    it('Should be an alias of parseJSON.', function () {
 
-        expect(toJSON).toBe(stringToJSON);
+        expect(toJSON).toBe(parseJSON);
 
     });
 
