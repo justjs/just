@@ -369,6 +369,54 @@ describe('@lib/Define', function () {
 
     });
 
+    describe('Define.urls', function () {
+
+        it('Should load a <script>.', function (done) {
+
+            var id = 'using a string';
+            var url = '/assets/Define/load-script.js';
+
+            removeElements(
+                '[src="' + url + '"]',
+                '[href="' + url + '"]'
+            );
+
+            Define.urls[id] = url;
+            Define.load(id, function () {
+
+                var element = this;
+
+                expect(element.tagName.toLowerCase()).toBe('script');
+                done();
+
+            });
+
+        });
+
+        it('Should load a <link>.', function (done) {
+
+            var id = 'using a string';
+            var url = '/assets/Define/load-style.css';
+
+            removeElements(
+                '[src="' + url + '"]',
+                '[href="' + url + '"]'
+            );
+
+            Define.urls[id] = url;
+            Define.load(id, function () {
+
+                var element = this;
+
+                expect(element.tagName.toLowerCase()).toBe('link');
+                done();
+
+            });
+
+        });
+
+    });
+
     describe('Define.configure', function () {
 
         it('Should assign properties to Define.', function () {
