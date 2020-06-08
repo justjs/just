@@ -1,5 +1,8 @@
+var parseJSON = require('./parseJSON');
+
 /**
- * Parses a JSON string into a JSON.
+ * Parses an stringified JSON ('{"a": 1}') into an object literal ({a: 1}).
+ * If you need to parse any other value, use {@link just.parseJSON} instead.
  *
  * @namespace
  * @memberof just
@@ -11,7 +14,7 @@
  * @example
  * stringToJSON(1); // returns {}.
  *
- * @return {!object} A JSON-like object.
+ * @return {!object} An object literal.
  */
 function stringToJSON (string) {
 
@@ -19,8 +22,7 @@ function stringToJSON (string) {
 
     if (!/\{.+\}/.test(string)) { return {}; }
 
-    try { json = JSON.parse(string); }
-    catch (exception) { return {}; }
+    json = parseJSON(string) || {};
 
     return json;
 
