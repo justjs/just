@@ -1,3 +1,4 @@
+var deprecate = require('./deprecate');
 /**
  * @typedef {function} just.eachProperty~fn
  *
@@ -15,6 +16,7 @@
  * calls a function on each iteration, and if a truthy value
  * is returned from that function, the loop will stop.
  *
+ * @deprecated since 1.0.0-rc.22
  * @namespace
  * @memberof just
  * @param {*} object - Some value.
@@ -37,6 +39,11 @@ function eachProperty (object, fn, thisArg, opts) {
     }, opts);
     var wasInterrupted = false;
     var key;
+
+    deprecate('.eachProperty()', 'warning', {
+        'since': '1.0.0-rc.22',
+        'message': 'Use a for in loop instead.'
+    });
 
     if (typeof fn !== 'function') { throw new TypeError(fn + ' is not a function.'); }
 

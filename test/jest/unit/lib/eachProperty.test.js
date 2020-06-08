@@ -1,6 +1,9 @@
+/**
+ * @deprecated since 1.0.0-rc.22
+ */
 var eachProperty = require('@lib/eachProperty');
 
-describe('@lib/eachProperty.js', function () {
+describe.skip('@lib/eachProperty.js', function () {
 
     it('Should call a function on each element found.', function () {
 
