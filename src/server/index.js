@@ -1,6 +1,7 @@
 /** @file Exports utilities for node js. */
 module.exports = {
     'core': require('../lib/core'),
+    'deprecate': require('../lib/deprecate'),
     'access': require('../lib/access'),
     'prop': require('../lib/prop'),
     'check': require('../lib/check'),
