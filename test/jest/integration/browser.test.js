@@ -46,7 +46,8 @@ describe('Core', function () {
             'stringToJSON': expect.any(Function),
             'toJSON': expect.any(Function),
             'toObjectLiteral': expect.any(Function),
-            'toObj': expect.any(Function)
+            'toObj': expect.any(Function),
+            'parseJSON': expect.any(Function)
         }));
 
     });

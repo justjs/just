@@ -16,6 +16,7 @@ module.exports = {
     'eachProp': require('../lib/eachProp'),
     'isEmptyObject': require('../lib/isEmptyObject'),
     'emptyObj': require('../lib/emptyObj'),
+    'parseJSON': require('../lib/parseJSON'),
     'stringToJSON': require('../lib/stringToJSON'),
     'toJSON': require('../lib/toJSON'),
     'toObjectLiteral': require('../lib/toObjectLiteral'),
