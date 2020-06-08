@@ -16,7 +16,7 @@ var defineProperties = require('./defineProperties');
  * @namespace
  * @memberof just
  * @param {!string} url - Some url.
- * @param {!function} fn - Hook for error/load listener.
+ * @param {!function} fn - Hook for onreadystatechange listener.
  * @param {?object} options
  * @param {?string} [options.method="GET"] - Method for the request.
  * @param {?boolean} [options.json=/.json$/.test(url)] - .
@@ -52,23 +52,26 @@ function request (url, fn, options) {
 
     }
 
-    xhr.onerror = xhr.onload = function onreponse (e) {
+    xhr.onreadystatechange = function onReadyStateChange (e) {
 
-        var status = this.status;
-        var content = ('response' in this
-			? this.response
-			: this.responseText
-        );
-        var error = (status < 200 || status >= 400
-			? new Error('Bad status: ' + status)
-			: e.type === 'error'
-			? new Error('Unknown error.')
-			: null
-        );
+        var status, content, error;
 
-        xhr.onerror = xhr.onload = null;
+        if (this.readyState === XMLHttpRequest.DONE) {
 
-        if (fn) { fn.call(this, error, content); }
+            this.onreadystatechange = null;
+            status = this.status;
+            content = ('response' in this
+                ? this.response
+                : this.responseText
+            );
+            error = ((status < 200 || status >= 400) && status !== 0
+                ? new Error('Bad status: ' + status)
+                : null
+            );
+
+            if (fn) { fn.call(this, error, content); }
+
+        }
 
     };
 
