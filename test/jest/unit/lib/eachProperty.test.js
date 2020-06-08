@@ -1,3 +1,4 @@
+jest.spyOn(console, 'warn').mockImplementation(function () {});
 var eachProperty = require('@lib/eachProperty');
 
 describe('@lib/eachProperty.js', function () {
