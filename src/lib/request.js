@@ -22,6 +22,10 @@ var defineProperties = require('./defineProperties');
  * @param {?boolean} [options.json=/.json$/.test(url)] - .
  * @param {*} [options.data=null] - Data to send.
  * @param {?function} [send=just.request~send] - A custom function to intercept and send the request.
+ * @param {?boolean} [options.async=true]
+ * @param {?string} [options.user=null]
+ * @param {?string} [options.pwd=null]
+ * @returns {*} The retuned value of {@link just.request~send}.
  */
 function request (url, fn, options) {
 
