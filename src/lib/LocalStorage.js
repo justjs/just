@@ -1,4 +1,5 @@
 var defineProperties = require('./defineProperties');
+var eachProperty = require('./eachProperty');
 var defaults = require('./defaults');
 
 /**
@@ -113,7 +114,6 @@ defineProperties(LocalStorage.prototype, /** @lends just.LocalStorage.prototype 
         var options = defaults(opts, {
             'secure': location.protocol === 'https:'
         });
-        var k, v;
 
         if (!this.consent) { return false; }
 
@@ -123,17 +123,7 @@ defineProperties(LocalStorage.prototype, /** @lends just.LocalStorage.prototype 
         if (options.expires) { options.expires = new Date(options.expires).toGMTString(); }
 
         set(name, value);
-
-        for (k in options) {
-
-            if (({}).hasOwnProperty.call(options, k)) {
-
-                v = options[k];
-                set(k, v);
-
-            }
-
-        }
+        eachProperty(options, function (v, k) { set(k, v); });
 
         document.cookie = cookie.trim();
 

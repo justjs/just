@@ -1,3 +1,5 @@
+var eachProperty = require('./eachProperty');
+
 /**
  * Checks if an object has no direct keys.
  *
@@ -9,16 +11,7 @@
  */
 function isEmptyObject (object) {
 
-    var obj = Object(object);
-    var key;
-
-    for (key in obj) {
-
-        if (({}).hasOwnProperty.call(obj, key)) { return false; }
-
-    }
-
-    return true;
+    return !eachProperty(object, function () { return true; });
 
 }
 

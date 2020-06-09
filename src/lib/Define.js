@@ -1,6 +1,7 @@
 var findElements = require('./findElements');
 var stringToJSON = require('./stringToJSON');
 var loadElement = require('./loadElement');
+var eachProperty = require('./eachProperty');
 var defineProperties = require('./defineProperties');
 var onDocumentReady = require('./onDocumentReady');
 var parseUrl = require('./parseUrl');
@@ -98,19 +99,11 @@ var Define = (function () {
 
         }, function (similarScript) {
 
-            var name, value;
+            eachProperty(extraElementAttributes, function setAttributes (value, name) {
 
-            for (name in extraElementAttributes) {
+                if (['tagName', 'href', 'src'].indexOf(name) === -1) { this.setAttribute(name, value); }
 
-                value = extraElementAttributes[name];
-
-                if (({}).hasOwnProperty.call(extraElementAttributes, name)) {
-
-                    if (['tagName', 'href', 'src'].indexOf(name) === -1) { this.setAttribute(name, value); }
-
-                }
-
-            }
+            }, this);
 
             if (type !== 'script' && !(id in Define.nonScripts)) { Define.nonScripts[id] = this; }
             if (similarScript) { return false; }
@@ -396,19 +389,11 @@ var Define = (function () {
 
         timeout = setTimeout(function updateModules () {
 
-            var key;
+            eachProperty(modules, function (module) {
 
-            for (key in modules) {
+                if (callModule(module)) { return updateModules(), true; }
 
-                if (({}).hasOwnProperty.call(modules, key)
-                    && callModule(modules[key])) {
-
-                    updateModules();
-                    break;
-
-                }
-
-            }
+            });
 
         });
 
@@ -683,23 +668,11 @@ var Define = (function () {
          */
         'init': function loadUrlsFromDocument () {
 
-            var urls, id;
-
             Define.configure({
                 'urls': Define.findUrlsInDocument('data-just-Define')
             });
 
-            urls = Define.urls;
-
-            for (id in urls) {
-
-                if (({}).hasOwnProperty.call(urls, id)) {
-
-                    Define.load(id);
-
-                }
-
-            }
+            eachProperty(Define.urls, function (url, id) { Define.load(id); });
 
             return Define;
 

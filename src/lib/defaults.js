@@ -1,4 +1,5 @@
 var check = require('./check');
+var eachProperty = require('./eachProperty');
 
 /**
  * Defaults to <var>defaultValue</var> if <var>value</var> looks like
@@ -62,7 +63,6 @@ function defaults (value, defaultValue, opts) {
         'checkDeepLooks': true,
         'ignoreNull': false
     }, opts);
-    var v, k;
 
     if (options.ignoreNull && defaultValue === null && value !== void 0) { return value; }
 
@@ -72,26 +72,20 @@ function defaults (value, defaultValue, opts) {
 
         if (check(value, {}) && options.checkDeepLooks) {
 
-            for (k in defaultValue) {
+            eachProperty(defaultValue, function (v, k) {
 
-                v = defaultValue[k];
+                if (typeof value[k] !== 'undefined') {
 
-                if (({}).hasOwnProperty.call(defaultValue, k)) {
+                    value[k] = defaults(value[k], v, options);
 
-                    if (typeof value[k] !== 'undefined') {
+                }
+                else if (!options.ignoreDefaultKeys) {
 
-                        value[k] = defaults(value[k], v, options);
-
-                    }
-                    else if (!options.ignoreDefaultKeys) {
-
-                        value[k] = v;
-
-                    }
+                    value[k] = v;
 
                 }
 
-            }
+            });
 
         }
 
