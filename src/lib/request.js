@@ -27,6 +27,7 @@ var eachProperty = require('./eachProperty');
  * @param {?string} [options.user=null]
  * @param {?string} [options.pwd=null]
  * @param {object} [options.props=options.json ? {responseType: 'json'} : {}] - Properties for the xhr instance.
+ * @param {object} [options.headers=options.json ? {'Content-Type': 'application/json'} : {}] - Custom headers for the request.
  * @returns {*} The retuned value of {@link just.request~send}.
  */
 function request (url, fn, options) {
@@ -42,12 +43,14 @@ function request (url, fn, options) {
         'async': true,
         'user': null,
         'pwd': null,
+        'headers': Object.assign({}, (isJSON ? {
+            'Content-Type': 'application/json'
+        } : null)),
         'props': Object.assign({}, (isJSON ? {
             'responseType': 'json'
         } : null)),
         'send': function send (data) { return this.send(data); }
     }, {'ignoreNull': true});
-    var json = opts.json;
     var data = opts.data;
     var method = opts.method;
     var async = opts.async;
@@ -64,11 +67,7 @@ function request (url, fn, options) {
 
     xhr.open(method, url, async, user, password);
 
-    if (json) {
-
-        xhr.setRequestHeader('Content-Type', 'application/json');
-
-    }
+    eachProperty(function setHeaders (value, key) { this.setRequestHeader(key, value); }, xhr);
     eachProperty(function setProps (value, key) { this[key] = value; }, xhr);
 
     xhr.onreadystatechange = function onReadyStateChange (e) {
