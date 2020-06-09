@@ -1,6 +1,7 @@
 var defaults = require('./defaults');
 var parseUrl = require('./parseUrl');
 var defineProperties = require('./defineProperties');
+var eachProperty = require('./eachProperty');
 
 /**
  * A function to intercept and send the request.
@@ -25,17 +26,25 @@ var defineProperties = require('./defineProperties');
  * @param {?boolean} [options.async=true]
  * @param {?string} [options.user=null]
  * @param {?string} [options.pwd=null]
+ * @param {object} [options.props=options.json ? {responseType: 'json'} : {}] - Properties for the xhr instance.
  * @returns {*} The retuned value of {@link just.request~send}.
  */
 function request (url, fn, options) {
 
+    var isJSON = ('json' in Object(options)
+        ? options.json
+        : /\.json$/i.test(url)
+    );
     var opts = defaults(options, {
-        'json': /\.json$/i.test(url),
+        'json': isJSON,
         'data': null,
         'method': 'GET',
         'async': true,
         'user': null,
         'pwd': null,
+        'props': Object.assign({}, (isJSON ? {
+            'responseType': 'json'
+        } : null)),
         'send': function send (data) { return this.send(data); }
     }, {'ignoreNull': true});
     var json = opts.json;
@@ -58,9 +67,9 @@ function request (url, fn, options) {
     if (json) {
 
         xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.responseType = 'json';
 
     }
+    eachProperty(function setProps (value, key) { this[key] = value; }, xhr);
 
     xhr.onreadystatechange = function onReadyStateChange (e) {
 
