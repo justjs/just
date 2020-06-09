@@ -105,4 +105,25 @@ describe('@lib/defineProperty.js', function () {
 
     });
 
+    describe('.isDescriptor()', function () {
+
+        test.each([
+            [{'value': 1}, true],
+            [{'enumerable': 'not a boolean'}, true],
+            [{'configurable': 'not a boolean'}, true],
+            [{'get': 'not a function'}, true],
+            [{'set': 'not a function'}, true],
+            [{'writable': 'not a boolean'}, true],
+            [{'value': 1, 'get': null}, true],
+            [{'value': 1, 'get': null, 'extra': true}, true],
+            [{'VALUE': 'uppercased'}, false],
+            [{'unknown': true}, false]
+        ], 'Should check if %o is a property descriptor.', function (value, expected) {
+
+            expect(defineProperty.isDescriptor(value)).toBe(expected);
+
+        });
+
+    });
+
 });

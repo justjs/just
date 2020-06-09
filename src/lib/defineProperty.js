@@ -24,10 +24,8 @@
 function defineProperty (object, key, value) {
 
     var descriptor = Object(value);
-    var defaultDescriptors = ['value', 'writable', 'get', 'set', 'configurable', 'enumerable'];
-    var someDescriptor = defaultDescriptors.some(function (key) { return key in this; }, descriptor);
 
-    if (!someDescriptor) {
+    if (!defineProperty.isDescriptor(descriptor)) {
 
         descriptor = {
             'value': value
@@ -40,5 +38,29 @@ function defineProperty (object, key, value) {
     return object;
 
 }
+
+Object.defineProperties(defineProperty, /** @lends just.defineProperty */{
+    /**
+     * Check if the given value is a {@link propertyDescriptor}.
+     *
+     * @since 1.0.0-rc.23
+     * @function
+     * @param {*} descriptor
+     * @returns {boolean}
+     */
+    'isDescriptor': {
+        'value': function isPropertyDescriptor (descriptor) {
+
+            var keys = ['value', 'writable', 'get', 'set', 'configurable', 'enumerable'];
+            var isDescriptor = keys.some(
+                function (key) { return key in this; },
+                Object(descriptor)
+            );
+
+            return isDescriptor;
+
+        }
+    }
+});
 
 module.exports = defineProperty;
