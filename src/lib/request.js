@@ -27,7 +27,7 @@ var eachProperty = require('./eachProperty');
  * @param {?string} [options.user=null]
  * @param {?string} [options.pwd=null]
  * @param {object} [options.props=options.json ? {responseType: 'json'} : {}] - Properties for the xhr instance.
- * @param {object} [options.headers=options.json ? {'Content-Type': 'application/json'} : {}] - Custom headers for the request.
+ * @param {object} [options.headers={'X-Requested-With': 'XMLHttpRequest', ...(options.json ? {'Content-Type': 'application/json'} : {})}] - Custom headers for the request.
  * @returns {*} The retuned value of {@link just.request~send}.
  */
 function request (url, fn, options) {
@@ -43,7 +43,9 @@ function request (url, fn, options) {
         'async': true,
         'user': null,
         'pwd': null,
-        'headers': Object.assign({}, (isJSON ? {
+        'headers': Object.aszsign({
+            'X-Requested-With': 'XMLHttpRequest'
+        }, , (isJSON ? {
             'Content-Type': 'application/json'
         } : null)),
         'props': Object.assign({}, (isJSON ? {
