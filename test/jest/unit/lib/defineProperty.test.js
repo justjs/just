@@ -126,4 +126,17 @@ describe('@lib/defineProperty.js', function () {
 
     });
 
+    describe('.toDescriptor()', function () {
+
+        test.each([
+            [1, {'value': 1}],
+            [{'value': 1}, {'value': 1}]
+        ], 'Should convert %o to a property descriptor.', function (value, expected) {
+
+            expect(defineProperty.toDescriptor(value)).toBe(expected);
+
+        });
+
+    });
+
 });

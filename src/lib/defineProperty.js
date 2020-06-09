@@ -23,15 +23,7 @@
  */
 function defineProperty (object, key, value) {
 
-    var descriptor = Object(value);
-
-    if (!defineProperty.isDescriptor(descriptor)) {
-
-        descriptor = {
-            'value': value
-        };
-
-    }
+    var descriptor = defineProperty.toDescriptor(value);
 
     Object.defineProperty(object, key, descriptor);
 
@@ -58,6 +50,31 @@ Object.defineProperties(defineProperty, /** @lends just.defineProperty */{
             );
 
             return isDescriptor;
+
+        }
+    },
+    /**
+     * Convert some value into a {@link propertyDescriptor}.
+     *
+     * @since 1.0.0-rc.23
+     * @function
+     * @param {*} value
+     * @returns {propertyDescriptor}
+     */
+    'toDescriptor': {
+        'value': function convertToPropertyDescriptor (value) {
+
+            var descriptor = Object(value);
+
+            if (!defineProperty.isDescriptor(descriptor)) {
+
+                descriptor = {
+                    'value': value
+                };
+
+            }
+
+            return descriptor;
 
         }
     }
