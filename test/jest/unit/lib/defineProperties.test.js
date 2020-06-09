@@ -60,4 +60,81 @@ test('@lib/defineProperties.js', function () {
 
     });
 
+    test.each([
+        [
+            {'a': 1, 'b': {'value': 2}},
+            {'value': 'common'},
+            {
+                'a': Object.assign({}, defaultDescriptors, {'value': 'common'}),
+                'b': Object.assign({}, defaultDescriptors, {'value': 'common'})
+            }
+        ],
+        [
+            {'a': 1, 'b': {'value': 2}},
+            {'writable': true},
+            {
+                'a': Object.assign({}, defaultDescriptors, {'value': 1, 'writable': true}),
+                'b': Object.assign({}, defaultDescriptors, {'value': 2, 'writable': true})
+            }
+        ],
+        [
+            {'a': 1, 'b': {'value': 2}},
+            {'get': fn},
+            {
+                'a': Object.assign({}, defaultDescriptors, {'value': 1, 'get': fn}),
+                'b': Object.assign({}, defaultDescriptors, {'value': 2, 'get': fn})
+            }
+        ],
+        [
+            {'a': 1, 'b': {'value': 2}},
+            {'set': fn},
+            {
+                'a': Object.assign({}, defaultDescriptors, {'value': 1, 'set': fn}),
+                'b': Object.assign({}, defaultDescriptors, {'value': 2, 'set': fn})
+            }
+        ],
+        [
+            {'a': 1, 'b': {'value': 2}},
+            {'configurable': true},
+            {
+                'a': Object.assign({}, defaultDescriptors, {'value': 1, 'configurable': true}),
+                'b': Object.assign({}, defaultDescriptors, {'value': 2, 'configurable': true})
+            }
+        ],
+        [
+            {'a': 1, 'b': {'value': 2}},
+            {'enumerable': true},
+            {
+                'a': Object.assign({}, defaultDescriptors, {'value': 1, 'enumerable': true}),
+                'b': Object.assign({}, defaultDescriptors, {'value': 2, 'enumerable': true})
+            }
+        ],
+        [
+            {'a': 1, 'b': {'value': 2}},
+            'not a descriptor',
+            Error
+        ],
+    ], 'Should set a common descriptor.', function (properties, commonDescriptor, expected) {
+
+        var object = {};
+
+        if (expected === Error) {
+
+            expect(function () {
+
+                defineProperties(object, properties, commonDescriptor);
+
+            }).toThrow(Error);
+
+        }
+        else {
+
+            expect(Object.getOwnPropertyDescriptors(
+                defineProperties(object, properties, commonDescriptor)
+            )).toMatchObject(expected);
+
+        }
+
+    });
+
 });
