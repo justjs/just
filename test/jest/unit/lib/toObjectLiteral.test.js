@@ -1,3 +1,4 @@
+jest.spyOn(console, 'warn').mockImplementation(function () {});
 var toObjectLiteral = require('@lib/toObjectLiteral');
 
 describe('@lib/toObjectLiteral.js', function () {
