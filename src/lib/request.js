@@ -29,11 +29,17 @@ function request (url, fn, options) {
         'json': /\.json$/i.test(url),
         'data': null,
         'method': 'GET',
+        'async': true,
+        'user': null,
+        'pwd': null,
         'send': function send (data) { return this.send(data); }
     }, {'ignoreNull': true});
     var json = opts.json;
     var data = opts.data;
     var method = opts.method;
+    var async = opts.async;
+    var user = opts.user;
+    var password = opts.pwd;
     var xhr = new XMLHttpRequest();
 
     if (/GET/i.test(method) && data) {
@@ -43,7 +49,7 @@ function request (url, fn, options) {
 
     }
 
-    xhr.open(method, url);
+    xhr.open(method, url, async, user, password);
 
     if (json) {
 
