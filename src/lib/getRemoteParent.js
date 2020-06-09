@@ -33,8 +33,7 @@ function getRemoteParent (childNode, fn, rootContainer, includeChild) {
     var currentNode = childNode;
     var deepLevel = 0;
 
-    if (typeof fn !== 'function') { throw new TypeError(fn + ' is not a function.'); }
-    if (!(childNode instanceof Node)) { throw new TypeError('The child isn\'t an instance of a Node.'); }
+    if (!(childNode instanceof Node)) { throw new TypeError(childNode + ' is not a Node.'); }
     if (!(rootContainer instanceof Node)) { rootContainer = document.documentElement; }
 
     while (currentNode) {
