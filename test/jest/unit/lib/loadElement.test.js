@@ -1,165 +1,100 @@
 var loadElement = require('@lib/loadElement');
-var parseUrl = require('@lib/parseUrl');
 var helpers = require('@test/helpers');
+var removeElements = helpers.removeElements;
 
 describe('@lib/loadElement.js', function () {
 
-    var head = document.head;
     var assets = {
-        'css': '/assets/loadElement-test.css',
-        'js': '/assets/loadElement-test.js'
+        'link': '//:0',
+        'script': '//:0',
+        'iframe': '//:0',
+        'embed': '//:0',
+        'img': '//:0',
+        'video': '//:0'
     };
 
-    it('Should throw if something is missing.', function () {
+    beforeEach(function () {
 
-        expect(function () {
-
-            /** Not enough arguments (from document.createElement) */
-            loadElement();
-
-        }).toThrow(TypeError);
-
-        expect(function () {
-
-            /** Not a valid url. */
-            loadElement('link', '');
-
-        }).toThrow(TypeError);
-
-        expect(function () {
-
-            /** Not a valid url. */
-            loadElement('link', null);
-
-        }).toThrow(TypeError);
+        removeElements.apply(null, Object.keys(assets));
 
     });
 
-    it('Should load files and set some default properties to ' +
-		'the element.', function (done) {
+    it('Should create an element, append it to document.head and ' +
+        'return it.', function () {
 
-        var onEvent = jest.fn(function (e) {
+        var script = loadElement('script');
 
-            /** The element finished loading. */
-
-            expect(this).toBeInstanceOf(HTMLLinkElement);
-            expect(e).toBeInstanceOf(Event);
-
-            this.parentNode.removeChild(this);
-            done();
-
-        });
-        var fn = jest.fn(function (loadedFile, url) {
-
-            /** `this` is the current node. */
-            expect(this).toBeInstanceOf(HTMLLinkElement);
-            /** `loadedFile` is a node that loaded the same url. */
-            expect(loadedFile).toBeNull();
-            /** Some link attributes were applied by default. */
-            expect(this.rel).toBe('stylesheet');
-            /**
-             * The url is not a cross origin resource,
-             * so the attribute was not added.
-             */
-            expect(this.getAttribute('crossorigin')).toBeNull();
-            /** The url was added to the src-like attribute. */
-            expect(this.href).toBe(parseUrl(url).href);
-
-            head.appendChild(this);
-
-            return this;
-
-        });
-        var link = loadElement('link', assets['css'], onEvent, fn);
-
-        expect(fn).toHaveBeenCalledTimes(1);
-        /** The function returned the current Node. */
-        expect(fn).toHaveReturnedWith(link);
-        expect(link).toBeInstanceOf(Node);
+        expect(script).toBeInstanceOf(HTMLScriptElement);
+        expect(script.parentNode).toBe(document.head);
 
     });
 
-    it('Should avoid loading the same file multiple times.', function (done) {
+    test.each([
+        ['script', 'src'],
+        ['link', 'href'],
+        ['iframe', 'src'],
+        ['embed', 'src'],
+        ['img', 'src'],
+        ['video', 'src']
+    ], 'Should load <%s>s setting the 2nd argument as a string.', function (tagName, urlAttribute) {
 
-        var url = assets['css'];
+        var url = assets[tagName];
+        var element = loadElement(tagName, url);
+        var attribute = element.getAttribute(urlAttribute);
 
-        helpers.removeElements('link[href="' + url + '"]');
-
-        loadElement('link', url, function () {
-
-            loadElement('link', url, null, function (wasLoaded) {
-
-                if (wasLoaded) {
-
-                    /** The file was found and didn't get loaded. */
-                    done();
-
-                }
-                else {
-
-                    done(new Error('The file was already loaded.'));
-
-                }
-
-            });
-
-        }, function (loadedElement) {
-
-            expect(loadedElement).toBeNull();
-            head.appendChild(this);
-
-        });
+        expect(attribute).toBe(url);
 
     });
 
-    it('Should use the default function to append the element ' +
-		'if no function is given.', function (done) {
+    it('Should set properties on the created element.', function () {
 
-        var url = assets['js'];
+        var tagName = 'link';
+        var url = assets['link'];
+        var properties = {'href': url};
+        var element = loadElement(tagName, properties);
 
-        helpers.removeElements(
-            'script[src="' + url + '"]'
-        );
-
-        loadElement('script', url, function () {
-
-            /** The element was appended to the `head` */
-            expect(this.parentNode).toBe(head);
-            done();
-
-        }, null);
+        expect(element.href).toBe(url);
 
     });
 
-    it('Should be capable of extending the properties.', function (done) {
+    it('Should not load the same url multiple times.', function () {
 
-        delete loadElement.nonSrcAttributes['a'];
+        var url = assets['link'];
+        var selector = 'link[href="' + url + '"]';
 
-        loadElement.nonSrcAttributes['a'] = 'href';
+        expect(document.querySelectorAll(selector).length).toBe(0);
 
-        loadElement('a', '#', null, function () {
+        loadElement('link', url);
+        loadElement('link', {'href': url});
 
-            /**
-             * The property was modified and it works as expected
-             * (even though "a" is not a "loadable" element).
-             */
-            expect(this).toBeInstanceOf(HTMLAnchorElement);
-            done();
-
-        });
+        expect(document.querySelectorAll(selector).length).toBe(1);
 
     });
 
-    it('Should set the "crossorigin" attribute to specific tags.', function (done) {
+    it('Should set a custom container.', function () {
 
-        var noop = function () {};
+        var tagName = 'script';
+        var listener = null;
+        var container = document.body;
 
-        loadElement('img', '//:80', noop, function () {
+        loadElement(tagName, listener, container);
 
-            expect(this.getAttribute('crossorigin')).toBe('anonymous');
-            done();
+    });
 
-        });
+    test.each([
+        ['set', 'script', '//:0'],
+        ['set', 'img', '//:0'],
+        ['set', 'link', '//:0'],
+        ['set', 'video', '//:0'],
+        ['not set', 'iframe', '//:0'],
+        ['not set', 'embed', '//:0'],
+        ['not set', 'script', '/assets/loadElement-test.js']
+    ], 'Should %s "crossOrigin" property to "anonymous" on <%s>s.', function (action, tagName, url) {
+
+        var element = loadElement(tagName, url);
+
+        if (action === 'set') { expect(element.crossOrigin).toBe('anonymous'); }
+        else { expect(element.crossOrigin).not.toBe('anonymous'); }
 
     });
 
