@@ -12,12 +12,20 @@ var eachProperty = require('./eachProperty');
  * @typedef {function} just.request~send
  */
 /**
+ * A function to call onreadystatechage event.
+ *
+ * @this {XMLHttpRequest}
+ * @param {?Error} error - Bad status error or null.
+ * @param {*} response - response or responseText.
+ * @typedef {function} just.request~fn
+ */
+/**
  * Make a request using XMLHttpRequest.
  *
  * @namespace
  * @memberof just
  * @param {!string} url - Some url.
- * @param {!function} fn - Hook for onreadystatechange listener.
+ * @param {!just.request~fn} fn - Hook for onreadystatechange listener.
  * @param {?object} options
  * @param {?string} [options.method="GET"] - Method for the request.
  * @param {?boolean} [options.json=/.json$/.test(url)] - .
@@ -76,13 +84,13 @@ function request (url, fn, options) {
 
     xhr.onreadystatechange = function onReadyStateChange (e) {
 
-        var status, content, error;
+        var status, response, error;
 
         if (this.readyState === XMLHttpRequest.DONE) {
 
             this.onreadystatechange = null;
             status = this.status;
-            content = ('response' in this
+            response = ('response' in this
                 ? this.response
                 : this.responseText
             );
@@ -91,7 +99,7 @@ function request (url, fn, options) {
                 : null
             );
 
-            if (fn) { fn.call(this, error, content); }
+            if (fn) { fn.call(this, error, response); }
 
         }
 
