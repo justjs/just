@@ -130,7 +130,7 @@ defineProperties(request, /** @lends just.request */{
         return [
             parsedUrl.origin,
             parsedUrl.pathname,
-            (parsedUrl.search + '&' || '?') + request.dataToUrl(data),
+            (/\?.+/.test(parsedUrl.search) ? parsedUrl.search + '&' : '?') + request.dataToUrl(data),
             parsedUrl.hash
         ].join('');
 
