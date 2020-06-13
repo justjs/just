@@ -627,8 +627,8 @@ describe('@lib/Define', function () {
 
     describe('Define.load', function () {
 
-        it('Should return `true` if the value module is being loaded, ' +
-            '`true` otherwise.', function () {
+        it('Should return `true` if the module is being loaded, ' +
+            '`false` otherwise.', function () {
 
             var url = '/assets/Define/load.js';
             var clear = function () {
