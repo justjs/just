@@ -36,7 +36,7 @@ var createElement = require('./createElement');
  * @param {?Node|just.loadElement~handler} [container=document.head]
  *     A custom function to append the element by yourself or a Node
  *     to append the created element to it.
- * @param  {just.loadElement~listener} [listener] - A function to trigger on element/similarElement load/error.
+ * @param  {just.loadElement~listener} [listener] - A function to trigger on element load/error.
  *
  * @return {Element|*} The created element, a similar element, or the returned value of
  *     {@link just.loadElement~handler|handler}.
@@ -52,7 +52,7 @@ function loadElement (tagName, properties, listener, container) {
     var needsRelProperty = !('rel' in props);
     var similarElementSelector = tagName + '[' + urlProperty + '="' + (url || '') + '"]';
     var similarElement = findElements(similarElementSelector)[0] || null;
-    var element = similarElement || createElement(tagName, props);
+    var element = createElement(tagName, props);
     var listenerWrapper = function listenerWrapper (e) {
 
         ['load', 'error'].forEach(
