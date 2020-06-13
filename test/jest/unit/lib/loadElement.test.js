@@ -131,25 +131,6 @@ describe('@lib/loadElement.js', function () {
 
     });
 
-    it('Should be capable of extending the properties.', function (done) {
-
-        delete loadElement.nonSrcAttributes['a'];
-
-        loadElement.nonSrcAttributes['a'] = 'href';
-
-        loadElement('a', '#', null, function () {
-
-            /**
-             * The property was modified and it works as expected
-             * (even though "a" is not a "loadable" element).
-             */
-            expect(this).toBeInstanceOf(HTMLAnchorElement);
-            done();
-
-        });
-
-    });
-
     it('Should set the "crossorigin" attribute to specific tags.', function (done) {
 
         var noop = function () {};
