@@ -551,7 +551,7 @@ var Define = (function () {
          *     // Define === 1; > true
          * });
          *
-         * @example <caption>Defining a global after a file load.</caption>
+         * @example <caption>Defining a global on file load.</caption>
          * // https://some.cdn/js/just.js
          * window.just = {Define: 1};
          *
@@ -559,6 +559,22 @@ var Define = (function () {
          * Define.globals['JustJs'] = 'just';
          * Define.urls['JustJs'] = 'https://some.cdn/js/just.js';
          * Define('main', ['JustJs'], function (just) {
+         *     // just === {Define: 1};
+         * });
+         *
+         * @example <caption>Defining a global after a file has loaded already.</caption>
+         * // https://some.cdn/js/just.js
+         * window.just = {Define: 1};
+         *
+         * // index.html
+         * <script src='https://some.cdn/js/just.js'
+         *   data-just-Define='{"JustJs": "[src]"}' async></script>
+         *
+         * // main.js
+         * if ('just' in window) { Define('JustJs', just); }
+         * else { Define.globals['JustJs'] = 'just'; }
+         *
+         * Define(['JustJs'], function (just) {
          *     // just === {Define: 1};
          * });
          *
