@@ -43,9 +43,9 @@ function request (url, fn, options) {
         'async': true,
         'user': null,
         'pwd': null,
-        'headers': Object.aszsign({
+        'headers': Object.assign({
             'X-Requested-With': 'XMLHttpRequest'
-        }, , (isJSON ? {
+        }, (isJSON ? {
             'Content-Type': 'application/json'
         } : null)),
         'props': Object.assign({}, (isJSON ? {
