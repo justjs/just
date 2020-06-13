@@ -1,7 +1,6 @@
-var addEventListener = require('./addEventListener');
 var findElements = require('./findElements');
 var parseUrl = require('./parseUrl');
-var createElement = require('./createElement');
+var defineProperties = require('./defineProperties');
 
 /**
  * A listener for the "onload" or "onerror" events.
@@ -30,40 +29,81 @@ var createElement = require('./createElement');
  *
  * @namespace
  * @memberof just
- * @throws document.createElement exception.
- * @param {!element_tag} tagName - A tag name.
- * @param {?url|?object} [properties] - The url of the file or the properties for the new element.
- * @param {?Node|just.loadElement~handler} [container=document.head]
- *     A custom function to append the element by yourself or a Node
- *     to append the created element to it.
+ * @throws document.createElement exception or TypeError if <var>url</var> is missing.
+ * @param {!element_tag} tag - A tag name.
+ * @param {!url} url - The url of the file.
+ * @param {just.loadElement~handler} [handler]
+ *     If it's a function: it will be triggered
+ *     (without appending the element),
+ *     otherwise: the element will be appended to
+ *     {@link just.head|head}.
  * @param  {just.loadElement~listener} [listener] - A function to trigger after
  *     the element is appended.
  *
- * @return {Element|*} The created element, a similar element, or the returned value of
- *     {@link just.loadElement~handler|handler}.
+ * @return {*} The return of the {@link just.loadElement~handler|handler}.
  */
-function loadElement (tagName, properties, listener, container) {
+function loadElement (tag, url, listener, handler) {
 
-    var props = Object(typeof properties === 'object' ? properties : null);
-    var urlProperty = /link/i.test(tagName) ? 'href' : 'src';
-    var url = typeof arguments[1] === 'string' ? (props[urlProperty] = arguments[1]) : props[urlProperty];
-    var isCrossOriginRequest = parseUrl(url).origin !== window.location.origin;
-    var needsCrossOriginProperty = !('crossOrigin' in props) && ['video', 'img', 'script', 'link'].indexOf(tagName) !== -1;
-    var similarElementSelector = tagName + '[' + urlProperty + '="' + url + '"]';
-    var similarElement = findElements(similarElementSelector)[0] || null;
-    var element = similarElement || createElement(tagName, props);
+    var attribute = loadElement.nonSrcAttributes[tag] || 'src';
+    var element = document.createElement(tag);
+    var parsedUrl = parseUrl(url);
+    var selectors = [url, parsedUrl.href].map(function (url) { return tag + '[' + attribute + '="' + url + '"]'; });
+    var similarElement = findElements(selectors.join(','))[0] || null;
+    var isValidUrl = typeof url === 'string' && url.trim() !== '';
+    var isLinkElement;
+    var isCrossOriginResource;
 
-    if (listener) { addEventListener(element, ['load', 'error'], listener, {'once': true}); }
-    if (isCrossOriginRequest && needsCrossOriginProperty) { element.crossOrigin = 'anonymous'; }
+    if (!isValidUrl) { throw new TypeError(url + ' is not a valid url.'); }
 
-    if (typeof container === 'function') { return container.call(element, similarElement, url); }
-    /*else */if (similarElement) { return similarElement; }
-    /*else */if (!container) { container = document.head; }
+    isLinkElement = element instanceof HTMLLinkElement;
+    isCrossOriginResource = parsedUrl.origin !== window.location.origin
+        && ['video', 'img', 'script', 'link'].indexOf(tag) >= 0;
 
-    container.appendChild(element);
+    if (isLinkElement) { element.rel = 'stylesheet'; }
+    if (isCrossOriginResource) { element.crossOrigin = 'anonymous'; }
 
-    return element;
+    if (typeof listener === 'function') {
+
+        element.onerror = element.onload = function (e) {
+
+            this.onload = this.onerror = null;
+
+            return listener.call(this, e);
+
+        };
+
+    }
+
+    element[attribute] = url;
+
+    if (typeof handler === 'function') { return handler.call(element, similarElement, url); }
+    if (!similarElement) { document.head.appendChild(element); }
+
+    return this;
 
 }
+
+defineProperties(loadElement, /** @lends just.loadElement */{
+
+    /**
+     * An src-like attribute for an Element.
+     *
+     * @typedef {string} just.loadElement~srcLikeAttribute
+     */
+
+    /**
+     * {@link element_tag|Element-tags} that are known
+     * for not using 'src' to fetch a url.
+     *
+     * @type {Object.<
+     *     element_tag,
+     *     just.loadElement~srcLikeAttribute
+     * >}
+     */
+    'nonSrcAttributes': {
+        'link': 'href'
+    }
+
+});
 
 module.exports = loadElement;
