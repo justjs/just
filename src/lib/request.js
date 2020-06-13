@@ -58,6 +58,8 @@ function request (url, fn, options) {
     var async = opts.async;
     var user = opts.user;
     var password = opts.pwd;
+    var props = opts.props;
+    var headers = opts.headers;
     var xhr = new XMLHttpRequest();
 
     if (/GET/i.test(method) && data) {
@@ -69,8 +71,8 @@ function request (url, fn, options) {
 
     xhr.open(method, url, async, user, password);
 
-    eachProperty(function setHeaders (value, key) { this.setRequestHeader(key, value); }, xhr);
-    eachProperty(function setProps (value, key) { this[key] = value; }, xhr);
+    eachProperty(headers, function setHeaders (value, key) { this.setRequestHeader(key, value); }, xhr);
+    Object.assign(xhr, props);
 
     xhr.onreadystatechange = function onReadyStateChange (e) {
 
