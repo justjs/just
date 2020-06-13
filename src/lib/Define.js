@@ -65,10 +65,6 @@ var Define = (function () {
 
         var urlDetails = Define.urls[id];
         var urlDetailsObject = Object(urlDetails);
-        var extraElementAttributes = (typeof urlDetails === 'object'
-            ? urlDetailsObject
-            : null
-        );
         var url = (typeof urlDetails === 'object'
             ? urlDetailsObject.src || urlDetailsObject.href
             : typeof urlDetails === 'string'
@@ -85,11 +81,15 @@ var Define = (function () {
             ? 'link'
             : (/css$/i.test(urlExtension) ? 'link' : 'script')
         );
+        var properties = (typeof urlDetails === 'object'
+            ? (delete urlDetails.tagName, urlDetails)
+            : null
+        );
 
         if (!(id in Define.urls)) { Define.urls[id] = url; }
         if (url !== id) { defineAlias(id, url); }
 
-        return loadElement(type, url, function (e) {
+        return loadElement(type, properties || url, function (e) {
 
             var isError = Object(e).type === 'error';
 
@@ -98,12 +98,6 @@ var Define = (function () {
             if (isError) { Define.handleError.call(null, new Error('Error loading ' + url)); }
 
         }, function (similarScript) {
-
-            eachProperty(extraElementAttributes, function setAttributes (value, name) {
-
-                if (['tagName', 'href', 'src'].indexOf(name) === -1) { this.setAttribute(name, value); }
-
-            }, this);
 
             if (type !== 'script' && !(id in Define.nonScripts)) { Define.nonScripts[id] = this; }
             if (similarScript) { return false; }
