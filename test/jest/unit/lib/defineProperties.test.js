@@ -1,7 +1,7 @@
 var defineProperties = require('@lib/defineProperties');
 
 // TODO: Mock
-test('@lib/defineProperties.js', function () {
+describe('@lib/defineProperties.js', function () {
 
     var defaultDescriptors = Object.getOwnPropertyDescriptor(
         Object.defineProperty({}, '_', {}),
@@ -46,7 +46,7 @@ test('@lib/defineProperties.js', function () {
             Object.assign({}, defaultDescriptors, {'value': {'value': 1, 'not': 'descriptor'}}),
             'Mixed property descriptors.'
         ]
-    ], 'Should define multiple properties: %# %% %% %s', function (value, expected, reason) {
+    ])('Should define multiple properties: %# %% %% %s', function (value, expected, reason) {
 
         var key = '_';
         var properties = {};
