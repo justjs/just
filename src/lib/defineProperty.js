@@ -25,9 +25,14 @@ function defineProperty (object, key, value) {
 
     var descriptor = Object(value);
     var defaultDescriptors = ['value', 'writable', 'get', 'set', 'configurable', 'enumerable'];
-    var someDescriptor = defaultDescriptors.some(function (key) { return key in this; }, descriptor);
+    var descriptorKeys = Object.keys(descriptor);
+    var isEmptyObject = !descriptorKeys.length;
+    var notADescriptor = isEmptyObject || descriptorKeys.some(
+        function notInDescriptors (key) { return this.indexOf(key) === -1; },
+        defaultDescriptors
+    );
 
-    if (!someDescriptor) {
+    if (notADescriptor) {
 
         descriptor = {
             'value': value
