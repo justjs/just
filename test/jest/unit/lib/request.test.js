@@ -36,6 +36,23 @@ describe('@lib/request.js', function () {
 
     });
 
+    describe('.appendData()', function () {
+
+        test.each([
+            ['/', null, '/'],
+            ['/', ['a', 'b'], '/?0=a&1=b'],
+            ['/', {'a': 1, 'b': 2}, '/?a=1&b=2'],
+            ['/?', {'a': 1, 'b': 2}, '/?a=1&b=2'],
+            ['/?a=1', {'a': 1, 'b': 2}, '/?a=1&a=1&b=2'],
+            ['/?a=1&b=2', {'c': 3}, '/?a=1&b=2&c=3']
+        ])('Should append data to a given url.', function (url, data, expectedUrl) {
+
+            expect(request.appendData(url, data)).toBe(location.origin + expectedUrl);
+
+        });
+
+    });
+
     describe('integration', function () {
 
         var server = mockXMLHttpRequest
