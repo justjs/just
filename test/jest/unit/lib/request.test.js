@@ -1,8 +1,6 @@
 var request = require('@lib/request');
 var mockXMLHttpRequest = require('mock-xmlhttprequest');
 
-afterEach(function () { jest.resetAllMocks(); });
-
 describe('@lib/request.js', function () {
 
     it('Should make an XMLHttpRequest using the default values.', function () {
@@ -33,6 +31,8 @@ describe('@lib/request.js', function () {
         expect(mockOpen).toHaveBeenCalledWith(method, url, async, user, password);
         expect(mockSetRequestHeader).toHaveBeenCalledWith('X-Requested-With', 'XMLHttpRequest');
         expect(mockSend).toHaveBeenCalledWith(null);
+
+        jest.restoreAllMocks();
 
     });
 
