@@ -86,7 +86,7 @@ describe('@lib/request.js', function () {
             request(url, function (error, response) {
 
                 expect(error).toBe(null);
-                expect(response).toMatchObject({"ok": true});
+                expect(response).toMatchObject({'ok': true});
                 expect(this.responseType).toBe('json');
                 // expect(this.requestHeaders['Content-Type']).toBe('application/json');
 
