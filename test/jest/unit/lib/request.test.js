@@ -53,6 +53,23 @@ describe('@lib/request.js', function () {
 
     });
 
+    describe('.dataToUrl()', function () {
+
+        it('Should throw if the given value is not an object.', function () {
+
+            var url = '/';
+            var data = '';
+
+            expect(function () {
+
+                request.dataToUrl(url, data);
+
+            }).toThrow(TypeError);
+
+        });
+
+    });
+
     describe('integration', function () {
 
         var server = mockXMLHttpRequest

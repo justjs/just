@@ -145,6 +145,7 @@ defineProperties(request, /** @lends just.request */{
      *
      * @function
      * @param {*} data - Expects an object literal.
+     * @throws {TypeError} If data is not an object.
      * @example
      * dataToUrl({'a': '&a', 'b': 2}); // > 'a=%26&b=2'
      *
@@ -153,6 +154,8 @@ defineProperties(request, /** @lends just.request */{
     'dataToUrl': function convertDataIntoUrl (data) {
 
         var dataObject = Object(data);
+
+        if (typeof data !== 'object') { throw new TypeError(data + ' is not an object.'); }
 
         return Object.keys(dataObject).map(
             function (key) { return encodeURIComponent(key) + '=' + encodeURIComponent(dataObject[key]); }
