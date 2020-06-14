@@ -126,11 +126,16 @@ defineProperties(request, /** @lends just.request */{
     'appendData': function appendDataToUrl (url, data) {
 
         var parsedUrl = parseUrl(url);
+        var searchParams = request.dataToUrl(data);
+        var search = ((/\?.+/.test(parsedUrl.search)
+            ? parsedUrl.search + '&'
+            : '?'
+        ) + searchParams).replace(/[?&]$/, '');
 
         return [
             parsedUrl.origin,
             parsedUrl.pathname,
-            (/\?.+/.test(parsedUrl.search) ? parsedUrl.search + '&' : '?') + request.dataToUrl(data),
+            search,
             parsedUrl.hash
         ].join('');
 
