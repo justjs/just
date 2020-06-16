@@ -38,6 +38,7 @@ require([
     '../lib/onDocumentReady',
     '../lib/createElement',
     '../lib/create',
+    '../lib/request',
     '../lib/Define',
     '../lib/Def'
 ]);
