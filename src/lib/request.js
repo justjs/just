@@ -12,11 +12,11 @@ var eachProperty = require('./eachProperty');
  * @typedef {function} just.request~send
  */
 /**
- * A function to call onreadystatechage event.
+ * A function to call on "load"/"error" event.
  *
  * @this {XMLHttpRequest}
- * @param {?Error} error - Bad status error or null.
- * @param {*} response - response or responseText.
+ * @param {?Error} error - Bad status error or <code>null</code>.
+ * @param {*} response - #response or #responseText property.
  * @typedef {function} just.request~fn
  */
 /**
@@ -37,11 +37,13 @@ var eachProperty = require('./eachProperty');
  *
  * @namespace
  * @memberof just
- * @param {!string} url - Some url.
+ * @param {!url} url - Some url.
  * @param {just.request~fn} [fn] - Hook for onreadystatechange listener.
  * @param {object} [options]
  * @param {string} [options.method="GET"] - An HTTP Request Method: GET, POST, HEAD, ...
- * @param {boolean} [options.json=/.json$/.test(url)] - If true, Content-Type will be set to "application/json" and #responseType to "json".
+ * @param {boolean} [options.json=/.json$/.test(url)] - If <code>true</code>,
+ *       <code>"Content-Type"</code> will be set to <code>"application/json"</code> and
+ *       #responseType to <code>"json"<code>.
  * @param {*} [options.data=null] - Data to send.
  * @param {function} [options.send={@link just.request~send}] - A custom function to intercept and send the request.
  * @param {boolean} [options.async=true] - "async" param for XMLHttpRequest#open().
@@ -158,7 +160,7 @@ defineProperties(request, /** @lends just.request */{
      *
      * @function
      * @param {?object} data - Expects an object literal.
-     * @throws {TypeError} If data is not an object.
+     * @throws {TypeError} If <var>data</var> is not an object.
      * @example
      * dataToUrl({'a': '&a', 'b': 2}); // > 'a=%26&b=2'
      *
