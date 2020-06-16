@@ -91,6 +91,9 @@ describe('@lib/request.js', function () {
             })
             .get('0', {
                 'status': 0
+            })
+            .get('204', {
+                'status': 204
             });
 
         beforeAll(function () { server.install(global); });
@@ -143,10 +146,11 @@ describe('@lib/request.js', function () {
         });
 
         test.each([
-            ['400'],
+            ['400', ''],
             ['0', 'not'],
-            ['199']
-        ], 'Should %%%srespond with an error.', function (status, negation) {
+            ['199', ''],
+            ['204', 'not']
+        ])('Should %%srespond with an error.', function (status, negation, done) {
 
             var url = status;
 
@@ -154,6 +158,8 @@ describe('@lib/request.js', function () {
 
                 if (negation) { expect(error).toBe(null); }
                 else { expect(error).toBeInstanceOf(Error); }
+
+                done();
 
             });
 
