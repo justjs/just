@@ -20,22 +20,35 @@ var eachProperty = require('./eachProperty');
  * @typedef {function} just.request~fn
  */
 /**
+ * Default request headers.
+ *
+ * @property {string} [X-Requested-With="XMLHttpRequest"]
+ * @property {string} [Content-Type="application/json"] - Only on JSON requests.
+ * @typedef {!object} just.request~defaultHeaders
+ */
+/**
+ * Default request properties.
+ *
+ * @property {string} [responseType="json"] - Only on JSON requests.
+ * @typedef {object} just.request~defaultProps
+ */
+/**
  * Make a request using XMLHttpRequest.
  *
  * @namespace
  * @memberof just
  * @param {!string} url - Some url.
- * @param {!just.request~fn} fn - Hook for onreadystatechange listener.
- * @param {?object} options
- * @param {?string} [options.method="GET"] - Method for the request.
- * @param {?boolean} [options.json=/.json$/.test(url)] - .
+ * @param {just.request~fn} [fn] - Hook for onreadystatechange listener.
+ * @param {object} [options]
+ * @param {string} [options.method="GET"] - An HTTP Request Method: GET, POST, HEAD, ...
+ * @param {boolean} [options.json=/.json$/.test(url)] - If true, Content-Type will be set to "application/json" and #responseType to "json".
  * @param {*} [options.data=null] - Data to send.
- * @param {?function} [send=just.request~send] - A custom function to intercept and send the request.
- * @param {?boolean} [options.async=true]
- * @param {?string} [options.user=null]
- * @param {?string} [options.pwd=null]
- * @param {object} [options.props=options.json ? {responseType: 'json'} : {}] - Properties for the xhr instance.
- * @param {object} [options.headers={'X-Requested-With': 'XMLHttpRequest', ...(options.json ? {'Content-Type': 'application/json'} : {})}] - Custom headers for the request.
+ * @param {function} [options.send={@link just.request~send}] - A custom function to intercept and send the request.
+ * @param {boolean} [options.async=true] - "async" param for XMLHttpRequest#open().
+ * @param {string} [options.user=null] - User name to use for authentication purposes.
+ * @param {string} [options.pwd=null] - Password to use for authentication purposes.
+ * @param {object} [options.props={@link just.request~defaultProps}] - Properties for the xhr instance.
+ * @param {object} [options.headers={@link just.request~defaultHeaders}] - Custom headers for the request.
  * @returns {*} The retuned value of {@link just.request~send}.
  */
 function request (url, fn, options) {
@@ -116,7 +129,7 @@ defineProperties(request, /** @lends just.request */{
      *
      * @function
      * @param {string} url - Some url.
-     * @param {*} data - Expects an object literal.
+     * @param {?object} data - An object to be appended.
      * @example
      * appendData('/some', {'data': 1}); // > '/some?data=1'
      * appendData('/some?url', {'data': 1}); // > '/some?url&data=1'
@@ -144,7 +157,7 @@ defineProperties(request, /** @lends just.request */{
      * Convert data into search params.
      *
      * @function
-     * @param {*} data - Expects an object literal.
+     * @param {?object} data - Expects an object literal.
      * @throws {TypeError} If data is not an object.
      * @example
      * dataToUrl({'a': '&a', 'b': 2}); // > 'a=%26&b=2'
