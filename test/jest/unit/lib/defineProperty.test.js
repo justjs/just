@@ -48,7 +48,7 @@ describe('@lib/defineProperty.js', function () {
 
     });
 
-    it('Should convert any value into a property descriptor.', function () {
+    describe('Should convert', function () {
 
         var emptyObject = {};
         var randomObject = {'some': 'value'};
@@ -58,41 +58,41 @@ describe('@lib/defineProperty.js', function () {
 
         test.each([
             [
+                'non objects into `value` attribute.',
                 void 0,
-                Object.assign({}, defaultPropertyDescriptor, {'value': void 0}),
-                'Non objects into `value` attribute.'
+                Object.assign({}, defaultPropertyDescriptor, {'value': void 0})
             ],
             [
+                'empty objects into `value` attribute.',
                 emptyObject,
-                Object.assign({}, defaultPropertyDescriptor, {'value': emptyObject}),
-                'Empty objects into `value` attribute.'
+                Object.assign({}, defaultPropertyDescriptor, {'value': emptyObject})
             ],
             [
+                'objects without property descriptor attributes into `value` attribute.',
                 randomObject,
-                Object.assign({}, defaultPropertyDescriptor, {'value': randomObject}),
-                'Objects without property descriptor attributes into `value` attribute.'
+                Object.assign({}, defaultPropertyDescriptor, {'value': randomObject})
             ],
             [
+                'property descriptors into property descriptors.',
                 someDescriptor,
-                Object.assign({}, defaultPropertyDescriptor, someDescriptor),
-                'Property descriptors into property descriptors.'
+                Object.assign({}, defaultPropertyDescriptor, someDescriptor)
             ],
             [
+                'getters into getters.',
                 {'get': fn},
-                Object.assign({}, defaultPropertyAccessor, {'get': fn}),
-                'Getters into getters.'
+                Object.assign({}, defaultPropertyAccessor, {'get': fn})
             ],
             [
+                'setters into setters.',
                 {'set': fn},
-                Object.assign({}, defaultPropertyAccessor, {'set': fn}),
-                'Setters into setters.'
+                Object.assign({}, defaultPropertyAccessor, {'set': fn})
             ],
             [
+                'property descriptor with other non-descriptor attributes into `value` attribute.',
                 descriptorWithNonDescriptors,
-                Object.assign({}, defaultPropertyDescriptor, {'value': descriptorWithNonDescriptors}),
-                'Property descriptor with other non-descriptor attributes into `value` attribute.'
+                Object.assign({}, defaultPropertyDescriptor, {'value': descriptorWithNonDescriptors})
             ]
-        ], '%% %% %s', function (value, expected) {
+        ])('%s', function (text, value, expected) {
 
             var key = '_';
 
