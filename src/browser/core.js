@@ -37,6 +37,7 @@ require([
     '../lib/toObj',
     '../lib/onDocumentReady',
     '../lib/createElement',
+    '../lib/create',
     '../lib/Define',
     '../lib/Def'
 ]);
