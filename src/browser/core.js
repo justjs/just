@@ -39,6 +39,7 @@ require([
     '../lib/createElement',
     '../lib/create',
     '../lib/request',
+    '../lib/ajax',
     '../lib/Define',
     '../lib/Def'
 ]);
