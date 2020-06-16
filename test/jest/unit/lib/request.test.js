@@ -96,8 +96,16 @@ describe('@lib/request.js', function () {
         beforeAll(function () { server.install(global); });
         afterAll(function () { server.remove(global); });
 
-        it('Should make a GET request.', function (done) {
+        it('Should make a request.', function () {
 
+            var method = 'GET';
+            var data = {};
+            var send = function (data) {
+
+                expect(this).toBeInstanceOf(XMLHttpRequest);
+                expect(data).toBe(data);
+
+            };
             var url = '/';
 
             request(url, function (error, response) {
@@ -107,8 +115,12 @@ describe('@lib/request.js', function () {
                 expect(response).toBe('');
                 expect(this.status).toBe(204);
 
-                done();
+                expect.assertions(6);
 
+            }, {
+                'method': method,
+                'data': data,
+                'send': send
             });
 
         });
