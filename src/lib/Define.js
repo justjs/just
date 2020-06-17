@@ -6,6 +6,7 @@ var defineProperties = require('./defineProperties');
 var onDocumentReady = require('./onDocumentReady');
 var parseUrl = require('./parseUrl');
 var access = require('./access');
+var addEventListener = require('./addEventListener');
 var Define = (function () {
 
     var modules = {};
@@ -86,21 +87,34 @@ var Define = (function () {
             : null
         );
 
-        if (!(id in Define.urls)) { Define.urls[id] = url; }
-        if (url !== id) { defineAlias(id, url); }
-
-        return loadElement(type, properties || url, function (e) {
+        function listenerWrapper (e) {
 
             var isError = Object(e).type === 'error';
+
+            ['load', 'error'].forEach(
+                function removeListener (type) { this.removeEventListener(type, listenerWrapper, false); },
+                this
+            );
 
             if (!isError) { defineKnownModule(id, true); }
             if (typeof onLoad === 'function') { return onLoad.call(this, e); }
             if (isError) { Define.handleError.call(null, new Error('Error loading ' + url)); }
 
-        }, function (similarScript) {
+        }
+
+        if (!(id in Define.urls)) { Define.urls[id] = url; }
+        if (url !== id) { defineAlias(id, url); }
+
+        return loadElement(type, properties || url, listenerWrapper, function (similarScript) {
 
             if (type !== 'script' && !(id in Define.nonScripts)) { Define.nonScripts[id] = this; }
-            if (similarScript) { return false; }
+            if (similarScript) {
+
+                addEventListener(similarScript, ['load', 'error'], listenerWrapper);
+
+                return false;
+
+            }
 
             document.head.appendChild(this);
 
