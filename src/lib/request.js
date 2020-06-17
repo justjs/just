@@ -2,6 +2,7 @@ var defaults = require('./defaults');
 var parseUrl = require('./parseUrl');
 var defineProperties = require('./defineProperties');
 var eachProperty = require('./eachProperty');
+var parseJSON = require('./parseJSON');
 
 /**
  * A function to intercept and send the request.
@@ -16,7 +17,8 @@ var eachProperty = require('./eachProperty');
  *
  * @this {XMLHttpRequest}
  * @param {?Error} error - Bad status error or <code>null</code>.
- * @param {*} response - #response or #responseText property.
+ * @param {*} response - Either #response or #responseText property.
+ *            On JSON request, the property parsed as a JSON.
  * @typedef {function} just.request~fn
  */
 /**
@@ -42,8 +44,9 @@ var eachProperty = require('./eachProperty');
  * @param {object} [options]
  * @param {string} [options.method="GET"] - An HTTP Request Method: GET, POST, HEAD, ...
  * @param {boolean} [options.json=/.json$/.test(url)] - If <code>true</code>,
- *       <code>"Content-Type"</code> will be set to <code>"application/json"</code> and
- *       #responseType to <code>"json"<code>.
+ *       <code>"Content-Type"</code> will be set to <code>"application/json"</code>,
+ *       #responseType to <code>"json"<code>, and the #response/#responseText
+ *       will be parsed to a JSON.
  * @param {*} [options.data=null] - Data to send.
  * @param {function} [options.send={@link just.request~send}] - A custom function to intercept and send the request.
  * @param {boolean} [options.async=true] - "async" param for XMLHttpRequest#open().
@@ -114,6 +117,7 @@ function request (url, fn, options) {
                 : null
             );
 
+            if (isJSON) { response = parseJSON(response); }
             if (fn) { fn.call(this, error, response); }
 
         }
