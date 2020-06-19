@@ -7,6 +7,7 @@ var onDocumentReady = require('./onDocumentReady');
 var parseUrl = require('./parseUrl');
 var access = require('./access');
 var addEventListener = require('./addEventListener');
+var removeEventListener = require('./removeEventListener');
 var Define = (function () {
 
     var modules = {};
@@ -91,10 +92,7 @@ var Define = (function () {
 
             var isError = Object(e).type === 'error';
 
-            ['load', 'error'].forEach(
-                function removeListener (type) { this.removeEventListener(type, listenerWrapper, false); },
-                this
-            );
+            removeEventListener(this, ['load', 'error'], listenerWrapper);
 
             if (!isError) { defineKnownModule(id, true); }
             if (typeof onLoad === 'function') { return onLoad.call(this, e); }
