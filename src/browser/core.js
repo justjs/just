@@ -29,6 +29,7 @@ require([
     '../lib/LocalStorage',
     '../lib/addEventListener',
     '../lib/on',
+    '../lib/removeEventListener',
     '../lib/parseUrl',
     '../lib/parseJSON',
     '../lib/stringToJSON',
