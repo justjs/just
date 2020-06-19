@@ -72,6 +72,7 @@ document () {
 
 	echo "[Docs] Generating docs at $DESTINATION"
 	npm run doc:jsdoc -- "dist/$BUILD_NAME" -d "$DESTINATION"
+	npm run doc:minify
 
 }
 
