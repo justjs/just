@@ -13,11 +13,11 @@ var eachProperty = require('./eachProperty');
  */
 function defineProperties (object, properties) {
 
-    eachProperty(properties, function (value, key) {
+    eachProperty(properties, function define (value, key) {
 
-        defineProperty(object, key, value);
+        defineProperty(this, key, value);
 
-    });
+    }, object);
 
     return object;
 
