@@ -30,6 +30,7 @@ require([
     '../lib/addEventListener',
     '../lib/on',
     '../lib/removeEventListener',
+    '../lib/off',
     '../lib/parseUrl',
     '../lib/parseJSON',
     '../lib/stringToJSON',
