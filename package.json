@@ -23,6 +23,7 @@
     "doc": "./bin/document",
     "doc:jsdoc": "jsdoc -c docs/jsdoc.config.json",
     "doc:dev": "gulp",
+    "doc:minify": "npm run minify:html -- --input-dir docs/public --output-dir docs/public",
     "minify:html": "html-minifier --file-ext html --collapse-whitespace --minify-css true --minify-js true",
     "lint": "eslint",
     "style": "npm run lint -- --fix",
