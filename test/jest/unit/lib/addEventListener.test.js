@@ -74,4 +74,19 @@ describe('@lib/addEventListener', function () {
 
     });
 
+    test.each([
+        [null, []],
+        [1, []],
+        [{}, []],
+        [window, [window]]
+    ])('Should ignore invalid targets.', function (target, expected) {
+
+        var result;
+
+        result = addEventListener(target);
+
+        expect(result).toEqual(expect.arrayContaining(expected));
+
+    });
+
 });
