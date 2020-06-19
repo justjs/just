@@ -26,11 +26,11 @@ function addEventListener (elements, eventNames, listener, options) {
 
     elements.forEach(function (element) {
 
-    	if (!('addEventListener' in element)) { return; }
+        if (!('addEventListener' in element)) { return; }
 
         eventNames.forEach(function (eventType) {
 
-        	this.addEventListener(eventType, listener, opts);
+            this.addEventListener(eventType, listener, opts);
 
         }, element);
 
