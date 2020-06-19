@@ -5,7 +5,6 @@ var eachProperty = require('./eachProperty');
 var defineProperties = require('./defineProperties');
 var onDocumentReady = require('./onDocumentReady');
 var parseUrl = require('./parseUrl');
-var access = require('./access');
 var addEventListener = require('./addEventListener');
 var removeEventListener = require('./removeEventListener');
 var Define = (function () {
@@ -30,7 +29,6 @@ var Define = (function () {
         var value = global;
 
         if (!(id in Define.globals) || isModuleDefined(id)) { return false; }
-        if (typeof global === 'string') { value = function () { return access(window, global.split('.')); }; }
 
         new Define(id, [], value);
 
@@ -280,7 +278,7 @@ var Define = (function () {
      * just.configure({
      *    'globals': {
      *        // Set justJs to window.just
-     *        'justJs': 'just'
+     *        'justJs': function () { return just; }
      *    },
      *    'urls': {
      *        // Load "/css/index.css" when "index.css" is required.
@@ -537,7 +535,8 @@ var Define = (function () {
          * <aside class='note'>
          *     <h3>Notes:</h3>
          *     <ul>
-         *         <li>If the value for the global is a string, the property
+         *         <li><strong>Deprecated since 1.0.0-rc.24. It raises a security error over a CDN.</strong>
+         *             If the value for the global is a string, the property
          *             will be accessed from window. I.e.:
          *             <var>'some.property'</var> will access to <var>window.some.property</var>.
          *         </li>
@@ -555,20 +554,12 @@ var Define = (function () {
          *     // just === 1; > true
          * });
          *
-         * @example <caption>Using a string.</caption>
-         * // index.js
-         * window.just = {Define: 1};
-         * Define.globals['Define'] = 'just.Define';
-         * Define('index', ['Define'], function (Define) {
-         *     // Define === 1; > true
-         * });
-         *
          * @example <caption>Defining a global on file load.</caption>
          * // https://some.cdn/js/just.js
          * window.just = {Define: 1};
          *
          * // main.js
-         * Define.globals['JustJs'] = 'just';
+         * Define.globals['JustJs'] = function () { return just; };
          * Define.urls['JustJs'] = 'https://some.cdn/js/just.js';
          * Define('main', ['JustJs'], function (just) {
          *     // just === {Define: 1};
@@ -584,7 +575,7 @@ var Define = (function () {
          *
          * // main.js
          * if ('just' in window) { Define('JustJs', just); }
-         * else { Define.globals['JustJs'] = 'just'; }
+         * else { Define.globals['JustJs'] = function () { return just; }; }
          *
          * Define(['JustJs'], function (just) {
          *     // just === {Define: 1};
