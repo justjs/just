@@ -59,6 +59,7 @@
     "eslint-plugin-jest": "^22.21.0",
     "gulp": "^4.0.2",
     "gzip-size": "^5.1.1",
+    "html-minifier": "^4.0.0",
     "jest": "^24.9.0",
     "jsdoc": "^3.6.3",
     "live-server": "^1.2.1",
