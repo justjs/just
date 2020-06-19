@@ -117,7 +117,7 @@ function request (url, fn, options) {
                 : null
             );
 
-            if (isJSON) { response = parseJSON(response); }
+            if (isJSON && typeof response !== 'object') { response = parseJSON(response); }
             if (fn) { fn.call(this, error, response); }
 
         }
