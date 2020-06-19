@@ -1,99 +1,77 @@
-var addEventListener = require('@lib/addEventListener');
-var helpers = require('@test/helpers');
+var addEventListener = require('@lib/addEventListener.js');
 
 describe('@lib/addEventListener', function () {
 
-    var removeEventListener = function (type, listener, options) {
+    beforeEach(function () { jest.resetAllMocks(); });
 
-        this.removeEventListener(type, listener, options);
+    it('Should add an event listener.', function () {
 
-    };
+        var target = document;
+        var eventType = 'click';
+        var listener = jest.fn();
+        var spy = jest.spyOn(target, 'addEventListener');
+        var expected = [target];
+        var options;
+        var result;
 
-    it('Should query elements and add an event listener to each element.', function () {
+        result = addEventListener(target, eventType, listener, options);
 
-        var onClick = function () {};
-        var mock = jest.spyOn(Element.prototype, 'addEventListener').mockImplementation(function (
-            type, listener, options) {
+        expect(result).toEqual(expect.arrayContaining(expected));
+        expect(spy).toHaveBeenCalledWith(eventType, listener, false);
 
-            expect(this).toBe(document.body);
-            expect(type).toBe('click');
-            expect(listener).toBe(onClick);
-            /** If no provided, useCapture will default to `false` */
-            expect(options).toBe(false);
+    });
 
-            removeEventListener.apply(this, Array.from(arguments));
+    it('Should query elements and add an event listener to each one.', function () {
 
-        });
+        var target = 'body, head';
+        var eventType = 'click';
+        var listener = jest.fn();
+        var options = false;
+        var body = document.body;
+        var head = document.head;
+        var bodySpy = jest.spyOn(body, 'addEventListener');
+        var headSpy = jest.spyOn(head, 'addEventListener');
+        var expected = [body, head];
+        var result;
 
-        addEventListener('body', 'click', onClick);
-        expect(mock).toHaveBeenCalledTimes(1);
-        mock.mockRestore();
+        result = addEventListener(target, eventType, listener, options);
 
-    }, 3000);
+        expect(result).toEqual(expect.arrayContaining(expected));
+        expect(bodySpy).toHaveBeenCalledWith(eventType, listener, options);
+        expect(headSpy).toHaveBeenCalledWith(eventType, listener, options);
 
-    it('Should set multiple events.', function () {
+    });
 
-        var onActive = function () {};
-        var options = true;
-        var eventTypes = ['focus', 'blur'];
-        var selector = 'html, body';
-        var expected = {
-            'elements': [document.documentElement, document.body],
-            'types': eventTypes,
-            'listener': onActive,
-            'options': options
-        };
-        var mock = jest.spyOn(Element.prototype, 'addEventListener').mockImplementation(function (
-            type, listener, options) {
+    it('Should add an event to multiple targets.', function () {
 
-            expect(helpers.findInArrayAndRemove(this, expected.elements)).toBe(true);
-            expect(helpers.findInArrayAndRemove(type, expected.types)).toBe(true);
-            /** Uses same listener for all. */
-            expect(listener).toBe(expected.listener);
-            /** Uses same options for all. */
-            expect(options).toBe(expected.options);
+        var targets = [document, window];
+        var eventType = 'click';
+        var listener = jest.fn();
+        var documentSpy = jest.spyOn(document, 'addEventListener');
+        var windowSpy = jest.spyOn(window, 'addEventListener');
+        var options = false;
 
-            removeEventListener.apply(this, Array.from(arguments));
+        addEventListener(targets, eventType, listener, options);
 
-        });
+        expect(documentSpy).toHaveBeenCalledWith(eventType, listener, options);
+        expect(windowSpy).toHaveBeenCalledWith(eventType, listener, options);
 
-        addEventListener(selector, eventTypes, onActive, options);
-        expect(mock).toHaveBeenCalledTimes(expected.elements.length * expected.types.length);
-        mock.mockRestore();
+    });
 
-    }, 3000);
+    it('Should add multiple events.', function () {
 
-    it('Should add event listeners to any element.', function () {
+        var target = document;
+        var eventTypes = ['click', 'focus'];
+        var listener = jest.fn();
+        var options = false;
+        var spy = jest.spyOn(target, 'addEventListener');
 
-        var element = document.querySelector('body');
-        var mock = jest.spyOn(Element.prototype, 'addEventListener').mockImplementation(function () {
+        addEventListener(target, eventTypes, listener);
 
-            expect(this).toBe(element);
+        expect(spy).toHaveBeenCalledTimes(2);
+        expect(spy).toHaveBeenNthCalledWith(1, eventTypes[0], listener, options);
+        expect(spy).toHaveBeenNthCalledWith(2, eventTypes[1], listener, options);
 
-            removeEventListener.apply(this, Array.from(arguments));
-
-        });
-
-        addEventListener(element, 'click', function () {});
-        mock.mockRestore();
-
-    }, 3000);
-
-    it('Should add event listeners to multiple elements.', function () {
-
-        var elements = document.getElementsByTagName('body');
-        var expectedElements = [].slice.call(elements);
-        var mock = jest.spyOn(Element.prototype, 'addEventListener').mockImplementation(function () {
-
-            expect(helpers.findInArrayAndRemove(this, expectedElements)).toBe(true);
-
-            removeEventListener.apply(this, Array.from(arguments));
-
-        });
-
-        addEventListener(elements, 'click', function (e) {});
-        mock.mockRestore();
-
-    }, 3000);
+    });
 
 });
