@@ -1,4 +1,5 @@
 var addEventListener = require('./addEventListener');
+var removeEventListener = require('./removeEventListener');
 
 /**
  * Call a function when the HTML document has been loaded.
@@ -12,7 +13,7 @@ function onDocumentReady (fn) {
 
     addEventListener(document, 'DOMContentLoaded', function onDocumentReady () {
 
-        document.removeEventListener('DOMContentLoaded', onDocumentReady);
+        removeEventListener(document, 'DOMContentLoaded', onDocumentReady);
         fn();
 
     });
