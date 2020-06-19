@@ -13,10 +13,12 @@ var findElements = require('./findElements');
  */
 function addEventListener (elements, eventNames, listener, options) {
 
-	var opts = options || false;
-	// Prefer results.push() over elements.filter().map()
-	// to avoid increasing complexity.
-	var results = [];
+    var opts = options || false;
+    /**
+     * Prefer results.push() over elements.filter().map()
+     * to avoid increasing complexity.
+     */
+    var results = [];
 
     if (typeof elements === 'string') { elements = findElements(elements); }
     if (!Array.isArray(eventNames)) { eventNames = [eventNames]; }
