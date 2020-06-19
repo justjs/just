@@ -13,21 +13,30 @@ var findElements = require('./findElements');
  */
 function addEventListener (elements, eventNames, listener, options) {
 
+	var opts = options || false;
+	// Prefer results.push() over elements.filter().map()
+	// to avoid increasing complexity.
+	var results = [];
+
     if (typeof elements === 'string') { elements = findElements(elements); }
     if (!Array.isArray(eventNames)) { eventNames = [eventNames]; }
-    if (elements && !('length' in elements)) { elements = [elements]; }
+    if (!Array.isArray(elements)) { elements = [elements]; }
 
-    [].slice.call((elements = elements || [])).forEach(function (element) {
+    elements.forEach(function (element) {
 
-        eventNames.forEach(function (eventName) {
+    	if (!('addEventListener' in element)) { return; }
 
-            element.addEventListener(eventName, listener, options || false);
+        eventNames.forEach(function (eventType) {
 
-        });
+        	this.addEventListener(eventType, listener, opts);
 
-    });
+        }, element);
 
-    return elements;
+        this.push(element);
+
+    }, results);
+
+    return results;
 
 }
 
