@@ -46,7 +46,7 @@ var parseJSON = require('./parseJSON');
  * @param {string} [options.method="GET"] - An HTTP Request Method: GET, POST, HEAD, ...
  * @param {boolean} [options.json=/.json$/.test(url)] - If <code>true</code>,
  *       <code>"Content-Type"</code> will be set to <code>"application/json"</code>,
- *       #responseType to <code>"json"<code>, and the #response/#responseText
+ *       #responseType to <code>"json"</code>, and the #response/#responseText
  *       will be parsed to a JSON.
  * @param {*} [options.data=null] - Data to send.
  * @param {function} [options.send={@link just.request~send}] - A custom function to intercept and send the request.
