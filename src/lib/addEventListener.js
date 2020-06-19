@@ -26,7 +26,7 @@ function addEventListener (elements, eventNames, listener, options) {
 
     elements.forEach(function (element) {
 
-        if (!('addEventListener' in element)) { return; }
+        if (!('addEventListener' in Object(element))) { return; }
 
         eventNames.forEach(function (eventType) {
 
