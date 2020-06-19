@@ -1,7 +1,8 @@
 var parseJSON = require('./parseJSON');
 
 /**
- * Parses an stringified JSON ('{"a": 1}') into an object literal ({a: 1}).
+ * Parses an stringified JSON (<code>'{"a": 1}'</code>)
+ * into an object literal (<code>{a: 1}</code>).
  * If you need to parse any other value, use {@link just.parseJSON} instead.
  *
  * @namespace
