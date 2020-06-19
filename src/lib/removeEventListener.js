@@ -5,10 +5,10 @@
  * @namespace
  * @memberof just
  * @since 1.0.0-rc.24
- * @param {Element|Element[]} targets
- * @param {string|string[]} eventTypes
- * @param {function} listener
- * @param {*} [options=false]
+ * @param {Element|Element[]} targets - The targets of the attached events.
+ * @param {string|string[]} eventTypes - Name of the attached events, like "click", "focus", ...
+ * @param {function} listener - The same listener passed to EventTarget#addEventListener().
+ * @param {*} [options=false] - The same options passed to EventTarget#addEventListener().
  */
 function removeEventListener (targets, eventTypes, listener, options) {
 
