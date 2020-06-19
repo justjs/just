@@ -16,15 +16,14 @@ var defineProperties = require('./defineProperties');
  */
 function check (value, otherValues) {
 
-    return [].slice.call(arguments, 1).some(function (otherValue, i) {
+    var exceptFirstArg = [].slice.call(arguments, 1);
 
-        if ([value, otherValue].some(function (v) { return v === null || v === void 0; })) {
+    return exceptFirstArg.some(function checkAgainst (arg) {
 
-            return otherValue === value;
-
-        }
-
-        return value.constructor === otherValue.constructor;
+        return ([arg, value].some(function hasNoProps (v) { return v === null || v === void 0; })
+            ? arg === value
+            : arg.constructor === value.constructor
+        );
 
     });
 
