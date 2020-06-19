@@ -63,6 +63,7 @@ describe('Core', function () {
                 'LocalStorage': expect.any(Function),
                 'addEventListener': expect.any(Function),
                 'on': expect.any(Function),
+                'removeEventListener': expect.any(Function),
                 'parseUrl': expect.any(Function),
                 'stringToJSON': expect.any(Function),
                 'toJSON': expect.any(Function),
