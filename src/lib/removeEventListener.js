@@ -12,20 +12,20 @@
  */
 function removeEventListener (targets, eventTypes, listener, options) {
 
-	var opts = options || false;
+    var opts = options || false;
 
-	if (!Array.isArray(targets)) { targets = [targets]; }
-	if (!Array.isArray(eventTypes)) { eventTypes = [eventTypes]; }
+    if (!Array.isArray(targets)) { targets = [targets]; }
+    if (!Array.isArray(eventTypes)) { eventTypes = [eventTypes]; }
 
-	targets.forEach(function (target) {
+    targets.forEach(function (target) {
 
-		eventTypes.forEach(function (eventType) {
+        eventTypes.forEach(function (eventType) {
 
-			this.removeEventListener(eventType, listener, opts);
+            this.removeEventListener(eventType, listener, opts);
 
-		}, target);
+        }, target);
 
-	});
+    });
 
 }
 
