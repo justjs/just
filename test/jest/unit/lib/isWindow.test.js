@@ -1,3 +1,4 @@
+jest.spyOn(console, 'warn').mockImplementation(function () {});
 var isWindow = require('@lib/isWindow');
 
 describe('@lib/isWindow.js', function () {
