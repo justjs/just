@@ -13,6 +13,18 @@ var Define = (function () {
     var defaultErrorHandler = function (exception) { throw exception; };
     var timeout;
 
+    function defineKnownValue (id, context, alias) {
+
+        var value = context[id];
+
+        if (!(id in context) || isModuleDefined(id)) { return false; }
+
+        new Define(id, [], value);
+
+        return true;
+
+    }
+
     function defineAlias (id, alias) {
 
         if (isModuleDefined(alias)) { return false; }
@@ -23,32 +35,8 @@ var Define = (function () {
 
     }
 
-    function defineGlobal (id) {
-
-        var global = Define.globals[id];
-        var value = global;
-
-        if (!(id in Define.globals) || isModuleDefined(id)) { return false; }
-
-        new Define(id, [], value);
-
-        return true;
-
-    }
-
-    function defineNonScript (id) {
-
-        var nonScript = Define.nonScripts[id];
-        var value = nonScript;
-
-        if (!(id in Define.nonScripts) || isModuleDefined(id)) { return false; }
-
-        new Define(id, [], value);
-
-        return true;
-
-    }
-
+    function defineGlobal (id) { return defineKnownValue(id, Define.globals); }
+    function defineNonScript (id) { return defineKnownValue(id, Define.nonScripts); }
     function defineKnownModule (id, isLoaded) {
 
         if (isModuleDefined(id)) { return false; }
