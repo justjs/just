@@ -5,7 +5,7 @@
  * @namespace
  * @memberof just
  * @since 1.0.0-rc.24
- * @params {Element|Element[]} targets
+ * @param {Element|Element[]} targets
  * @param {string|string[]} eventTypes
  * @param {function} listener
  * @param {*} [options=false]
