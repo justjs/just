@@ -2,6 +2,7 @@ var addEventListener = require('./addEventListener');
 var findElements = require('./findElements');
 var parseUrl = require('./parseUrl');
 var createElement = require('./createElement');
+var removeEventListener = require('./removeEventListener');
 
 /**
  * A listener for the "onload" or "onerror" events.
@@ -55,10 +56,7 @@ function loadElement (tagName, properties, listener, container) {
     var element = createElement(tagName, props);
     var listenerWrapper = function listenerWrapper (e) {
 
-        ['load', 'error'].forEach(
-            function (type) { this.removeEventListener(type, listenerWrapper, false); },
-            this
-        );
+        removeEventListener(this, ['load', 'error'], listenerWrapper);
 
         return listener.call(this, e);
 
