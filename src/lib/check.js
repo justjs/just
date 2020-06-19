@@ -1,4 +1,5 @@
 var defineProperties = require('./defineProperties');
+var deprecate = require('./deprecate');
 
 /**
  * Checks if <var>value</var> looks like the other values.
@@ -42,6 +43,7 @@ defineProperties(check, /** @lends just.check */{
      * throws if the result is `false`.
      *
      * @function
+     * @deprecated Since 1.0.0-rc.24
      * @this just.check~throwable_message
      * @param {*} value - Comparison value.
      * @param {...*} [otherValues] - Values to check against.
@@ -53,6 +55,10 @@ defineProperties(check, /** @lends just.check */{
 
         var args = [].slice.call(arguments);
         var throwableMessage = this;
+
+        deprecate('.check.throwable()', 'warning', {
+            'since': '1.0.0-rc.24'
+        });
 
         if (!check.apply(this, args)) {
 

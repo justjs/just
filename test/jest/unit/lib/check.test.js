@@ -1,3 +1,4 @@
+jest.spyOn(console, 'warn').mockImplementation(function () {});
 var check = require('@lib/check');
 
 describe('@lib/check.js', function () {
