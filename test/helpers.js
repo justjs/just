@@ -15,27 +15,3 @@ exports.removeElements = function removeElements (selector) {
     });
 
 };
-/**
- * Find <var>value</var> in <var>values</var> and remove it if it was found.
- *
- * @param {*} value
- * @param {array} values
- * @return {boolean} `true` if `value` was found, `false` otherwise.
- */
-exports.findInArrayAndRemove = function (value, values) {
-
-    return values.some(function (v, i) {
-
-        if (value === v) {
-
-            values.slice(i);
-
-            return true;
-
-        }
-
-        return false;
-
-    });
-
-};
