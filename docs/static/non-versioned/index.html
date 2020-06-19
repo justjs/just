@@ -85,12 +85,11 @@
 				<h3>Browser</h3>
 				<p>To use the latest version of <b>JustJs</b>' core over a CDN, include the following anywhere on your HTML:</p>
 				<div class='code-wrapper'>
-					<code><pre>&lt;script
+					<pre class='prettyprint'><code>&lt;script
 					src="%{browser-example-url}%"
 					integrity="%{browser-example-sri}%"
 					crossorigin="anonymous"
-					async&gt;
-					&lt;/script&gt;</pre></code>
+					async&gt;&lt;/script&gt;</code></pre>
 				</div>
 				<p>Then, you can replace <em>core.min.js</em> with <a href='#available-bundles-browser'>any of these files</a> and/or <em>%{latest-version}%</em> with <a href='#available-versions'>any of these versions</a>.</p>
 				<h3>Server</h3>
@@ -199,5 +198,7 @@
 			});
 		};
 	</script>
+	<script src='/%{tag}%/browser/js/prettify.min.js' async></script>
+	<link rel='stylesheet' type='text/css' href='/%{tag}%/browser/css/tomorrow.min.css'/>
 </body>
 </html>
