@@ -315,7 +315,7 @@ describe('@lib/Define', function () {
         // TODO: Mock loadElement in here.
 
         Define.urls[id] = url;
-        Define.globals[id] = 'some.global.in.window';
+        Define.globals[id] = function () { return window.some.global.in.window; };
         Define('global', [id], function (value) {
 
             expect(value).toBe('defined');
@@ -698,7 +698,7 @@ describe('@lib/Define', function () {
         });
 
         test.each([
-            ['some.global.in.window', 'defined'],
+            [function () { return window.some.global.in.window; }, 'defined'],
             [null, null]
         ])('Should define a global using %o on file load.', function (value, result, done) {
 
