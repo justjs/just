@@ -39,6 +39,7 @@ var parseJSON = require('./parseJSON');
  *
  * @namespace
  * @memberof just
+ * @since 1.0.0-rc.23
  * @param {!url} url - Some url.
  * @param {just.request~fn} [fn] - Hook for onreadystatechange listener.
  * @param {object} [options]
