@@ -63,9 +63,9 @@
     "gzip-size": "^5.1.1",
     "html-minifier": "^4.0.0",
     "jest": "^24.9.0",
-    "jsdoc": "^3.6.3",
+    "jsdoc": "^3.6.5",
     "live-server": "^1.2.1",
-    "mock-xmlhttprequest": "^6.1.0",
+    "mock-xmlhttprequest": "^6.1.1",
     "requirejs": "^2.3.6",
     "uglify-js": "^3.9.4"
   },
