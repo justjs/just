@@ -1,24 +1,28 @@
 .table-wrapper {
 	border: 2px solid #ededed;
+	max-height: 50vh;
 }
 
 .table-wrapper caption {
 	padding: 1em 2em 0 2em;
 }
 
-section {
+#content {
 	max-width: 55em;
+	margin: auto;
+	padding: 5% 0;
 }
 
+h1 { line-height: 1; }
 h1, h2 { font-size: 2.15em; }
 h3, h4 { font-size: 1.25em; }
 
-#contentinfo {
-	margin-top: 10%;
-}
-
 main {
 	background: inherit;
+}
+
+main > * {
+	padding: 0 2em;
 }
 
 #home {
@@ -30,7 +34,6 @@ main {
 	text-align: left;
 	position: relative;
 	margin-top: -2em;
-	padding: 0 5%;
 	box-sizing: border-box;
 	text-align: center;
 }
@@ -60,7 +63,6 @@ main,
 	z-index: 999;
 	box-shadow: 0 2px 2px rgba(0, 0, 0, .05);
 	overflow-y: hidden;
-	padding: 0 2em;
 	margin-top: -2em;
 }
 
@@ -87,8 +89,8 @@ main,
 	padding: 1em;
 }
 
-section .content-wrapper > *:not(:last-child) {
-	margin-bottom: 2em;
+.content-wrapper > *:not(:last-child) {
+	margin-bottom: 2rem;
 }
 
 .code-wrapper code {
@@ -112,7 +114,7 @@ section .content-wrapper > *:not(:last-child) {
 }
 
 #contentinfo {
-	background: #3c224f;
+	background: #54184d;
 	color: white;
 	padding: 2em;
 	text-align: center;
@@ -152,16 +154,6 @@ section .content-wrapper > *:not(:last-child) {
 		scroll-behavior: smooth;
 	}
 
-	#home,
-	section {
-		padding-left: 2em;
-		padding-right: 2em;
-	}
-
-	section header {
-		margin-bottom: 3em;
-	}
-
 	figure {
 		display: block;
 		margin: auto;
@@ -172,7 +164,6 @@ section .content-wrapper > *:not(:last-child) {
 	}
 
 	figure:nth-child(2n) {
-		margin-left: auto;
 		margin-right: -2em;
 	}
 
@@ -185,7 +176,6 @@ section .content-wrapper > *:not(:last-child) {
 	}
 
 	.code-wrapper {
-		/*margin-right: -2em;*/
 		margin: 0 -2em;
 	}
 
@@ -195,9 +185,14 @@ section .content-wrapper > *:not(:last-child) {
 
 	#home {
 		text-align: left;
+		height: calc(100vh - 4em);
 	}
 
 	#banner {
 		display: block;
+	}
+
+	#contentinfo {
+		text-align: left;
 	}
 }
