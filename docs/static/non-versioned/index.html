@@ -54,107 +54,109 @@
 				</ul>
 			</nav>
 		</div>
-		<section id='status'>
-			<header>
-				<h2>Status <a href='https://travis-ci.org/justjs/just' target='_blank' rel='noopener noreferrer' id='travis-badge-link' class='badge-link'></a></h2>
-			</header>
-			<div class='content-wrapper'>
-				<dl>
-					<div>
-						<dt>Latest version:</dt>
-						<dd><a href='/%{tag}%/index.html'>%{tag}%</a></p></dd>
-					</div>
-					<div>
-						<dt>Released versions:</dt>
-						<dd><a href='#available-versions'>Check</a></dd>
-					</div>
-					<div>
-						<dt>Test coverage:</dt>
-						<dd><a href='https://coveralls.io/github/justjs/just?branch=master' target='_blank' rel='noopener noreferrer' id='coveralls-badge-link' class='badge-link'></a></dd>
-					</div>
-				</dl>
-			</div>
-		</section>
-		<section id='usage'>
-			<header>
-				<h2>Usage</h2>
-			</header>
-			<div class='content-wrapper'>
-				<p><b>JustJs</b> is available on npm for server usage and distributed over a CDN for browser usage.</p>
-				<h3>Browser</h3>
-				<p>To use the latest version of <b>JustJs</b>' core over a CDN, include the following anywhere on your HTML:</p>
-				<div class='code-wrapper'>
-					<pre class='prettyprint'><code>&lt;script
-					src="%{browser-example-url}%"
-					integrity="%{browser-example-sri}%"
-					crossorigin="anonymous"
-					async&gt;&lt;/script&gt;</code></pre>
-				</div>
-				<p>Then, you can replace <em>core.min.js</em> with <a href='#available-bundles-browser'>any of these files</a> and/or <em>%{latest-version}%</em> with <a href='#available-versions'>any of these versions</a>.</p>
-				<h3>Server</h3>
-				<p>To use the latest version of <b>JustJs</b> on a server, install it <a href='#installation-via-npm'>via npm</a> or <a href='#installation-via-yarn'>via yarn</a>:</p>
-				<figure id='installation-via-npm'>
-					<figcaption>Installation via npm</figcaption>
-					<code>npm i @just-js/just</code>
-				</figure>
-				<figure id='installation-via-yarn'>
-					<figcaption>Installation via yarn</figcaption>
-					<code>yarn add @just-js/just</code>
-				</figure>
-			</div>
-		</section>
-		<section id='flavors'>
-			<header>
-				<h2>Flavors</h2>
-			</header>
-			<div class='content-wrapper'>
-				<p><b>JustJs</b> distributes multiple files when a new version is released, therefore you should pick the one that better suits your needs...</p>
-				<figure id='available-bundles-browser'>
-					<figcaption>Available bundles for browser</figcaption>
+		<div id='content'>
+			<section id='status'>
+				<header>
+					<h2>Status <a href='https://travis-ci.org/justjs/just' target='_blank' rel='noopener noreferrer' id='travis-badge-link' class='badge-link'></a></h2>
+				</header>
+				<div class='content-wrapper'>
 					<dl>
 						<div>
-							<dt>core[.min].js <span class='footnote'>[Default]</span><span class='footnote'>[Since v1.0.0]</span></dt>
-							<dd>Things you need for small/static websites.</dd>
+							<dt>Latest version:</dt>
+							<dd><a href='/%{tag}%/index.html'>%{tag}%</a></p></dd>
 						</div>
 						<div>
-							<dt>basic[.min].js <span class='footnote'>[Under development]</span></dt>
-							<dd>Things you need for dynamic websites where you integrate some other tools but you don't want to use the full library.</dd>
+							<dt>Released versions:</dt>
+							<dd><a href='#available-versions'>Check</a></dd>
 						</div>
 						<div>
-							<dt>just[.min].js <span class='footnote'>[Under development]</span></dt>
-							<dd>The full suite to develop a medium/large website.</dd>
-						</div>
-						<div>
-							<dt>polyfills-es5.min.js <span class='footnote'>[Since v1.0.0]</span><span class='footnote'>[optional]</span></dt>
-							<dd>Polyfills to add ES5 support.</dd>
+							<dt>Test coverage:</dt>
+							<dd><a href='https://coveralls.io/github/justjs/just?branch=master' target='_blank' rel='noopener noreferrer' id='coveralls-badge-link' class='badge-link'></a></dd>
 						</div>
 					</dl>
-				</figure>
-				<figure id='available-files-server'>
-					<figcaption>Available files for server</figcaption>
-					<dl>
-						<div>
-							<dt><a href='https://github.com/justjs/just/blob/master/src/server/index.js' target='_blank' rel='noopener noreferrer'>Check here</a></dt>
-							<dd>All members are documented <a href='/%{tag}%/server/index.html' target='_blank' rel='noopener noreferrer'>here</a>.</dd>
-						</div>
-					</dl>
-				</figure>
-				<p>If you don't know what to choose, "core.min.js" is always a good option...</p>
-			</div>
-		</section>
-		<section id='versioning'>
-			<header>
-				<h2>Versioning</h2>
-			</header>
-			<div class='content-wrapper'>
-				<p><b>JustJs</b> follows the <a href='https://semver.org/' target='_blank' rel='noopener noreferrer'>Semantic Versioning Specification (SemVer)</a> to version each release. However, we tag the release prepending "v" to the version.</p>
-				<p>Usually, you should avoid using release-candidates (those releases that include "-rc" on the version) and use a previous/next version instead, since those are used for testing purposes and removed after a release is no longer a candidate.</p>
-				<p>If you need more information about a certain version, please check the source code on Github.</p>
-				<div class='table-wrapper'>
-					%{available-versions-table}%
 				</div>
-			</div>
-		</section>
+			</section>
+			<section id='usage'>
+				<header>
+					<h2>Usage</h2>
+				</header>
+				<div class='content-wrapper'>
+					<p><b>JustJs</b> is available on npm for server usage and distributed over a CDN for browser usage.</p>
+					<h3>Browser</h3>
+					<p>To use the latest version of <b>JustJs</b>' core over a CDN, include the following anywhere on your HTML:</p>
+					<div class='code-wrapper'>
+						<pre class='prettyprint'><code>&lt;script
+						src="%{browser-example-url}%"
+						integrity="%{browser-example-sri}%"
+						crossorigin="anonymous"
+						async&gt;&lt;/script&gt;</code></pre>
+					</div>
+					<p>Then, you can replace <em>core.min.js</em> with <a href='#available-bundles-browser'>any of these files</a> and/or <em>%{latest-version}%</em> with <a href='#available-versions'>any of these versions</a>.</p>
+					<h3>Server</h3>
+					<p>To use the latest version of <b>JustJs</b> on a server, install it <a href='#installation-via-npm'>via npm</a> or <a href='#installation-via-yarn'>via yarn</a>:</p>
+					<figure id='installation-via-npm'>
+						<figcaption>Installation via npm</figcaption>
+						<code>npm i @just-js/just</code>
+					</figure>
+					<figure id='installation-via-yarn'>
+						<figcaption>Installation via yarn</figcaption>
+						<code>yarn add @just-js/just</code>
+					</figure>
+				</div>
+			</section>
+			<section id='flavors'>
+				<header>
+					<h2>Flavors</h2>
+				</header>
+				<div class='content-wrapper'>
+					<p><b>JustJs</b> distributes multiple files when a new version is released, therefore you should pick the one that better suits your needs...</p>
+					<figure id='available-bundles-browser'>
+						<figcaption>Available bundles for browser</figcaption>
+						<dl>
+							<div>
+								<dt>core[.min].js <span class='footnote'>[Default]</span><span class='footnote'>[Since v1.0.0]</span></dt>
+								<dd>Things you need for small/static websites.</dd>
+							</div>
+							<div>
+								<dt>basic[.min].js <span class='footnote'>[Under development]</span></dt>
+								<dd>Things you need for dynamic websites where you integrate some other tools but you don't want to use the full library.</dd>
+							</div>
+							<div>
+								<dt>just[.min].js <span class='footnote'>[Under development]</span></dt>
+								<dd>The full suite to develop a medium/large website.</dd>
+							</div>
+							<div>
+								<dt>polyfills-es5.min.js <span class='footnote'>[Since v1.0.0]</span><span class='footnote'>[optional]</span></dt>
+								<dd>Polyfills to add ES5 support.</dd>
+							</div>
+						</dl>
+					</figure>
+					<figure id='available-files-server'>
+						<figcaption>Available files for server</figcaption>
+						<dl>
+							<div>
+								<dt><a href='https://github.com/justjs/just/blob/master/src/server/index.js' target='_blank' rel='noopener noreferrer'>Check here</a></dt>
+								<dd>All members are documented <a href='/%{tag}%/server/index.html' target='_blank' rel='noopener noreferrer'>here</a>.</dd>
+							</div>
+						</dl>
+					</figure>
+					<p>If you don't know what to choose, "core.min.js" is always a good option...</p>
+				</div>
+			</section>
+			<section id='versioning'>
+				<header>
+					<h2>Versioning</h2>
+				</header>
+				<div class='content-wrapper'>
+					<p><b>JustJs</b> follows the <a href='https://semver.org/' target='_blank' rel='noopener noreferrer'>Semantic Versioning Specification (SemVer)</a> to version each release. However, we tag the release prepending "v" to the version.</p>
+					<p>Usually, you should avoid using release-candidates (those releases that include "-rc" on the version) and use a previous/next version instead, since those are used for testing purposes and removed after a release is no longer a candidate.</p>
+					<p>If you need more information about a certain version, please check the source code on Github.</p>
+					<div class='table-wrapper'>
+						%{available-versions-table}%
+					</div>
+				</div>
+			</section>
+		</div>
 	</main>
 	<footer id='contentinfo' role='contentinfo'>
 		<ul>
