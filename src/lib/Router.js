@@ -27,8 +27,8 @@ var Router = (function () {
 
     function onRoute (e) {
 
-        var router = this;
-        var routesObj = router.routes;
+        var route = this;
+        var pathObj = route.path;
 
         if (e.type === 'popstate') {
 
@@ -39,53 +39,44 @@ var Router = (function () {
                 }
             };
 
-            return false;
-
         }
 
-        eachProperty(routesObj, function (route, id) {
+        eachProperty(pathObj, function (path, by) {
 
-            var router = this;
-            var pathObj = route.path;
+            var route = this;
+            var handler = route.handler;
+            var options = route.options;
+            var url = location[by];
+            var ignore = options.ignore;
+            var only = options.only;
+            var actions = options.actions;
+            var action = e.detail.route.action;
+            var allowAction = actions.some(
+                function (value) { return testRoute(value, action); }
+            );
+            /**
+             * Make sure to call this just before calling the handler
+             * to include the matched tokens in RegExp.
+             * i.e: /(some)-route/ -> RegExp.$1 // > some
+             */
+            var isCurrentPath = testRoute(path, url);
+            var routeArg = e.detail.route;
+            var result, stop;
 
-            eachProperty(pathObj, function (path, by) {
+            if (isCurrentPath
+                && only.call(route)
+                && !ignore.call(route)
+                && allowAction) {
 
-                var route = this;
-                var handler = route.handler;
-                var options = route.options;
-                var url = location[by];
-                var ignore = options.ignore;
-                var only = options.only;
-                var actions = options.actions;
-                var action = e.detail.route.action;
-                var allowAction = actions.some(
-                    function (value) { return testRoute(value, action); }
-                );
-                /**
-                 * Make sure to call this just before calling the handler
-                 * to include the matched tokens in RegExp.
-                 * i.e: /(some)-route/ -> RegExp.$1 // > some
-                 */
-                var isCurrentPath = testRoute(path, url);
-                var routeArg = e.detail.route;
-                var result, stop;
+                if (!routeArg.by || routeArg.action === 'init') { routeArg.by = by; }
+                result = handler.call(route, e, routeArg);
+                stop = !result;
 
-                if (isCurrentPath
-                    && only.call(route)
-                    && !ignore.call(route)
-                    && allowAction) {
+                return stop;
 
-                    if (!routeArg.by || routeArg.action === 'init') { routeArg.by = by; }
-                    result = handler.call(router, e, routeArg);
-                    stop = !result;
+            }
 
-                    return stop;
-
-                }
-
-            }, route);
-
-        }, router);
+        }, route);
 
     }
 
@@ -129,7 +120,15 @@ var Router = (function () {
                 var eventTarget = eventOptions.target;
                 var eventName = eventOptions.name;
                 var defaultEventInit = eventOptions.init;
+                var isInit = action === 'init';
                 var event;
+
+                if (isInit) {
+
+                    if (route.init) { return false; }
+                    route.init = true;
+
+                }
 
                 eventInit = defaults(eventInit, defaultEventInit);
                 Object.assign(eventInit.detail.route, {
@@ -175,9 +174,10 @@ var Router = (function () {
                 'path': pathObj,
                 'originalPath': path,
                 'handler': handler,
-                'options': opts
+                'options': opts,
+                'init': false
             };
-            var listener = onRoute.bind(this);
+            var listener = onRoute.bind(route);
 
             this.routes[id] = route;
 
