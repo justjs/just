@@ -104,4 +104,88 @@ describe('@lib/Router.js', function () {
 
     });
 
+    describe('#change()', function () {
+
+        test.each([
+            ['pushState', '/a', void 0, void 0, {
+                'data': void 0,
+                'route': {
+                    'action': 'pushState',
+                    'by': 'action'
+                }
+            }],
+            ['replaceState', '/b', 'some data', {
+                'detail': {
+                    'custom': 'not ignored'
+                }
+            }, {
+                'data': 'some data',
+                'custom': 'not ignored',
+                'route': {
+                    'action': 'replaceState',
+                    'by': 'action'
+                }
+            }]
+        ])('Should trigger a window.history\'s action.', function (
+            action, url, data, eventInit, expectedArg) {
+
+            var router = new Router();
+            var route = jest.fn();
+
+            router.route('id', url, route);
+            router.change(action, url, data, eventInit);
+
+            expect(route).toHaveBeenCalledWith(
+                expect.any(Event),
+                expectedArg
+            );
+
+        });
+
+    });
+
+    test.each([
+        ['push', 'pushState'],
+        ['replace', 'replaceState']
+    ])('#%s() › Should do a %s.', function (methodName, action) {
+
+        var router = new Router();
+        var url = '/';
+        var data = {};
+        var eventInit = {
+            'detail': {
+                'custom': true
+            }
+        };
+        var route = jest.fn();
+        var id = 'some id';
+        var expected = Object.assign({
+            'data': data,
+            'route': {
+                'action': action,
+                'by': 'action'
+            }
+        }, eventInit.detail);
+        var spy = jest.spyOn(window.history, action);
+
+        router.route(id, url, route, {
+            'actions': [action]
+        }); // jest.spyOn(router, 'change') is not allowed.
+
+        router[methodName](url, data, eventInit);
+
+        expect(spy).toHaveBeenCalledWith(
+            null,
+            '',
+            url
+        );
+        expect(route).toHaveBeenCalledWith(
+            expect.any(Event),
+            expected
+        );
+
+        spy.mockClear();
+
+    });
+
 });

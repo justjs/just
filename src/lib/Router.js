@@ -194,25 +194,25 @@ var Router = (function () {
             return this;
 
         },
-        'change': function changeState (action, url, eventInit) {
+        'change': function changeState (action, url, data, eventInit) {
 
             if (Router.changeState(action, url)) {
 
-                this.trigger(action, eventInit);
+                this.trigger(action, data, eventInit);
 
             }
 
             return this;
 
         },
-        'push': function pushState (url, eventInit) {
+        'push': function pushState (url, data, eventInit) {
 
-            return this.change('pushState', url, eventInit);
+            return this.change('pushState', url, data, eventInit);
 
         },
-        'replace': function replaceState (url, eventInit) {
+        'replace': function replaceState (url, data, eventInit) {
 
-            return this.change('replaceState', url, eventInit);
+            return this.change('replaceState', url, data, eventInit);
 
         }
 
