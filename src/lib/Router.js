@@ -60,7 +60,8 @@ var Router = (function () {
              * i.e: /(some)-route/ -> RegExp.$1 // > some
              */
             var isCurrentPath = testRoute(path, url);
-            var routeArg = e.detail.route;
+            var detail = e.detail;
+            var routeArg = detail.route;
             var result, stop;
 
             if (isCurrentPath
@@ -69,7 +70,7 @@ var Router = (function () {
                 && allowAction) {
 
                 if (!routeArg.by || routeArg.action === 'init') { routeArg.by = by; }
-                result = handler.call(route, e, routeArg);
+                result = handler.call(route, e, detail);
                 stop = !result;
 
                 return stop;

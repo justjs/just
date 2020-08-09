@@ -26,6 +26,25 @@ describe('@lib/Router.js', function () {
 
         });
 
+        it('Should trigger an "init" action.', function () {
+
+            var router = new Router();
+            var routeFn = jest.fn();
+
+            router.route('my-route', '/', routeFn);
+
+            expect(routeFn).toHaveBeenCalledWith(
+                expect.any(Event),
+                expect.objectContaining({
+                    'route': {
+                        'by': 'pathname',
+                        'action': 'init'
+                    }
+                })
+            );
+
+        });
+
     });
 
 });
