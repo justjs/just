@@ -33,6 +33,7 @@ var Router = (function () {
         if (e.type === 'popstate') {
 
             e.detail = {
+                'data': null,
                 'route': {
                     'by': null,
                     'action': e.type
@@ -111,7 +112,7 @@ var Router = (function () {
 
     defineProperties(Router.prototype, {
 
-        'trigger': function triggerAction (action, eventInit) {
+        'trigger': function triggerAction (action, data, eventInit) {
 
             var routesObj = this.routes;
 
@@ -131,7 +132,8 @@ var Router = (function () {
 
                 }
 
-                eventInit = defaults(eventInit, defaultEventInit);
+                eventInit = defaults(eventInit, defaultEventInit, {'ignoreNull': true});
+                eventInit.detail.data = data;
                 Object.assign(eventInit.detail.route, {
                     'by': 'action',
                     'action': action
@@ -154,6 +156,7 @@ var Router = (function () {
                     'target': document,
                     'init': {
                         'detail': {
+                            'data': null,
                             'route': {
                                 'by': null,
                                 'action': null
@@ -165,6 +168,7 @@ var Router = (function () {
             var eventOptions = opts.event;
             var eventName = eventOptions.name;
             var eventInit = eventOptions.init;
+            var eventInitData = eventInit.detail.data;
             var eventTarget = eventOptions.target;
             var pathObj = (check(path, {})
                 ? path
@@ -185,7 +189,7 @@ var Router = (function () {
             addEventListener(eventTarget, eventName, listener);
             addEventListener(window, 'popstate', listener);
 
-            this.trigger('init', eventInit);
+            this.trigger('init', eventInitData, eventInit);
 
             return this;
 
