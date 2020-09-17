@@ -3,6 +3,7 @@ var eachProperty = require('./eachProperty');
 var defineProperties = require('./defineProperties');
 var defaults = require('./defaults');
 var check = require('./check');
+var parseUrl = require('./parseUrl');
 var Router = (function () {
 
     var location = window.location;
@@ -86,10 +87,16 @@ var Router = (function () {
 
         'changeState': function changeState (action, url) {
 
+            var currentOrigin = location.origin;
+            var sameOrigin = parseUrl(url).origin === currentOrigin;
+            var sameOriginPath = url.replace(currentOrigin, '');
+
+            if (!sameOrigin) { return false; }
+
             try {
 
-                if (action in history) { history[action](null, '', url); }
-                else { location.hash = '#!' + url; }
+                if (action in history) { history[action](null, '', sameOriginPath); }
+                else { location.hash = '#!' + sameOriginPath; }
 
             }
             catch (exception) { return false; }

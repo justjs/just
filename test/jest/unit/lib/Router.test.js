@@ -10,9 +10,10 @@ describe('@lib/Router.js', function () {
             var routeA = jest.fn();
             var routeB = jest.fn();
             var routeC = jest.fn();
+            var currentOrigin = location.origin;
             var pathnameMock = jest
                 .spyOn(window, 'location', 'get')
-                .mockImplementation(function () { return {'pathname': '/'}; });
+                .mockImplementation(function () { return {'pathname': '/', 'origin': currentOrigin}; });
 
             router.route('a', '/', routeA);
             router.route('b', '/B', routeB);
