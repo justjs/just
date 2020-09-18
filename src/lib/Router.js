@@ -26,10 +26,59 @@ var Router = (function () {
 
     }
 
+    function callMatchingRoute (route, path, by, e) {
+
+        var detail = e.detail;
+        var detailObj = Object(detail);
+        var routeArgObj = Object(detailObj.route);
+        var handler = route.handler;
+        var options = route.options;
+        var url = location[by];
+        var ignore = options.ignore;
+        var only = options.only;
+        var actions = options.actions;
+        var action = routeArgObj.action;
+        var allowAction = actions.some(
+            function (value) { return testRoute(value, action); }
+        );
+        /**
+         * Make sure to call this just before calling the handler
+         * to include the matched tokens in RegExp.
+         * i.e: /(some)-route/ -> RegExp.$1 // > some
+         */
+        var isCurrentPath = testRoute(path, url);
+        var result, stop;
+
+        if (isCurrentPath
+            && only.call(route)
+            && !ignore.call(route)
+            && allowAction) {
+
+            if (!routeArgObj.by || routeArgObj.action === 'init') { routeArgObj.by = by; }
+            result = handler.call(route, e, detail);
+            stop = !result;
+
+            return stop;
+
+        }
+
+    }
+
+    function callMatchingRoutes (route, e) {
+
+        var pathObj = route.path;
+
+        eachProperty(pathObj, function (path, by) {
+
+            return callMatchingRoute(this, path, by, e);
+
+        }, route);
+
+    }
+
     function onRoute (e) {
 
         var route = this;
-        var pathObj = route.path;
 
         if (e.type === 'popstate') {
 
@@ -43,43 +92,7 @@ var Router = (function () {
 
         }
 
-        eachProperty(pathObj, function (path, by) {
-
-            var route = this;
-            var handler = route.handler;
-            var options = route.options;
-            var url = location[by];
-            var ignore = options.ignore;
-            var only = options.only;
-            var actions = options.actions;
-            var action = e.detail.route.action;
-            var allowAction = actions.some(
-                function (value) { return testRoute(value, action); }
-            );
-            /**
-             * Make sure to call this just before calling the handler
-             * to include the matched tokens in RegExp.
-             * i.e: /(some)-route/ -> RegExp.$1 // > some
-             */
-            var isCurrentPath = testRoute(path, url);
-            var detail = e.detail;
-            var routeArg = detail.route;
-            var result, stop;
-
-            if (isCurrentPath
-                && only.call(route)
-                && !ignore.call(route)
-                && allowAction) {
-
-                if (!routeArg.by || routeArg.action === 'init') { routeArg.by = by; }
-                result = handler.call(route, e, detail);
-                stop = !result;
-
-                return stop;
-
-            }
-
-        }, route);
+        callMatchingRoutes(route, e);
 
     }
 
