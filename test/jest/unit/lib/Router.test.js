@@ -23,7 +23,7 @@ describe('@lib/Router.js', function () {
             expect(routeB).toBeCalledTimes(0);
             expect(routeC).toBeCalledTimes(0);
 
-            pathnameMock.mockClear();
+            pathnameMock.mockRestore();
 
         });
 
@@ -185,7 +185,39 @@ describe('@lib/Router.js', function () {
             expected
         );
 
-        spy.mockClear();
+        spy.mockRestore();
+
+    });
+
+    describe('History API fallback', function () {
+
+        var pushStateFn = history.pushState;
+
+        beforeEach(function () {
+
+            delete History.prototype.pushState;
+            location.hash = '';
+
+        });
+
+        afterEach(function () {
+
+            History.prototype.pushState = pushStateFn;
+            location.hash = '';
+
+        });
+
+        it('Should use location.hash and set a hashbang (#!).', function () {
+
+            var url = '/';
+            var result;
+
+            result = Router.changeState('pushState', url);
+
+            expect(result).toBe(true);
+            expect(location.hash).toBe('#!' + url);
+
+        });
 
     });
 
