@@ -79,6 +79,8 @@ var Router = (function () {
     function onRoute (e) {
 
         var route = this;
+        var pathObj = Object(route.path);
+        var throttle = false;
 
         if (e.type === 'popstate') {
 
@@ -90,9 +92,27 @@ var Router = (function () {
                 }
             };
 
+            /**
+             * Changing a hash triggers a "popstate" event before any other
+             * event. By throttling, if another event is triggered
+             * after this, we ensure to call the last event only.
+             */
+            throttle = /#!/.test(pathObj.hash) && !('pushState' in history);
+
         }
 
-        callMatchingRoutes(route, e);
+        if (throttle) {
+
+            clearTimeout(route.throttling);
+            route.throttling = setTimeout(function throttle () {
+
+                delete route.throttling;
+                callMatchingRoutes(route, e);
+
+            }, 0);
+
+        }
+        else { callMatchingRoutes(route, e); }
 
     }
 
