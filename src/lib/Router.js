@@ -18,7 +18,7 @@ var Router = (function () {
      * @example
      * // routes/router.js
      * const router = new Router();
-     * 
+     *
      * export default router;
      *
      * // routes/home.js
@@ -135,7 +135,7 @@ var Router = (function () {
          * Call a <var>window.history</var>'s function if available.
          * Otherwise, change the current url using <var>location.hash</var>
          * and prepending a hashbang (#!) to the url state.
-         * 
+         *
          * <aside class='note'>
          *     <p>Note: This function does not accept any arguments
          *     for pushState/replaceState because it's only intended
@@ -205,7 +205,7 @@ var Router = (function () {
          *
          * router.route('all', /./, (e, {route, data}) => {
          *
-         *     const {action} = route;     
+         *     const {action} = route;
          *
          *     if (action === 'my-action') {
          *         console.log(`triggered ${data} on any route!`); // > "triggered my-data on any route!"
@@ -316,7 +316,7 @@ var Router = (function () {
          *
          * @return {boolean} If `true`, the route won't be called.
          */
-         /**
+        /**
          * @typedef {function} just.Router~route_only
          *
          * @this {just.Router~route}
