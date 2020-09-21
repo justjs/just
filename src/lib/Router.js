@@ -275,6 +275,7 @@ var Router = (function () {
          *
          * // Then, click an anchor link and the corresponding controller
          * // will be called.
+         * @chainable
          */
         'trigger': function triggerAction (action, data, eventInit) {
 
@@ -307,6 +308,8 @@ var Router = (function () {
                 eventTarget.dispatchEvent(event);
 
             });
+
+            return this;
 
         },
         /**
