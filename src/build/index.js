@@ -8,6 +8,11 @@ var gzipSize = require('gzip-size');
 var UglifyJS = require('uglify-js');
 var rjsConfig = require('./rjs.config.js');
 var uglifyJsConfig = require('./uglifyjs.config.js');
+var distributedFiles = [
+    'browser/core.js',
+    'server/index.js',
+    'browser/just.js'
+];
 var bytesToKb = function (bytes) { return bytes * 1e-3; };
 var getFileSize = function (filepath, opts) {
 
@@ -105,7 +110,7 @@ var copyExtraFiles = function (baseDirectory, files, opts) {
 
 };
 
-['browser/core.js', 'server/index.js'].forEach(function (filepathRelativeToSrc) {
+distributedFiles.forEach(function (filepathRelativeToSrc) {
 
     var filename = ((filepathRelativeToSrc.match(/\/([^/]*)$/) || [])[1] || 'index').replace(/(?:\.js)?$/, '.js');
     var directory = path.dirname(filepathRelativeToSrc);
