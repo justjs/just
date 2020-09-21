@@ -29,8 +29,7 @@ module.exports = {
             'else { ' +
                 'this.just = fn(); ' +
             '} ' +
-        '}).call(this, function () { ' +
-        ('\n' + fs.readFileSync('src/lib/shims.min.js', 'utf8')).replace(/\n/g, '\n\t'),
+        '}).call(this, function () { ',
         'end': 'return just; });'
     },
     'metadata': 'set(\'version\', \'' + pkg.version + '\'); set(\'just\', just);'
