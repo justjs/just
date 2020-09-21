@@ -79,8 +79,6 @@ var Router = (function () {
     function onRoute (e) {
 
         var route = this;
-        var pathObj = Object(route.path);
-        var throttle = false;
 
         if (e.type === 'popstate') {
 
@@ -92,27 +90,9 @@ var Router = (function () {
                 }
             };
 
-            /**
-             * Changing a hash triggers a "popstate" event before any other
-             * event. By throttling, if another event is triggered
-             * after this, we ensure to call the last event only.
-             */
-            throttle = /#!/.test(pathObj.hash) && !('pushState' in history);
-
         }
 
-        if (throttle) {
-
-            clearTimeout(route.throttling);
-            route.throttling = setTimeout(function throttle () {
-
-                delete route.throttling;
-                callMatchingRoutes(route, e);
-
-            }, 0);
-
-        }
-        else { callMatchingRoutes(route, e); }
+        callMatchingRoutes(route, e);
 
     }
 
@@ -227,7 +207,20 @@ var Router = (function () {
             this.routes[id] = route;
 
             addEventListener(eventTarget, eventName, listener);
-            addEventListener(window, 'popstate', listener);
+            addEventListener(window, 'popstate', function (e) {
+
+                /**
+                 * Trigger at the end of the browser event loop,
+                 * as stated in MDN, to avoid calling it before
+                 * any other event.
+                 */
+                setTimeout(function () {
+
+                    listener.call(this, e);
+
+                }.bind(this), 0);
+
+            });
 
             this.trigger('init', eventInitData, eventInit);
 

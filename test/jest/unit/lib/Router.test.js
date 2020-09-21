@@ -192,10 +192,12 @@ describe('@lib/Router.js', function () {
     describe('History API fallback', function () {
 
         var pushStateFn = history.pushState;
+        var replaceStateFn = history.replaceState;
 
         beforeEach(function () {
 
             delete History.prototype.pushState;
+            delete History.prototype.replaceState;
             location.hash = '';
 
         });
@@ -203,6 +205,7 @@ describe('@lib/Router.js', function () {
         afterEach(function () {
 
             History.prototype.pushState = pushStateFn;
+            History.prototype.replaceState = replaceStateFn;
             location.hash = '';
 
         });
@@ -216,6 +219,55 @@ describe('@lib/Router.js', function () {
 
             expect(result).toBe(true);
             expect(location.hash).toBe('#!' + url);
+
+        });
+
+        it('Should trigger a "popstate" event at the end of ' +
+            'the event loop.', function (done) {
+
+            var callsCount = 0;
+            var router = new Router();
+            var routeFn = jest.fn(function (e, detail) {
+
+                var type = e.type;
+                var route = detail.route;
+                var action = route.action;
+
+                callsCount++;
+
+                if (callsCount === 1) {
+
+                    expect(action).toBe('init');
+                    expect(type).not.toBe('popstate');
+
+                }
+                else if (callsCount === 2) {
+
+                    expect(action).toBe('pushState');
+                    expect(type).not.toBe('popstate');
+
+                }
+                else if (callsCount === 3) {
+
+                    expect(action).toBe('popstate');
+                    expect(type).toBe('popstate');
+
+                }
+                else if (callsCount === 4) {
+
+                    expect(action).toBe('popstate');
+                    expect(type).toBe('popstate');
+
+                    return void done();
+
+                }
+
+            });
+
+            router.route('home', '/', routeFn);
+            router.push('/popstate');
+            history.back(), location.hash = ''; // history.back() didn't change the location.
+            history.forward(), location.hash = '#!/popstate'; // history.forward() didn't change the location.
 
         });
 
