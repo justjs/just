@@ -50,4 +50,17 @@ describe.only('@lib/View.js', function () {
 
     });
 
+    describe('.globals', function () {
+
+        it('Should be mutable.', function () {
+
+            View.globals.mutable = true;
+
+            expect(View.globals.mutable).toBe(true);
+            expect(delete View.globals.mutable).toBe(true);
+
+        });
+
+    });
+
 });
