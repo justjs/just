@@ -43,10 +43,10 @@ var View = (function () {
             function getValue (object, key) {
 
                 var value = (key in Object(object)
-				? Object(object)[key]
-				: key in String.prototype
-				? String.prototype[key]
-				: void 0
+                    ? Object(object)[key]
+                    : key in String.prototype
+                    ? String.prototype[key]
+                    : void 0
                 );
                 var fn, params;
                 var result = value;
@@ -89,8 +89,8 @@ var View = (function () {
         }, {'ignoreNull': true});
         var attributes = props.attributes;
         var attributesPrefix = (typeof attributes === 'string'
-			? attributes
-			: 'data-var'
+            ? attributes
+            : 'data-var'
         );
         var attributesObj = Object.assign({
             'var': attributesPrefix,
@@ -99,8 +99,8 @@ var View = (function () {
             'if': attributesPrefix + '-if',
             'alias': attributesPrefix + '-as'
         }, (typeof attributes === 'object'
-			? attributes
-			: {}
+            ? attributes
+            : {}
         ));
 
         Object.assign(this, props, {
@@ -117,7 +117,11 @@ var View = (function () {
         'resolveConditional': function resolveConditional (conditional, data) {
 
             var negate = /^!/.test(conditional);
-            var isTruthy = /^!?true$/.test(conditional) || !!access(conditional, data);
+            var nonNegatedConditional = (conditional + '').replace('!', '');
+            var properties = nonNegatedConditional;
+            var isTruthy = /^true$/.test(nonNegatedConditional) || Boolean(
+                access(properties, data)
+            );
 
             if (negate) { isTruthy = !isTruthy; }
 
@@ -153,8 +157,8 @@ var View = (function () {
         'replaceVars': function replaceVars (data, value) {
 
             var text = (typeof value === 'object'
-				? View.resolveConditionals(value, data)
-				: value + ''
+                ? View.resolveConditionals(value, data)
+                : value + ''
             );
 
             return text.replace(/\$\{([^}]+)\}/g, function ($0, key) {
@@ -162,8 +166,8 @@ var View = (function () {
                 var value = access(key, data);
 
                 return (typeof value !== 'undefined'
-					? value
-					: $0
+                    ? value
+                    : $0
                 );
 
             });
@@ -361,8 +365,8 @@ var View = (function () {
             var template = this.element;
             var id = this.id || template.id;
             var wrapper = container || (id
-				? document.getElementById(id).parentNode
-				: null
+                ? document.getElementById(id).parentNode
+                : null
             );
 
             if (!(wrapper instanceof Node)) { throw new TypeError('Please provide a container.'); }
