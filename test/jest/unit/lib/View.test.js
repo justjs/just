@@ -63,4 +63,73 @@ describe.only('@lib/View.js', function () {
 
     });
 
+    describe('.resolveConditional()', function () {
+
+        it('Should return false if no arguments were given.', function () {
+
+            var result = View.resolveConditional();
+
+            expect(result).toBe(false);
+
+        });
+
+        it('Should return true if "true" is given.', function () {
+
+            var result = View.resolveConditional('true');
+
+            expect(result).toBe(true);
+
+        });
+
+        test.each([
+
+            // Present with a truthy value:
+            ['a', {'a': {}}, true],
+            // Present with a falsy value:
+            ['b', {'b': ''}, false],
+            // Not present:
+            ['a', null, false],
+
+            // A nested property (with a truthy value):
+            ['c.d', {'c': {'d': true}}, true],
+            // Not a nested property:
+            ['c.d', {'c.d': true}, false]
+
+        ])('Should check if "%s" is a truthy value within the given ' +
+			'object.', function (property, object, expected) {
+
+            var result = View.resolveConditional(property, object);
+
+            expect(result).toBe(expected);
+
+        });
+
+        test.each([
+
+            // Negated true:
+            ['true', {}, false],
+
+            // Negated truthy value:
+            ['a', {'a': true}, false],
+            // Negated falsy value:
+            ['a', {'a': false}, true],
+
+            // Negated not present value:
+            ['a', null, true],
+            // Negated nested truthy value:
+            ['a.b.c', {'a': {'b': {'c': true}}}, false],
+            // Negated nested falsy value:
+            ['a.b.c', {'a': {'b': {'c': false}}}, true]
+
+        ])('Should negate "%s" by prepending "!"', function (
+            conditional, data, expected) {
+
+            var result = View.resolveConditional('!' + conditional, data);
+
+            expect(result).toBe(expected);
+
+        });
+
+    });
+
 });
