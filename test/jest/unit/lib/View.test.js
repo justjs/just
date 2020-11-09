@@ -132,4 +132,29 @@ describe.only('@lib/View.js', function () {
 
     });
 
+    describe('.resolveConditionals()', function () {
+
+        it('Should resolve many conditionals and return the first ' +
+            'truthy value.', function () {
+
+            var result = View.resolveConditionals({
+                'a': 'do this',
+                'b': 'or this'
+            }, {'a': true});
+
+            expect(result).toBe('do this');
+
+        });
+
+        it('Should allow passing strings to resolve one conditional ' +
+            'an return its truthy value', function () {
+
+            var result = View.resolveConditionals('a', {'a': 1});
+
+            expect(result).toBe(1);
+
+        });
+
+    });
+
 });
