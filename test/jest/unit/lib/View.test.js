@@ -191,6 +191,19 @@ describe.only('@lib/View.js', function () {
 
         });
 
+        it('Should call a function within a placeholder and replace ' +
+            'the placeholder with its returned value.', function () {
+
+            var result = View.replaceVars('${say.hi()}', {
+                'say': {
+                    'hi': function () { return 'hi!'; }
+                }
+            });
+
+            expect(result).toBe('hi!');
+
+        });
+
     });
 
 });
