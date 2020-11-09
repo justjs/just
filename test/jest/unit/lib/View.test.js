@@ -65,11 +65,11 @@ describe.only('@lib/View.js', function () {
 
     describe('.resolveConditional()', function () {
 
-        it('Should return false if no arguments were given.', function () {
+        it('Should return undefined if no arguments were given.', function () {
 
             var result = View.resolveConditional();
 
-            expect(result).toBe(false);
+            expect(result).toBe(void 0);
 
         });
 
@@ -84,16 +84,16 @@ describe.only('@lib/View.js', function () {
         test.each([
 
             // Present with a truthy value:
-            ['a', {'a': {}}, true],
+            ['a', {'a': 1}, 1],
             // Present with a falsy value:
-            ['b', {'b': ''}, false],
+            ['b', {'b': ''}, ''],
             // Not present:
-            ['a', null, false],
+            ['a', null, void 0],
 
             // A nested property (with a truthy value):
             ['c.d', {'c': {'d': true}}, true],
             // Not a nested property:
-            ['c.d', {'c.d': true}, false]
+            ['c.d', {'c.d': true}, void 0]
 
         ])('Should check if "%s" is a truthy value within the given ' +
 			'object.', function (property, object, expected) {
