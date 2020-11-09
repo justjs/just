@@ -157,4 +157,40 @@ describe.only('@lib/View.js', function () {
 
     });
 
+    describe('.replaceVars()', function () {
+
+        it('Should replace a ${splitted.property} with its accessed ' +
+            'value.', function () {
+
+            var result = View.replaceVars('{${splitted.property}}!', {
+                'splitted': {'property': 'hey'}
+            });
+
+            expect(result).toBe('{hey}!');
+
+        });
+
+        it('Should .resolveConditionals() first, if an object is given, ' +
+            'and replace ${placeholders} within the accessed value.', function () {
+
+            // @TODO Mock View.resolveConditionals(), if possible.
+            var result = View.replaceVars({
+                'a': 'Show ${a}',
+                'b': 'Show ${b}'
+            }, {'b': 'me (b)'});
+
+            expect(result).toBe('Show me (b)');
+
+        });
+
+        it('Should not replace undefined values.', function () {
+
+            var result = View.replaceVars('Don\'t replace ${me}!');
+
+            expect(result).toBe('Don\'t replace ${me}!');
+
+        });
+
+    });
+
 });
