@@ -117,10 +117,10 @@ var View = (function () {
         /**
          * Access to an object and return its value-
          *
-         * @param {?string} condititional - Keys splitted by ".".
+         * @param {?string} condititional - Expected keys splitted by ".".
          *        Use "!" to negate a expression.
          *        Use "true" to return true.
-         * @parma {?object} data - An object with the given keys.
+         * @parma {?object} data - An object with all the properties.
          *
          * @returns {*|boolean} if the conditional is negated, a boolean.
          * Else, the accessed value.
