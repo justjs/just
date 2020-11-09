@@ -140,6 +140,16 @@ var View = (function () {
             return value;
 
         },
+        /**
+         * Access to multiple conditionals and return the first value
+         * that is truthy.
+         *
+         * @param {?object|?string} conditionals - An object containing conditions
+         *        (expected properties) as keys, or a string containing a condition
+         *        (a expected property).
+         * @param {?object} data - An object with all the properties.
+         * @returns {*} View.resolveConditional()'s returned value.'
+         */
         'resolveConditionals': function resolveConditionals (conditionals, data) {
 
             var conditionalsObj = Object(conditionals);
