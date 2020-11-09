@@ -176,7 +176,31 @@ var View = (function () {
             return resolvedValue;
 
         },
-        'replaceVars': function replaceVars (data, value) {
+        /**
+         * Replace placeholders (${}, eg. "${deep.deeper}") within a string.
+         *
+         * @param {?string|?object} value - Some text or an object.
+         *        If an object is given, it will {@link just.View.resolveConditionals} first,
+         *        then replace ${placeholders} within the accessed value.
+         * @param {?object} data - An object containing the data to be replaced.
+         * @example <caption>Using a string</caption>
+         * View.replaceVars('${splitted.property}!', {
+         *     'splitted': {'property': 'key'}
+         * }); // > "hey!"
+         *
+         * @example <caption>Using an object</caption>
+         * View.replaceVars({
+         *     'a': 'Show ${a}',
+         *     'b': 'Show ${b}'
+         * }, {'b': 'me (b)'}); // > "Show me (b)"
+         *
+         * @example <caption>Inexistent property</caption>
+         * View.replaceVars('Don't replace ${me}!') // "Don't replace ${me}!"
+         *
+         * @returns {string} The replaced string.
+         *          If some value is undefined, it won't be replaced at all.
+         */
+        'replaceVars': function replaceVars (value, data) {
 
             var text = (typeof value === 'object'
                 ? View.resolveConditionals(value, data)
@@ -202,7 +226,7 @@ var View = (function () {
 
             if (!attribute) { return false; }
 
-            text = View.replaceVars(data, attribute);
+            text = View.replaceVars(attribute, data);
 
             if (text !== attribute) { element.textContent = text; }
 
@@ -216,7 +240,7 @@ var View = (function () {
 
             if (!attribute) { return false; }
 
-            html = View.replaceVars(data, attribute);
+            html = View.replaceVars(attribute, data);
 
             if (html !== attribute) { element.innerHTML = html; }
 
@@ -248,7 +272,7 @@ var View = (function () {
 
             eachProperty(attributes, function (attribute, key) {
 
-                var value = View.replaceVars(data, attribute);
+                var value = View.replaceVars(attribute, data);
 
                 if (value !== attribute) { this.setAttribute(key, value); }
 
