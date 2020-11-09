@@ -6,9 +6,26 @@ var stringToJSON = require('./stringToJSON');
 var findElements = require('./findElements');
 var View = (function () {
 
+    function isReservedKeyword (string) {
+
+        var trimmedString = string.trim();
+
+        return /^undefined|false|true|null$/.test(trimmedString);
+
+    }
+
+    function isVar (string) {
+
+        var trimmedString = string.trim();
+
+        return /^[a-z]/.test(trimmedString)
+            && !isReservedKeyword(trimmedString);
+
+    }
+
     function access (keys, data) {
 
-        var allParamsSorted = [];
+        var allArgsSorted = [];
         var keysWithoutFunctions;
         var context;
 
@@ -18,22 +35,48 @@ var View = (function () {
         keysWithoutFunctions = keys.replace(/((?:^|\.)[^.]+)\(([^)]*)\)/g,
             function replaceFunctions ($0, textBeforeParenthesis, textWithinParenthesis) {
 
+                var replazableValues = {};
                 // Replace naked vars within "()":
-                var paramsWithoutVars = textWithinParenthesis.replace(/(^|,)\s*([a-z][^,]*)/ig,
-                    function replaceVarsInParams ($0, textBeforeNakedVar, nakedVar) {
+                var argsWithoutVars = textWithinParenthesis
+                    .split(',')
+                    .map(function (argument, index) {
 
-                        var value = access(nakedVar, data);
-                        var parsableJSONString = JSON.stringify(value);
+                        var arg = argument.trim();
+                        var value = (isVar(arg)
+                            ? access(arg, data)
+                            : arg
+                        );
 
-                        return textBeforeNakedVar + parsableJSONString;
+                        if (/^undefined$/.test(value)) {
 
-                    });
+                            replazableValues[index] = void 0;
+                            /**
+                             * We don't return null here because [].join
+                             * removes the value and makes it unparsable
+                             * anyway.
+                             */
+
+                        }
+
+                        return value;
+
+                    })
+                    .join(', ')
+                    .replace(/\bundefined\b/g, 'null');
                 // Use JSON.parse() to get valid data types:
-                var parsableJSONString = '[' + paramsWithoutVars + ']';
-                var params = parseJSON(parsableJSONString);
+                var parsableJSONString = '[' + argsWithoutVars + ']';
+                var args = parseJSON(parsableJSONString);
 
-                // ... and save its params for later (1).
-                allParamsSorted.push(params);
+                eachProperty(replazableValues, function (value, key) {
+
+                    var index = parseInt(key);
+
+                    this[index] = value;
+
+                }, args);
+
+                // ... and save its args for later (1).
+                allArgsSorted.push(args);
 
                 return textBeforeParenthesis;
 
@@ -48,14 +91,14 @@ var View = (function () {
                     ? String.prototype[key]
                     : void 0
                 );
-                var fn, params;
+                var fn, args;
                 var result = value;
 
                 if (typeof value === 'function') {
 
                     fn = value;
-                    params = allParamsSorted.shift(); // 1
-                    result = fn.apply(context, params);
+                    args = allArgsSorted.shift(); // 1
+                    result = fn.apply(context, args);
 
                 }
 
@@ -179,6 +222,14 @@ var View = (function () {
         /**
          * Replace placeholders (${}, eg. "${deep.deeper}") within a string.
          *
+         * It supports:
+         * - Functions (1): ${deep.deeper(1, "", myVar, ...)
+         * - String#methods: ${do.trim().replace('', '')}).
+         * - Deep replacements: ${a.b.c} or ${a.b().c()}
+         *
+         * (1) We don't currently support functions nor ES6+ things as arguments
+         * (like Symbols or all that stuff).
+         *
          * @param {?string|?object} value - Some text or an object.
          *        If an object is given, it will {@link just.View.resolveConditionals} first,
          *        then replace ${placeholders} within the accessed value.
@@ -207,8 +258,14 @@ var View = (function () {
                 : value + ''
             );
 
-            return text.replace(/\$\{([^}]+)\}/g, function ($0, key) {
+            return text.replace(/(\$\{[^(]+\()([^)]+)(\)\})/g, function encodeFnArgs (
+                $0, $1, $2, $3) {
 
+                return $1 + encodeURI($2) + $3;
+
+            }).replace(/\$\{([^}]+)\}/g, function replacePlaceholders ($0, $1) {
+
+                var key = decodeURI($1);
                 var value = access(key, data);
 
                 return (typeof value !== 'undefined'

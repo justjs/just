@@ -204,6 +204,19 @@ describe.only('@lib/View.js', function () {
 
         });
 
+        it('Should replace a function and call it with primitive ' +
+            'arguments.', function () {
+
+            var fn = jest.fn(function () { return 'done'; });
+            var result = View.replaceVars('Test: ${test(undefined, "", 0, false, null, {}, [])}!', {
+                'test': fn
+            });
+
+            expect(result).toBe('Test: done!');
+            expect(fn).toHaveBeenCalledWith(void 0, '', 0, false, null, {}, []);
+
+        });
+
     });
 
 });
