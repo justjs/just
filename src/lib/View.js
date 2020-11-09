@@ -114,18 +114,30 @@ var View = (function () {
 
     defineProperties(View, {
         'globals': {},
+        /**
+         * Access to an object and return its value-
+         *
+         * @param {?string} condititional - Keys splitted by ".".
+         *        Use "!" to negate a expression.
+         *        Use "true" to return true.
+         * @parma {?object} data - An object with the given keys.
+         *
+         * @returns {*|boolean} if the conditional is negated, a boolean.
+         * Else, the accessed value.
+         */
         'resolveConditional': function resolveConditional (conditional, data) {
 
             var negate = /^!/.test(conditional);
             var nonNegatedConditional = (conditional + '').replace('!', '');
             var properties = nonNegatedConditional;
-            var isTruthy = /^true$/.test(nonNegatedConditional) || Boolean(
-                access(properties, data)
+            var value = (/^true$/.test(nonNegatedConditional)
+                ? true
+                : access(properties, data)
             );
 
-            if (negate) { isTruthy = !isTruthy; }
+            if (negate) { value = !value; }
 
-            return isTruthy;
+            return value;
 
         },
         'resolveConditionals': function resolveConditionals (conditionals, data) {
