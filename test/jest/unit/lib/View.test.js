@@ -217,6 +217,36 @@ describe.only('@lib/View.js', function () {
 
         });
 
+        it('Should replace a function and call it with vars as ' +
+            'arguments.', function () {
+
+            var fn = jest.fn(function () {
+
+                var args = [].slice.call(arguments);
+
+                return args.reduce(function toString (string, arg) {
+
+                    return (string += arg + ', ');
+
+                }, '');
+
+            });
+            var result = View.replaceVars('${fn(undefinedVar, empty, zero, falseVar, nullVar, object-literal, array)}', {
+                'undefinedVar': undefined,
+                'empty': '',
+                'zero': 0,
+                'falseVar': false,
+                'nullVar': null,
+                'object-literal': {'a': 'b'},
+                'array': [1],
+                'fn': fn
+            });
+
+            expect(fn).toHaveBeenCalledWith(void 0, '', 0, false, null, {'a': 'b'}, [1]);
+            expect(result).toBe('undefined, , 0, false, null, [object Object], 1, ');
+
+        });
+
     });
 
 });

@@ -10,7 +10,7 @@ var View = (function () {
 
         var trimmedString = string.trim();
 
-        return /^undefined|false|true|null$/.test(trimmedString);
+        return /^(?:undefined|false|true|null)$/.test(trimmedString);
 
     }
 
@@ -42,10 +42,19 @@ var View = (function () {
                     .map(function (argument, index) {
 
                         var arg = argument.trim();
-                        var value = (isVar(arg)
+                        var isNakedVar = isVar(arg);
+                        var isReserved = isReservedKeyword(arg);
+                        var value = (isNakedVar
                             ? access(arg, data)
                             : arg
                         );
+
+                        if (isNakedVar) {
+
+                            replazableValues[index] = value;
+                            value = JSON.stringify(value);
+
+                        }
 
                         if (/^undefined$/.test(value)) {
 
@@ -62,7 +71,7 @@ var View = (function () {
 
                     })
                     .join(', ')
-                    .replace(/\bundefined\b/g, 'null');
+                    .replace(/(^|,)(?:undefined|\s*)(,|$)/g, '$1null$2');
                 // Use JSON.parse() to get valid data types:
                 var parsableJSONString = '[' + argsWithoutVars + ']';
                 var args = parseJSON(parsableJSONString);
