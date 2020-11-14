@@ -247,6 +247,17 @@ describe.only('@lib/View.js', function () {
 
         });
 
+        it('Should replace a function with nested arguments.', function () {
+
+            var result = View.replaceVars('${fn(a.b.c)}', {
+                'a': {'b': {'c': 'hey!'}},
+                'fn': function (x) { return x; }
+            });
+
+            expect(result).toBe('hey!');
+
+        });
+
     });
 
 });
