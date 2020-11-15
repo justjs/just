@@ -262,7 +262,7 @@ describe.only('@lib/View.js', function () {
 
     describe('.updateVars()', function () {
 
-        it('Should return false if the attribute does not exist.', function () {
+        it('Should return false if text was NOT updated.', function () {
 
             var element = document.body;
             var data = {};
@@ -277,14 +277,15 @@ describe.only('@lib/View.js', function () {
 
         });
 
-        it('Should return true if the attribute is a truthy value.', function () {
+        it('Should return true if text was updated.', function () {
 
             var element = document.body;
-            var data = {};
+            var data = {'x': 1};
             var attributeName = 'data-something';
+            var attributeValue = '${x}';
             var result;
 
-            element.setAttribute(attributeName, '1');
+            element.setAttribute(attributeName, attributeValue);
 
             result = View.updateVars(element, data, attributeName);
 
