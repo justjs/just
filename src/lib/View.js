@@ -284,6 +284,16 @@ var View = (function () {
             });
 
         },
+        /**
+         * Update the element's text if the attribute's value
+         * is different from the accessed value.
+         *
+         * @param {Element} element - The target element.
+         * @param {?object} data - Some object.
+         * @param {?string} attributeName - The name for the queried attribute.
+         *
+         * @return {boolean} false if the attribute is falsy, true otherwise.
+         */
         'updateVars': function updateVars (element, data, attributeName) {
 
             var attribute = element.getAttribute(attributeName);
