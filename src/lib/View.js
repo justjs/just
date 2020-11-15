@@ -305,6 +305,7 @@ var View = (function () {
          *        Else, element.textContent will be used to set the updated value and return true.
          *
          * @return {boolean} true if the value was updated, false otherwise.
+         *         Any other value will be casted to a Boolean.
          */
         'updateVars': function updateVars (element, data, attributeName, setter) {
 
@@ -322,7 +323,7 @@ var View = (function () {
 
             text = View.replaceVars(attribute, data);
 
-            return (text !== attribute
+            return Boolean(text !== attribute
                 ? set(element, text)
                 : false
             );
