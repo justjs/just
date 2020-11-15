@@ -295,12 +295,12 @@ describe.only('@lib/View.js', function () {
         });
 
         it('Should NOT replace an element\'s text if the given ' +
-            'attribute is equal.', function () {
+            'attribute is a constant.', function () {
 
             var element = document.body;
             var attributeName = 'data-var';
             var data = {};
-            var attributeValue = element.textContent;
+            var attributeValue = 'some constant';
             var textContentSpy;
 
             element.setAttribute(attributeName, attributeValue);
