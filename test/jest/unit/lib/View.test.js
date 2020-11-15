@@ -314,6 +314,26 @@ describe.only('@lib/View.js', function () {
 
         });
 
+        it('Should replace an element\'s text if the given ' +
+            'attribute is variable.', function () {
+
+            var element = document.body;
+            var attributeName = 'data-var';
+            var data = {'x': 1};
+            var attributeValue = '${x}';
+            var textContentSpy;
+
+            element.setAttribute(attributeName, attributeValue);
+
+            textContentSpy = jest.spyOn(element, 'textContent', 'set');
+            View.updateVars(element, data, attributeName);
+
+            expect(textContentSpy).toHaveBeenCalled();
+
+            element.removeAttribute(attributeName);
+
+        });
+
     });
 
 });
