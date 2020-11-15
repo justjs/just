@@ -285,17 +285,36 @@ var View = (function () {
 
         },
         /**
+         * A function to set the updated value.
+         *
+         * @param {Element} element - The target element.
+         * @param {string} text - The updated text.
+         * @return {boolean} true if updated, false otherwise.
+         * @typedef {function} just.View~updateVars_setter
+         */
+
+        /**
          * Update the element's text if the attribute's value
          * is different from the accessed value.
          *
          * @param {Element} element - The target element.
          * @param {?object} data - Some object.
          * @param {?string} attributeName - The name for the queried attribute.
+         * @param {?just.View~updateVars_setter} [setter=element.textContent] - If set,
+         *        a function to update the element's text. Expects a boolean to be returned.
+         *        Else, element.textContent will be used to set the updated value and return true.
          *
-         * @return {boolean} false if the attribute is falsy, true otherwise.
+         * @return {boolean} true if the value was updated, false otherwise.
          */
-        'updateVars': function updateVars (element, data, attributeName) {
+        'updateVars': function updateVars (element, data, attributeName, setter) {
 
+            var set = defaults(setter, function (element, text) {
+
+                element.textContent = text;
+
+                return true;
+
+            });
             var attribute = element.getAttribute(attributeName);
             var text;
 
@@ -303,9 +322,10 @@ var View = (function () {
 
             text = View.replaceVars(attribute, data);
 
-            if (text !== attribute) { element.textContent = text; }
-
-            return true;
+            return (text !== attribute
+                ? set(element, text)
+                : false
+            );
 
         },
         'updateHtmlVars': function updateHtmlVars (element, data, attributeName) {
