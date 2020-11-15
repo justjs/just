@@ -43,7 +43,6 @@ var View = (function () {
 
                         var arg = argument.trim();
                         var isNakedVar = isVar(arg);
-                        var isReserved = isReservedKeyword(arg);
                         var value = (isNakedVar
                             ? access(arg, data)
                             : arg
