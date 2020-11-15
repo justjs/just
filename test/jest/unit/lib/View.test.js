@@ -292,6 +292,25 @@ describe.only('@lib/View.js', function () {
 
         });
 
+        it('Should NOT replace an element\'s text if the given ' +
+            'attribute is equal.', function () {
+
+            var element = document.body;
+            var attributeName = 'data-var';
+            var data = {};
+            var value = 'same';
+            var textContentSpy;
+
+            element.textContent = value;
+            element.setAttribute(attributeName, value);
+
+            textContentSpy = jest.spyOn(element, 'textContent', 'set');
+            View.updateVars(element, data, attributeName);
+
+            expect(textContentSpy).not.toHaveBeenCalled();
+
+        });
+
     });
 
 });
