@@ -277,6 +277,21 @@ describe.only('@lib/View.js', function () {
 
         });
 
+        it('Should return true if the attribute is a truthy value.', function () {
+
+            var element = document.body;
+            var data = {};
+            var attributeName = 'data-something';
+            var result;
+
+            element.setAttribute(attributeName, '1');
+
+            result = View.updateVars(element, data, attributeName);
+
+            expect(result).toBe(true);
+
+        });
+
     });
 
 });
