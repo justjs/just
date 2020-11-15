@@ -260,4 +260,23 @@ describe.only('@lib/View.js', function () {
 
     });
 
+    describe('.updateVars()', function () {
+
+        it('Should return false if the attribute does not exist.', function () {
+
+            var element = document.body;
+            var data = {};
+            var attributeName = 'data-something';
+            var result;
+
+            element.removeAttribute(attributeName);
+
+            result = View.updateVars(element, data, attributeName);
+
+            expect(result).toBe(false);
+
+        });
+
+    });
+
 });
