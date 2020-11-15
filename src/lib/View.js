@@ -261,9 +261,9 @@ var View = (function () {
          */
         'replaceVars': function replaceVars (value, data) {
 
-            var text = (typeof value === 'object'
+            var text = String(typeof value === 'object'
                 ? View.resolveConditionals(value, data)
-                : value + ''
+                : value
             );
 
             return text.replace(/(\$\{[^(]+\()([^)]+)(\)\})/g, function encodeFnArgs (
