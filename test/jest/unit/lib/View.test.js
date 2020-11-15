@@ -267,6 +267,9 @@ describe.only('@lib/View.js', function () {
             var element = document.body;
             var data = {};
             var attributeName = 'data-something';
+            var textContentMock = jest
+                .spyOn(element, 'textContent', 'set')
+                .mockImplementation(function () {});
             var result;
 
             element.removeAttribute(attributeName);
@@ -274,6 +277,9 @@ describe.only('@lib/View.js', function () {
             result = View.updateVars(element, data, attributeName);
 
             expect(result).toBe(false);
+            expect(textContentMock).not.toHaveBeenCalled();
+
+            textContentMock.mockRestore();
 
         });
 
@@ -283,15 +289,20 @@ describe.only('@lib/View.js', function () {
             var data = {'x': 1};
             var attributeName = 'data-something';
             var attributeValue = '${x}';
+            var textContentMock;
             var result;
 
             element.setAttribute(attributeName, attributeValue);
+            textContentMock = jest
+                .spyOn(element, 'textContent', 'set')
+                .mockImplementation(function () {});
 
             result = View.updateVars(element, data, attributeName);
 
             expect(result).toBe(true);
 
             element.removeAttribute(attributeName);
+            textContentMock.mockRestore();
 
         });
 
@@ -322,16 +333,19 @@ describe.only('@lib/View.js', function () {
             var attributeName = 'data-var';
             var data = {'x': 1};
             var attributeValue = '${x}';
-            var textContentSpy;
+            var textContentMock;
 
             element.setAttribute(attributeName, attributeValue);
+            textContentMock = jest
+                .spyOn(element, 'textContent', 'set')
+                .mockImplementation(function () {});
 
-            textContentSpy = jest.spyOn(element, 'textContent', 'set');
             View.updateVars(element, data, attributeName);
 
-            expect(textContentSpy).toHaveBeenCalled();
+            expect(textContentMock).toHaveBeenCalled();
 
             element.removeAttribute(attributeName);
+            textContentMock.mockRestore();
 
         });
 
