@@ -290,6 +290,8 @@ describe.only('@lib/View.js', function () {
 
             expect(result).toBe(true);
 
+            element.removeAttribute(attributeName);
+
         });
 
         it('Should NOT replace an element\'s text if the given ' +
@@ -298,16 +300,17 @@ describe.only('@lib/View.js', function () {
             var element = document.body;
             var attributeName = 'data-var';
             var data = {};
-            var value = 'same';
+            var attributeValue = element.textContent;
             var textContentSpy;
 
-            element.textContent = value;
-            element.setAttribute(attributeName, value);
+            element.setAttribute(attributeName, attributeValue);
 
             textContentSpy = jest.spyOn(element, 'textContent', 'set');
             View.updateVars(element, data, attributeName);
 
             expect(textContentSpy).not.toHaveBeenCalled();
+
+            element.removeAttribute(attributeName);
 
         });
 
