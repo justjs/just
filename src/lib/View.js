@@ -329,6 +329,16 @@ var View = (function () {
             );
 
         },
+        /**
+         * Update the element's markup using {@link just.View.updateVars}
+         * and element.innerHTML.
+         *
+         * @param {Element} element - The target element.
+         * @param {?object} data - Some object.
+         * @param {?string} attributeName - The name for the queried attribute.
+         *
+         * @return {boolean} true if the value was updated, false otherwise.
+         */
         'updateHtmlVars': function updateHtmlVars (element, data, attributeName) {
 
             return View.updateVars(element, data, attributeName, function (element, html) {
