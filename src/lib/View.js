@@ -331,16 +331,13 @@ var View = (function () {
         },
         'updateHtmlVars': function updateHtmlVars (element, data, attributeName) {
 
-            var attribute = element.getAttribute(attributeName);
-            var html;
+            return View.updateVars(element, data, attributeName, function (element, html) {
 
-            if (!attribute) { return false; }
+                element.innerHTML = html;
 
-            html = View.replaceVars(attribute, data);
+                return true;
 
-            if (html !== attribute) { element.innerHTML = html; }
-
-            return true;
+            });
 
         },
         'updateConditionals': function updateConditionals (element, data, attributeName) {
