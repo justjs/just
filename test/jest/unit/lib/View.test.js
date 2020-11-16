@@ -355,7 +355,7 @@ describe.only('@lib/View.js', function () {
             var data = {'x': 1};
             var attributeName = 'data-var';
             var attributeValue = '${x}';
-            var expectedText = data.x;
+            // var expectedText = data.x;
             var setter = function () {};
             var result;
 
@@ -363,8 +363,10 @@ describe.only('@lib/View.js', function () {
 
             result = View.updateVars(element, data, attributeName, setter);
 
-            // expect(setter).toHaveBeenCalledWith(element, expectedText);
-            // expect(setter).toHaveReturned(void 0);
+            /*
+             * expect(setter).toHaveBeenCalledWith(element, expectedText);
+             * expect(setter).toHaveReturned(void 0);
+             */
             expect(result).toBe(false);
 
             element.removeAttribute(attributeName);
