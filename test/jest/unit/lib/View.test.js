@@ -375,4 +375,29 @@ describe.only('@lib/View.js', function () {
 
     });
 
+    describe('.updateHtmlVars()', function () {
+
+        it('Should replace html contents.', function () {
+
+            var element = document.body;
+            var data = {'x': '<span></span>'};
+            var attributeName = 'data-var';
+            var attributeValue = '${x}';
+            var expectedText = data.x;
+            var innerHTMLSpy = jest.spyOn(element, 'innerHTML', 'set');
+            var result;
+
+            element.setAttribute(attributeName, attributeValue);
+
+            result = View.updateHtmlVars(element, data, attributeName);
+
+            expect(innerHTMLSpy).toHaveBeenCalledWith(expectedText);
+            expect(result).toBe(true);
+
+            innerHTMLSpy.mockRestore();
+
+        });
+
+    });
+
 });
