@@ -349,6 +349,28 @@ describe.only('@lib/View.js', function () {
 
         });
 
+        it('Should allow passing any function as a setter.', function () {
+
+            var element = document.body;
+            var data = {'x': 1};
+            var attributeName = 'data-var';
+            var attributeValue = '${x}';
+            var expectedText = data.x;
+            var setter = function () {};
+            var result;
+
+            element.setAttribute(attributeName, attributeValue);
+
+            result = View.updateVars(element, data, attributeName, setter);
+
+            // expect(setter).toHaveBeenCalledWith(element, expectedText);
+            // expect(setter).toHaveReturned(void 0);
+            expect(result).toBe(false);
+
+            element.removeAttribute(attributeName);
+
+        });
+
     });
 
 });
