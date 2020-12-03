@@ -377,7 +377,7 @@ var View = (function () {
 
                 var value = View.replaceVars(attribute, data);
 
-                if (value !== attribute) { this.setAttribute(key, value); }
+                this.setAttribute(key, value);
 
             }, element);
 
