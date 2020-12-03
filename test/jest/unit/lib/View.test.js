@@ -400,4 +400,26 @@ describe.only('@lib/View.js', function () {
 
     });
 
+    describe('.updateAttributes()', function () {
+
+        it('Should replace constant values.', function () {
+
+            var element = document.body;
+            var constantValue = 'x';
+            var data = null;
+            var attributeName = 'data-var';
+            var attributeValue = JSON.stringify({
+                'title': constantValue
+            });
+
+            element.setAttribute(attributeName, attributeValue);
+
+            View.updateAttributes(element, data, attributeName);
+
+            expect(element.getAttribute('title')).toBe(constantValue);
+
+        });
+
+    });
+
 });
