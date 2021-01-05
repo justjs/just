@@ -52,4 +52,4 @@ The following are a list of useful scripts:
 
 ## License
 
-This project is under the BSD-3 LICENSE, unless otherwise stated.
+This project is under the [BSD 3-Clause License](LICENSE), unless otherwise stated.
