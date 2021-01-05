@@ -36,10 +36,10 @@ replaceStaticFileVars () {
 	local FILENAME="$1"
 	# Next line based on:
 	# - Sort array: https://stackoverflow.com/a/11789688
-	# - Sort by version: https://stackoverflow.com/a/4495368
-	local availableVersionsDesc=(`IFS=$'\n' && sort -t. -k 1.2,1nr -k 2,2nr -k 3,3nr -k 4,4nr <<< "${AVAILABLE_VERSIONS[*]}" && unset IFS`)
+	# - Sort by version: https://gist.github.com/loisaidasam/b1e6879f3deb495c22cc#gistcomment-3008151
+	local availableVersionsDesc=(`IFS=$'\n' && tr - \~ <<< "${AVAILABLE_VERSIONS[*]}" | sort -rV | tr \~ - && unset IFS`)
 	local availableVersionsTable=`./docs/tmpl/available-versions-table "${availableVersionsDesc[@]}"`
-	local latestVersion="${availableVersionsDesc[0]}"
+	local latestVersion="$VERSION"
 	local browserExampleFilename="dist/browser/core.min.js"
 	local browserExampleUrl="https://cdn.jsdelivr.net/npm/@just-js/just@$latestVersion/$browserExampleFilename"
 	local browserExampleSri=`./bin/generate-sri "$browserExampleFilename"`
