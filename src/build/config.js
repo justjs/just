@@ -13,7 +13,7 @@ module.exports = {
         ' */\n' +
         '\n' +
         '/**\n' +
-        ' * @preserve Copyright 2019-2020 ' + pkg.author.name + ' and contributors. See {@link ' + pkg.repository.url.replace(/\.git$/, '') + '/contributors}.\n' +
+        ' * @preserve Copyright 2019-2021 ' + pkg.author.name + ' and contributors. See {@link ' + pkg.repository.url.replace(/\.git$/, '') + '/contributors}.\n' +
         ' * @file ' + pkg.title + ': ' + pkg.description + '\n' +
         ' * @version ' + pkg.version + '\n' +
         ' */'
