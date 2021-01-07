@@ -49,7 +49,6 @@
 				<ul>
 					<li><a href='#status'>Status</a></li>
 					<li><a href='#usage'>Usage</a></li>
-					<li><a href='#flavors'>Flavors</a></li>
 					<li><a href='#versioning'>Versioning</a></li>
 				</ul>
 			</nav>
@@ -81,62 +80,114 @@
 					<h2>Usage</h2>
 				</header>
 				<div class='content-wrapper'>
-					<p><b>JustJs</b> is available on npm for server usage and distributed over a CDN for browser usage.</p>
-					<h3>Browser</h3>
-					<p>To use the latest version of <b>JustJs</b>' core over a CDN, include the following anywhere on your HTML:</p>
-					<div class='code-wrapper'>
-						<pre class='prettyprint'><code>&lt;script
-						src="%{browser-example-url}%"
-						integrity="%{browser-example-sri}%"
-						crossorigin="anonymous"
-						async&gt;&lt;/script&gt;</code></pre>
-					</div>
-					<p>Then, you can replace <em>core.min.js</em> with <a href='#available-bundles-browser'>any of these files</a> and/or <em>%{latest-version}%</em> with <a href='#available-versions'>any of these versions</a>.</p>
-					<h3>Server</h3>
-					<p>To use the latest version of <b>JustJs</b> on a server, install it <a href='#installation-via-npm'>via npm</a> or <a href='#installation-via-yarn'>via yarn</a>:</p>
-					<figure id='installation-via-npm'>
-						<figcaption>Installation via npm</figcaption>
-						<code>npm i @just-js/just</code>
-					</figure>
-					<figure id='installation-via-yarn'>
-						<figcaption>Installation via yarn</figcaption>
-						<code>yarn add @just-js/just</code>
-					</figure>
-				</div>
-			</section>
-			<section id='flavors'>
-				<header>
-					<h2>Flavors</h2>
-				</header>
-				<div class='content-wrapper'>
 					<p><b>JustJs</b> distributes multiple files when a new version is released, therefore you should pick the one that better suits your needs...</p>
-					<figure id='available-bundles-browser'>
-						<figcaption>Available bundles for browser</figcaption>
-						<dl>
-							<div>
-								<dt>core[.min].js <span class='footnote'>[Default]</span><span class='footnote'>[Since v1.0.0]</span></dt>
-								<dd>Things you need for small/static websites.</dd>
-							</div>
-							<div>
-								<dt>just[.min].js <span class='footnote'>[Since v1.1.0]</span></dt>
-								<dd>The full suite to develop a medium/large website.</dd>
-							</div>
-							<div>
-								<dt>polyfills-es5.min.js <span class='footnote'>[Since v1.0.0]</span><span class='footnote'>[optional]</span></dt>
-								<dd>Polyfills to add ES5 support.</dd>
-							</div>
-						</dl>
-					</figure>
-					<figure id='available-files-server'>
-						<figcaption>Available files for server</figcaption>
-						<dl>
-							<div>
-								<dt><a href='https://github.com/justjs/just/blob/master/src/server/index.js' target='_blank' rel='noopener noreferrer'>Check here</a></dt>
-								<dd>All members are documented <a href='/%{tag}%/server/index.html' target='_blank' rel='noopener noreferrer'>here</a>.</dd>
-							</div>
-						</dl>
-					</figure>
-					<p>If you don't know what to choose, "core.min.js" is always a good option...</p>
+					<div id='available-bundles-browser'>
+						<h3>Browser</h3>
+						<div>
+							<h4>Core <span class='footnote'>[Default]</span><span class='footnote'>[Since v1.0.0]</span></h4>
+							<p>Things you need for small/static websites.</p>
+							<details>
+								<summary>Usage via CDN</summary>
+								<dl>
+									<div>
+										<dt>core.js <span class='footnote'>[Non minified version]</span></dt>
+										<dd>
+											<div class='code-wrapper'>
+												<pre class='prettyprint'><code>&lt;script
+												src="https://cdn.jsdelivr.net/npm/@just-js/just@%{latest-version}%/%{filename-dist-core}%"
+												integrity="%{sri-dist-core}%"
+												crossorigin="anonymous"
+												async&gt;&lt;/script&gt;</code></pre>
+											</div>
+										</dd>
+									</div>
+									<div>
+										<dt>core.min.js <span class='footnote'>[Minified version]</span></dt>
+										<dd>
+											<div class='code-wrapper'>
+												<pre class='prettyprint'><code>&lt;script
+												src="https://cdn.jsdelivr.net/npm/@just-js/just@%{latest-version}%/%{filename-dist-core-min}%"
+												integrity="%{sri-dist-core-min}%"
+												crossorigin="anonymous"
+												async&gt;&lt;/script&gt;</code></pre>
+											</div>
+										</dd>
+									</div>
+								</dl>
+							</details>
+						</div>
+						<div>
+							<h4>Full <span class='footnote'>[Since v1.1.0]</span></h4>
+							<p>The full suite to develop a medium/large website.</p>
+							<details>
+								<summary>Usage via CDN</summary>
+								<dl>
+									<div>
+										<dt>just.js <span class='footnote'>[Non minified version]</span></dt>
+										<dd>
+											<div class='code-wrapper'>
+												<pre class='prettyprint'><code>&lt;script
+												src="https://cdn.jsdelivr.net/npm/@just-js/just@%{latest-version}%/%{filename-dist-just}%"
+												integrity="%{sri-dist-just}%"
+												crossorigin="anonymous"
+												async&gt;&lt;/script&gt;</code></pre>
+											</div>
+										</dd>
+									</div>
+									<div>
+										<dt>just.min.js <span class='footnote'>[Minified version]</span></dt>
+										<dd>
+											<div class='code-wrapper'>
+												<pre class='prettyprint'><code>&lt;script
+												src="https://cdn.jsdelivr.net/npm/@just-js/just@%{latest-version}%/%{filename-dist-just-min}%"
+												integrity="%{sri-dist-just-min}%"
+												crossorigin="anonymous"
+												async&gt;&lt;/script&gt;</code></pre>
+											</div>
+										</dd>
+									</div>
+								</dl>
+							</details>
+						</div>
+						<div>
+							<h4>Extra <span class='footnote'>[Optional]</span><span class='footnote'>[Since v1.0.0]</span></h4>
+							<dl>
+								<div>
+									<dt>polyfills.min.js <span class='footnote'>[Minified version]</span></dt>
+									<dd>If you need to support ES5+, use this file.</dd>
+									<dd>
+										<details>
+											<summary>Usage</summary>
+											<div class='code-wrapper'>
+												<pre class='prettyprint'><code>&lt;script
+												src="https://cdn.jsdelivr.net/npm/@just-js/just@%{latest-version}%/%{filename-dist-polyfills-ES5-min}%"
+												integrity="%{sri-dist-polyfills-ES5-min}%"
+												crossorigin="anonymous"
+												async&gt;&lt;/script&gt;</code></pre>
+											</div>
+										</details>
+									</dd>
+								</div>
+							</dl>
+						</div>
+					</div>
+					<div id='available-files-server'>
+						<h3>Server</h3>
+						<p><a href='https://github.com/justjs/just/blob/master/src/server/index.js' target='_blank' rel='noopener noreferrer'>Check available files on Github.</a></p>
+						<p><a href='/%{tag}%/server/index.html' target='_blank' rel='noopener noreferrer'>Read the documentation.</a></p>
+						<div>
+							<h4>Usage</h4>
+							<p>To use the latest version of <b>JustJs</b> on a server, install it <a href='#installation-via-npm'>via npm</a> or <a href='#installation-via-yarn'>via yarn</a>:</p>
+							<figure id='installation-via-npm'>
+								<figcaption>Installation via npm</figcaption>
+								<code>npm i @just-js/just</code>
+							</figure>
+							<figure id='installation-via-yarn'>
+								<figcaption>Installation via yarn</figcaption>
+								<code>yarn add @just-js/just</code>
+							</figure>
+						</div>
+					</div>
 				</div>
 			</section>
 			<section id='versioning'>

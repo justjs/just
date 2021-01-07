@@ -57,17 +57,27 @@ replaceStaticFileVars () {
 	local availableVersionsTable=`./docs/tmpl/available-versions-table "${availableVersionsDesc[@]}"`
 	local latestVersion="$VERSION"
 	local browserExampleFilename="dist/browser/core.min.js"
-	local browserExampleUrl="https://cdn.jsdelivr.net/npm/@just-js/just@$latestVersion/$browserExampleFilename"
-	local browserExampleSri=`./bin/generate-sri "$browserExampleFilename"`
+	local distCore="dist/browser/core.js"
+	local distCoreMin="dist/browser/core.min.js"
+	local distJust="dist/browser/just.js"
+	local distJustMin="dist/browser/just.min.js"
+	local distPolyfillsES5Min="dist/browser/polyfills-es5.min.js"
 	declare -A variables=(
 		[version]="$VERSION"
 		[tag]="$TAG"
 		[available-versions]="$AVAILABLE_VERSIONS"
 		[available-versions-table]="$availableVersionsTable"
-		[sri]="$sri"
 		[latest-version]="$VERSION"
-		[browser-example-url]="$browserExampleUrl"
-		[browserExampleSri]="$browserExampleSri"
+		[filename-dist-core]="$distCore"
+		[filename-dist-core-min]="$distCoreMin"
+		[filename-dist-just]="$distJust"
+		[filename-dist-just-min]="$distJustMin"
+		[filename-dist-polyfills-ES5-min]="$distPolyfillsES5Min"
+		[sri-dist-core]=`./bin/generate-sri "$distCore"`
+		[sri-dist-core-min]=`./bin/generate-sri "$distCoreMin"`
+		[sri-dist-just]=`./bin/generate-sri "$distJust"`
+		[sri-dist-just-min]=`./bin/generate-sri "$distJustMin"`
+		[sri-dist-polyfills-ES5-min]=`./bin/generate-sri "$distPolyfillsES5Min"`
 	)
 	echo "[Docs] Replacing vars in $FILENAME"
 
