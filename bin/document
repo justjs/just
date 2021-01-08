@@ -4,7 +4,9 @@ TAG="$1"
 VERSION="${TAG/v/}"
 ROOT="${BASH_SOURCE%/*}/.." # Source: https://stackoverflow.com/a/12694189
 PUBLIC_DIR='docs/public'
+TEMP_PUBLIC_DIR="$PUBLIC_DIR.temp"
 DESTINATION_DIR="$PUBLIC_DIR/$TAG"
+TEMP_DESTINATION_DIR="$TEMP_PUBLIC_DIR/$TAG"
 AVAILABLE_VERSIONS=(`./bin/get-available-versions`)
 
 cd "$ROOT"
@@ -26,8 +28,8 @@ copyContents () {
 
 copyStaticFiles () {
 
-	copyContents docs/static/versioned "$DESTINATION_DIR"
-	copyContents docs/static/non-versioned "$PUBLIC_DIR"
+	copyContents docs/static/versioned "$TEMP_DESTINATION_DIR"
+	copyContents docs/static/non-versioned "$TEMP_PUBLIC_DIR"
 
 }
 
@@ -78,11 +80,10 @@ replaceStaticFileVars () {
 document () {
 
 	local BUILD_NAME=$1
-	local DESTINATION="$DESTINATION_DIR/$BUILD_NAME"
+	local DESTINATION="$TEMP_DESTINATION_DIR/$BUILD_NAME"
 
 	echo "[Docs] Generating docs at $DESTINATION"
 	npm run doc:jsdoc -- "dist/$BUILD_NAME" -d "$DESTINATION"
-	npm run doc:minify
 
 }
 
@@ -98,7 +99,10 @@ if [ ! -d "dist" ]; then
 fi
 
 copyStaticFiles
-replaceStaticFileVars "$DESTINATION_DIR/index.html"
-replaceStaticFileVars "$PUBLIC_DIR/index.html"
+replaceStaticFileVars "$TEMP_DESTINATION_DIR/index.html"
+replaceStaticFileVars "$TEMP_PUBLIC_DIR/index.html"
 document browser
 document server
+npm run doc:minify -- --input-dir "$TEMP_PUBLIC_DIR" --output-dir "$TEMP_PUBLIC_DIR"
+rm -R "$PUBLIC_DIR"
+mv "$TEMP_PUBLIC_DIR" "$PUBLIC_DIR"
