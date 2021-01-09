@@ -57,6 +57,7 @@
   "devDependencies": {
     "@alexispuga/jsdoc-template": "^1.1.2",
     "coveralls": "^3.1.0",
+    "cssnano": "^5.0.4",
     "eslint": "^7.27.0",
     "eslint-config-justjs": "github:justjs/eslint-config-justjs#v0.1.0",
     "eslint-plugin-es5": "^1.5.0",
