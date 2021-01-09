@@ -46,3 +46,4 @@ var Docs = function (cliArgs) {
 };
 
 exports.default = Docs(['v' + pkg.version]);
+exports.jsdoc = Docs(['v' + pkg.version, '--run-jsdoc=true']);
