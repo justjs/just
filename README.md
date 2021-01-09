@@ -45,9 +45,10 @@ When you release a new version, the new version gets documented in docs/public, 
 Make sure you write valid [JSDOC](https://github.com/jsdoc/jsdoc) documentation on public members, in order to show it on the website.
 
 The following are a list of useful scripts:
-- Run ``` npm run doc:dev ``` to update the docs and watch for changes on the documentation.
+- Run ``` npm run doc:dev ``` to update the docs and watch for changes on bin, docs/static and docs/tmpl. This command will generate documentation only on start up. If you need to generate it continuously, use ``` npm run doc:jsdoc:dev ``` instead.
 - Run ``` npm run doc v$some-version ``` to document ``` $some-version ``` (don't forget the "v" prefix).
 - Run ``` npm run doc:jsdoc ``` to run JSDOC.
+- Run ``` npm run doc:jsdoc:dev ``` to watch for changes and update the generated documentation continuously.
 - Run ``` npm run doc:minify ``` to minify the generated documentation.
 
 ## License
