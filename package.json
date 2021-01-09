@@ -23,7 +23,7 @@
     "doc": "./bin/document",
     "doc:jsdoc": "jsdoc -c docs/jsdoc.config.json",
     "doc:jsdoc:dev": "light-server --open --serve docs/public -w \"src/**/*, docs/static/**/*, docs/tmpl/**/*, bin/**/* # npm run doc -- vx.x.x --run-jsdoc=true # no-reload\" -w \"docs/public/**/* # # reload\"",
-    "doc:dev": "light-server --open --serve docs/public -w \"docs/static/**/*, docs/tmpl/**/*, bin/**/* # npm run doc -- vx.x.x --run-jsdoc=false # no-reload\" -w \"docs/public/**/* # # reload\"",
+    "doc:dev": "npm run doc vx.x.x --run-jsdoc=true && light-server --open --serve docs/public -w \"docs/static/**/*, docs/tmpl/**/*, bin/**/* # npm run doc -- vx.x.x --run-jsdoc=false # no-reload\" -w \"docs/public/**/* # # reload\"",
     "doc:check": "npm run doc:jsdoc:dev",
     "doc:minify": "npm run minify:html -- --input-dir docs/public --output-dir docs/public",
     "minify:html": "html-minifier --file-ext html --collapse-whitespace --minify-css true --minify-js true",
