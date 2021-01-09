@@ -29,7 +29,19 @@ isValidTag () {
 	[[ "$1" =~ ^v[x0-9] ]]
 }
 
+minifyCss () {
+
+	TARGET="$1"
+	DESTINATION="$2"
+
+	postcss "$TARGET" --dir "$DESTINATION" --ext .min.css
+
+}
+
 copyStaticFiles () {
+
+	minifyCss docs/static/versioned/css "$TEMP_DESTINATION_DIR/css"
+	minifyCss docs/static/non-versioned/css "$TEMP_PUBLIC_DIR/css"
 
 	source "bin/copy-contents" docs/static/versioned "$TEMP_DESTINATION_DIR"
 	source "bin/copy-contents" docs/static/non-versioned "$TEMP_PUBLIC_DIR"
