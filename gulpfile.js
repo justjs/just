@@ -2,11 +2,11 @@ var liveServer = require('live-server');
 var spawn = require('child_process').spawn;
 var gulp = require('gulp');
 var pkg = require('./package.json');
-var Docs = (function () {
+var Docs = function (cliArgs) {
 
     function document (done) {
 
-        var cmd = spawn('./bin/document', ['v' + pkg.version], {
+        var cmd = spawn('./bin/document', cliArgs, {
             'cwd': __dirname
         });
 
@@ -43,6 +43,6 @@ var Docs = (function () {
 
     return gulp.series(serve, watch, stopServing);
 
-})();
+};
 
-exports.default = Docs;
+exports.default = Docs(['v' + pkg.version]);
