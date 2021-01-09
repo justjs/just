@@ -8,6 +8,20 @@ TEMP_PUBLIC_DIR="$PUBLIC_DIR.temp"
 DESTINATION_DIR="$PUBLIC_DIR/$TAG"
 TEMP_DESTINATION_DIR="$TEMP_PUBLIC_DIR/$TAG"
 AVAILABLE_VERSIONS=(`./bin/get-available-versions`)
+runJsdoc=true
+
+# Source: https://stackoverflow.com/a/13359121
+for arg in "$@"; do
+
+	case $arg in
+		--run-jsdoc=* )
+
+			runJsdoc="${arg#*=}"
+
+			;;
+	esac
+
+done
 
 cd "$ROOT"
 
@@ -101,8 +115,14 @@ fi
 copyStaticFiles
 replaceStaticFileVars "$TEMP_DESTINATION_DIR/index.html"
 replaceStaticFileVars "$TEMP_PUBLIC_DIR/index.html"
-document browser
-document server
+
+if [ "$runJsdoc" = true ]; then
+
+	document browser
+	document server
+
+fi
+
 npm run doc:minify -- --input-dir "$TEMP_PUBLIC_DIR" --output-dir "$TEMP_PUBLIC_DIR"
 rm -R "$PUBLIC_DIR"
 mv "$TEMP_PUBLIC_DIR" "$PUBLIC_DIR"
