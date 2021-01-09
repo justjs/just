@@ -30,7 +30,7 @@ Run ``` npm run dev ``` and wait for Jest to start.
 Before releasing, make sure your build is perfect by running ``` npm pack ``` or ``` npm run build ```. *—This will build the
 distributed files under the /dist directory.*
 
-Then, run ``` npm run doc:dev ``` to check and modify the generated documentation. *—The browser will automatically start.*
+Then, run ``` npm run doc:check ``` to check and modify the generated documentation. *—The browser will automatically start.*
 
 Later, if everything is correct, run ``` npm run release $next-version ``` *(where ``` $next-version ``` is a valid version in the [semver 2.0 format](https://semver.org/spec/v2.0.0.html)).*
 

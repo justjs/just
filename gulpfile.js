@@ -41,9 +41,13 @@ var Docs = function (cliArgs) {
 
     }
 
-    return gulp.series(serve, watch, stopServing);
+    return {
+        'default': gulp.series(serve, document, stopServing),
+        'watch': gulp.series(serve, watch, stopServing)
+    };
 
 };
 
-exports.default = Docs(['v' + pkg.version]);
-exports.jsdoc = Docs(['v' + pkg.version, '--run-jsdoc=true']);
+exports.default = Docs(['v' + pkg.version]).default;
+exports.jsdoc = Docs(['v' + pkg.version, '--run-jsdoc=true']).watch;
+exports.check = Docs(['v' + pkg.version, '--run-jsdoc=true']).default;

@@ -24,6 +24,7 @@
     "doc:jsdoc": "jsdoc -c docs/jsdoc.config.json",
     "doc:jsdoc:dev": "gulp jsdoc",
     "doc:dev": "gulp",
+    "doc:check": "gulp check",
     "doc:minify": "npm run minify:html -- --input-dir docs/public --output-dir docs/public",
     "minify:html": "html-minifier --file-ext html --collapse-whitespace --minify-css true --minify-js true",
     "lint": "eslint",
