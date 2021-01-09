@@ -22,7 +22,7 @@
     "test:coverage:coveralls": "npm run test:coverage && cat ./coverage/lcov.info | coveralls",
     "doc": "./bin/document",
     "doc:jsdoc": "jsdoc -c docs/jsdoc.config.json",
-    "doc:jsdoc:dev": "gulp jsdoc",
+    "doc:jsdoc:dev": "light-server --open --serve docs/public -w \"docs/static/**/*, docs/tmpl/**/*, bin/**/* # npm run doc -- vx.x.x --run-jsdoc=true # no-reload\" -w \"docs/public/**/* # # reload\"",
     "doc:dev": "light-server --open --serve docs/public -w \"docs/static/**/*, docs/tmpl/**/*, bin/**/* # npm run doc -- vx.x.x --run-jsdoc=false # no-reload\" -w \"docs/public/**/* # # reload\"",
     "doc:check": "gulp check",
     "doc:minify": "npm run minify:html -- --input-dir docs/public --output-dir docs/public",
