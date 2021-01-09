@@ -61,7 +61,6 @@
     "eslint-config-justjs": "github:justjs/eslint-config-justjs#v0.1.0",
     "eslint-plugin-es5": "^1.5.0",
     "eslint-plugin-jest": "^22.21.0",
-    "gulp": "^4.0.2",
     "gzip-size": "^5.1.1",
     "html-minifier": "^4.0.0",
     "jest": "^24.9.0",
