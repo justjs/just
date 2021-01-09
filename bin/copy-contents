@@ -1,0 +1,8 @@
+#!/bin/bash
+
+FROM="$1"
+TO="$2"
+
+echo "[Docs] Copying the contents of $FROM to $TO"
+mkdir -p "$TO"
+cp "$FROM"/* "$TO" -R
