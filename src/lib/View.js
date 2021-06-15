@@ -145,7 +145,8 @@ var View = (function () {
             'html': attributesPrefix + '-html',
             'attr': attributesPrefix + '-attr',
             'if': attributesPrefix + '-if',
-            'alias': attributesPrefix + '-as'
+            'alias': attributesPrefix + '-as',
+            'for': attributesPrefix + '-for'
         }, (typeof attributes === 'object'
             ? attributes
             : {}
@@ -429,6 +430,97 @@ var View = (function () {
 
             return aliases;
 
+        },
+        /**
+         * Update views recursively when multiple data is
+         * passed as a value.
+         *
+         * @param {Node} element - The target element.
+         * @param {Object} data - The data.
+         * @param {string} attributeName - The attribute containing the expression.
+         *
+         * @returns {?View[]} The updated views or null.
+         */
+        'updateLoops': function updateLoops (element, data, attributeName) {
+
+            var attribute = element.getAttribute(attributeName);
+            var objectProperty, varName, newAttributeName, object, array;
+
+            // var in data.property as attribute
+            if (/(\S+)\s+in\s+(\S+)(?:\s+as\s+(\S+))?/i.test(attribute)) {
+
+                varName = RegExp.$1;
+                objectProperty = RegExp.$2;
+                /*
+                 * Use "data-x" attribute in 'data-var-for="value in values as data-x"'
+                 * or "data-var-for-value" in 'data-var-for="value in values"'.
+                 */
+                newAttributeName = RegExp.$3 || attributeName + '-' + varName;
+                object = access(objectProperty, data);
+
+                if (Array.isArray(object)) {
+
+                    array = object;
+
+                    // Loop each element of data.property
+                    return array.map(function (value, i) {
+
+                        var view = element.view;
+                        var viewData = Object.assign({}, data);
+
+                        viewData[varName] = value;
+
+                        if (!view) {
+
+                            /*
+                             * Create a new View using the current element
+                             * as template.
+                             */
+                            view = new View({
+                                'element': element,
+                                'attributes': newAttributeName
+                            });
+
+                            /*
+                             * Add a new element with the updates.
+                             * Make sure to don't alter the order in which
+                             * it was written. I.e.: Don't append() or prepend().
+                             */
+                            view
+                                .create()
+                                .update(viewData)
+                                .insert({'before': element.nextSibling}, element.parentNode);
+
+                            // And cache it.
+                            view.element.view = view;
+
+                        }
+                        else {
+
+                            /*
+                             * Then, if we found a cached view, we remove
+                             * its element from the DOM to start from 0 again.
+                             */
+                            if (element.parentNode) { element.parentNode.removeChild(element); }
+
+                            /*
+                             * ... View#update() will create the new updated
+                             * elements for us.
+                             */
+                            view.update(viewData);
+
+                        }
+
+                        return view;
+
+                    });
+
+                }
+
+            }
+
+            return null;
+
         }
 
     });
@@ -442,12 +534,14 @@ var View = (function () {
             var attributeForHtml = attributes.html;
             var attributeForIf = attributes.if;
             var attributeForAttributes = attributes.attr;
+            var attributeForLoops = attributes.for;
 
             return findElements([
                 '[' + attributeForVars + ']',
                 '[' + attributeForHtml + ']',
                 '[' + attributeForIf + ']',
-                '[' + attributeForAttributes + ']'
+                '[' + attributeForAttributes + ']',
+                '[' + attributeForLoops + ']'
             ].join(','), container);
 
         },
@@ -485,6 +579,7 @@ var View = (function () {
             var attributeForAttributes = attributes.attr;
             var attributeForHtml = attributes.html;
             var attributeForVars = attributes.var;
+            var attributeForLoops = attributes.for;
             var updatableElements;
             var elementsWithAliases;
 
@@ -518,6 +613,7 @@ var View = (function () {
                 View.updateAttributes(element, dataWithAliases, attributeForAttributes);
                 View.updateHtmlVars(element, dataWithAliases, attributeForHtml);
                 View.updateVars(element, dataWithAliases, attributeForVars);
+                View.updateLoops(element, dataWithAliases, attributeForLoops);
 
             });
 
