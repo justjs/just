@@ -39,7 +39,7 @@ var View = (function () {
                 // Replace naked vars within "()":
                 var argsWithoutVars = textWithinParenthesis
                     .split(',')
-                    .map(function (argument, index) {
+                    .reduce(function (argsWithoutVars, argument, index) {
 
                         var arg = argument.trim();
                         var isNakedVar = isVar(arg);
@@ -58,19 +58,16 @@ var View = (function () {
                         if (/^undefined$/.test(value)) {
 
                             replazableValues[index] = void 0;
-                            /**
-                             * We don't return null here because [].join
-                             * removes the value and makes it unparsable
-                             * anyway.
-                             */
+                            value = null;
 
                         }
 
-                        return value;
+                        argsWithoutVars += value + ', ';
 
-                    })
-                    .join(', ')
-                    .replace(/(^|,)(?:undefined|\s*)(,|$)/g, '$1null$2');
+                        return argsWithoutVars;
+
+                    }, '')
+                    .replace(/, $/, '');
                 // Use JSON.parse() to get valid data types:
                 var parsableJSONString = '[' + argsWithoutVars + ']';
                 var args = parseJSON(parsableJSONString);
