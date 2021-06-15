@@ -50,6 +50,45 @@ describe.only('@lib/View.js', function () {
 
     });
 
+    describe('#insert', function () {
+
+        var container = document.body;
+        var relativeElement = document.createElement('span');
+
+        beforeEach(function () {
+
+            // Create a dumb element to compare it with this later.
+            container.appendChild(relativeElement);
+
+        });
+
+        afterEach(function () {
+
+            document.body.innerHTML = '';
+
+        });
+
+        test.each([
+            ['before the first element.', 'before', 0],
+            ['after the last element.', 'after', 1],
+            ['before the given Node.', {'before': relativeElement}, 0]
+        ])('Should insert #element %s.', function ($0, position,
+            expectedPositionIndex) {
+
+            var element = document.createElement('span');
+            var view = new View({
+                'element': element
+            });
+            var children;
+
+            view.insert('before', container);
+
+            expect(container.children[expectedPositionIndex]).toStrictEqual(element);
+
+        });
+
+    });
+
     describe('.globals', function () {
 
         it('Should be mutable.', function () {
