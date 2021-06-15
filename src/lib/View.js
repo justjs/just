@@ -377,6 +377,18 @@ var View = (function () {
             return Boolean(value);
 
         },
+        /**
+         * Create dynamic attributes after {@link just.View.replaceVars|replacing variables}
+         * in values.
+         *
+         * Please note that null/undefined values won't be replaced.
+         *
+         * @param {Element} element - The target element.
+         * @param {?object} data - Some object.
+         * @param {?string} attributeName - The name for attribute containing a stringified json.
+         *
+         * @return {boolean} true if the attribute contains some value, false otherwise.
+         */
         'updateAttributes': function updateAttributes (element, data, attributeName) {
 
             var attribute = element.getAttribute(attributeName);
@@ -389,6 +401,9 @@ var View = (function () {
             eachProperty(attributes, function (attribute, key) {
 
                 var value = View.replaceVars(attribute, data);
+
+                // Don't save null or undefined values on attributes.
+                if (/^(?:null|undefined)$/.test(value)) { return; }
 
                 this.setAttribute(key, value);
 

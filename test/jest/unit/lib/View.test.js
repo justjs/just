@@ -447,12 +447,13 @@ describe.only('@lib/View.js', function () {
 
     describe('.updateAttributes()', function () {
 
+        var element = document.body;
+        var attributeName = 'data-var';
+
         it('Should replace constant values.', function () {
 
-            var element = document.body;
             var constantValue = 'x';
             var data = null;
-            var attributeName = 'data-var';
             var attributeValue = JSON.stringify({
                 'title': constantValue
             });
@@ -462,6 +463,31 @@ describe.only('@lib/View.js', function () {
             View.updateAttributes(element, data, attributeName);
 
             expect(element.getAttribute('title')).toBe(constantValue);
+
+        });
+
+        test.each([
+            [null],
+            // @TODO Test undefined values.
+            // [undefined]
+        ])('Should not replace %s values.', function (variable) {
+
+            var element = document.body;
+            var attributeValue = JSON.stringify({
+                'title': '${' + variable + '}'
+            });
+            var data = {};
+            var result;
+
+            data[variable] = variable;
+
+            element.removeAttribute('title');
+            element.setAttribute(attributeName, attributeValue);
+
+            result = View.updateAttributes(element, data, attributeName);
+
+            expect(element.hasAttribute('title')).toBe(false);
+            expect(result).toBe(true);
 
         });
 
