@@ -400,6 +400,51 @@ describe.only('@lib/View.js', function () {
 
     });
 
+    describe('.updateConditionals()', function () {
+
+        var element = document.body;
+        var data = {'presentKey': 'value'};
+        var attributeName = 'data-var-if';
+        var hiddenAttribute = 'hidden';
+
+        it('Should hide an element (by setting the [hidden] attribute) ' +
+            'if the conditional returns false.', function () {
+
+            var attributeValue = 'notPresentKey';
+            var resolved = false;
+            var hidden = true;
+            var result;
+
+            element.removeAttribute(hiddenAttribute);
+            element.setAttribute(attributeName, attributeValue);
+
+            result = View.updateConditionals(element, data, attributeName);
+
+            expect(result).toBe(resolved);
+            expect(element.hasAttribute(hiddenAttribute)).toBe(hidden);
+
+        });
+
+        it('Should show an element (by removing the [hidden] attribute) ' +
+            'if the conditional returns true.', function () {
+
+            var attributeValue = 'presentKey';
+            var resolved = true;
+            var hidden = false;
+            var result;
+
+            element.removeAttribute(hiddenAttribute);
+            element.setAttribute(attributeName, attributeValue);
+
+            result = View.updateConditionals(element, data, attributeName);
+
+            expect(result).toBe(resolved);
+            expect(element.hasAttribute(hiddenAttribute)).toBe(hidden);
+
+        });
+
+    });
+
     describe('.updateAttributes()', function () {
 
         it('Should replace constant values.', function () {

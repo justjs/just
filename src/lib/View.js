@@ -350,6 +350,17 @@ var View = (function () {
             });
 
         },
+        /**
+         * Show/Hide an element (by setting/removing the [hidden] attribute)
+         * after {@link just.View.resolveConditionals|evaluating the conditional}
+         * found in the given <var>attribute</var>.
+         *
+         * @param {Element} element - The target element.
+         * @param {?object} data - Some object.
+         * @param {string} attributeName - The name for the queried attribute.
+         *
+         * @return {boolean} True if resolved (and hidden), false otherwise.
+         */
         'updateConditionals': function updateConditionals (element, data, attributeName) {
 
             var attribute = element.getAttribute(attributeName);
@@ -359,9 +370,11 @@ var View = (function () {
             if (!parentNode || !attribute) { return false; }
 
             value = View.resolveConditionals(attribute, data);
-            if (!value) { parentNode.removeChild(element); }
 
-            return true;
+            if (!value) { element.setAttribute('hidden', ''); }
+            else { element.removeAttribute('hidden'); }
+
+            return Boolean(value);
 
         },
         'updateAttributes': function updateAttributes (element, data, attributeName) {
