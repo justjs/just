@@ -83,7 +83,9 @@ describe.only('@lib/View.js', function () {
 
             view.insert('before', container);
 
-            expect(container.children[expectedPositionIndex]).toStrictEqual(element);
+            children = container.children;
+
+            expect(children[expectedPositionIndex]).toStrictEqual(element);
 
         });
 
@@ -507,8 +509,10 @@ describe.only('@lib/View.js', function () {
 
         test.each([
             [null],
-            // @TODO Test undefined values.
-            // [undefined]
+            /*
+             * @TODO Test undefined values.
+             * [undefined]
+             */
         ])('Should not replace %s values.', function (variable) {
 
             var element = document.body;
