@@ -444,7 +444,7 @@ var View = (function () {
         'updateLoops': function updateLoops (element, data, attributeName) {
 
             var attribute = element.getAttribute(attributeName);
-            var objectProperty, varName, newAttributeName, object, array;
+            var objectProperty, varName, newAttributeName, object;
 
             // var in data.property as attribute
             if (/(\S+)\s+in\s+(\S+)(?:\s+as\s+(\S+))?/i.test(attribute)) {
@@ -460,60 +460,80 @@ var View = (function () {
 
                 if (Array.isArray(object)) {
 
-                    array = object;
-
                     // Loop each element of data.property
-                    return array.map(function (value, i) {
+                    return (function (array) {
 
-                        var view = element.view;
-                        var viewData = Object.assign({}, data);
+                        var i = 0;
+                        var arrayLength = array.length;
+                        var updatedViews = [];
+                        var value, cachedView, view, viewData, isTheTemplate;
 
-                        viewData[varName] = value;
+                        /*
+                         * Call at least once to remove elements
+                         * from the DOM, even if the array is empty.
+                         */
+                        do {
 
-                        if (!view) {
-
-                            /*
-                             * Create a new View using the current element
-                             * as template.
-                             */
-                            view = new View({
+                            value = array[i];
+                            cachedView = element.view;
+                            view = cachedView || new View({
                                 'element': element,
                                 'attributes': newAttributeName
                             });
+                            viewData = Object.assign({}, data);
 
                             /*
-                             * Add a new element with the updates.
-                             * Make sure to don't alter the order in which
-                             * it was written. I.e.: Don't append() or prepend().
+                             * Don't modify the view's data if the given
+                             * array is empty.
                              */
-                            view
-                                .create()
-                                .update(viewData)
-                                .insert({'before': element.nextSibling}, element.parentNode);
+                            if (arrayLength) {
 
-                            // And cache it.
-                            view.element.view = view;
+                                viewData[varName] = value;
 
-                        }
-                        else {
+                            }
 
-                            /*
-                             * Then, if we found a cached view, we remove
-                             * its element from the DOM to start from 0 again.
-                             */
-                            if (element.parentNode) { element.parentNode.removeChild(element); }
+                            if (!cachedView && arrayLength) {
 
-                            /*
-                             * ... View#update() will create the new updated
-                             * elements for us.
-                             */
-                            view.update(viewData);
+                                /*
+                                 * Add a new element with the updates.
+                                 * Make sure to don't alter the order in which
+                                 * it was written. I.e.: Don't append() or prepend().
+                                 */
+                                view
+                                    .create()
+                                    .update(viewData)
+                                    .insert({'before': element.nextSibling}, element.parentNode);
 
-                        }
+                                // And cache the view.
+                                view.element.view = view;
 
-                        return view;
+                            }
+                            else {
 
-                    });
+                                isTheTemplate = view.original.element === element;
+
+                                /*
+                                 * If we found a cached view or the given array
+                                 * is empty, we remove its element from the DOM
+                                 * to start from 0 again.
+                                 */
+                                if (!isTheTemplate && element.parentNode) { element.parentNode.removeChild(element); }
+
+                                /*
+                                 * ... View#update() will create the new updated
+                                 * elements for us.
+                                 */
+                                view.update(viewData);
+
+                            }
+
+                            updatedViews.push(view);
+
+                        } while (++i < arrayLength);
+
+                        return updatedViews;
+
+                    })(object);
 
                 }
 
