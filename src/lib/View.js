@@ -481,6 +481,7 @@ var View = (function () {
                                 'attributes': newAttributeName
                             });
                             viewData = Object.assign({}, data);
+                            isTheTemplate = view.original.element === element;
 
                             /*
                              * Don't modify the view's data if the given
@@ -508,16 +509,17 @@ var View = (function () {
                                 view.element.view = view;
 
                             }
-                            else {
-
-                                isTheTemplate = view.original.element === element;
+                            /*
+                             * On a loop, templates shouldn't be updated.
+                             */
+                            else if (!isTheTemplate) {
 
                                 /*
                                  * If we found a cached view or the given array
                                  * is empty, we remove its element from the DOM
                                  * to start from 0 again.
                                  */
-                                if (!isTheTemplate && element.parentNode) { element.parentNode.removeChild(element); }
+                                if (element.parentNode) { element.parentNode.removeChild(element); }
 
                                 /*
                                  * ... View#update() will create the new updated
