@@ -299,6 +299,25 @@ describe.only('@lib/View.js', function () {
 
         });
 
+        it('Should replace nested functions.', function () {
+
+            var data = {
+                'a': {
+                    'b': jest.fn(function () { return {'f': 'f'}; })
+                },
+                'c': {
+                    'd': jest.fn(function () { return {'e': 'e'}; })
+                },
+                'e': 1
+            };
+            var result = View.replaceVars('${a.b(c.d().e, e).f}', data);
+
+            expect(data.a.b).toHaveBeenCalledTimes(1);
+            expect(data.c.d).toHaveBeenCalledTimes(1);
+            expect(result).toBe(data.a.b(data.c.d().e, data.e).f);
+
+        });
+
     });
 
     describe('.updateVars()', function () {

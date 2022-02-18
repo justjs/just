@@ -23,95 +23,101 @@ var View = (function () {
 
     }
 
+    /**
+     * Access to properties using the dot notation.
+     * 
+     * Supports nested function arguments replacements and
+     * reserved keywords.
+     * 
+     * It uses JSON.parse to replace reserved keywords,
+     * except for `undefined` values.
+     * 
+     * @example
+     * access('a.b(c(d))', {
+     *   'a': {'b': function (v) { return v + 'b'; }},
+     *   'c': function (v) { return v + 'c'; },
+     *   'd': 'd'
+     * }); // > 'dcb';
+     */
     function access (keys, data) {
 
         var allArgsSorted = [];
-        var keysWithoutFunctions;
-        var context;
 
         if (!keys) { return; }
 
-        // We strip "(...[, ...])" from keys...
-        keysWithoutFunctions = keys.replace(/((?:^|\.)[^.]+)\(([^)]*)\)/g,
-            function replaceFunctions ($0, textBeforeParenthesis, textWithinParenthesis) {
+        /**
+         * The way it works is by JSON.parsing things within parenthesis,
+         * store each result in an array (`allArgsSorted`),
+         * and removing parenthesis from the final string (`keysNoArgs`).
+         * 
+         * Then, once we removed all parenthesis, we access
+         * each property in the final string (using the dot notation)
+         * and start replacing values. And since arguments were
+         * removed from the final string, we just have to worry
+         * for checking if the accessed property is a function and
+         * evaluate them with the stored arguments in order.
+         */
+        return keys.split(')').reduce(function (keysNoArgs, key) {
 
-                var replazableValues = {};
-                // Replace naked vars within "()":
-                var argsWithoutVars = textWithinParenthesis
-                    .split(',')
-                    .reduce(function (argsWithoutVars, argument, index) {
+            var properties = keysNoArgs + key;
+            var isArg = /\(/.test(properties);
+            var openSymbolIndex, matchedArgs, args;
 
-                        var arg = argument.trim();
-                        var isNakedVar = isVar(arg);
-                        var value = (isNakedVar
-                            ? access(arg, data)
-                            : arg
-                        );
+            if (isArg) {
 
-                        if (isNakedVar) {
+                // Parse arguments enclosed in the last parenthesis.
+                openSymbolIndex = properties.lastIndexOf('(');
+                matchedArgs = properties.slice(openSymbolIndex + 1);
+                args = matchedArgs.split(',').map(function (arg) {
 
-                            replazableValues[index] = value;
-                            value = JSON.stringify(value);
+                    // Support all replacements (vars, reserved keywords, ...).
+                    return access(arg, data);
 
-                        }
+                });
 
-                        if (/^undefined$/.test(value)) {
-
-                            replazableValues[index] = void 0;
-                            value = null;
-
-                        }
-
-                        argsWithoutVars += value + ', ';
-
-                        return argsWithoutVars;
-
-                    }, '')
-                    .replace(/, $/, '');
-                // Use JSON.parse() to get valid data types:
-                var parsableJSONString = '[' + argsWithoutVars + ']';
-                var args = parseJSON(parsableJSONString);
-
-                eachProperty(replazableValues, function (value, key) {
-
-                    var index = parseInt(key);
-
-                    this[index] = value;
-
-                }, args);
-
-                // ... and save its args for later (1).
+                // Store apart.
                 allArgsSorted.push(args);
 
-                return textBeforeParenthesis;
+                // Remove parenthesis from the final string (`keysNoArgs`).
+                return properties.slice(0, openSymbolIndex);
 
-            });
+            }
 
-        return keysWithoutFunctions.split('.').reduce(
-            function getValue (object, key) {
+            // Replace values using the dot notation.
+            return properties.split('.').reduce(function (context, keyNoArgs) {
 
-                var value = (key in Object(object)
-                    ? Object(object)[key]
+                var contextObj = Object(context);
+                var key = keyNoArgs.trim();
+                var value = (isVar(key)
+                    ? contextObj[key]
                     : key in String.prototype
                     ? String.prototype[key]
+                    // Replace reserved keywords, numbers, objects, ...
+                    : typeof key !== 'undefined' && key !== 'undefined'
+                    ? parseJSON(key)
                     : void 0
                 );
-                var fn, args;
                 var result = value;
+                var fn, args;
 
+                /**
+                 * Since parenthesis where removed, replacing 
+                 * arguments is as simple as evaluating this
+                 * value with the arguments stored previously.
+                 */
                 if (typeof value === 'function') {
 
                     fn = value;
-                    args = allArgsSorted.shift(); // 1
-                    result = fn.apply(context, args);
+                    args = allArgsSorted.pop();
+                    result = fn.apply(contextObj, args);
 
                 }
-
-                context = Object(result);
 
                 return result;
 
             }, data);
+
+        }, '');
 
     }
 
