@@ -23,6 +23,38 @@ var View = (function () {
 
     }
 
+    function matchNested (string, openSymbol, closeSymbol, transform) {
+
+        if (typeof transform !== 'function') {
+
+            transform = function (matched) { return matched; };
+
+        }
+
+        return string.split(closeSymbol).reduce(function (left, right) {
+
+            var matched = left + right;
+            var openSymbolIndex = matched.lastIndexOf(openSymbol);
+            var hasOpenSymbol = openSymbolIndex > -1;
+            var enclosed = null;
+            var result = matched;
+
+            if (hasOpenSymbol) {
+
+                enclosed = matched.slice(openSymbolIndex + 1);
+                result = matched.slice(0, openSymbolIndex);
+
+            }
+
+            return transform(result, {
+                'enclosed': enclosed,
+                'index': openSymbolIndex
+            });
+
+        }, '');
+
+    }
+
     /**
      * Access to properties using the dot notation.
      *
@@ -57,18 +89,15 @@ var View = (function () {
          * for checking if the accessed property is a function and
          * evaluate them with the stored arguments in order.
          */
-        return keys.split(')').reduce(function (keysNoArgs, key) {
+        return matchNested(keys, '(', ')', function (matched, detail) {
 
-            var properties = keysNoArgs + key;
-            var isArg = /\(/.test(properties);
-            var openSymbolIndex, matchedArgs, args;
+            var enclosed = detail.enclosed;
+            var args;
 
-            if (isArg) {
+            if (enclosed !== null) {
 
                 // Parse arguments enclosed in the last parenthesis.
-                openSymbolIndex = properties.lastIndexOf('(');
-                matchedArgs = properties.slice(openSymbolIndex + 1);
-                args = matchedArgs.split(',').map(function (arg) {
+                args = enclosed.split(',').map(function (arg) {
 
                     // Support all replacements (vars, reserved keywords, ...).
                     return access(arg, data);
@@ -78,13 +107,12 @@ var View = (function () {
                 // Store apart.
                 allArgsSorted.push(args);
 
-                // Remove parenthesis from the final string (`keysNoArgs`).
-                return properties.slice(0, openSymbolIndex);
+                return matched;
 
             }
 
             // Replace values using the dot notation.
-            return properties.split('.').reduce(function (context, keyNoArgs) {
+            return matched.split('.').reduce(function (context, keyNoArgs) {
 
                 var contextObj = Object(context);
                 var key = keyNoArgs.trim();
@@ -117,7 +145,7 @@ var View = (function () {
 
             }, data);
 
-        }, '');
+        });
 
     }
 
