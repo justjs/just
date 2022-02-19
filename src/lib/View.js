@@ -25,13 +25,13 @@ var View = (function () {
 
     /**
      * Access to properties using the dot notation.
-     * 
+     *
      * Supports nested function arguments replacements and
      * reserved keywords.
-     * 
+     *
      * It uses JSON.parse to replace reserved keywords,
      * except for `undefined` values.
-     * 
+     *
      * @example
      * access('a.b(c(d))', {
      *   'a': {'b': function (v) { return v + 'b'; }},
@@ -49,7 +49,7 @@ var View = (function () {
          * The way it works is by JSON.parsing things within parenthesis,
          * store each result in an array (`allArgsSorted`),
          * and removing parenthesis from the final string (`keysNoArgs`).
-         * 
+         *
          * Then, once we removed all parenthesis, we access
          * each property in the final string (using the dot notation)
          * and start replacing values. And since arguments were
@@ -101,7 +101,7 @@ var View = (function () {
                 var fn, args;
 
                 /**
-                 * Since parenthesis where removed, replacing 
+                 * Since parenthesis where removed, replacing
                  * arguments is as simple as evaluating this
                  * value with the arguments stored previously.
                  */
