@@ -71,11 +71,13 @@ var View = (function () {
 
         var invalidJSONValues = {};
         var unparsedArgs = (',' + string + ',')
-            // Match arguments starting with words and digits: vars, reserved keywords, numbers...
-            .replace(/,\s*([\w.-]+)\s*(?=,)/g, function ($0, value, index) {
+            // Match numbers, variables and reserved keywords.
+            .replace(/,\s*([\w.-]+)\s*(?=,)/ig, function ($0, value, index) {
 
-                // Replace variables.
-                var arg = access(value, data);
+                var arg = (/^\d/.test(value)
+                    ? parseFloat(value)
+                    : access(value, data)
+                );
                 var requiresQuotes = typeof arg === 'object' && arg !== null || typeof arg === 'string';
 
                 return ',' + (requiresQuotes

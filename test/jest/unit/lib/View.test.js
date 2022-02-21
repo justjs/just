@@ -321,8 +321,8 @@ describe.only('@lib/View.js', function () {
         test.each([
             [[1, 2]],
             [{'a': 'b', 'c': 'd'}],
-            [[{'a': [1, {'b': {'c': undefined}}, null]}]]
-            // @FIXME [1.1]
+            [[{'a': [1, {'b': {'c': undefined}}, null]}]],
+            [[1.1, .1]]
         ])('Should pass complex arguments to functions (%s).', function (arg) {
 
             var fn = jest.fn();
