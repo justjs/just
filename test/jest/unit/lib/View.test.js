@@ -318,6 +318,25 @@ describe.only('@lib/View.js', function () {
 
         });
 
+        test.each([
+            [[1, 2]],
+            [{'a': 'b', 'c': 'd'}],
+            [[{'a': [1, {'b': {'c': undefined}}, null]}]]
+            // @FIXME [1.1]
+        ])('Should pass complex arguments to functions (%s).', function (arg) {
+
+            var fn = jest.fn();
+            var data = {'fn': fn};
+            var placeholder = '${fn(' + JSON.stringify(arg) + ')}';
+
+            View.replaceVars(placeholder, data);
+
+            expect(fn).toHaveBeenCalledTimes(1);
+            expect(fn).toHaveBeenNthCalledWith(1, arg);
+            // @FIXME expect(result).toBe(placeholder);
+
+        });
+
     });
 
     describe('.updateVars()', function () {

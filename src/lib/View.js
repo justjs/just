@@ -56,13 +56,67 @@ var View = (function () {
     }
 
     /**
+     * Parse argument-like strings ("a, b, c") and return valid JSON values.
+     *
+     * It supports dot notation on each argument. It doesn't support functions
+     * as arguments or variables in objects (Eg. `fn({"a": var}, [var])`).
+     *
+     * It uses JSON.parse internally.
+     *
+     * @example
+     * parseArguments("a, b, c", {})
+     *
+     */
+    function parseArguments (string, data) {
+
+        var invalidJSONValues = {};
+        var unparsedArgs = (',' + string + ',')
+            // Match arguments starting with words and digits: vars, reserved keywords, numbers...
+            .replace(/,\s*([\w.-]+)\s*(?=,)/g, function ($0, value, index) {
+
+                // Replace variables.
+                var arg = access(value, data);
+                var requiresQuotes = typeof arg === 'object' && arg !== null || typeof arg === 'string';
+
+                return ',' + (requiresQuotes
+                    ? JSON.stringify(arg)
+                    : arg
+                );
+
+            })
+            // Remove extra commas.
+            .replace(/^,|,$/g, '')
+            // Replace invalid JSON values with a random/unique string.
+            .replace(/(\b)undefined(\b)/g, function ($0, $1, $2) {
+
+                var uniqueString = Math.random() + '';
+
+                invalidJSONValues[uniqueString] = void 0;
+
+                return $1 + JSON.stringify(uniqueString) + $2;
+
+            });
+        // Parse as an array.
+        var parseableArgs = '[' + unparsedArgs + ']';
+        // Parse args as JSON and replace invalid values back.
+        var args = parseJSON(parseableArgs).map(function (arg, i) {
+
+            return (arg in invalidJSONValues
+                ? invalidJSONValues[arg]
+                : arg
+            );
+
+        });
+
+        return args;
+
+    }
+
+    /**
      * Access to properties using the dot notation.
      *
      * Supports nested function arguments replacements and
-     * reserved keywords.
-     *
-     * It uses JSON.parse to replace reserved keywords,
-     * except for `undefined` values.
+     * reserved keywords. See {@link just.View~parseArguments}.
      *
      * @example
      * access('a.b(c(d))', {
@@ -96,13 +150,7 @@ var View = (function () {
 
             if (enclosed !== null) {
 
-                // Parse arguments enclosed in the last parenthesis.
-                args = enclosed.split(',').map(function (arg) {
-
-                    // Support all replacements (vars, reserved keywords, ...).
-                    return access(arg, data);
-
-                });
+                args = parseArguments(enclosed, data);
 
                 // Store apart.
                 allArgsSorted.push(args);
