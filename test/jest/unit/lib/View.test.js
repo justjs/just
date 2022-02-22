@@ -643,6 +643,37 @@ describe.only('@lib/View.js', function () {
 
         });
 
+        test.each([
+            [null],
+            [{'the': null}],
+            [{'the': {'items': null}}],
+            [{'the': {'items': []}}]
+        ])('Should remove elements if updated data is empty.', function (givenData) {
+
+            var data = {'the': {'items': [1, 2]}};
+            var container = document.body;
+            var attributeName = 'data-var-for';
+            var template;
+
+            container.innerHTML = [
+                '<span id=\'element\' class=\'template\' data-var-for=\'item in the.items\' hidden>',
+                '<span data-var-for-item=\'${item}\'></span>',
+                '</span>'
+            ].join('');
+            template = container.querySelector('#element');
+
+            // Generate 2 items.
+            data = {'the': {'items': [1, 2]}};
+            View.updateLoops(template, data, attributeName);
+
+            data = givenData;
+            View.updateLoops(template, data, attributeName);
+
+            expect(container.children.length).toBe(1);
+            expect(container.children[0]).toBe(template);
+
+        });
+
     });
 
 });
