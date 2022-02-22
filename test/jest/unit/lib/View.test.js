@@ -644,6 +644,41 @@ describe.only('@lib/View.js', function () {
         });
 
         test.each([
+            [{'the': {'items': [3, 4]}}],
+            [{'the': {'items': [2]}}],
+            [{'the': {'items': [5, 6, 7]}}]
+        ])('Should update elements.', function (givenData) {
+
+            var container = document.body;
+            var attributeName = 'data-var-for';
+            var data, template;
+
+            container.innerHTML = [
+                '<span id=\'element\' class=\'template\' data-var-for=\'item in the.items\' hidden>',
+                '<span data-var-for-item=\'${item}\'></span>',
+                '</span>'
+            ].join('');
+            template = container.querySelector('#element');
+
+            // Generate 2 items.
+            data = {'the': {'items': [1, 2]}};
+            View.updateLoops(template, data, attributeName);
+
+            data = givenData;
+            View.updateLoops(template, data, attributeName);
+
+            expect(container.children.length).toBe(givenData.the.items.length + 1); // given + template.
+            expect(container.children[0]).toBe(template);
+            givenData.the.items.forEach(function (value, i) {
+
+                // Skip the first for the template.
+                expect(container.children[i + 1].querySelector('span').textContent).toBe(value.toString());
+
+            });
+
+        });
+
+        test.each([
             [null],
             [{'the': null}],
             [{'the': {'items': null}}],
