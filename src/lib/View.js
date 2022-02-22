@@ -410,6 +410,10 @@ var View = (function () {
 
             if (!attribute) { return false; }
 
+            data = Object(data);
+
+            if (!('this' in data)) { data.this = element; }
+
             text = View.replaceVars(attribute, data);
 
             return Boolean(text !== attribute

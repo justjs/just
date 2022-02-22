@@ -451,6 +451,23 @@ describe.only('@lib/View.js', function () {
 
         });
 
+        it('Should replace "this" with the current element.', function () {
+
+            var element = document.body;
+            var data = {'fn': jest.fn()};
+            var attributeName = 'data-var';
+            var attributeValue = '${fn(this)}';
+
+            element.setAttribute(attributeName, attributeValue);
+
+            View.updateVars(element, data, attributeName);
+
+            expect(data.fn).toHaveBeenCalledWith(element);
+
+            element.removeAttribute(attributeName);
+
+        });
+
     });
 
     describe('.updateHtmlVars()', function () {
