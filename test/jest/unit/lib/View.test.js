@@ -607,9 +607,9 @@ describe.only('@lib/View.js', function () {
             var template, result, generatedElements, expectedElementsCount;
 
             container.innerHTML = [
-                "<span id='element' class='template' data-var-for='item in the.items'>",
-                "<span data-var-for-item='${item}'></span>",
-                "</span>"
+                '<span id=\'element\' class=\'template\' data-var-for=\'item in the.items\' hidden>',
+                '<span data-var-for-item=\'${item}\'></span>',
+                '</span>'
             ].join('');
 
             template = container.querySelector('#element');
@@ -631,6 +631,12 @@ describe.only('@lib/View.js', function () {
             // Should remove ids from generated elements (and set it as a class).
             expect(generatedElements[0].hasAttribute('id')).toBe(false);
             expect(generatedElements[1].hasAttribute('id')).toBe(false);
+            // Should remove the .template class from generated elements.
+            expect(generatedElements[0].classList.contains('template')).toBe(false);
+            expect(generatedElements[1].classList.contains('template')).toBe(false);
+            // Should remove the [hidden] attribute from generated elements.
+            expect(generatedElements[0].hasAttribute('hidden')).toBe(false);
+            expect(generatedElements[1].hasAttribute('hidden')).toBe(false);
             // Should update data on children.
             expect(generatedElements[0].querySelector('span').textContent).toBe(data.the.items[0].toString());
             expect(generatedElements[1].querySelector('span').textContent).toBe(data.the.items[1].toString());

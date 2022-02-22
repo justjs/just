@@ -527,12 +527,37 @@ var View = (function () {
 
         },
         /**
-         * Update views recursively when multiple data is
-         * passed as a value.
+         * Expression in the format:
+         * "<currentItem> in <accessed.array>[ as <updatableAttribute>]".
+         *
+         * Where text enclosed in brackets is optional, and:
+         * `<currentItem>` is the property containing the current iteration data.
+         * `<accessed.array>` is a property to be {@link just.View.access|accessed} that contains an array as value.
+         * `<updatableAttribute>` is the name of the attribute that will be updated afterwards by {@link View#update}.
+         *
+         * @example
+         * "item in some.items"
+         * // Will iterate over `some.items`, set `item` to each element (some.items[0], some.items[1], and so on...), and make `item` available under the default attribute.
+         *
+         * @example
+         * "item in some.items as data-item"
+         * // Will iterate over `some.items`, set `item` to each element, and make `item` available under the [data-item] attribute only.
+         *
+         * @typedef {string} just.View.updateLoops_expression
+         */
+
+        /**
+         * Iterate over an array to create multiple elements
+         * based on a given template (`element`),
+         * append them in order, and update each generated element.
+         *
+         * New elements will contain the template's id as a class,
+         * the "template" class will be removed, and the "hidden" attribute
+         * will be removed too.
          *
          * @param {Node} element - The target element.
          * @param {Object} data - The data.
-         * @param {string} attributeName - The attribute containing the expression.
+         * @param {string} attributeName - The attribute containing the {@link just.View.updateLoops_expression|loop expression}.
          *
          * @returns {?View[]} The updated views or null.
          */
