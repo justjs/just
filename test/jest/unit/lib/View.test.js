@@ -200,6 +200,16 @@ describe.only('@lib/View.js', function () {
 
     describe('.replaceVars()', function () {
 
+        it('Should not replace anything.', function () {
+
+            var text = 'hey!';
+            var expected = text;
+            var result = View.replaceVars(text);
+
+            expect(result).toBe(expected);
+
+        });
+
         it('Should replace a ${splitted.property} with its accessed ' +
             'value.', function () {
 
