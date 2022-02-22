@@ -495,6 +495,16 @@ var View = (function () {
             return true;
 
         },
+        /**
+         * Define aliases using a stringified JSON from an element attribute;
+         * access object values and set keys as alias.
+         *
+         * @param {Element} element - The target element.
+         * @param {?object} data - Some object.
+         * @param {?string} attributeName - The name for attribute containing a stringified json.
+         *
+         * @return {!object} An object containing keys as alias.
+         */
         'getAliases': function getAliases (element, data, attributeName) {
 
             var attribute = element.getAttribute(attributeName);
@@ -505,9 +515,9 @@ var View = (function () {
 
                 json = stringToJSON(attribute);
 
-                eachProperty(json, function (alias, key) {
+                eachProperty(json, function (value, key) {
 
-                    this[alias] = access(key, data);
+                    this[key] = access(value, data);
 
                 }, aliases);
 

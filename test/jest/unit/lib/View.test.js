@@ -573,4 +573,28 @@ describe.only('@lib/View.js', function () {
 
     });
 
+    describe('.getAliases()', function () {
+
+        it('Should get aliases.', function () {
+
+            var element = document.body;
+            var data = {'a': {'b': 1}};
+            var attributeName = 'data-var-as';
+            var attributeValue = JSON.stringify({
+                'alias': 'a.b'
+            });
+            var result;
+
+            element.setAttribute(attributeName, attributeValue);
+
+            result = View.getAliases(element, data, attributeName);
+
+            expect(result).toMatchObject({
+                'alias': data.a.b
+            });
+
+        });
+
+    });
+
 });
