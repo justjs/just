@@ -76,9 +76,12 @@ var View = (function () {
 
                 var arg = (/^\d/.test(value)
                     ? parseFloat(value)
+                    : value === 'this'
+                    ? value
                     : access(value, data)
                 );
-                var requiresQuotes = typeof arg === 'object' && arg !== null || typeof arg === 'string';
+                var requiresQuotes = typeof arg === 'object' && arg !== null
+                    || typeof arg === 'string' && arg !== 'this';
 
                 return ',' + (requiresQuotes
                     ? JSON.stringify(arg)
@@ -89,11 +92,14 @@ var View = (function () {
             // Remove extra commas.
             .replace(/^,|,$/g, '')
             // Replace invalid JSON values with a random/unique string.
-            .replace(/(\b)undefined(\b)/g, function ($0, $1, $2) {
+            .replace(/(\b)(undefined|this)(\b)/g, function ($0, $1, value, $2) {
 
                 var uniqueString = Math.random() + '';
 
-                invalidJSONValues[uniqueString] = void 0;
+                invalidJSONValues[uniqueString] = (value === 'this'
+                    ? data[value]
+                    : void 0
+                );
 
                 return $1 + JSON.stringify(uniqueString) + $2;
 
