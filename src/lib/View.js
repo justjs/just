@@ -646,6 +646,7 @@ var View = (function () {
                         return cachedViews.map(function (cachedView, i) {
 
                             viewData[varName] = array[i];
+                            viewData.this = cachedView.element;
                             viewData.loop = {
                                 'index': i,
                                 'array': array,

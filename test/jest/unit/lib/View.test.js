@@ -740,6 +740,26 @@ describe.only('@lib/View.js', function () {
 
         });
 
+        it('Should expose the current element under `this`.', function () {
+
+            var data = {'items': [1], 'fn': jest.fn()};
+            var container = document.body;
+            var attributeName = 'data-var-for';
+            var template;
+
+            container.innerHTML = [
+                '<span id=\'element\' class=\'template\' data-var-for=\'item in items\' hidden>',
+                '<span data-var-for-item=\'${fn(this)}\'></span>',
+                '</span>'
+            ].join('');
+            template = container.querySelector('#element');
+
+            View.updateLoops(template, data, attributeName);
+
+            expect(data.fn).toHaveBeenNthCalledWith(1, container.children[1]);
+
+        });
+
     });
 
 });
