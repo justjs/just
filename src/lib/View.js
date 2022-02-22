@@ -545,6 +545,16 @@ var View = (function () {
          *
          * @typedef {string} just.View.updateLoops_expression
          */
+        /**
+         * Loop data. Contains loop data for the current iteration.
+         *
+         * @typedef {!{
+         *   number: index,
+         *   array: array,
+         *   number: length,
+         *   number: left
+         * }} just.View.updateLoops_loopData
+         */
 
         /**
          * Iterate over an array to create multiple elements
@@ -554,6 +564,9 @@ var View = (function () {
          * New elements will contain the template's id as a class,
          * the "template" class will be removed, and the "hidden" attribute
          * will be removed too.
+         *
+         * Loop data is exposed under the "loop" property on the updatable elements.
+         * See {@link just.View.updateLoops_loopData}.
          *
          * @param {Node} element - The target element.
          * @param {Object} data - The data.
@@ -627,8 +640,12 @@ var View = (function () {
                         return cachedViews.map(function (cachedView, i) {
 
                             viewData[varName] = array[i];
-
-                            // @TODO Add current loop values to viewData.
+                            viewData.loop = {
+                                'index': i,
+                                'array': array,
+                                'length': arrayLength,
+                                'left': arrayLength - i
+                            };
 
                             return cachedView.update(viewData);
 

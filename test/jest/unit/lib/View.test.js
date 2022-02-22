@@ -709,6 +709,37 @@ describe.only('@lib/View.js', function () {
 
         });
 
+        it('Should expose loop data.', function () {
+
+            var data = {'items': [1, 2], 'fn': jest.fn()};
+            var container = document.body;
+            var attributeName = 'data-var-for';
+            var template;
+
+            container.innerHTML = [
+                '<span id=\'element\' class=\'template\' data-var-for=\'item in items\' hidden>',
+                '<span data-var-for-item=\'${fn(loop)}\'></span>',
+                '</span>'
+            ].join('');
+            template = container.querySelector('#element');
+
+            View.updateLoops(template, data, attributeName);
+
+            expect(data.fn).toHaveBeenNthCalledWith(1, {
+                'index': 0,
+                'array': data.items,
+                'length': data.items.length,
+                'left': data.items.length
+            });
+            expect(data.fn).toHaveBeenNthCalledWith(2, {
+                'index': 1,
+                'array': data.items,
+                'length': data.items.length,
+                'left': data.items.length - 1
+            });
+
+        });
+
     });
 
 });
