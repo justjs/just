@@ -593,12 +593,12 @@ var View = (function () {
                                 /*
                                  * Add a new element with the updates.
                                  * Make sure to don't alter the order in which
-                                 * it was written. I.e.: Don't append() or prepend().
+                                 * it was written.
                                  */
                                 view
                                     .create()
                                     .update(viewData)
-                                    .insert({'before': element.nextSibling}, element.parentNode);
+                                    .append(element.parentNode);
 
                                 // And cache the view.
                                 view.element.view = view;

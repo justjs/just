@@ -597,4 +597,46 @@ describe.only('@lib/View.js', function () {
 
     });
 
+    describe('.updateLoops()', function () {
+
+        it('Should generate new elements in order, based on a template.', function () {
+
+            var data = {'the': {'items': [1, 2]}};
+            var container = document.body;
+            var attributeName = 'data-var-for';
+            var template, result, generatedElements, expectedElementsCount;
+
+            container.innerHTML = [
+                "<span id='element' class='template' data-var-for='item in the.items'>",
+                "<span data-var-for-item='${item}'></span>",
+                "</span>"
+            ].join('');
+
+            template = container.querySelector('#element');
+            result = View.updateLoops(template, data, attributeName);
+            generatedElements = container.querySelectorAll('.element');
+            expectedElementsCount = Object.keys(data.the.items).length;
+
+            // Should return the updated views.
+            expect(result).toMatchObject([
+                expect.any(View),
+                expect.any(View)
+            ]);
+            // Should update in the DOM and respect order.
+            expect(generatedElements.length).toBe(expectedElementsCount);
+            expect(container.children.length).toBe(expectedElementsCount + 1); // generated + template.
+            expect(container.children[0]).toBe(template);
+            expect(container.children[1]).toBe(generatedElements[0]);
+            expect(container.children[2]).toBe(generatedElements[1]);
+            // Should remove ids from generated elements (and set it as a class).
+            expect(generatedElements[0].hasAttribute('id')).toBe(false);
+            expect(generatedElements[1].hasAttribute('id')).toBe(false);
+            // Should update data on children.
+            expect(generatedElements[0].querySelector('span').textContent).toBe(data.the.items[0].toString());
+            expect(generatedElements[1].querySelector('span').textContent).toBe(data.the.items[1].toString());
+
+        });
+
+    });
+
 });
