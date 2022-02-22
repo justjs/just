@@ -328,12 +328,11 @@ describe.only('@lib/View.js', function () {
             var fn = jest.fn();
             var data = {'fn': fn};
             var placeholder = '${fn(' + JSON.stringify(arg) + ')}';
-
-            View.replaceVars(placeholder, data);
+            var result = View.replaceVars(placeholder, data);
 
             expect(fn).toHaveBeenCalledTimes(1);
             expect(fn).toHaveBeenNthCalledWith(1, arg);
-            // @FIXME expect(result).toBe(placeholder);
+            expect(result).toBe(placeholder);
 
         });
 

@@ -357,10 +357,11 @@ var View = (function () {
 
                 var key = decodeURI($1);
                 var value = access(key, data);
+                var placeholder = decodeURI($0);
 
                 return (typeof value !== 'undefined'
                     ? value
-                    : $0
+                    : placeholder
                 );
 
             });
