@@ -887,6 +887,40 @@ describe.only('@lib/View.js', function () {
 
     });
 
+    describe('.attachListeners()', function () {
+
+        it('Should access to the given data and attach listeners.', function () {
+
+            var element = document.body;
+            var attributeName = 'data-var-on';
+            var fn = jest.fn();
+            var data = {
+                'listeners': {
+                    'custom': function (e) { fn(this, e); }
+                }
+            };
+            var event = new CustomEvent('custom');
+            var result, event;
+
+            element.setAttribute(attributeName, JSON.stringify({
+                'custom': 'listeners.custom'
+            }));
+
+            result = View.attachListeners(element, data, attributeName);
+            element.dispatchEvent(event);
+
+            expect(result).toMatchObject({
+                'custom': data.listeners.custom
+            });
+            expect(fn).toHaveBeenCalledWith(element, event);
+
+            element.removeAttribute(attributeName);
+            element.removeEventListener('custom', result.custom);
+
+        });
+
+    });
+
     describe('#getElement()', function () {
 
         it('Should return #element if set.', function () {

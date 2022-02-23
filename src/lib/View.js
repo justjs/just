@@ -4,6 +4,7 @@ var defineProperties = require('./defineProperties');
 var eachProperty = require('./eachProperty');
 var stringToJSON = require('./stringToJSON');
 var findElements = require('./findElements');
+var addEventListener = require('./addEventListener');
 var View = (function () {
 
     function matchNested (string, openSymbol, closeSymbol, transform) {
@@ -272,6 +273,46 @@ var View = (function () {
                 return view;
 
             });
+
+        },
+        /**
+         * Parse an attribute as a json and set keys as
+         * event names/types and values as listeners.
+         * 
+         * Values are {@link just.View~access()|accessable} properties,
+         * that require a function as final value.
+         *
+         * @param {Node} element - The target element.
+         * @param {!object} data - Data for the accessable properties, containing the listeners.
+         * @param {!string} attributeName - Name of the attribute that contains the parseable json.
+         * @returns {!object} The attached listeners, with eventTypes as keys.
+         */
+        'attachListeners': function attachListeners (element, data, attributeName) {
+
+            var attributeValue = element.getAttribute(attributeName);
+            var attachedListeners = {};
+            var json;
+
+            if (attributeValue) {
+
+                json = stringToJSON(attributeValue);
+
+                eachProperty(json, function (value, eventType) {
+
+                    // Remove the last property to prevent executing the function on View~access().
+                    var property = value.split('.').slice(0, -1).join('.');
+                    // Once accessed, we can safely access the last property to return the listener.
+                    var listener = access(property, data)[eventType];
+
+                    addEventListener(this, eventType, listener);
+
+                    attachedListeners[eventType] = listener;
+
+                }, element);
+
+            }
+
+            return attachedListeners;
 
         },
         /**
