@@ -300,10 +300,15 @@ var View = (function () {
 
                 eachProperty(json, function (value, eventType) {
 
+                    var properties = value.split('.');
                     // Remove the last property to prevent executing the function on View~access().
-                    var property = value.split('.').slice(0, -1).join('.');
+                    var lastProperty = properties.pop();
+                    var property = properties.join('.');
                     // Once accessed, we can safely access the last property to return the listener.
-                    var listener = access(property, data)[eventType];
+                    var listener = (property
+                        ? access(property, data)[lastProperty]
+                        : data[lastProperty]
+                    );
 
                     addEventListener(this, eventType, listener);
 
