@@ -255,10 +255,16 @@ var View = (function () {
          * Find elements with the {@link just.View.INIT_ATTRIBUTE_NAME} attribute,
          * parse its value as json, and call {@link just.View} with those options.
          *
+         * @param {object} options
+         * @param {object} options.listeners - Listeners for the {@link View#attachListeners} call.
          * @returns {View[]} The created views.
          */
-        'init': function () {
+        'init': function (options) {
 
+            var opts = defaults(options, {
+                'listeners': {}
+            });
+            var listeners = opts.listeners;
             var attributeName = View.INIT_ATTRIBUTE_NAME;
             var elements = findElements('[' + attributeName + ']');
 
@@ -266,7 +272,7 @@ var View = (function () {
 
                 var attributeValue = element.getAttribute(attributeName);
                 var options = stringToJSON(attributeValue);
-                var view = new View(options);
+                var view = new View(options).attachListeners(listeners);
 
                 // Store/Cache it.
                 element.view = view;

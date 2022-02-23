@@ -10,10 +10,18 @@ describe.only('@lib/View.js', function () {
             'id': 'template',
             'attributes': 'data-x'
         };
+        var listeners = {
+            'customupdate': 'doSomething'
+        };
 
         beforeEach(function () {
 
-            container.innerHTML = '<span id="' + constructorOptions.id + '" ' + defaultAttributeName + '=\'' + JSON.stringify(constructorOptions) + '\'></span>';
+            container.innerHTML = [
+                '<span id="' + constructorOptions.id + '"',
+                constructorOptions.attributes + '-on=\'' + JSON.stringify(listeners) + '\'',
+                defaultAttributeName + '=\'' + JSON.stringify(constructorOptions) + '\'>',
+                '</span>'
+            ].join(' ');
 
         });
 
@@ -29,6 +37,26 @@ describe.only('@lib/View.js', function () {
                 new View(constructorOptions)
             ]);
             expect(element).toHaveProperty('view');
+
+        });
+
+        it('Should attach listeners.', function () {
+
+            var fn = jest.fn();
+            var element = document.getElementById(constructorOptions.id);
+            var event = new CustomEvent('customupdate');
+
+            View.init({
+                'listeners': {
+                    'doSomething': function (e) { fn(this, e); }
+                }
+            });
+
+            element.dispatchEvent(event);
+
+            expect(fn).toHaveBeenCalledWith(element, event);
+
+            // @TODO Remove listener.
 
         });
 
