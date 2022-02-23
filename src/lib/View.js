@@ -285,7 +285,7 @@ var View = (function () {
         /**
          * Parse an attribute as a json and set keys as
          * event names/types and values as listeners.
-         * 
+         *
          * Values are {@link just.View~access()|accessable} properties,
          * that require a function as final value.
          *
@@ -839,14 +839,12 @@ var View = (function () {
             var element = this.getElement();
             var allData = Object.assign({}, this.getData(), data);
             var attributes = this.attributes;
-            var attributeForAliases = attributes.alias;
             var attributeForIf = attributes.if;
             var attributeForAttributes = attributes.attr;
             var attributeForHtml = attributes.html;
             var attributeForVars = attributes.var;
             var attributeForLoops = attributes.for;
             var updatableElements;
-            var elementsWithAliases;
 
             if (!element) { return this; }
 

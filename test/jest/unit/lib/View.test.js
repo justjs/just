@@ -928,7 +928,7 @@ describe.only('@lib/View.js', function () {
                 }
             };
             var event = new CustomEvent('custom');
-            var result, event;
+            var result;
 
             element.setAttribute(attributeName, JSON.stringify({
                 'custom': 'listeners.custom'
@@ -962,7 +962,7 @@ describe.only('@lib/View.js', function () {
                 }
             };
             var event = new CustomEvent('custom');
-            var view, result, event;
+            var view, result;
 
             element.setAttribute(attributeName, JSON.stringify({
                 'custom': 'listeners.custom'
