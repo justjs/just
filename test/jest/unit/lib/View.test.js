@@ -807,6 +807,8 @@ describe.only('@lib/View.js', function () {
 
             // Disconnect generated element from DOM.
             disconnectedElement = container.removeChild(container.lastChild);
+            // Set the removed [data-var-for] attribute as if it were the template.
+            disconnectedElement.setAttribute(attributeName, 'item in items');
 
             // Expect to have a cached view to know its template.
             expect(disconnectedElement).toHaveProperty('view');
@@ -816,7 +818,38 @@ describe.only('@lib/View.js', function () {
                 result = View.updateLoops(disconnectedElement, data, attributeName);
 
             }).not.toThrow();
+            expect(result).toMatchObject([
+                expect.any(View),
+                expect.any(View)
+            ]);
             expect(container.children.length).toBe(2 + 1); // 2 + template
+
+        });
+
+        it('Should prevent (silent) recursiveness.', function () {
+
+            var container = document.body;
+            var attributeName = 'data-var-for';
+            var data = {'items': [1], 'fn': jest.fn()};
+            var template;
+
+            container.innerHTML = [
+                '<span id=\'element\' class=\'template\' data-var-for=\'item in items\' hidden>',
+                '<span data-var-for-item=\'${fn(this)}\'></span>',
+                '</span>'
+            ].join('');
+            template = container.querySelector('#element');
+
+            // Generate items.
+            View.updateLoops(template, data, attributeName);
+
+            /**
+             * Recursive looping is caused by this attribute
+             * on generated elements.
+             *
+             * @TODO Detect recursiveness instead.
+             */
+            expect(container.lastChild.hasAttribute(attributeName)).toBe(false);
 
         });
 

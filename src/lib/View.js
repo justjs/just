@@ -625,6 +625,9 @@ var View = (function () {
                                 'attributes': newAttributeName
                             }).create().append(parent);
 
+                            // Remove loop attribute to prevent recursive looping on update.
+                            view.element.removeAttribute(attributeName);
+
                             // Cache.
                             view.element.view = view;
                             cachedViews.push(view);
