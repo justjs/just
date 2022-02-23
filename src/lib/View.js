@@ -240,7 +240,39 @@ var View = (function () {
     }
 
     defineProperties(View, {
+        /**
+         * Default attribute to query elements in {@link just.View.init}.
+         *
+         * @type {string}
+         * @readonly
+         */
+        'INIT_ATTRIBUTE_NAME': 'data-just-View',
         'globals': {},
+        /**
+         * Find elements with the {@link just.View.INIT_ATTRIBUTE_NAME} attribute,
+         * parse its value as json, and call {@link just.View} with those options.
+         *
+         * @returns {View[]} The created views.
+         */
+        'init': function () {
+
+            var attributeName = View.INIT_ATTRIBUTE_NAME;
+            var elements = findElements('[' + attributeName + ']');
+
+            return elements.map(function (element) {
+
+                var attributeValue = element.getAttribute(attributeName);
+                var options = stringToJSON(attributeValue);
+                var view = new View(options);
+
+                // Store/Cache it.
+                element.view = view;
+
+                return view;
+
+            });
+
+        },
         /**
          * Access to an object and return its value-
          *

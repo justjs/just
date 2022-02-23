@@ -2,6 +2,38 @@ var View = require('@lib/View.js');
 
 describe.only('@lib/View.js', function () {
 
+    describe('.init()', function () {
+
+        var defaultAttributeName = View.INIT_ATTRIBUTE_NAME;
+        var container = document.body;
+        var constructorOptions = {
+            'id': 'template',
+            'attributes': 'data-x'
+        };
+
+        beforeEach(function () {
+
+            container.innerHTML = '<span id="' + constructorOptions.id + '" ' + defaultAttributeName + '=\'' + JSON.stringify(constructorOptions) + '\'></span>';
+
+        });
+
+        it('Should search elements with the [' + defaultAttributeName + '] attribute ' +
+            'parse each of them as JSON, ' +
+            'call the #constructor with those options, ' +
+            'and store the view in the element that contains it.', function () {
+
+            var element = document.getElementById(constructorOptions.id);
+            var result = View.init();
+
+            expect(result).toMatchObject([
+                new View(constructorOptions)
+            ]);
+            expect(element).toHaveProperty('view');
+
+        });
+
+    });
+
     describe('#constructor()', function () {
 
         var defaultProperties = {
