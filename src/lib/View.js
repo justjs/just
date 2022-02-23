@@ -6,23 +6,6 @@ var stringToJSON = require('./stringToJSON');
 var findElements = require('./findElements');
 var View = (function () {
 
-    function isReservedKeyword (string) {
-
-        var trimmedString = string.trim();
-
-        return /^(?:undefined|false|true|null)$/.test(trimmedString);
-
-    }
-
-    function isVar (string) {
-
-        var trimmedString = string.trim();
-
-        return /^[a-z]/.test(trimmedString)
-            && !isReservedKeyword(trimmedString);
-
-    }
-
     function matchNested (string, openSymbol, closeSymbol, transform) {
 
         if (typeof transform !== 'function') {
@@ -172,13 +155,18 @@ var View = (function () {
 
                 var contextObj = Object(context);
                 var key = keyNoArgs.trim();
-                var value = (isVar(key)
+                var value = (key in contextObj
                     ? contextObj[key]
                     : key in String.prototype
                     ? String.prototype[key]
                     // Replace reserved keywords, numbers, objects, ...
-                    : typeof key !== 'undefined' && key !== 'undefined'
+                    : (
+                        // If the given data is an object and the key is not undefined.
+                        (typeof context === 'object' && context !== null)
+                        && typeof key !== 'undefined' && key !== 'undefined'
+                    )
                     ? parseJSON(key)
+                    // Otherwise, return undefined.
                     : void 0
                 );
                 var result = value;
