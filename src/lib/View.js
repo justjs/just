@@ -735,8 +735,7 @@ var View = (function () {
         },
         'create': function createTemplate () {
 
-            var id = this.id;
-            var template = this.element || document.getElementById(id);
+            var template = this.getElement();
             var templateClon;
             var templateClonID;
 
@@ -757,7 +756,7 @@ var View = (function () {
         },
         'update': function updateTemplate (data, skip) {
 
-            var element = this.element;
+            var element = this.getElement();
             var localData = this.data;
             var globals = View.globals;
             var dataWithAliases = Object.assign({}, globals, localData, data);
@@ -837,18 +836,14 @@ var View = (function () {
          */
         'insert': function insert (position, container) {
 
-            var template = this.element;
-            var id = this.id || template.id;
-            var wrapper = container || (id
-                ? document.getElementById(id).parentNode
-                : null
-            );
+            var element = this.getElement();
+            var wrapper = container || element.parentNode;
             var positionObj = Object(position);
 
             if (!(wrapper instanceof Node)) { throw new TypeError('Please provide a container.'); }
 
-            if (position === 'after') { wrapper.appendChild(template); }
-            else if (position === 'before' || 'before' in positionObj) { wrapper.insertBefore(template, positionObj.before || wrapper.firstChild); }
+            if (position === 'after') { wrapper.appendChild(element); }
+            else if (position === 'before' || 'before' in positionObj) { wrapper.insertBefore(element, positionObj.before || wrapper.firstChild); }
             else { throw new TypeError(position + ' is not a valid position ("after", "before").'); }
 
             return this;
