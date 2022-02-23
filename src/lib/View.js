@@ -707,6 +707,14 @@ var View = (function () {
 
     defineProperties(View.prototype, {
 
+        /**
+         * @returns {@link just.View#element} or query element by {@link just.View#id}.
+         */
+        'getElement': function getElement () {
+
+            return this.element || document.getElementById(this.id);
+
+        },
         'getUpdatables': function queryAllUpdatables (container) {
 
             var attributes = this.attributes;

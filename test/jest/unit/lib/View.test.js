@@ -887,4 +887,35 @@ describe.only('@lib/View.js', function () {
 
     });
 
+    describe('#getElement()', function () {
+
+        it('Should return #element if set.', function () {
+
+            var element = document.body;
+            var view = new View({
+                'element': element
+            });
+
+            expect(view.getElement()).toBe(element);
+
+        });
+
+        it('Should query an element by #id if #element is not set.', function () {
+
+            var view = new View({
+                'id': 'x'
+            });
+            var element = document.createElement('span');
+
+            element.id = view.id;
+            document.body.appendChild(element);
+
+            expect(view.getElement()).toBe(element);
+
+            document.body.removeChild(element);
+
+        });
+
+    });
+
 });
