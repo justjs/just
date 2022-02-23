@@ -716,6 +716,32 @@ var View = (function () {
             return this.element || document.getElementById(this.id);
 
         },
+        /**
+         * Merges all available data into one object in the following
+         * order: {@link just.View.globals}, {@link just.View#data}, {@link just.View#getAliases|aliases}.
+         *
+         * @returns {!object}
+         */
+        'getData': function getAvailableData () {
+
+            var element = this.getElement();
+            var globals = View.globals;
+            var locals = this.data;
+            var attributeForAliases = this.attributes.alias;
+            var elementsWithAliases = findElements('[' + attributeForAliases + ']', element)
+                .concat(element);
+
+            return elementsWithAliases.reduce(function (data, element) {
+
+                return Object.assign(data, View.getAliases(
+                    element,
+                    data,
+                    attributeForAliases
+                ));
+
+            }, Object.assign({}, globals, locals));
+
+        },
         'getUpdatables': function queryAllUpdatables (container) {
 
             var attributes = this.attributes;

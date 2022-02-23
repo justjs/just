@@ -918,4 +918,31 @@ describe.only('@lib/View.js', function () {
 
     });
 
+    describe('#getData()', function () {
+
+        it('Should return all available data.', function () {
+
+            var globals = {'global': true};
+            var locals = {'local': true};
+            var aliases = {'alias': true};
+            var element = document.body;
+            var result;
+
+            element.setAttribute('data-var-as', JSON.stringify(aliases));
+            Object.assign(View.globals, globals);
+            result = new View({
+                'element': element,
+                'data': locals
+            }).getData();
+
+            // Expect the following order.
+            expect(result).toMatchObject(Object.assign({}, globals, locals, aliases));
+
+            delete View.globals.global;
+            element.removeAttribute('data-var-as');
+
+        });
+
+    });
+
 });
