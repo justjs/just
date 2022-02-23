@@ -921,6 +921,46 @@ describe.only('@lib/View.js', function () {
 
     });
 
+    describe('#attachListeners()', function () {
+
+        it('Should call View.attachListeners() with #getElement() ' +
+            '#getData(), and #attributes.on as arguments.', function () {
+
+            var element = document.body;
+            var attributeName = 'data-var-on';
+            var data = {
+                'listeners': {
+                    'custom': jest.fn()
+                }
+            };
+            var event = new CustomEvent('custom');
+            var view, result, event;
+
+            element.setAttribute(attributeName, JSON.stringify({
+                'custom': 'listeners.custom'
+            }));
+
+            view = new View({
+                'element': element,
+                'data': data
+            });
+
+            result = view.attachListeners();
+
+            element.dispatchEvent(event);
+
+            // @TODO Mock View.attachListeners() instead.
+
+            expect(result).toBe(view);
+            expect(data.listeners.custom).toHaveBeenCalledWith(event);
+
+            element.removeAttribute(attributeName);
+            element.removeEventListener('custom', result.custom);
+
+        });
+
+    });
+
     describe('#getElement()', function () {
 
         it('Should return #element if set.', function () {

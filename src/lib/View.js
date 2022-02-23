@@ -226,7 +226,8 @@ var View = (function () {
             'attr': attributesPrefix + '-attr',
             'if': attributesPrefix + '-if',
             'alias': attributesPrefix + '-as',
-            'for': attributesPrefix + '-for'
+            'for': attributesPrefix + '-for',
+            'on': attributesPrefix + '-on'
         }, (typeof attributes === 'object'
             ? attributes
             : {}
@@ -916,6 +917,23 @@ var View = (function () {
             var originalProperties = this.original;
 
             Object.assign(this, originalProperties);
+
+            return this;
+
+        },
+        /**
+         * Call {@link just.View.attachListeners}.
+         *
+         * @param {?object} listeners - An object in the format: `{eventType: fn}`.
+         * @chainable
+         */
+        'attachListeners': function attachListeners (listeners) {
+
+            var element = this.getElement();
+            var attributeName = this.attributes.on;
+            var data = Object.assign({}, this.getData(), listeners);
+
+            View.attachListeners(element, data, attributeName);
 
             return this;
 
