@@ -594,7 +594,15 @@ var View = (function () {
                     // Loop each element of data.property
                     return (function (array) {
 
-                        var parent = element.parentNode;
+                        /**
+                         * Prefer the template's parent node over the element's parent node
+                         * to avoid empty values for element.parentNode (when element
+                         * is not connected to the DOM, for example).
+                         */
+                        var parent = (element.view
+                            ? element.view.original.element.parentNode
+                            : element.parentNode
+                        );
                         var arrayLength = array.length;
                         var children = [].slice.call(parent.children);
                         var viewData = Object.assign({}, data);

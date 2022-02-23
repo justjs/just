@@ -787,6 +787,39 @@ describe.only('@lib/View.js', function () {
 
         });
 
+        it('Should update the container even if the given element ' +
+            'is not connected to the DOM, but contains a cached view.', function () {
+
+            var container = document.body;
+            var attributeName = 'data-var-for';
+            var data, template, disconnectedElement, result;
+
+            container.innerHTML = [
+                '<span id=\'element\' class=\'template\' data-var-for=\'item in items\' hidden>',
+                '<span data-var-for-item=\'${fn(this)}\'></span>',
+                '</span>'
+            ].join('');
+            template = container.querySelector('#element');
+
+            // Generate items.
+            data = {'items': [1], 'fn': jest.fn()};
+            View.updateLoops(template, data, attributeName);
+
+            // Disconnect generated element from DOM.
+            disconnectedElement = container.removeChild(container.lastChild);
+
+            // Expect to have a cached view to know its template.
+            expect(disconnectedElement).toHaveProperty('view');
+            expect(function () {
+
+                data = {'items': [1, 2], 'fn': jest.fn()};
+                result = View.updateLoops(disconnectedElement, data, attributeName);
+
+            }).not.toThrow();
+            expect(container.children.length).toBe(2 + 1); // 2 + template
+
+        });
+
     });
 
 });
