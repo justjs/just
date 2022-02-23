@@ -784,9 +784,7 @@ var View = (function () {
         'update': function updateTemplate (data, skip) {
 
             var element = this.getElement();
-            var localData = this.data;
-            var globals = View.globals;
-            var dataWithAliases = Object.assign({}, globals, localData, data);
+            var allData = Object.assign({}, this.getData(), data);
             var attributes = this.attributes;
             var attributeForAliases = attributes.alias;
             var attributeForIf = attributes.if;
@@ -800,20 +798,6 @@ var View = (function () {
             if (!element) { return this; }
 
             this.previousData = data;
-            elementsWithAliases = findElements(
-                '[' + attributeForAliases + ']',
-                element
-            ).concat(element);
-
-            elementsWithAliases.forEach(function (element) {
-
-                Object.assign(dataWithAliases, View.getAliases(
-                    element,
-                    dataWithAliases,
-                    attributeForAliases
-                ));
-
-            });
 
             updatableElements = this
                 .getUpdatables(element)
@@ -823,11 +807,11 @@ var View = (function () {
 
                 if (typeof skip === 'function' && skip(element)) { return; }
 
-                View.updateConditionals(element, dataWithAliases, attributeForIf);
-                View.updateAttributes(element, dataWithAliases, attributeForAttributes);
-                View.updateHtmlVars(element, dataWithAliases, attributeForHtml);
-                View.updateVars(element, dataWithAliases, attributeForVars);
-                View.updateLoops(element, dataWithAliases, attributeForLoops);
+                View.updateConditionals(element, allData, attributeForIf);
+                View.updateAttributes(element, allData, attributeForAttributes);
+                View.updateHtmlVars(element, allData, attributeForHtml);
+                View.updateVars(element, allData, attributeForVars);
+                View.updateLoops(element, allData, attributeForLoops);
 
             });
 
