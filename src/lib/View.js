@@ -121,6 +121,7 @@ var View = (function () {
         var allArgsSorted = [];
 
         if (!keys) { return; }
+        if (typeof keys !== 'string') { return keys; }
 
         /**
          * The way it works is by JSON.parsing things within parenthesis,
