@@ -4,32 +4,40 @@ describe.only('@lib/View.js', function () {
 
     describe('.init()', function () {
 
-        var defaultAttributeName = View.INIT_ATTRIBUTE_NAME;
-        var container = document.body;
-        var constructorOptions = {
-            'id': 'template',
-            'attributes': 'data-x'
-        };
-        var listeners = {
-            'customupdate': 'doSomething'
-        };
+        function buildMarkup (options) {
 
-        beforeEach(function () {
+            var opts = Object.assign({
+                'attributeName': View.INIT_ATTRIBUTE_NAME,
+                'container': document.body,
+                'viewOptions': {
+                    'id': 'template',
+                    'attributes': 'data-x'
+                },
+                'listeners': null
+            }, options);
+            var attributeName = opts.attributeName;
+            var container = opts.container;
+            var constructorOptions = opts.viewOptions;
+            var listeners = opts.listeners;
 
             container.innerHTML = [
                 '<span id="' + constructorOptions.id + '"',
-                constructorOptions.attributes + '-on=\'' + JSON.stringify(listeners) + '\'',
-                defaultAttributeName + '=\'' + JSON.stringify(constructorOptions) + '\'>',
+                listeners ? constructorOptions.attributes + '-on=\'' + JSON.stringify(listeners) + '\'' : '',
+                attributeName + '=\'' + JSON.stringify(constructorOptions) + '\'>',
                 '</span>'
             ].join(' ');
 
-        });
+            return opts;
 
-        it('Should search elements with the [' + defaultAttributeName + '] attribute ' +
+        }
+
+        it('Should search elements with the [' + View.INIT_ATTRIBUTE_NAME + '] attribute ' +
             'parse each of them as JSON, ' +
             'call the #constructor with those options, ' +
             'and store the view in the element that contains it.', function () {
 
+            var options = buildMarkup();
+            var constructorOptions = options.viewOptions;
             var element = document.getElementById(constructorOptions.id);
             var result = View.init();
 
@@ -42,8 +50,13 @@ describe.only('@lib/View.js', function () {
 
         it('Should attach listeners.', function () {
 
+            var options = buildMarkup({
+                'listeners': {
+                    'customupdate': 'doSomething'
+                }
+            });
             var fn = jest.fn();
-            var element = document.getElementById(constructorOptions.id);
+            var element = document.getElementById(options.viewOptions.id);
             var event = new CustomEvent('customupdate');
 
             View.init({
