@@ -195,6 +195,57 @@ var View = (function () {
 
     }
 
+    function replaceNestedVarsArray (array, data) {
+
+        return array.map(function (value) {
+
+            return replaceNestedVars(value, this);
+
+        }, data);
+
+    }
+
+    function replaceNestedVarsObject (object, data) {
+
+        var newObject = {};
+        var key, value, k, v;
+
+        if (Array.isArray(object)) {
+
+            return replaceNestedVarsArray(object, data);
+
+        }
+
+        for (k in object) {
+
+            if (Object.prototype.hasOwnProperty.call(object, k)) {
+
+                v = object[k];
+                key = replaceNestedVars(k, data);
+                value = replaceNestedVars(v, data);
+
+                newObject[key] = value;
+
+            }
+
+        }
+
+        return newObject;
+
+    }
+
+    function replaceNestedVars (value, data) {
+
+        if (typeof value === 'object') {
+
+            return replaceNestedVarsObject(value, data);
+
+        }
+
+        return View.replaceVars(value, data);
+
+    }
+
     /**
      * Templarize elements easily.
      *
@@ -255,6 +306,12 @@ var View = (function () {
          * Find elements with the {@link just.View.INIT_ATTRIBUTE_NAME} attribute,
          * parse its value as json, and call {@link just.View} with those options.
          *
+         * Options support (nested) data replacement, using the `${}` sintax.
+         * E.g: You can use {"data": {"${key}": ["${get.value(0)}"]}}
+         * to replace '${key}', and '${get.value(0)}' with your own values
+         * defined in `View.globals` and `options.listeners`. You can also
+         * use `this` to replace it with the current element. E.g: "${this.id}".
+         *
          * @param {object} options
          * @param {object} options.listeners - Listeners for the {@link View#attachListeners} call.
          * @returns {View[]} The created views.
@@ -267,11 +324,14 @@ var View = (function () {
             var listeners = opts.listeners;
             var attributeName = View.INIT_ATTRIBUTE_NAME;
             var elements = findElements('[' + attributeName + ']');
+            var data = Object.assign({}, View.globals, listeners);
 
             return elements.map(function (element) {
 
                 var attributeValue = element.getAttribute(attributeName);
-                var options = stringToJSON(attributeValue);
+                var nestedVarsData = Object.assign({'this': element}, data);
+                var json = stringToJSON(attributeValue);
+                var options = replaceNestedVars(json, nestedVarsData);
                 var view = new View(options).attachListeners(listeners);
 
                 // Store/Cache it.

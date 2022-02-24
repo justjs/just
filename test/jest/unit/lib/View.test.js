@@ -73,6 +73,55 @@ describe.only('@lib/View.js', function () {
 
         });
 
+        it('Should replace nested vars using View.globals ' +
+            'and options.listeners data.', function () {
+
+            var options = buildMarkup({
+                'id': 'some-id',
+                'viewOptions': {
+                    // ${this} is supported.
+                    'id': '${this.id}',
+                    // Nested replacements are supported.
+                    'data': {
+                        // Keys and values are supported, even inside other structures (arrays, objects, ...).
+                        '${g.getKey()}': ['${g.getValue()}'],
+                        // Given data should also be supported.
+                        'notAListener': '${notAListener}'
+                    }
+                }
+            });
+            var viewOptions = options.viewOptions;
+            var listeners = {
+                'notAListener': 'nope'
+            };
+            var globals = {
+                'g': {
+                    'getKey': function () { return 'key'; },
+                    'getValue': function () { return 'value'; }
+                }
+            };
+            var result;
+
+            Object.assign(View.globals, globals);
+
+            result = View.init({
+                'listeners': listeners
+            });
+
+            expect(result).toMatchObject([
+                new View({
+                    'id': viewOptions.id,
+                    'data': {
+                        'key': ['value'],
+                        'notAListener': listeners.notAListener
+                    }
+                })
+            ]);
+
+            delete View.globals.g;
+
+        });
+
     });
 
     describe('#constructor()', function () {
