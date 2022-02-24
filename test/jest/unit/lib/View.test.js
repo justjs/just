@@ -1022,11 +1022,13 @@ describe.only('@lib/View.js', function () {
 
     describe('#getData()', function () {
 
-        it('Should return all available data.', function () {
+        it('Should return all available data in the following order:' +
+            '#globals, #data, #getData()~currentData, and .getAliases().', function () {
 
             var globals = {'global': true};
             var locals = {'local': true};
             var aliases = {'alias': true};
+            var current = {'current': true};
             var element = document.body;
             var result;
 
@@ -1035,10 +1037,10 @@ describe.only('@lib/View.js', function () {
             result = new View({
                 'element': element,
                 'data': locals
-            }).getData();
+            }).getData(current);
 
             // Expect the following order.
-            expect(result).toMatchObject(Object.assign({}, globals, locals, aliases));
+            expect(result).toMatchObject(Object.assign({}, globals, locals, current, aliases));
 
             delete View.globals.global;
             element.removeAttribute('data-var-as');

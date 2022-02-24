@@ -771,11 +771,12 @@ var View = (function () {
         },
         /**
          * Merges all available data into one object in the following
-         * order: {@link just.View.globals}, {@link just.View#data}, {@link just.View#getAliases|aliases}.
+         * order: {@link just.View.globals}, {@link just.View#data}, `currentData`, and {@link just.View.getAliases|aliases}.
          *
+         * @param {!object} currentData - It merges this object after globals, and locals, and before setting aliases.
          * @returns {!object}
          */
-        'getData': function getAvailableData () {
+        'getData': function getAvailableData (currentData) {
 
             var element = this.getElement();
             var globals = View.globals;
@@ -792,7 +793,7 @@ var View = (function () {
                     attributeForAliases
                 ));
 
-            }, Object.assign({}, globals, locals));
+            }, Object.assign({}, globals, locals, currentData));
 
         },
         'getUpdatables': function queryAllUpdatables (container) {
@@ -837,7 +838,7 @@ var View = (function () {
         'update': function updateTemplate (data, skip) {
 
             var element = this.getElement();
-            var allData = Object.assign({}, this.getData(), data);
+            var allData = this.getData(data);
             var attributes = this.attributes;
             var attributeForIf = attributes.if;
             var attributeForAttributes = attributes.attr;
@@ -940,7 +941,7 @@ var View = (function () {
 
             var element = this.getElement();
             var attributeName = this.attributes.on;
-            var data = Object.assign({}, this.getData(), listeners);
+            var data = this.getData(listeners);
 
             View.attachListeners(element, data, attributeName);
 
