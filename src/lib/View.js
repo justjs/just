@@ -985,6 +985,12 @@ var View = (function () {
             return this.insert('before', container);
 
         },
+        /**
+         * Restore constructor to its default value.
+         * Use the #original property to restore it.
+         *
+         * @chainable
+         */
         'reset': function resetProperties () {
 
             var originalProperties = this.original;

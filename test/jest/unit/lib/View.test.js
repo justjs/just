@@ -1126,4 +1126,30 @@ describe.only('@lib/View.js', function () {
 
     });
 
+    describe('#reset()', function () {
+
+        it('Should restore the constructor\'s original ' +
+            'properties.', function () {
+
+            var view = new View();
+            var originalProperties = Object.assign({}, view);
+
+            // The "original" property shouldn't be cyclic.
+            delete originalProperties.original;
+
+            // Modify.
+            view.id = 'another-id';
+
+            // Restore.
+            view.reset();
+
+            expect(view).toHaveProperty('original');
+            expect(view.original).toMatchObject(originalProperties);
+            expect(view.original).not.toHaveProperty('original');
+            expect(view).toMatchObject(originalProperties);
+
+        });
+
+    });
+
 });
