@@ -960,7 +960,10 @@ var View = (function () {
         'insert': function insert (position, container) {
 
             var element = this.getElement();
-            var wrapper = container || element.parentNode;
+            var wrapper = container || Object(this.id
+                ? document.getElementById(this.id)
+                : this.element
+            ).parentNode;
             var positionObj = Object(position);
 
             if (!(wrapper instanceof Node)) { throw new TypeError('Please provide a container.'); }

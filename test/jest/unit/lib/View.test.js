@@ -175,7 +175,9 @@ describe.only('@lib/View.js', function () {
     describe('#insert', function () {
 
         var container = document.body;
-        var relativeElement = document.createElement('span');
+        var relativeElement = Object.assign(document.createElement('span'), {
+            'id': 'some-id'
+        });
 
         beforeEach(function () {
 
@@ -208,6 +210,19 @@ describe.only('@lib/View.js', function () {
             children = container.children;
 
             expect(children[expectedPositionIndex]).toBe(element);
+
+        });
+
+        test.each([
+            ['the template', {'id': relativeElement.id}],
+            ['the element', {'element': relativeElement}],
+            ['the template or the element', {'id': relativeElement.id, 'element': relativeElement}]
+        ])('Should use %s\'s parentNode, if the container was not provided.', function (_, options) {
+
+            var view = new View(options);
+
+            expect(function () { view.insert('before'); }).not.toThrow();
+            expect(container.firstChild).toBe(relativeElement);
 
         });
 
