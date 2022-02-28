@@ -203,11 +203,11 @@ describe.only('@lib/View.js', function () {
             });
             var children;
 
-            view.insert('before', container);
+            view.insert(position, container);
 
             children = container.children;
 
-            expect(children[expectedPositionIndex]).toStrictEqual(element);
+            expect(children[expectedPositionIndex]).toBe(element);
 
         });
 
