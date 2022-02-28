@@ -930,6 +930,17 @@ var View = (function () {
             return this;
 
         },
+        /**
+         * Update the view using {@link just.View#previousData} (set
+         * on {@link just.View#update|update}) and `newData`.
+         *
+         * Useful to update the view with previous values or
+         * update only some properties, after a normal {@link just.View#update|update}.
+         *
+         * @param {*} newData - Any new data.
+         * @param {just.View#update~skip} skip - {@link just.View#update|skip} argument.
+         * @chainable
+         */
         'refresh': function (newData, skip) {
 
             var previousData = this.previousData;

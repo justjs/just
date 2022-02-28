@@ -1152,4 +1152,43 @@ describe.only('@lib/View.js', function () {
 
     });
 
+    describe('#refresh', function () {
+
+        // @TODO Improve.
+        it('Should make an update using #previousData and newData.', function () {
+
+            var fn = jest.fn();
+            var element = document.body;
+            var view = new View({
+                'element': element,
+                'data': {
+                    'fn': fn
+                }
+            });
+            var update = {
+                'a': 'update',
+                'b': 'update'
+            };
+            var refresh = {
+                'b': 'refresh'
+            };
+
+            // Prepare:
+            element.setAttribute('data-var', '${fn(a, b)}');
+
+            // Make a normal update to set #previousData.
+            view.update(update);
+
+            // Update only the new property.
+            view.refresh(refresh);
+
+            // @TODO Mock #update() instead.
+            expect(fn).toHaveBeenCalledWith('update', 'refresh');
+
+            element.removeAttribute('data-var');
+
+        });
+
+    });
+
 });
