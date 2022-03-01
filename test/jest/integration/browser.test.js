@@ -93,7 +93,8 @@ test.each([
         appendLibrary(src);
 
         expect(window.just).toEqual(expect.objectContaining({
-            'Router': expect.any(Function)
+            'Router': expect.any(Function),
+            'View': expect.any(Function)
         }));
 
         removeLibrary(src);

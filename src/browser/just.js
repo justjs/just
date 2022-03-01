@@ -1,5 +1,6 @@
 // just remove-from-bundle
 require([
     './core',
-    '../lib/Router'
+    '../lib/Router',
+    '../lib/View'
 ]);
