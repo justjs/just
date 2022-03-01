@@ -346,6 +346,15 @@ describe.only('@lib/View.js', function () {
 
         });
 
+        it('Should resolve conditionals once, when strings are given.', function () {
+
+            var fn = jest.fn();
+            var result = View.resolveConditional('fn()', {'fn': fn});
+
+            expect(fn).toHaveBeenCalledTimes(1);
+
+        });
+
     });
 
     describe('.replaceVars()', function () {

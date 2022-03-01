@@ -399,8 +399,9 @@ var View = (function () {
             if (typeof conditionals === 'string') {
 
                 conditional = conditionals;
-                conditionalsObj = {};
-                conditionalsObj[conditional] = View.resolveConditional(conditional, data);
+                resolvedValue = View.resolveConditional(conditional, data);
+
+                return resolvedValue;
 
             }
 
