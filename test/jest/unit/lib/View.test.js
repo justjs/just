@@ -372,6 +372,17 @@ describe.only('@lib/View.js', function () {
 
         });
 
+        it('Should replace undefined values with a default value.', function () {
+
+            var text = 'Replace ${me}';
+            var defaultValue = 'who?';
+            var expected = 'Replace who?';
+            var result = View.replaceVars(text, null, defaultValue);
+
+            expect(result).toBe(expected);
+
+        });
+
         it('Should .resolveConditionals() first, if an object is given, ' +
             'and replace ${placeholders} within the accessed value.', function () {
 

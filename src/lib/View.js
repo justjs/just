@@ -464,6 +464,8 @@ var View = (function () {
          *        If an object is given, it will {@link just.View.resolveConditionals} first,
          *        then replace ${placeholders} within the accessed value.
          * @param {?object} data - An object containing the data to be replaced.
+         * @param {*} defaultValue - By default, it skips replacements if some accessed value is undefined.
+         *                           Any other value will be stringified (returned to the String#replace function).
          * @example <caption>Using a string</caption>
          * View.replaceVars('${splitted.property}!', {
          *     'splitted': {'property': 'key'}
@@ -478,10 +480,13 @@ var View = (function () {
          * @example <caption>Inexistent property</caption>
          * View.replaceVars('Don't replace ${me}!') // "Don't replace ${me}!"
          *
+         * @example <caption>Setting a default value for an inexistent property</caption>
+         * View.replaceVars('Replace ${me}', null, 'who?') // "Replace who?"
+         *
          * @returns {string} The replaced string.
          *          If some value is undefined, it won't be replaced at all.
          */
-        'replaceVars': function replaceVars (value, data) {
+        'replaceVars': function replaceVars (value, data, defaultValue) {
 
             var text = String(typeof value === 'object'
                 ? View.resolveConditionals(value, data)
@@ -498,10 +503,14 @@ var View = (function () {
                 var key = decodeURI($1);
                 var value = access(key, data);
                 var placeholder = decodeURI($0);
+                var defaultReplacement = (typeof defaultValue !== 'undefined'
+                    ? defaultValue
+                    : placeholder
+                );
 
                 return (typeof value !== 'undefined'
                     ? value
-                    : placeholder
+                    : defaultReplacement
                 );
 
             });
