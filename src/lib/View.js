@@ -838,6 +838,13 @@ var View = (function () {
             }, Object.assign({}, globals, locals, currentData));
 
         },
+        /**
+         * Find all elements that contain a {@link just.View.attributes|supported attribute}
+         * and return them.
+         *
+         * @param {?Node} [container|document]
+         * @returns {Node[]} All matching elements within the given container
+         */
         'getUpdatables': function queryAllUpdatables (container) {
 
             var attributes = this.attributes;

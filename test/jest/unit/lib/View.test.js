@@ -1174,6 +1174,49 @@ describe.only('@lib/View.js', function () {
 
     });
 
+    describe('#getUpdatables()', function () {
+
+        var container = document.body;
+        var attributes = {
+            'var': 'data-var',
+            'html': 'data-var-html',
+            'if': 'data-var-if',
+            'attr': 'data-var-attr',
+            'for': 'data-var-for'
+        };
+
+        function buildTree (container) {
+
+            container.innerHTML = Object.keys(attributes).map(function (key) {
+
+                var attr = attributes[key];
+
+                return '<span ' + attr + '></span>';
+
+            });
+
+        }
+
+        beforeEach(function () {
+
+            buildTree(container);
+
+        });
+
+        // @TODO Improve.
+
+        it('Should find all updatable elements within a container.', function () {
+
+            var view = new View();
+            var attributesCount = Object.keys(view.attributes).length;
+            var result = view.getUpdatables();
+
+            expect(result).toMatchObject(new Array(attributesCount - 1).fill(expect.any(Node)));
+
+        });
+
+    });
+
     describe('#reset()', function () {
 
         it('Should restore the constructor\'s original ' +
