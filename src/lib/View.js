@@ -195,57 +195,6 @@ var View = (function () {
 
     }
 
-    function replaceNestedVarsArray (array, data) {
-
-        return array.map(function (value) {
-
-            return replaceNestedVars(value, this);
-
-        }, data);
-
-    }
-
-    function replaceNestedVarsObject (object, data) {
-
-        var newObject = {};
-        var key, value, k, v;
-
-        if (Array.isArray(object)) {
-
-            return replaceNestedVarsArray(object, data);
-
-        }
-
-        for (k in object) {
-
-            if (Object.prototype.hasOwnProperty.call(object, k)) {
-
-                v = object[k];
-                key = replaceNestedVars(k, data);
-                value = replaceNestedVars(v, data);
-
-                newObject[key] = value;
-
-            }
-
-        }
-
-        return newObject;
-
-    }
-
-    function replaceNestedVars (value, data) {
-
-        if (typeof value === 'object') {
-
-            return replaceNestedVarsObject(value, data);
-
-        }
-
-        return View.replaceVars(value, data);
-
-    }
-
     /**
      * Templarize elements easily.
      *
@@ -312,6 +261,24 @@ var View = (function () {
          * defined in `View.globals` and `options.listeners`. You can also
          * use `this` to replace it with the current element. E.g: "${this.id}".
          *
+         * Please note that, in current versions, you don't need to enclose
+         * `${}` within quotes to replace variables, since that's the only
+         * way you can replace them on stringified objects. I.e:
+         * - {${var}: [${var}]} is valid. (Equivalent to {[var]: var}).
+         * - {"${var}": ["${var}"]} is also valid, but different. (Equivalent to {[`${var}`]: `${var}`}).
+         * - {var: [var]} is invalid (for now), and will throw an error.
+         * Since replacements are sometimes required, you can use
+         * that sintax for now, but in the future, that sintax
+         * is likely to be removed.
+         *
+         * Also consider that default values for undefined replacements are `null`:
+         *
+         *  E.g: ["one", "two", ${three}]. If `three` is undefined, the
+         * result will be ["one", "two", null].
+         *
+         * E.g: "Hello ${world}!". If `world` is undefined, the result
+         * will be "Hello null!".
+         *
          * @param {object} options
          * @param {object} options.listeners - Listeners for the {@link View#attachListeners} call.
          * @returns {View[]} The created views.
@@ -330,8 +297,8 @@ var View = (function () {
 
                 var attributeValue = element.getAttribute(attributeName);
                 var nestedVarsData = Object.assign({'this': element}, data);
-                var json = stringToJSON(attributeValue);
-                var options = replaceNestedVars(json, nestedVarsData);
+                var stringifiedJSON = View.replaceVars(attributeValue, nestedVarsData, null);
+                var options = stringToJSON(stringifiedJSON);
                 var view = new View(options).attachListeners(listeners);
 
                 // Store/Cache it.
@@ -507,9 +474,14 @@ var View = (function () {
                     ? defaultValue
                     : placeholder
                 );
+                var isDefined = typeof value !== 'undefined';
+                var requiresQuotes = isDefined
+                    && typeof value !== 'string'
+                    && typeof value !== 'number'
+                    && value !== null;
 
-                return (typeof value !== 'undefined'
-                    ? value
+                return (isDefined
+                    ? (requiresQuotes ? JSON.stringify(value) : value)
                     : defaultReplacement
                 );
 

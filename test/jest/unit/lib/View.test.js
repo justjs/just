@@ -7,6 +7,7 @@ describe.only('@lib/View.js', function () {
         function buildMarkup (options) {
 
             var opts = Object.assign({
+                'id': null,
                 'attributeName': View.INIT_ATTRIBUTE_NAME,
                 'container': document.body,
                 'viewOptions': {
@@ -19,11 +20,16 @@ describe.only('@lib/View.js', function () {
             var container = opts.container;
             var constructorOptions = opts.viewOptions;
             var listeners = opts.listeners;
+            var constructorOptionsString = (typeof constructorOptions === 'string'
+                ? constructorOptions
+                : JSON.stringify(constructorOptions)
+            );
+            var id = opts.id || constructorOptions.id;
 
             container.innerHTML = [
-                '<span id="' + constructorOptions.id + '"',
+                '<span id="' + id + '"',
                 listeners ? constructorOptions.attributes + '-on=\'' + JSON.stringify(listeners) + '\'' : '',
-                attributeName + '=\'' + JSON.stringify(constructorOptions) + '\'>',
+                attributeName + '=\'' + constructorOptionsString + '\'>',
                 '</span>'
             ].join(' ');
 
@@ -78,21 +84,15 @@ describe.only('@lib/View.js', function () {
 
             var options = buildMarkup({
                 'id': 'some-id',
-                'viewOptions': {
-                    // ${this} is supported.
-                    'id': '${this.id}',
-                    // Nested replacements are supported.
-                    'data': {
-                        // Keys and values are supported, even inside other structures (arrays, objects, ...).
-                        '${g.getKey()}': ['${g.getValue()}'],
-                        // Given data should also be supported.
-                        'notAListener': '${notAListener}'
-                    }
-                }
+                /**
+                 * ${this} should be supported.
+                 * Nested replacements are supported.
+                 * Keys and values are supported, even inside other structures (arrays, objects, ...).
+                 */
+                'viewOptions': '{"id": "${this.id}", "data": {"${g.getKey()}": ["${g.getValue()}", ${notAListener}]}}'
             });
-            var viewOptions = options.viewOptions;
             var listeners = {
-                'notAListener': 'nope'
+                'notAListener': ['nope']
             };
             var globals = {
                 'g': {
@@ -110,10 +110,9 @@ describe.only('@lib/View.js', function () {
 
             expect(result).toMatchObject([
                 new View({
-                    'id': viewOptions.id,
+                    'id': options.id,
                     'data': {
-                        'key': ['value'],
-                        'notAListener': listeners.notAListener
+                        'key': ['value', ['nope']]
                     }
                 })
             ]);
