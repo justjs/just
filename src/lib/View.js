@@ -978,6 +978,12 @@ var View = (function () {
             return this;
 
         },
+        /**
+         * Call {@link just.View#insert} to perform an append
+         * of the current template element.
+         *
+         * @param {?Node} container
+         */
         'append': function appendTo (container) {
 
             return this.insert('after', container);
