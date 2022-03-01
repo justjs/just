@@ -877,6 +877,21 @@ var View = (function () {
             return this;
 
         },
+        /**
+         * Update all updatable elements by querying them and calling
+         * all possible update* functions, like:
+         * - {@link just.View.updateConditionals}.
+         * - {@link just.View.updateAttributes}.
+         * - {@link just.View.updateHtmlVars}.
+         * - {@link just.View.updateVars}.
+         * - {@link just.View.updateLoops}.
+         * (In that order).
+         *
+         * @param {*} data - Data for the update. Merged with {@link just.View#getData()}.
+         * @param {?function} skip - A function called on each updatable element.
+         *                           if a truthy value is returned, the update won't take place.
+         * @chainable
+         */
         'update': function updateTemplate (data, skip) {
 
             var element = this.getElement();

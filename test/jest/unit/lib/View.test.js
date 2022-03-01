@@ -1200,6 +1200,52 @@ describe.only('@lib/View.js', function () {
 
     });
 
+    describe('#update()', function () {
+
+        var container = document.body;
+
+        afterEach(function () {
+
+            container.innerHTML = '';
+
+        });
+
+        /**
+         * Instead of mocking the View.update* members,
+         * we check that properties are accessed on each supported
+         * attribute, meaning an update is being performed.
+         */
+        test.each([
+            ['conditionals', 'if', 'called("if")'],
+            ['attributes', 'attr', JSON.stringify({
+                'title': '${called("attr")}'
+            })],
+            ['html vars', 'html', '<i>${called(\"html\")}</i>'],
+            ['vars', 'var', '${called(\"var\")}'],
+            ['loops', 'for', 'item in called(\"for\")']
+        ])('Should update %s on views.', function (_, key, attributeValue) {
+
+            var element = document.createElement('span');
+            var view = new View({'element': element}).append(container);
+            var attributeName = view.attributes[key];
+            var fn = jest.fn(function (arg) { return [arg]; });
+            var data = {
+                'called': fn
+            };
+
+            element.setAttribute(attributeName, attributeValue);
+
+            // @TODO Mock each member instead.
+            view.update(data);
+
+            expect(fn).toHaveBeenCalledWith(key);
+
+            container.removeChild(element);
+
+        });
+
+    });
+
     describe('#refresh', function () {
 
         // @TODO Improve.
