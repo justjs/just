@@ -349,7 +349,8 @@ describe.only('@lib/View.js', function () {
         it('Should resolve conditionals once, when strings are given.', function () {
 
             var fn = jest.fn();
-            var result = View.resolveConditional('fn()', {'fn': fn});
+
+            View.resolveConditional('fn()', {'fn': fn});
 
             expect(fn).toHaveBeenCalledTimes(1);
 
@@ -1313,9 +1314,9 @@ describe.only('@lib/View.js', function () {
             ['attributes', 'attr', JSON.stringify({
                 'title': '${called("attr")}'
             })],
-            ['html vars', 'html', '<i>${called(\"html\")}</i>'],
-            ['vars', 'var', '${called(\"var\")}'],
-            ['loops', 'for', 'item in called(\"for\")']
+            ['html vars', 'html', '<i>${called("html")}</i>'],
+            ['vars', 'var', '${called("var")}'],
+            ['loops', 'for', 'item in called("for")']
         ])('Should update %s on views.', function (_, key, attributeValue) {
 
             var element = document.createElement('span');
