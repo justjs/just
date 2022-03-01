@@ -863,6 +863,17 @@ var View = (function () {
             ].join(','), container);
 
         },
+        /**
+         * Create a clone of an {@link just.View#getElement|element},
+         * remove the .template class, the [hidden] attribute, and the [id]
+         * after setting it as a class on the clon.
+         *
+         * Set {@link just.View#element} to the new clon and return
+         * the current instance.
+         *
+         * @throws {TypeError} if {@link just.View#getElement|the template} is not a Node.
+         * @chainable
+         */
         'create': function createTemplate () {
 
             var template = this.getElement();

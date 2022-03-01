@@ -1217,6 +1217,56 @@ describe.only('@lib/View.js', function () {
 
     });
 
+    describe('#create()', function () {
+
+        function buildElement (tagName, attributes, container) {
+
+            var element = document.createElement(tagName);
+            var key, value;
+
+            for (key in attributes) {
+
+                if (Object.prototype.hasOwnProperty.call(attributes, key)) {
+
+                    value = attributes[key];
+
+                    element.setAttribute(key, value);
+
+                }
+
+            }
+
+            if (container) { container.appendChild(element); }
+
+            return element;
+
+        }
+
+        it('Should create a clon of the given element, ' +
+            'remove the .template class, ' +
+            'the [hidden] attribute, ' +
+            'set the [id] as a class of the clon, ' +
+            'and remove it from the clon.', function () {
+
+            var template = buildElement('span', {
+                'class': 'template',
+                'hidden': '',
+                'id': 'some-id'
+            }, document.body);
+            var view = new View({'element': template});
+            var result = view.create();
+
+            expect(result).toBe(view);
+            expect(result.element).not.toBe(template);
+            expect(result.element.classList.contains('template')).toBe(false);
+            expect(result.element.classList.contains('some-id')).toBe(true);
+            expect(result.element.hasAttribute('id')).toBe(false);
+            expect(result.element.hasAttribute('hidden')).toBe(false);
+
+        });
+
+    });
+
     describe('#reset()', function () {
 
         it('Should restore the constructor\'s original ' +
