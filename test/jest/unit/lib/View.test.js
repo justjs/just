@@ -741,6 +741,21 @@ describe.only('@lib/View.js', function () {
 
         });
 
+        it('Should replace variables.', function () {
+
+            var data = {'x': 'y'};
+            var attributeValue = JSON.stringify({
+                'title': '${x}'
+            });
+
+            element.setAttribute(attributeName, attributeValue);
+
+            View.updateAttributes(element, data, attributeName);
+
+            expect(element.getAttribute('title')).toBe(data.x);
+
+        });
+
         test.each([
             [null],
             /*
