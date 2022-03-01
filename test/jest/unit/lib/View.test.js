@@ -193,6 +193,33 @@ describe.only('@lib/View.js', function () {
         });
 
         test.each([
+            ['before'],
+            [{'before': container.firstChild}],
+            ['after']
+        ])('Should not throw because the given position is valid.', function (position) {
+
+            var view = new View({
+                'element': document.createElement('span')
+            });
+
+            expect(function () { view.insert(position, container); }).not.toThrow(TypeError);
+
+        });
+
+        test.each([
+            // @TODO Implement.
+            [{'after': container.firstChild}]
+        ])('Should throw because the given position is invalid.', function (position) {
+
+            var view = new View({
+                'element': document.createElement('span')
+            });
+
+            expect(function () { view.insert(position, container); }).toThrow(TypeError);
+
+        });
+
+        test.each([
             ['before the first element.', 'before', 0],
             ['after the last element.', 'after', 1],
             ['before the given Node.', {'before': relativeElement}, 0]
