@@ -1,6 +1,6 @@
 var View = require('@lib/View.js');
 
-describe.only('@lib/View.js', function () {
+describe('@lib/View.js', function () {
 
     describe('.init()', function () {
 
