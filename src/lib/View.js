@@ -955,17 +955,13 @@ var View = (function () {
          * Insert just.View#element at the given <var>position</var>
          * into the given <var>container</var>.
          *
-         *
          * @param {string|object<{before: Node}>} position
-         *        - "after" will append the element. This will be deprecated.
          *        - "before" will insert the element before the first child.
          *        - {"before": Node} will insert the element before the given Node.
+         *        - else (other values): will use appendChild() by default.
          * @param {?Node} container - The Node that will contain the element.
          *
          * @throws {TypeError} if a container can't be guessed.
-         * @throws {TypeError} if the <var>position</var> is invalid.
-         *
-         * @TODO Don't use "after" to append. Replace it with "append" or something else.
          * @chainable
          */
         'insert': function insert (position, container) {
@@ -979,9 +975,8 @@ var View = (function () {
 
             if (!(wrapper instanceof Node)) { throw new TypeError('Please provide a container.'); }
 
-            if (position === 'after') { wrapper.appendChild(element); }
             else if (position === 'before' || 'before' in positionObj) { wrapper.insertBefore(element, positionObj.before || wrapper.firstChild); }
-            else { throw new TypeError(position + ' is not a valid position ("after", "before").'); }
+            else { wrapper.appendChild(element); }
 
             return this;
 

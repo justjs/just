@@ -193,29 +193,16 @@ describe.only('@lib/View.js', function () {
         });
 
         test.each([
-            ['before'],
-            [{'before': container.firstChild}],
-            ['after']
-        ])('Should not throw because the given position is valid.', function (position) {
+            ['before', '"before" is valid.'],
+            [{'before': container.firstChild}, '{"before": Node} is valid.'],
+            ['other', 'other values will use appendChild instead'],
+        ])('Should not throw if the given position is invalid (%s)', function (position) {
 
             var view = new View({
                 'element': document.createElement('span')
             });
 
             expect(function () { view.insert(position, container); }).not.toThrow(TypeError);
-
-        });
-
-        test.each([
-            // @TODO Implement.
-            [{'after': container.firstChild}]
-        ])('Should throw because the given position is invalid.', function (position) {
-
-            var view = new View({
-                'element': document.createElement('span')
-            });
-
-            expect(function () { view.insert(position, container); }).toThrow(TypeError);
 
         });
 
