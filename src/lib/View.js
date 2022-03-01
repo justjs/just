@@ -989,6 +989,12 @@ var View = (function () {
             return this.insert('after', container);
 
         },
+        /**
+         * Call {@link just.View#insert} to perform an prepend
+         * of the current template element, at the beginning.
+         *
+         * @param {?Node} container
+         */
         'prepend': function prependTo (container) {
 
             return this.insert('before', container);
