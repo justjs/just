@@ -124,5 +124,5 @@ if [ "$runJsdoc" = true ]; then
 fi
 
 npm run doc:minify -- --input-dir "$TEMP_PUBLIC_DIR" --output-dir "$TEMP_PUBLIC_DIR"
-rm -R "$PUBLIC_DIR"
-mv "$TEMP_PUBLIC_DIR" "$PUBLIC_DIR"
+# Don't rename $PUBLIC_DIR. Doing so will make live-server's reloads stop working.
+cp -R "$TEMP_PUBLIC_DIR"/* "$PUBLIC_DIR"
