@@ -16,7 +16,7 @@ module.exports = {
 		}]
 	}, {
 		'pattern': ['docs/static', 'docs/tmpl'],
-		'on': ['ready', 'change'],
+		'on': ['change'],
 		'run': [{
 			'cmd': 'bin/document',
 			'args': ['vx.x.x', '--run-jsdoc=false'],
