@@ -14,5 +14,12 @@ module.exports = {
 			'cmd': 'live-server',
 			'args': [SERVER_DIR],
 		}]
+	}, {
+		'pattern': ['docs/static', 'docs/tmpl'],
+		'on': ['ready', 'change'],
+		'run': [{
+			'cmd': 'bin/document',
+			'args': ['vx.x.x', '--run-jsdoc=false'],
+		}]
 	}]
 };
