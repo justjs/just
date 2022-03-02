@@ -66,6 +66,7 @@
     "jest": "^27.4.7",
     "jsdoc": "^3.6.7",
     "light-server": "^2.9.1",
+    "live-server": "^1.2.1",
     "mock-xmlhttprequest": "^7.0.4",
     "requirejs": "^2.3.6",
     "uglify-js": "^3.14.5"
