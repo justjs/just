@@ -21,5 +21,13 @@ module.exports = {
 			'cmd': 'bin/document',
 			'args': ['vx.x.x', '--run-jsdoc=false'],
 		}]
+	}, {
+		// @TODO Merge this into the previous task.
+		'pattern': ['src', 'bin', 'precise-watcher.config.js'],
+		'on': ['ready', 'change'],
+		'run': [{
+			'cmd': 'bin/document',
+			'args': ['vx.x.x', '--run-jsdoc=true']
+		}]
 	}]
 };
