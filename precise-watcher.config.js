@@ -15,7 +15,7 @@ module.exports = {
             'args': [SERVER_DIR],
         }]
     }, {
-        'pattern': ['docs/static', 'docs/tmpl'],
+        'pattern': ['docs/static', 'docs/tmpl', 'docs/static/**/.*.css'],
         'on': ['change'],
         'run': [{
             'cmd': 'bin/document',
