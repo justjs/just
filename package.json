@@ -67,6 +67,7 @@
     "jsdoc": "^3.6.7",
     "live-server": "^1.2.1",
     "mock-xmlhttprequest": "^7.0.4",
+    "nunjucks-to-html": "^1.1.0",
     "precise-watcher": "^2.1.0",
     "requirejs": "^2.3.6",
     "uglify-js": "^3.14.5"
