@@ -116,6 +116,9 @@ copyStaticFiles
 replaceStaticFileVars "$TEMP_DESTINATION_DIR/index.html"
 replaceStaticFileVars "$TEMP_PUBLIC_DIR/index.html"
 
+# Override previous files; start using nunjucks instead.
+nunjucks-to-html --baseDir docs/static --dest "$TEMP_PUBLIC_DIR"
+
 if [ "$runJsdoc" = true ]; then
 
 	document browser
