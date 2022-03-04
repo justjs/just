@@ -1,8 +1,25 @@
+{% set coreMinJsScript %}
+<script
+  src="https://cdn.jsdelivr.net/npm/@just-js/just@{{ version }}/dist/browser/core.min.js"
+  crossorigin="anonymous"
+  defer></script>
+{% endset %}
+{% set justMinJsScript %}
+<script
+  src="https://cdn.jsdelivr.net/npm/@just-js/just@{{ version }}/dist/browser/just.min.js"
+  crossorigin="anonymous"
+  defer></script>
+{% endset %}
+{% set nodeJsCommand %}
+npm i @just-js/just
+{% endset %}
+
 <!DOCTYPE html>
 <html lang='en'>
 <head>
 	<meta charset='utf-8'/>
 	<title>JustJs - The core for all your js projects.</title>
+	<link rel='preload' href='/font/spacemono/SpaceMono-Regular.ttf' as='font' />
 	<link rel="apple-touch-icon-precomposed" sizes="57x57" href="/img/apple-touch-icon-57x57.png" />
 	<link rel="apple-touch-icon-precomposed" sizes="114x114" href="/img/apple-touch-icon-114x114.png" />
 	<link rel="apple-touch-icon-precomposed" sizes="72x72" href="/img/apple-touch-icon-72x72.png" />
@@ -37,6 +54,35 @@
 				</a>
 				<h1 id='logo'><span data-text='just'>Just</span><span data-text='js'>Js</span></h1>
 			</div>
+			<section id='setup'>
+				<header>
+					<h2>Setup</h2>
+				</header>
+				<figure id='browser-setup'>
+					<figcaption><a href='https://github.com/justjs/just/blob/master/src/browser/' rel='noopener noreferrer'>Browser</a></figcaption>
+					<dl>
+						<dt><a href='https://github.com/justjs/just/blob/master/src/browser/core.js' rel='noopener noreferrer'>Core</a> &rarr; <a href='https://cdn.jsdelivr.net/npm/@just-js/just@{{ version }}/dist/browser/core.min.js' rel='noopener noreferrer'>core.min.js</a></dt>
+						<dd>
+							<div class='code-wrapper'>
+								<pre class='prettyprint'><code>{{ coreMinJsScript | trim }}</code></pre>
+							</div>
+						</dd>
+						<dt><a href='https://github.com/justjs/just/blob/master/src/browser/just.js' rel='noopener noreferrer'>Full suite</a> &rarr; <a href='https://cdn.jsdelivr.net/npm/@just-js/just@{{ version }}/dist/browser/just.min.js'>just.min.js</a></dt>
+						<dd>
+							<div class='code-wrapper'>
+								<pre class='prettyprint'><code>{{ justMinJsScript | trim }}</code></pre>
+							</div>
+						</dd>
+					</dl>
+				</figure>
+				<br>
+				<figure id='nodejs-setup'>
+					<figcaption><a href='https://github.com/justjs/just/blob/master/src/server/' rel='noopener noreferrer'>Node js</a></figcaption>
+					<div class='code-wrapper'>
+						<pre class='prettyprint'><code>{{ nodeJsCommand | trim }}</code></pre>
+					</div>
+				</figure>
+			</section>
 		</div>
 	</main>
 	<footer id='contentinfo' role='contentinfo'>

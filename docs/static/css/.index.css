@@ -1,3 +1,9 @@
+@font-face {
+	font-family: 'SpaceMono';
+	src: url('/font/spacemono/SpaceMono-Regular.ttf') format('truetype');
+	font-display: swap;
+}
+
 * {
 	border: 0;
 	margin: 0;
@@ -32,6 +38,16 @@ a {
 a:hover,
 a:focus {
 	text-decoration: underline;
+}
+
+figcaption {
+	font-weight: bold;
+	text-transform: uppercase;
+}
+
+dt {
+	font-weight: bold;
+	margin-top: 1em;
 }
 
 main {
@@ -77,6 +93,19 @@ main {
 	position: relative;
 }
 
+#setup {
+	/* Based on jsdoc-template's colors. */
+	background: #f3f3f3;
+	color: #1f1e26;
+}
+
+#home header {
+	position: absolute;
+	top: 0;
+	right: 0;
+	padding: 2em;
+}
+
 #banner {
 	text-align: center;
 }
@@ -95,6 +124,17 @@ main {
 [data-text='js'] {
 	display: block;
 	font-size: 4em;
+}
+
+.prettyprint {
+	width: 100%;
+	padding: 2em;
+	overflow-x: auto;
+	white-space: nowrap;
+}
+
+code {
+	font-family: 'SpaceMono', monospace;
 }
 
 #github-link {
