@@ -143,6 +143,20 @@ code {
 	font-family: 'SpaceMono', monospace;
 }
 
+a[role='button'] {
+	padding: .5em 1em;
+	background: #54184d;
+	color: white;
+}
+
+#floating-button {
+	position: fixed;
+	bottom: 0;
+	right: 0;
+	margin: 2em;
+	z-index: 999;
+}
+
 #github-link {
 	position: absolute;
 	top: 0;
