@@ -99,6 +99,12 @@ main {
 	color: #1f1e26;
 }
 
+#usage {
+	/* Based on jsdoc-template's colors. */
+	background: #181826;
+	color: white;
+}
+
 #home header {
 	position: absolute;
 	top: 0;
