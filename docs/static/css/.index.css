@@ -54,10 +54,13 @@ main {
 }
 
 footer[role='contentinfo'] {
-	text-align: center;
 	background: #54184d;
 	color: white;
 	padding: 2em;
+}
+
+footer[role='contentinfo'] .content-wrapper {
+	padding: 2em 0;
 }
 
 .horizontal-list li {
@@ -162,6 +165,11 @@ a[role='button'] {
 	display: none;
 }
 
+:not(#banner) > .content-wrapper {
+	max-width: 720px;
+	margin: auto;
+}
+
 /**
  * Large screens:
  * Show 3 splitted sections.
@@ -173,6 +181,10 @@ a[role='button'] {
 	main {
 		height: 100%;
 		width: 100%;
+	}
+
+	footer[role='contentinfo'] {
+		text-align: center;
 	}
 
 }
@@ -218,6 +230,16 @@ a[role='button'] {
 		padding: 2em;
 	}
 
+	#usage header {
+		position: relative;
+		padding: 0;
+		text-align: right;
+	}
+
+	#usage .content-wrapper {
+		padding: 2em 0;
+	}
+
 }
 
 /**
@@ -242,6 +264,22 @@ a[role='button'] {
 		top: 50%;
 		transform: translateY(-50%);
 		width: 100%;
+	}
+
+	#home header {
+		position: relative;
+		padding: 0;
+		text-align: right;
+	}
+
+	#setup .content-wrapper,
+	#usage .content-wrapper {
+		padding: 2em 0;
+	}
+
+	footer[role='contentinfo'] {
+		/* Add extra padding to prevent #floating-button from overlapping. */
+		padding-bottom: 6em;
 	}
 
 }
