@@ -144,6 +144,13 @@ a[role='button'] {
 	padding: .5em 1em;
 	background: #54184d;
 	color: white;
+	text-decoration: none;
+}
+
+a[role='button']:hover,
+a[role='button']:focus {
+	/* Show a lighter color */
+	background: #641a5b;
 }
 
 #floating-button {
