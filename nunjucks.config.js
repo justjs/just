@@ -45,6 +45,11 @@ module.exports = {
 
                 return hash;
 
+            },
+            'getCDNUrl': function (filename, version) {
+
+                return 'https://cdn.jsdelivr.net/npm/@just-js/just@' + version + filename;
+
             }
         }
     }
