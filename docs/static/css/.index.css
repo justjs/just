@@ -13,12 +13,6 @@
 			box-sizing: border-box;
 }
 
-html,
-body {
-	width: 100%;
-	height: 100%;
-}
-
 body {
 	line-height: 1.6;
 	font-family: helvetica, arial, sans-serif;
@@ -71,11 +65,6 @@ footer[role='contentinfo'] {
 }
 
 /* Specific styles: */
-
-main {
-	height: 100%;
-	width: 100%;
-}
 
 #home {
 	display: table;
@@ -166,4 +155,87 @@ a[role='button'] {
 
 [hidden] {
 	display: none;
+}
+
+/**
+ * Large screens:
+ * Show 3 splitted sections.
+ */
+@media all and (min-width: 1520px) {
+
+	html,
+	body,
+	main {
+		height: 100%;
+		width: 100%;
+	}
+
+}
+
+/**
+ * Medium screens:
+ * Show 2 splitted sections.
+ */
+@media all and (max-width: 1520px) and (min-width: 920px) {
+
+	#home {
+		display: block;
+		position: relative;
+	}
+
+	#home > * {
+		display: inline-block;
+		padding: 0;
+	}
+
+	#banner {
+		margin: auto;
+	}
+
+	#banner,
+	#setup {
+		height: 100vh;
+		width: 50%;
+	}
+
+	#usage {
+		width: 100%;
+		padding: 2em;
+	}
+
+	#banner .content-wrapper,
+	#setup .content-wrapper {
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 100%;
+		padding: 2em;
+	}
+
+}
+
+/**
+ * Small screens:
+ * Show each section as a block.
+ */
+@media all and (max-width: 920px) {
+
+	#home > * {
+		display: block;
+		height: auto;
+	}
+
+	#banner {
+		height: 100vh;
+		padding: 0;
+	}
+
+	#banner .content-wrapper {
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+		width: 100%;
+		padding: 2em;
+	}
+
 }

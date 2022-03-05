@@ -52,43 +52,49 @@ npm i @just-js/just
 						<use xlink:href='#github-logo' href='#github-logo'/>
 					</svg>
 				</a>
-				<h1 id='logo'><span data-text='just'>Just</span><span data-text='js'>Js</span></h1>
-			</div>
-			<section id='setup'>
+				<div class='content-wrapper'>
+					<h1 id='logo'><span data-text='just'>Just</span><span data-text='js'>Js</span></h1>
+				</div>
+			</div
+			><section id='setup'>
 				<header>
 					<h2>Setup</h2>
 				</header>
-				<figure id='browser-setup'>
-					<figcaption><a href='https://github.com/justjs/just/blob/master/src/browser/' rel='noopener noreferrer'>Browser</a></figcaption>
-					<dl>
-						<dt><a href='https://github.com/justjs/just/blob/master/src/browser/core.js' rel='noopener noreferrer'>Core</a> &rarr; <a href='https://cdn.jsdelivr.net/npm/@just-js/just@{{ version }}/dist/browser/core.min.js' rel='noopener noreferrer'>core.min.js</a></dt>
-						<dd>
-							<div class='code-wrapper'>
-								<pre class='prettyprint'><code>{{ coreMinJsScript | trim }}</code></pre>
-							</div>
-						</dd>
-						<dt><a href='https://github.com/justjs/just/blob/master/src/browser/just.js' rel='noopener noreferrer'>Full suite</a> &rarr; <a href='https://cdn.jsdelivr.net/npm/@just-js/just@{{ version }}/dist/browser/just.min.js'>just.min.js</a></dt>
-						<dd>
-							<div class='code-wrapper'>
-								<pre class='prettyprint'><code>{{ justMinJsScript | trim }}</code></pre>
-							</div>
-						</dd>
-					</dl>
-				</figure>
-				<br>
-				<figure id='nodejs-setup'>
-					<figcaption><a href='https://github.com/justjs/just/blob/master/src/server/' rel='noopener noreferrer'>Node js</a></figcaption>
-					<div class='code-wrapper'>
-						<pre class='prettyprint'><code>{{ nodeJsCommand | trim }}</code></pre>
-					</div>
-				</figure>
-			</section>
-			<section id='usage'>
+				<div class='content-wrapper'>
+					<figure id='browser-setup'>
+						<figcaption><a href='https://github.com/justjs/just/blob/master/src/browser/' rel='noopener noreferrer'>Browser</a></figcaption>
+						<dl>
+							<dt><a href='https://github.com/justjs/just/blob/master/src/browser/core.js' rel='noopener noreferrer'>Core</a> &rarr; <a href='https://cdn.jsdelivr.net/npm/@just-js/just@{{ version }}/dist/browser/core.min.js' rel='noopener noreferrer'>core.min.js</a></dt>
+							<dd>
+								<div class='code-wrapper'>
+									<pre class='prettyprint'><code>{{ coreMinJsScript | trim }}</code></pre>
+								</div>
+							</dd>
+							<dt><a href='https://github.com/justjs/just/blob/master/src/browser/just.js' rel='noopener noreferrer'>Full suite</a> &rarr; <a href='https://cdn.jsdelivr.net/npm/@just-js/just@{{ version }}/dist/browser/just.min.js'>just.min.js</a></dt>
+							<dd>
+								<div class='code-wrapper'>
+									<pre class='prettyprint'><code>{{ justMinJsScript | trim }}</code></pre>
+								</div>
+							</dd>
+						</dl>
+					</figure>
+					<br>
+					<figure id='nodejs-setup'>
+						<figcaption><a href='https://github.com/justjs/just/blob/master/src/server/' rel='noopener noreferrer'>Node js</a></figcaption>
+						<div class='code-wrapper'>
+							<pre class='prettyprint'><code>{{ nodeJsCommand | trim }}</code></pre>
+						</div>
+					</figure>
+				</div>
+			</section
+			><section id='usage'>
 				<header>
 					<h2>Usage</h2>
 				</header>
-				<div class='code-wrapper'>
-					<pre class='prettyprint'><code>var just = window.just;</code><br/><code>// or: var just = require('@just-js/just');</code></pre>
+				<div class='content-wrapper'>
+					<div class='code-wrapper'>
+						<pre class='prettyprint'><code>var just = window.just;</code><br/><code>// or: var just = require('@just-js/just');</code></pre>
+					</div>
 				</div>
 			</section>
 		</div>
