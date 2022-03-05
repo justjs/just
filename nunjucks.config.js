@@ -42,6 +42,33 @@ function getIntegrity (filename) {
 
 }
 
+function buildTag (tagName, attributes, content) {
+
+    var attributesString = Object.keys(attributes).reduce(function (string, name) {
+
+        var value = attributes[name];
+
+        string += ' ' + name + '="' + value + '"';
+
+        return string;
+
+    }, '');
+
+    return '<' + tagName + attributesString + '>' + (content || '') + '</' + tagName + '>';
+
+}
+
+function buildScriptTag (filename, version) {
+
+    return buildTag('script', {
+        'src': getCDNUrl(filename, version),
+        'crossorigin': 'anonymous',
+        'integrity': getIntegrity(filename),
+        'defer': ''
+    });
+
+}
+
 module.exports = {
     'render': {
         'context': {
@@ -53,7 +80,8 @@ module.exports = {
                 : 'x.x.x'
             ),
             'getIntegrity': getIntegrity,
-            'getCDNUrl': getCDNUrl
+            'getCDNUrl': getCDNUrl,
+            'buildScriptTag': buildScriptTag
         }
     }
 };
