@@ -2,6 +2,7 @@
 
 # Relative to cwd
 FILENAME=$1
+ALGORITHM=sha384
 
 # Based on https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity
-echo "sha384-`shasum -b -a 384 "$FILENAME" | awk '{ print $1 }' | xxd -r -p | base64`"
+echo "${ALGORITHM}-s`openssl dgst -${ALGORITHM} -binary ${FILENAME} | openssl base64 -A`"
