@@ -24,6 +24,24 @@ function generateHash (filename) {
 
 }
 
+function getCDNUrl (filename, version) {
+
+    return 'https://cdn.jsdelivr.net/npm/@just-js/just@' + version + filename;
+
+}
+
+function getIntegrity (filename) {
+
+    var hash;
+
+    if (!fs.existsSync(filename)) { build(); }
+
+    hash = generateHash(filename);
+
+    return hash;
+
+}
+
 module.exports = {
     'render': {
         'context': {
@@ -34,23 +52,8 @@ module.exports = {
                 ? npmPackageVersion
                 : 'x.x.x'
             ),
-            'getIntegrity': function (src) {
-
-                var filename = src;
-                var hash;
-
-                if (!fs.existsSync(filename)) { build(); }
-
-                hash = generateHash(filename);
-
-                return hash;
-
-            },
-            'getCDNUrl': function (filename, version) {
-
-                return 'https://cdn.jsdelivr.net/npm/@just-js/just@' + version + filename;
-
-            }
+            'getIntegrity': getIntegrity,
+            'getCDNUrl': getCDNUrl
         }
     }
 };
