@@ -47,7 +47,7 @@ npm i @just-js/just
 	<main role='main'>
 		<div id='home'>
 			<div id='banner'>
-				<a id='github-link' href='https://github.com/justjs' rel='noopener noreferrer'>
+				<a id='github-link' href='https://github.com/justjs' rel='noopener noreferrer' title='Github'>
 					<svg xmlns='http://w3.org/2000/svg' width='24' height='24'>
 						<use xlink:href='#github-logo' href='#github-logo'/>
 					</svg>
@@ -55,6 +55,8 @@ npm i @just-js/just
 				<div class='content-wrapper'>
 					<h1 id='logo'><span data-text='just'>Just</span><span data-text='js'>Js</span></h1>
 				</div>
+				{# FIXME: Link to the merged version of browser and server docs once generated. #}
+				<a id='floating-button' href='v{{ version }}/browser/' role='button'>Read the docs &rarr;</a>
 			</div
 			><section id='setup'>
 				<header>
@@ -98,8 +100,6 @@ npm i @just-js/just
 				</div>
 			</section>
 		</div>
-		{# FIXME: Link to the merged version of browser and server docs once generated. #}
-		<a id='floating-button' href='v{{ version }}/browser/' role='button'>Read the docs &rarr;</a>
 	</main>
 	<footer id='contentinfo' role='contentinfo'>
 		<div class='content-wrapper'>
