@@ -4,6 +4,11 @@
 	font-display: swap;
 }
 
+:root {
+	/* Fix height for firefox on mobile */
+	--vh100: 100vh;
+}
+
 * {
 	border: 0;
 	margin: 0;
@@ -195,6 +200,7 @@ a[role='button'] {
 	#banner,
 	#setup {
 		height: 100vh;
+		height: var(--vh100);
 		width: 50%;
 	}
 
@@ -227,6 +233,7 @@ a[role='button'] {
 
 	#banner {
 		height: 100vh;
+		height: var(--vh100);
 		padding: 0;
 	}
 
@@ -235,7 +242,6 @@ a[role='button'] {
 		top: 50%;
 		transform: translateY(-50%);
 		width: 100%;
-		padding: 2em;
 	}
 
 }
