@@ -20,7 +20,7 @@ function generateHash (filename) {
 
     const {stdout} = spawnSync(path.resolve('bin/generate-sri'), [filename]);
 
-    return `${stdout}`;
+    return `${stdout}`.trim();
 
 }
 
