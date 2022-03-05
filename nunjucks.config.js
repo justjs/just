@@ -26,7 +26,7 @@ function generateHash (filename) {
 
 function getCDNUrl (filename, version) {
 
-    return 'https://cdn.jsdelivr.net/npm/@just-js/just@' + version + filename;
+    return 'https://cdn.jsdelivr.net/npm/@just-js/just@' + version + '/' + filename;
 
 }
 
