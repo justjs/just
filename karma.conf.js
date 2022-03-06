@@ -25,8 +25,15 @@ module.exports = function (config) {
             'test/e2e/**/*.test.js'
         ],
 
+        // Set cors headers just in case we need them for [integrity] values.
+        customHeaders: [{
+          'match': '/dist/',
+          'name': 'Access-Control-Allow-Origin',
+          'value': '*'
+        }],
+
         proxies: {
-          '/dist': '/base/dist/'
+          '/dist/': '/base/dist/'
         },
 
         // list of files / patterns to exclude
