@@ -66,6 +66,7 @@
     "jest": "^27.4.7",
     "jsdoc": "^3.6.7",
     "karma": "^6.3.17",
+    "karma-firefox-launcher": "^2.1.2",
     "live-server": "^1.2.1",
     "mock-xmlhttprequest": "^7.0.4",
     "nunjucks-to-html": "^1.1.0",
