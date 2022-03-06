@@ -79,15 +79,18 @@ module.exports = function (config) {
         /*
          * start these browsers
          * available browser launchers: https://www.npmjs.com/search?q=keywords:karma-launcher
+         *
+         * Don't run jsdom as it doesn't seem to validate [integrity] values.
+         * In fact, that's the main reason why we use karma instead of jest.
          */
-        browsers: ['Firefox'],
+        browsers: ['FirefoxHeadless'],
 
 
         /*
          * Continuous Integration mode
          * if true, Karma captures browsers, runs the tests and exits
          */
-        singleRun: false,
+        singleRun: true,
 
         /*
          * Concurrency level
