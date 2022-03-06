@@ -20,9 +20,14 @@ module.exports = function (config) {
 
         // list of files / patterns to load in the browser
         files: [
+            {'pattern': 'dist/browser/**/*', 'included': false, 'serve': true, 'nocache': true},
+            {'pattern': 'docs/public/index.html', 'included': true, 'type': 'dom', 'serve': false},
             'test/e2e/**/*.test.js'
         ],
 
+        proxies: {
+          '/dist': '/base/dist/'
+        },
 
         // list of files / patterns to exclude
         exclude: [
