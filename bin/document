@@ -44,50 +44,8 @@ copyStaticFiles () {
 
 	copyContents docs/static/versioned "$TEMP_DESTINATION_DIR"
 	copyContents docs/static/non-versioned "$TEMP_PUBLIC_DIR"
-
-}
-
-replaceStaticFileVars () {
-
-	local FILENAME="$1"
-	# Next line based on:
-	# - Sort array: https://stackoverflow.com/a/11789688
-	# - Sort by version: https://gist.github.com/loisaidasam/b1e6879f3deb495c22cc#gistcomment-3008151
-	local availableVersionsDesc=(`IFS=$'\n' && tr - \~ <<< "${AVAILABLE_VERSIONS[*]}" | sort -rV | tr \~ - && unset IFS`)
-	local availableVersionsTable=`./docs/tmpl/available-versions-table "${availableVersionsDesc[@]}"`
-	local latestVersion="$VERSION"
-	local browserExampleFilename="dist/browser/core.min.js"
-	local browserExampleUrl="https://cdn.jsdelivr.net/npm/@just-js/just@$latestVersion/$browserExampleFilename"
-	local browserExampleSri=`./bin/generate-sri "$browserExampleFilename"`
-	declare -A variables=(
-		[version]="$VERSION"
-		[tag]="$TAG"
-		[available-versions]="$AVAILABLE_VERSIONS"
-		[available-versions-table]="$availableVersionsTable"
-		[sri]="$sri"
-		[latest-version]="$VERSION"
-		[browser-example-url]="$browserExampleUrl"
-		[browserExampleSri]="$browserExampleSri"
-	)
-	echo "[Docs] Replacing vars in $FILENAME"
-
-	while read line; do
-
-		replacedText="$line"
-
-		for key in "${!variables[@]}"; do
-
-			value="${variables[$key]}"
-			token="%{${key}}%"
-			replacedText="${replacedText//$token/$value}"
-
-		done
-
-		echo "$replacedText"
-
-	done < "$FILENAME" > "$FILENAME.temp"
-
-	mv "$FILENAME.temp" "$FILENAME"
+	# Exclude nunjucks files.
+	rm "$TEMP_PUBLIC_DIR"/*.njk
 
 }
 
@@ -113,11 +71,8 @@ if [ ! -d "dist" ]; then
 fi
 
 copyStaticFiles
-replaceStaticFileVars "$TEMP_DESTINATION_DIR/index.html"
-replaceStaticFileVars "$TEMP_PUBLIC_DIR/index.html"
-
-# Override previous files; start using nunjucks instead.
-nunjucks-to-html --baseDir docs/static --dest "$TEMP_PUBLIC_DIR"
+nunjucks-to-html --baseDir docs/static/non-versioned --dest "$TEMP_PUBLIC_DIR"
+nunjucks-to-html --baseDir docs/static/versioned --dest "$TEMP_PUBLIC_DIR/$TAG"
 
 if [ "$runJsdoc" = true ]; then
 
