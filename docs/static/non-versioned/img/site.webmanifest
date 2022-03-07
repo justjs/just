@@ -1,0 +1,19 @@
+{
+    "name": "JustJS",
+    "short_name": "JustJS",
+    "icons": [
+        {
+            "src": "/img/android-chrome-192x192.png?v=1.2.0",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/img/android-chrome-512x512.png?v=1.2.0",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "theme_color": "#641a5b",
+    "background_color": "#641a5b",
+    "display": "standalone"
+}
