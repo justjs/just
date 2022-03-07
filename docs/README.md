@@ -1,11 +1,14 @@
-# Docs
+# Documentation
 
-This directory includes the docs that will'be pushed to [this repo](justjs.github.com/justjs.github.io).
+This directory contains the source code of [justjs.github.io](https://justjs.github.io).
 
-Contents from [/assets](assets) will be added to [/public](public) and published on the live site.
+[The non-versioned directory](./non-versioned) contains the main structure of the website, except for the generated documentation.
 
-[index.html](index.html)
+[The versioned directory](./versioned) contains the structure for generated documentation of the next version. I.e: files under [/versioned](./versioned) will be added to `https://justjs.github.io/vx.x.x`, where `vx.x.x` is the next/released version.
 
-# See the docs live
+When a new version is released, the documentation is generated in the
+`public` directory, and pushed to [this repository](https://github.com/justjs/justjs.github.io).
 
-[Visit justjs.github.io](justjs.github.io).
+## See it live
+
+[Visit justjs.github.io](https://justjs.github.io).
