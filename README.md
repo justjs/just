@@ -15,6 +15,7 @@ Run ``` npm run dev ``` and wait for Jest to start.
 - Run ``` npm test ``` to run unit test on --ci mode.
 - Run ``` npm run test:unit ``` to run unit tests.
 - Run ``` npm run test:integration ``` to run integration tests.
+- Run ``` npm run test:e2e ``` to run integrity tests.
 - Run ``` npm run test:dev ``` to run jest on --watch & --coverage mode.
 - Run ``` npm run test:jest ``` to run jest.
 - Run ``` npm run test:coverage ``` to run ``` npm test ``` on --coverage mode.
