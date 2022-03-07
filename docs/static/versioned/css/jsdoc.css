@@ -2,10 +2,13 @@ a {
 	color: #54184d;
 }
 
-#logo img {
+#logo {
+	padding: 60px 0;
+}
+
+#logo a {
 	display: table;
 	margin: auto;
-	padding: 60px 0;
 }
 
 td.description {
