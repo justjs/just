@@ -27,13 +27,13 @@ module.exports = function (config) {
 
         // Set cors headers just in case we need them for [integrity] values.
         customHeaders: [{
-          'match': '/dist/',
-          'name': 'Access-Control-Allow-Origin',
-          'value': '*'
+            'match': '/dist/',
+            'name': 'Access-Control-Allow-Origin',
+            'value': '*'
         }],
 
         proxies: {
-          '/dist/': '/base/dist/'
+            '/dist/': '/base/dist/'
         },
 
         // list of files / patterns to exclude

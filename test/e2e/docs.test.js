@@ -1,3 +1,4 @@
+/* globals Promise */
 /**
  * This test checks if raw scripts shown in the docs
  * are fully working by inserting them on a page.
@@ -5,85 +6,91 @@
  * This makes sure [integrity] values are working, and [src]
  * values are set to a CDN url.
  */
-var el = function (selector) { return [].slice.call(document.querySelectorAll(selector)); };
-var rawScripts = el('#browser-setup code').map(function (element) { return element.textContent });
-var loadScript = function (rawScript) {
+(function () {
 
-	var container = document.body;
+    'use strict';
 
-	return new Promise(function (resolve, reject) {
+    var el = function (selector) { return [].slice.call(document.querySelectorAll(selector)); };
+    var rawScripts = el('#browser-setup code').map(function (element) { return element.textContent; });
+    var loadScript = function (rawScript) {
 
-		// Raw scripts won't be executed by using .innerHTML. That's why we create a Node instead.
-		var script = document.createElement('script');
-		var attributes = rawScript.match(/\w+="[^"]*"/g);
+        var container = document.body;
 
-		attributes.forEach(function (attribute) {
+        return new Promise(function (resolve, reject) {
 
-			var parts = attribute.split('=');
-			var name = parts[0];
-			var value = parts[1].slice(1, -1); // Remove quotes.
+            // Raw scripts won't be executed by using .innerHTML. That's why we create a Node instead.
+            var script = document.createElement('script');
+            var attributes = rawScript.match(/\w+="[^"]*"/g);
 
-			if (name === 'src') {
+            attributes.forEach(function (attribute) {
 
-				// Instead of making an external request, check the file locally.
-				value = value.replace(/https\:\/\/cdn\.jsdelivr\.net\/npm\/@just-js\/just@([^\/]+)\/(.+)/, '$2');
+                var parts = attribute.split('=');
+                var name = parts[0];
+                var value = parts[1].slice(1, -1); // Remove quotes.
 
-			}
+                if (name === 'src') {
 
-			this.setAttribute(name, value);
+                    // Instead of making an external request, check the file locally.
+                    value = value.replace(/https:\/\/cdn\.jsdelivr\.net\/npm\/@just-js\/just@([^/]+)\/(.+)/, '$2');
 
-		}, script);
+                }
 
-		script.onload = function () {
+                this.setAttribute(name, value);
 
-			if ('just' in window) { resolve(); }
-			else { reject(new Error('`just` is not defined.')); }
+            }, script);
 
-		};
-		script.onerror = function (e) { reject(e); };
+            script.onload = function () {
 
-		container.appendChild(script);
+                if ('just' in window) { resolve(); }
+                else { reject(new Error('`just` is not defined.')); }
 
-	});
+            };
+            script.onerror = function (e) { reject(e); };
 
-};
+            container.appendChild(script);
 
-window.karmaCustomEnv = {
-	'execute': function (karma) {
+        });
 
-		if (!rawScripts.length) {
+    };
 
-			return karma.result({
-				'success': false,
-				'suite': [],
-				'log': [new Error('Scripts are not being shown.')]
-			});
+    window.karmaCustomEnv = {
+        'execute': function (karma) {
 
-		}
+            if (!rawScripts.length) {
 
-		Promise
-			.all(rawScripts.map(loadScript))
-			.then(function () {
+                return karma.result({
+                    'success': false,
+                    'suite': [],
+                    'log': [new Error('Scripts are not being shown.')]
+                });
 
-				karma.result({
-					'success': true
-				});
+            }
 
-			})
-			.catch(function (e) {
+            Promise
+                .all(rawScripts.map(loadScript))
+                .then(function () {
 
-				karma.result({
-					'success': false,
-					'suite': [],
-					'log': [e]
-				});
+                    karma.result({
+                        'success': true
+                    });
 
-			})
-			.finally(function () {
+                })
+                .catch(function (e) {
 
-				karma.complete({});
+                    karma.result({
+                        'success': false,
+                        'suite': [],
+                        'log': [e]
+                    });
 
-			});
+                })
+                .finally(function () {
 
-	}
-};
+                    karma.complete({});
+
+                });
+
+        }
+    };
+
+})();

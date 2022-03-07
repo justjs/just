@@ -10,17 +10,19 @@ var development = NODE_ENV === 'development';
 
 function build () {
 
-    const {stdout} = spawnSync('npm run build', []);
+    var cmd = spawnSync('npm run build', []);
+    var stdout = cmd.stdout;
 
-    return `${stdout}`;
+    return stdout.toString();
 
 }
 
 function generateHash (filename) {
 
-    const {stdout} = spawnSync(path.resolve('bin/generate-sri'), [filename]);
+    var cmd = spawnSync(path.resolve('bin/generate-sri'), [filename]);
+    var stdout = cmd.stdout;
 
-    return `${stdout}`.trim();
+    return stdout.toString().trim();
 
 }
 
