@@ -15,7 +15,7 @@ module.exports = {
             'args': [SERVER_DIR],
         }]
     }, {
-        'pattern': ['docs/static', 'docs/tmpl', 'docs/static/**/.*.css'],
+        'pattern': ['docs/static/non-versioned'],
         'on': ['change'],
         'run': [{
             'cmd': 'bin/document',
@@ -23,7 +23,7 @@ module.exports = {
         }]
     }, {
         // @TODO Merge this into the previous task.
-        'pattern': ['src', 'bin', 'precise-watcher.config.js'],
+        'pattern': ['src', 'bin', 'precise-watcher.config.js', 'docs/static/versioned', 'docs/jsdoc.config.js'],
         'on': ['ready', 'change'],
         'run': [{
             'cmd': 'bin/document',
