@@ -1,4 +1,7 @@
-var version = process.env.npm_package_version;
+var nunjucksConfig = require('../nunjucks.config.js');
+var nunjucks = nunjucksConfig.render.context;
+var availableVersions = [nunjucks.version].concat(nunjucks.getAvailableVersions());
+var version = nunjucks.version;
 
 module.exports = {
 	'opts': {
@@ -25,8 +28,12 @@ module.exports = {
     				'<link rel="stylesheet" href="../css/jsdoc.css?v=' + version + '"/>'
     			],
     			'header': [
-    				'<div id="logo"><a href="/" title="JustJs"><img src="/img/logo-white-64x64.png?v=1.2.0" alt="JustJs" srcset="/img/logo-white-128x128.png?v=1.2.0 2x"/></a></div>'
-    			]
+    				'<div id="logo"><a href="/" title="JustJs"><img src="/img/logo-white-64x64.png?v=1.2.0" alt="JustJs" srcset="/img/logo-white-128x128.png?v=1.2.0 2x"/></a></div>',
+                    '<select id="versions">' + availableVersions.map(function (v) { return '<option value="' + v + '"' + (v === version ? ' selected' : '') + '>' + v + '</option>'; }).join('') + '</select>'
+    			],
+                'footer': [
+                    '<script src="../js/index.js" defer></script>'
+                ]
     		}
     	}
     }

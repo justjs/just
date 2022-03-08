@@ -11,6 +11,19 @@ a {
 	margin: auto;
 }
 
+#versions {
+	margin-left: auto;
+	display: table;
+	color: white;
+	background: rgba(255, 255, 255, .03);
+	padding: .5em;
+}
+
+#versions:hover,
+#versions:focus {
+	background: rgba(255, 255, 255, .05);
+}
+
 td.description {
 	min-width: 20em;
 }
