@@ -71,6 +71,15 @@ function buildScriptTag (filename, version) {
 
 }
 
+function getAvailableVersions () {
+
+    var cmd = spawnSync(path.resolve('bin/get-available-versions'), []);
+    var stdout = cmd.stdout;
+
+    return stdout.toString().trim().split(' ');
+
+}
+
 module.exports = {
     'render': {
         'context': {
@@ -83,7 +92,8 @@ module.exports = {
             ),
             'getIntegrity': getIntegrity,
             'getCDNUrl': getCDNUrl,
-            'buildScriptTag': buildScriptTag
+            'buildScriptTag': buildScriptTag,
+            'getAvailableVersions': getAvailableVersions
         }
     }
 };
