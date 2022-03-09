@@ -140,7 +140,8 @@ distributedFiles.forEach(function (filepathRelativeToSrc) {
         );
 
         copyExtraFiles(directory, require(tempFilepath));
-        fs.unlinkSync(tempFilepath);
+        try { fs.unlinkSync(tempFilepath); }
+        catch (notFound) { /* ignore */ }
         copyExtraFiles(directory, [filename]);
 
         fs.writeFileSync(out, (fs.readFileSync(out) + '').replace(/\.{2}\/lib\//g, './'), 'utf8');
