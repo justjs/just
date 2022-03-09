@@ -81,6 +81,12 @@ if [ "$runJsdoc" = true ]; then
 
 fi
 
-npm run doc:minify -- --input-dir "$TEMP_PUBLIC_DIR" --output-dir "$TEMP_PUBLIC_DIR"
+# Minify only during production or by setting MINIFY=true.
+if [ "$NODE_ENV" = "production" ] || [ "$MINIFY" = "true" ]; then
+
+	npm run doc:minify -- --input-dir "$TEMP_PUBLIC_DIR" --output-dir "$TEMP_PUBLIC_DIR"
+
+fi
+
 # Don't rename $PUBLIC_DIR. Doing so will make live-server's reloads stop working.
 cp -R "$TEMP_PUBLIC_DIR"/* "$PUBLIC_DIR"
