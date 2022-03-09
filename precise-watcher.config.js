@@ -22,8 +22,21 @@ module.exports = {
             'args': ['vx.x.x', '--run-jsdoc=false'],
         }]
     }, {
-        // @TODO Merge this into the previous task.
-        'pattern': ['src', 'bin', 'precise-watcher.config.js', 'docs/static/versioned', 'docs/jsdoc.config.js'],
+        'pattern': ['src'],
+        'on': ['ready', 'change'],
+        'run': [{
+            'cmd': 'node',
+            'args': ['src/build']
+        }, {
+            'cmd': 'npm',
+            'args': 'run style dist'.split(' ')
+        }, {
+            'cmd': 'bin/document',
+            'args': ['vx.x.x', '--run-jsdoc=true']
+        }]
+    }, {
+        // @TODO Merge this with the previous tasks.
+        'pattern': ['bin', 'precise-watcher.config.js', 'docs/static/versioned', 'docs/jsdoc.config.js'],
         'on': ['ready', 'change'],
         'run': [{
             'cmd': 'bin/document',
