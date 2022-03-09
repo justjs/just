@@ -4,6 +4,8 @@
 var fs = require('fs');
 var pkg = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
 var license = fs.readFileSync('./LICENSE', 'utf8');
+var projectUrl = pkg.repository.url.replace(/\.git$/, '');
+var currentYear = new Date().getUTCFullYear();
 
 module.exports = {
     'banner': (
@@ -13,7 +15,7 @@ module.exports = {
         ' */\n' +
         '\n' +
         '/**\n' +
-        ' * @preserve Copyright 2019-2021 ' + pkg.author.name + ' and contributors. See {@link ' + pkg.repository.url.replace(/\.git$/, '') + '/contributors}.\n' +
+        ' * @preserve © 2019-' + currentYear + ' {@link ' + pkg.author.url + '|' + pkg.author.name + '} and {@link ' + projectUrl + '/contributors|contributors}. {@link ' + projectUrl + '|' + pkg.title + '} is released under the {@link ' + projectUrl + '/blob/master/LICENSE|' + pkg.license + ' License}.\n' +
         ' * @file ' + pkg.title + ': ' + pkg.description + '\n' +
         ' * @version ' + pkg.version + '\n' +
         ' */'

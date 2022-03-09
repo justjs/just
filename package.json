@@ -1,8 +1,8 @@
 {
   "name": "@just-js/just",
-  "title": "Just js",
+  "title": "JustJs",
   "version": "1.0.0-dev",
-  "description": "The core for all your javascript proyects.",
+  "description": "Essential utilities for all your javascript proyects.",
   "main": "dist/server/index.js",
   "browser": "dist/browser/core.min.js",
   "homepage": "https://justjs.github.io",
