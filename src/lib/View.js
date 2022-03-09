@@ -40,16 +40,24 @@ var View = (function () {
     }
 
     /**
-     * Parse argument-like strings ("a, b, c") and return valid JSON values.
+     * Parse argument-like strings ("a, b, c") and return valid JSON values.<br>
      *
-     * It supports dot notation on each argument. It doesn't support functions
-     * as arguments or variables in objects (Eg. `fn({"a": var}, [var])`).
+     * <aside class='note'>
+     *   <h3>A few things to consider:</h3>
+     *   <ul>
+     *     <li>It supports dot notation on each argument. Eg: <code>a.b, b.c</code>.</li>
+     *     <li>It doesn't support functions as arguments. Eg: <code>fn(function () {})</code>.</li>
+     *     <li>It doesn't support variables in objects yet. Eg: <code>fn({"a": var}, [var])</code>).</li>
+     *   </ul>
+     *   <p>It uses JSON.parse internally.</p>
+     * </aside>
      *
-     * It uses JSON.parse internally.
-     *
+     * @typedef {function} just.View~parseArguments
+     * @param {string} string - Argument-like string without quotes, like "a, b, c".
+     * @param {object} data - Accessable data.
      * @example
      * parseArguments("a, b, c", {})
-     *
+     * @returns {Array} Arguments.
      */
     function parseArguments (string, data) {
 
@@ -110,6 +118,9 @@ var View = (function () {
      * Supports nested function arguments replacements and
      * reserved keywords. See {@link just.View~parseArguments}.
      *
+     * @typedef {function} just.View~access
+     * @param {string} keys - Accessable properties using the dot notation.
+     * @param {?object} data - Accessable data.
      * @example
      * access('a.b(c(d))', {
      *   'a': {'b': function (v) { return v + 'b'; }},
@@ -126,8 +137,8 @@ var View = (function () {
 
         /**
          * The way it works is by JSON.parsing things within parenthesis,
-         * store each result in an array (`allArgsSorted`),
-         * and removing parenthesis from the final string (`keysNoArgs`).
+         * store each result in an array (<var>allArgsSorted</var>),
+         * and removing parenthesis from the final string (<var>keysNoArgs</var>).
          *
          * Then, once we removed all parenthesis, we access
          * each property in the final string (using the dot notation)
@@ -201,48 +212,125 @@ var View = (function () {
      * @class
      * @memberof just
      *
-     * @param {?object} options
-     * @param {?string} options.id
-     * @param {?Element} options.element
-     * @param {?object} options.data
-     * @param {?string|?object} options.attributes
+     * @param {?object} options - Any {@link just.View} property.
+     * @param {just.View#id} options.id - Use either this or <var>element</var>.
+     * @param {just.View#element} options.element - Use either this or <var>id</var>.
+     * @param {just.View#data} options.data - Data available on all updates for this view.
+     * @param {?string|just.View#attributes} [options.attributes=data-var] - <span id='~options~attributes'></span>Set it to a string to use it as a prefix or set it to an object with {@link just.View#attributes|this properties}.
+     *
+     * @example <caption>Generate elements based on one element.</caption>
+     * <html>
+     * <body>
+     *   <ol>
+     *     <li
+     *       id='item'
+     *       class='template'
+     *       data-var-for='item in items as data-item'
+     *       data-item-if='visible'
+     *       hidden>
+     *       <span
+     *         data-item='${loop.index}. ${capitalize(item.text)} is visible!'
+     *         data-item-attr='{
+     *           "title": "Updated: ${updated}."
+     *         }'></span>
+     *     </li>
+     *   </ol>
+     *   <script src='/just.js'></script>
+     *   <script>
+     *     var view = new just.View({
+     *       id: 'item',
+     *       data: {
+     *         capitalize: function (string) { return string[0].toUpperCase() + string.slice(1).toLowerCase(); },
+     *         items: [{
+     *           visible: true,
+     *           text: 'first item'
+     *         }, {
+     *           visible: false,
+     *           text: 'second item'
+     *         }, {
+     *           visible: true,
+     *           text: 'third item'
+     *         }]
+     *       }
+     *     });
+     *
+     *     // Do some work...
+     *
+     *     view.refresh({
+     *       updated: new Date().toString()
+     *     });
+     *   </script>
+     * </body>
+     * </html>
      */
     function View (options) {
 
-        var props = defaults(options, {
-            'id': null,
-            'element': null,
-            'data': {},
-            'attributes': null
-        }, {'ignoreNull': true});
-        var attributes = props.attributes;
+        var attributes = Object(options).attributes;
         var attributesPrefix = (typeof attributes === 'string'
             ? attributes
             : 'data-var'
         );
-        var attributesObj = Object.assign({
-            'var': attributesPrefix,
-            'html': attributesPrefix + '-html',
-            'attr': attributesPrefix + '-attr',
-            'if': attributesPrefix + '-if',
-            'alias': attributesPrefix + '-as',
-            'for': attributesPrefix + '-for',
-            'on': attributesPrefix + '-on'
-        }, (typeof attributes === 'object'
-            ? attributes
-            : {}
-        ));
+        var props = defaults(options, /** @lends just.View# */{
+            /**
+             * Id for the template element.
+             * @type {?string}
+             */
+            'id': null,
+            /**
+             * The template element.
+             * @type {?Node}
+             */
+            'element': null,
+            /**
+             * Data for this instance. Available on all updates.
+             * @type {?object}
+             */
+            'data': {},
+            /**
+             * Updatable attributes. I.e: attributes that will be
+             * updated when {@link just.View#update} gets called.
+             *
+             * <aside class='note'>
+             *   <p><code>${prefix}</code> is the <a href='#~options~attributes'><var>attributes</var> argument's string</a> or "data-var".</p>
+             * </note>
+             *
+             * @type {?object}
+             * @property {string} [var=${prefix}] - The attribute for text replacements.
+             * @property {string} [html=${prefix}-html] - The attribute for html replacements.
+             * @property {string} [attr=${prefix}-attr] - The attribute for attribute replacements.
+             * @property {string} [if=${prefix}-if] - The attribute for conditional/if replacements.
+             * @property {string} [as=${prefix}-as] - The attribute for alias replacements. Scoping is not supported yet.
+             * @property {string} [for=${prefix}-for] - The attribute for loops replacements. Only arrays are supported now.
+             * @property {string} [on=${prefix}-on] - The attribute for listener replacements.
+             */
+            'attributes': {
+                'var': attributesPrefix,
+                'html': attributesPrefix + '-html',
+                'attr': attributesPrefix + '-attr',
+                'if': attributesPrefix + '-if',
+                'alias': attributesPrefix + '-as',
+                'for': attributesPrefix + '-for',
+                'on': attributesPrefix + '-on'
+            }
+        }, {'ignoreNull': true});
 
-        Object.assign(this, props, {
-            'attributes': attributesObj,
+        Object.assign(this, props, /** @lends just.View# */{
+            /**
+             * Previous data set after a {@link just.View#update}.
+             * @type {?object}
+             */
             'previousData': null
         });
 
+        /**
+         * Original properties for this instance.
+         * @type {?object}
+         */
         this.original = Object.assign({}, this);
 
     }
 
-    defineProperties(View, {
+    defineProperties(View, /** @lends just.View */{
         /**
          * Default attribute to query elements in {@link just.View.init}.
          *
@@ -250,37 +338,114 @@ var View = (function () {
          * @readonly
          */
         'INIT_ATTRIBUTE_NAME': 'data-just-View',
+        /**
+         * Data available for all instances of {@link just.View}.
+         *
+         * @type {object}
+         * @readonly
+         */
         'globals': {},
         /**
          * Find elements with the {@link just.View.INIT_ATTRIBUTE_NAME} attribute,
-         * parse its value as json, and call {@link just.View} with those options.
+         * parse its value as json, and call {@link just.View} with those options.<br>
          *
-         * Options support (nested) data replacement, using the `${}` sintax.
-         * E.g: You can use {"data": {"${key}": ["${get.value(0)}"]}}
-         * to replace '${key}', and '${get.value(0)}' with your own values
-         * defined in `View.globals` and `options.listeners`. You can also
-         * use `this` to replace it with the current element. E.g: "${this.id}".
-         *
-         * Please note that, in current versions, you don't need to enclose
-         * `${}` within quotes to replace variables, since that's the only
-         * way you can replace them on stringified objects. I.e:
-         * - {${var}: [${var}]} is valid. (Equivalent to {[var]: var}).
-         * - {"${var}": ["${var}"]} is also valid, but different. (Equivalent to {[`${var}`]: `${var}`}).
-         * - {var: [var]} is invalid (for now), and will throw an error.
-         * Since replacements are sometimes required, you can use
-         * that sintax for now, but in the future, that sintax
-         * is likely to be removed.
-         *
-         * Also consider that default values for undefined replacements are `null`:
-         *
-         *  E.g: ["one", "two", ${three}]. If `three` is undefined, the
-         * result will be ["one", "two", null].
-         *
-         * E.g: "Hello ${world}!". If `world` is undefined, the result
-         * will be "Hello null!".
+         * <aside class='note'>
+         *   <h3>A few things to consider:</h3>
+         *   <ul>
+         *     <li>
+         *       <p><var>options</var> support (nested) data replacement, using the <code>${}</code> sintax:</p>
+         *       <ul>
+         *         <li>
+         *           <p>You can use <code>{"data": {"${key}": ["${get.value(0)}"]}}</code>
+         *           to replace <code>${key}</code>, and <code>${get.value(0)}</code> with your own values
+         *           defined in <var>View.globals</var> and <var>options.listeners</var>.</p>
+         *         </li>
+         *         <li>
+         *           <p>You can use <var>this</var> to replace it with the current element. E.g: <code>${this.id}</code>.</p>
+         *         </li>
+         *         <li>
+         *           <p>In current versions, you don't need to enclose <code>${}</code>
+         *           in quotes to replace variables, since that's the only
+         *           way you can replace them on stringified objects. I.e:</p>
+         *           <ul>
+         *             <li><code>{${var}: [${var}]}</code> is valid. (Equivalent to <code>{[var]: var})</code>.</li>
+         *             <li><code>{"${var}": ["${var}"]}</code> is also valid, but different. (Equivalent to <code>{[`${var}`]: `${var}`}</code>).</li>
+         *             <li><code>{var: [var]}</code> is invalid (for now), and will throw an error.</li>
+         *           </ul>
+         *           <p><em>Since replacements are sometimes required, you can use
+         *           that sintax for now, but in the future, that sintax
+         *           is likely to be removed.</em></p>
+         *         </li>
+         *       </ul>
+         *     </li>
+         *     <li>
+         *       <p>Default values for undefined replacements are <code>null</code>:</p>
+         *       <p>E.g: <code>["one", "two", ${three}]</code>. If <var>three</var> is undefined, the
+         *       result will be <code>["one", "two", null]</code>.</p>
+         *       <p>E.g: <code>"Hello ${world}!"</code>. If <var>world</var> is undefined, the result
+         *       will be <code>"Hello null!"</code>.</p>
+         *     </li>
+         *   </ul>
+         * </aside>
          *
          * @param {object} options
          * @param {object} options.listeners - Listeners for the {@link View#attachListeners} call.
+         * @example <caption>Generate elements based on one element using minimum javascript.</caption>
+         * <html>
+         * <body
+         *     data-just-View='{"element": ${this}}'
+         *     data-var-on='{"init": "onInit"}'>
+         *   <ol>
+         *     <li
+         *       id='item'
+         *       class='template'
+         *       data-var-for='item in items as data-item'
+         *       data-item-if='visible'
+         *       data-just-View='{
+         *         "element": ${this},
+         *         "data": {
+         *           "items": [{
+         *             "visible": true,
+         *             "text": "first item"
+         *           }, {
+         *             "visible": false,
+         *             "text": "second item"
+         *           }, {
+         *             "visible": true,
+         *             "text": "third item"
+         *           }]
+         *         }
+         *       }'
+         *       hidden>
+         *       <span
+         *         data-item='${loop.index}. ${capitalize(item.text)} is visible!'
+         *         data-item-attr='{
+         *           "title": "Updated: ${updated}."
+         *         }'></span>
+         *     </li>
+         *   </ol>
+         *   <script src='/just.js'></script>
+         *   <script>
+         *     just.View.init({
+         *       listeners: {
+         *         onInit: function (e) {
+         *           // This will refresh all [data-var] attributes.
+         *           this.view.refresh(e.detail);
+         *         }
+         *       }
+         *     });
+         *
+         *     // Trigger the "init" event:
+         *     document.body.dispatchEvent(
+         *       new CustomEvent('init', {
+         *         detail: {
+         *           updated: new Date().toString()
+         *         }
+         *       })
+         *     );
+         *   </script>
+         * </body>
+         * </html>
          * @returns {View[]} The created views.
          */
         'init': function (options) {
@@ -313,13 +478,13 @@ var View = (function () {
          * Parse an attribute as a json and set keys as
          * event names/types and values as listeners.
          *
-         * Values are {@link just.View~access()|accessable} properties,
+         * Values are {@link just.View~access|accessable} properties
          * that require a function as final value.
          *
          * @param {Node} element - The target element.
          * @param {!object} data - Data for the accessable properties, containing the listeners.
          * @param {!string} attributeName - Name of the attribute that contains the parseable json.
-         * @returns {!object} The attached listeners, with eventTypes as keys.
+         * @returns {!object} The attached listeners, with <var>event.type</var>s as keys.
          */
         'attachListeners': function attachListeners (element, data, attributeName) {
 
@@ -355,7 +520,7 @@ var View = (function () {
 
         },
         /**
-         * Access to an object and return its value-
+         * Access to an object and return its value.
          *
          * @param {?string} condititional - Expected keys splitted by ".".
          *        Use "!" to negate a expression.
@@ -418,25 +583,29 @@ var View = (function () {
 
         },
         /**
-         * Replace placeholders (${}, eg. "${deep.deeper}") within a string.
+         * Replace placeholders (<code>${}</code>, eg. <code>${deep.deeper}</code>) within a string.<br>
          *
-         * It supports:
-         * - Functions (1): ${deep.deeper(1, "", myVar, ...)
-         * - String#methods: ${do.trim().replace('', '')}).
-         * - Deep replacements: ${a.b.c} or ${a.b().c()}
-         *
-         * (1) We don't currently support functions nor ES6+ things as arguments
-         * (like Symbols or all that stuff).
+         * <aside class='note'>
+         *   <h3>A few things to consider:</h3>
+         *   <p>The following is supported:</p>
+         *   <ul>
+         *     <li>Functions<sup><a href='#.replaceVars[1]'>[1]</a></sup>: <code>${deep.deeper(1, "", myVar, ...)}</code></li>
+         *     <li>String methods: <code>${do.trim().replace('', '')}</code>.</li>
+         *     <li>Deep replacements: <code>${a.b.c}</code> or <code>${a.b().c()}</code></li>
+         *   </ul>
+         *   <footer><p><span id='.replaceVars[1]'>[1]</span>: Neither functions nor ES6+ things as arguments
+         *   (like Symbols or all that stuff) are supported yet.</p></footer>
+         * </aside>
          *
          * @param {?string|?object} value - Some text or an object.
          *        If an object is given, it will {@link just.View.resolveConditionals} first,
-         *        then replace ${placeholders} within the accessed value.
+         *        then replace <code>${placeholders}</code> within the accessed value.
          * @param {?object} data - An object containing the data to be replaced.
          * @param {*} defaultValue - By default, it skips replacements if some accessed value is undefined.
          *                           Any other value will be stringified (returned to the String#replace function).
          * @example <caption>Using a string</caption>
          * View.replaceVars('${splitted.property}!', {
-         *     'splitted': {'property': 'key'}
+         *     'splitted': {'property': 'hey'}
          * }); // > "hey!"
          *
          * @example <caption>Using an object</caption>
@@ -446,7 +615,7 @@ var View = (function () {
          * }, {'b': 'me (b)'}); // > "Show me (b)"
          *
          * @example <caption>Inexistent property</caption>
-         * View.replaceVars('Don't replace ${me}!') // "Don't replace ${me}!"
+         * View.replaceVars("Don't replace ${me}!") // "Don't replace ${me}!"
          *
          * @example <caption>Setting a default value for an inexistent property</caption>
          * View.replaceVars('Replace ${me}', null, 'who?') // "Replace who?"
@@ -540,7 +709,7 @@ var View = (function () {
         },
         /**
          * Update the element's markup using {@link just.View.updateVars}
-         * and element.innerHTML.
+         * and <code>element.innerHTML</code>.
          *
          * @param {Element} element - The target element.
          * @param {?object} data - Some object.
@@ -654,12 +823,14 @@ var View = (function () {
         },
         /**
          * Expression in the format:
-         * "<currentItem> in <accessed.array>[ as <updatableAttribute>]".
+         * <code>"currentItem in accessed.array[ as updatableAttribute]"</code>.
          *
-         * Where text enclosed in brackets is optional, and:
-         * `<currentItem>` is the property containing the current iteration data.
-         * `<accessed.array>` is a property to be {@link just.View.access|accessed} that contains an array as value.
-         * `<updatableAttribute>` is the name of the attribute that will be updated afterwards by {@link View#update}.
+         * <p>Where text enclosed in brackets is optional, and:</p>
+         * <ul>
+         *   <li><var>currentItem</var> is the property containing the current iteration data.
+         *   <li><var>accessed.array</var> is a property to be {@link just.View.access|accessed} that contains an array as value.
+         *   <li><var>updatableAttribute</var> is the name of the attribute that will be updated afterwards by {@link View#update}.
+         * </ul>
          *
          * @example
          * "item in some.items"
@@ -674,25 +845,28 @@ var View = (function () {
         /**
          * Loop data. Contains loop data for the current iteration.
          *
-         * @typedef {!{
-         *   number: index,
-         *   array: array,
-         *   number: length,
-         *   number: left
-         * }} just.View.updateLoops_loopData
+         * @typedef {!object} just.View.updateLoops_loopData
+         * @property {number} index - The current index.
+         * @property {array} array - The array.
+         * @property {number} length - The array's length.
+         * @property {number} left - Left elements' count.
          */
 
         /**
          * Iterate over an array to create multiple elements
-         * based on a given template (`element`),
-         * append them in order, and update each generated element.
+         * based on a given template (<var>element</var>),
+         * append them in order, and update each generated element.<br>
          *
-         * New elements will contain the template's id as a class,
-         * the "template" class will be removed, and the "hidden" attribute
-         * will be removed too.
-         *
-         * Loop data is exposed under the "loop" property on the updatable elements.
-         * See {@link just.View.updateLoops_loopData}.
+         * <aside class='note'>
+         *   <h3>A few things to consider:</h3>
+         *   <ul>
+         *     <li>New elements will contain the <var>element</var>'s id as a class,
+         *     the "template" class will be removed, and the "hidden" attribute
+         *     will be removed too.</li>
+         *     <li>Loop data is exposed under the <var>loop</var> property on the updatable elements.
+         *     See {@link just.View.updateLoops_loopData}.</li>
+         *   </ul>
+         * </aside>
          *
          * @param {Node} element - The target element.
          * @param {Object} data - The data.
@@ -801,7 +975,7 @@ var View = (function () {
 
     });
 
-    defineProperties(View.prototype, {
+    defineProperties(View.prototype, /** @lends just.View# */{
 
         /**
          * @returns {@link just.View#element} or query element by {@link just.View#id}.
@@ -813,7 +987,7 @@ var View = (function () {
         },
         /**
          * Merges all available data into one object in the following
-         * order: {@link just.View.globals}, {@link just.View#data}, `currentData`, and {@link just.View.getAliases|aliases}.
+         * order: {@link just.View.globals}, {@link just.View#data}, <var>currentData</var>, and {@link just.View.getAliases|aliases}.
          *
          * @param {!object} currentData - It merges this object after globals, and locals, and before setting aliases.
          * @returns {!object}
@@ -947,7 +1121,7 @@ var View = (function () {
         },
         /**
          * Update the view using {@link just.View#previousData} (set
-         * on {@link just.View#update|update}) and `newData`.
+         * on {@link just.View#update|update}) and <var>newData</var>.
          *
          * Useful to update the view with previous values or
          * update only some properties, after a normal {@link just.View#update|update}.
@@ -967,13 +1141,13 @@ var View = (function () {
 
         },
         /**
-         * Insert just.View#element at the given <var>position</var>
+         * Insert {@link just.View#element} at the given <var>position</var>
          * into the given <var>container</var>.
          *
-         * @param {string|object<{before: Node}>} position
-         *        - "before" will insert the element before the first child.
-         *        - {"before": Node} will insert the element before the given Node.
-         *        - else (other values): will use appendChild() by default.
+         * @param {string|object<{before: Node}>} position -
+         *        - <code>"before"</code> will insert the element before the first child.
+         *        - <code>{"before": Node}</code> will insert the element before the given Node.
+         *        - else (other values): will use <code>appendChild()</code> by default.
          * @param {?Node} container - The Node that will contain the element.
          *
          * @throws {TypeError} if a container can't be guessed.
@@ -1036,7 +1210,7 @@ var View = (function () {
         /**
          * Call {@link just.View.attachListeners}.
          *
-         * @param {?object} listeners - An object in the format: `{eventType: fn}`.
+         * @param {?object} listeners - An object in the format: <code>{eventType: fn}</code>.
          * @chainable
          */
         'attachListeners': function attachListeners (listeners) {
