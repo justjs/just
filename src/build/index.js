@@ -6,7 +6,8 @@ var fs = require('fs');
 var requirejs = require('requirejs');
 var gzipSize = require('gzip-size');
 var UglifyJS = require('uglify-js');
-var rjsConfig = require('./rjs.config.js');
+// Make sure to avoid overriding.
+var rjsConfig = Object.assign({}, require('./rjs.config.js'));
 var uglifyJsConfig = require('./uglifyjs.config.js');
 var distributedFiles = [
     'browser/core.js',
@@ -74,10 +75,19 @@ var minify = function uglify (filename, out) {
 };
 var bundle = function concatenate (directory, filename) {
 
+    var bundleName = filename.replace(/\.js$/i, '');
+    var fileDescription = {
+        'core': 'Core utilities for browser environments.',
+        'just': 'Full suite for browser environments. Includes core utilities, {@link just.View} & {@link just.Router}.'
+    }[bundleName];
     var fileConfig = Object.assign({}, rjsConfig, {
-        'name': filename.replace(/\.js$/i, ''),
+        'name': bundleName,
         'out': path.join('./dist', directory, filename),
-        'baseUrl': path.join('./src', directory)
+        'baseUrl': path.join('./src', directory),
+        // Set a custom description for each distributed file.
+        'wrap': Object.assign({}, rjsConfig.wrap, {
+            'start': rjsConfig.wrap.start.replace(/@file .+/, '@file ' + fileDescription)
+        })
     });
 
     requirejs.optimize(fileConfig, function () { minify(fileConfig.out); });
