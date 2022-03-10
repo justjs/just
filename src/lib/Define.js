@@ -263,7 +263,7 @@ var Define = (function () {
      * < /html>
      *
      * // /js/main.js
-     * just.configure({
+     * just.Define.configure({
      *    'globals': {
      *        // Set justJs to window.just
      *        'justJs': function () { return just; }
@@ -436,31 +436,31 @@ var Define = (function () {
          *
          * @example
          * // js/b.js
-         * Define('b', 1); // or: Define('js/b.js', 1);
+         * just.Define('b', 1); // or: just.Define('js/b.js', 1);
          *
          * // index.js
-         * Define.urls['b'] = 'js/b.js';
-         * Define('a', ['b'], function (b) {
+         * just.Define.urls['b'] = 'js/b.js';
+         * just.Define('a', ['b'], function (b) {
          *     // b === 1; > true
          * });
          *
          * @example <caption>Using multiple ids with the same url</caption>
          * // js/index.js
-         * Define('foo', 1);
-         * Define('bar', 1);
+         * just.Define('foo', 1);
+         * just.Define('bar', 1);
          *
          * // index.js
-         * Object.assign(Define.urls, {
+         * Object.assign(just.Define.urls, {
          *     'foo': 'js/index.js',
          *     'bar': 'js/index.js'
          * });
          *
-         * Define('foo-bar', ['foo', 'bar'], function () {
+         * just.Define('foo-bar', ['foo', 'bar'], function () {
          *     // Will load js/index.js once.
          * });
          *
          * @example <caption>Since v1.0.0-rc.23: Adding custom attributes to the loaded element.</caption>
-         * Object.assign(Define.urls, {
+         * Object.assign(just.Define.urls, {
          *     'id': {
          *         'src': 'https://some.cdn.com',
          *         'integrity': 'sha512-...',
@@ -469,19 +469,19 @@ var Define = (function () {
          *     }
          * });
          *
-         * Define(['id'], function () {
+         * just.Define(['id'], function () {
          *     // Will load a <script> with the given attributes ("integrity", "crossorigin", ...).
          * });
          *
          * @example <caption>Since v1.0.0-rc.23: Load a custom element.</caption>
-         * Object.assign(Define.urls, {
+         * Object.assign(just.Define.urls, {
          *     'id': {
          *         'tagName': 'iframe',
          *         'src': 'https://example.org'
          *     }
          * });
          *
-         * Define(['id'], function () {
+         * just.Define(['id'], function () {
          *     // Will load an <iframe> with the given attributes.
          * });
          *
@@ -504,8 +504,8 @@ var Define = (function () {
          * </aside>
          *
          * @example
-         * Define.nonScripts['/css/index.css'] = function () {};
-         * Define('load css', ['/css/index.css'], function (css) {
+         * just.Define.nonScripts['/css/index.css'] = function () {};
+         * just.Define('load css', ['/css/index.css'], function (css) {
          *     // by default, `css` is an HTMLElement (the link element that loaded the file).
          *     // but for now, `css` is a function since the id wasn't defined in Define.urls
          * });
@@ -537,8 +537,8 @@ var Define = (function () {
          *
          * @example
          * // index.js
-         * Define.globals['just'] = 1;
-         * Define('index', ['just'], function (just) {
+         * just.Define.globals['just'] = 1;
+         * just.Define('index', ['just'], function (just) {
          *     // just === 1; > true
          * });
          *
@@ -547,9 +547,9 @@ var Define = (function () {
          * window.just = {Define: 1};
          *
          * // main.js
-         * Define.globals['JustJs'] = function () { return just; };
-         * Define.urls['JustJs'] = 'https://some.cdn/js/just.js';
-         * Define('main', ['JustJs'], function (just) {
+         * just.Define.globals['JustJs'] = function () { return just; };
+         * just.Define.urls['JustJs'] = 'https://some.cdn/js/just.js';
+         * just.Define('main', ['JustJs'], function (just) {
          *     // just === {Define: 1};
          * });
          *
@@ -562,10 +562,10 @@ var Define = (function () {
          *   data-just-Define='{"JustJs": "[src]"}' async></script>
          *
          * // main.js
-         * if ('just' in window) { Define('JustJs', just); }
-         * else { Define.globals['JustJs'] = function () { return just; }; }
+         * if ('just' in window) { just.Define('JustJs', just); }
+         * else { just.Define.globals['JustJs'] = function () { return just; }; }
          *
-         * Define(['JustJs'], function (just) {
+         * just.Define(['JustJs'], function (just) {
          *     // just === {Define: 1};
          * });
          *
@@ -594,7 +594,7 @@ var Define = (function () {
          * Configure any writable option in {@link just.Define} using an object.
          *
          * @example
-         * Define.configure({
+         * just.Define.configure({
          *     'urls': {}, // Same as Define.urls = {}
          *     'handleError': function () {}, // Same as Define.handleError = function () {}
          *     'load': 1 // Same as Define.load = 1 > throws Define.load is read-only.
