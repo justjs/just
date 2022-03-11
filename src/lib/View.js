@@ -823,13 +823,17 @@ var View = (function () {
         },
         /**
          * Expression in the format:
-         * <code>"currentItem in accessed.array[ as updatableAttribute]"</code>.
+         * <code>"currentItem in accessed.array[ as updatableAttribute][,[ cache=true]]"</code>.
          *
          * <p>Where text enclosed in brackets is optional, and:</p>
          * <ul>
          *   <li><var>currentItem</var> is the property containing the current iteration data.
          *   <li><var>accessed.array</var> is a property to be {@link just.View.access|accessed} that contains an array as value.
          *   <li><var>updatableAttribute</var> is the name of the attribute that will be updated afterwards by {@link View#update}.
+         *   <li>Setting <var>cache</var> will update existing elements, using each element as template. By default, this is <var>true</var>
+         *   because it improves performance, but it also means that new modifications to each element will be replicated. If you set this
+         *   to <var>false</var>, all generated elements will be removed before updating them, causing new modifications to be removed,
+         *   but also hurting performance.
          * </ul>
          *
          * @example
@@ -839,6 +843,10 @@ var View = (function () {
          * @example
          * "item in some.items as data-item"
          * // Will iterate over `some.items`, set `item` to each element, and make `item` available under the [data-item] attribute only.
+         *
+         * @example
+         * "item in some.items as data-item, cache=false"
+         * // Will iterate over `some.items`, set `item` to each element, make `item` available under the [data-item] attribute only, and recreate each element instead of updating it.
          *
          * @typedef {string} just.View.updateLoops_expression
          */
@@ -876,11 +884,30 @@ var View = (function () {
          */
         'updateLoops': function updateLoops (element, data, attributeName) {
 
-            var attribute = element.getAttribute(attributeName);
+            var attributeValue = element.getAttribute(attributeName);
+            var attributeParts = (attributeValue || '').split(/\s*,\s*/);
+            var expression = attributeParts[0];
+            var opts = (attributeParts[1] || '').split(' ').reduce(function (options, option) {
+
+                var parts = option.split('=');
+                var key = parts[0];
+                var value = parts[1];
+
+                options[key] = (/false/.test(value)
+                    ? false
+                    : true
+                );
+
+                return options;
+
+            }, {
+                'cache': true // Cache by default.
+            });
+            var cache = opts.cache;
             var objectProperty, varName, newAttributeName, object;
 
             // var in data.property as attribute
-            if (/(\S+)\s+in\s+(\S+)(?:\s+as\s+(\S+))?/i.test(attribute)) {
+            if (/(\S+)\s+in\s+(\S+)(?:\s+as\s+(\S+))?/i.test(expression)) {
 
                 varName = RegExp.$1;
                 objectProperty = RegExp.$2;
@@ -919,6 +946,21 @@ var View = (function () {
                         }, []);
                         var cachedView, view, child;
 
+                        while (cache
+                            // Remove extra elements to match array.length.
+                            ? cachedViews.length > arrayLength
+                            // Remove all elements to recreate them.
+                            : cachedViews.length > 0
+                        ) {
+
+                            cachedView = cachedViews.pop();
+                            child = cachedView.element;
+
+                            try { child.parentNode.removeChild(child); }
+                            catch (e) { console.error(e); }
+
+                        }
+
                         // Create necessary elements to match array.length.
                         while (cachedViews.length < arrayLength) {
 
@@ -933,17 +975,6 @@ var View = (function () {
                             // Cache.
                             view.element.view = view;
                             cachedViews.push(view);
-
-                        }
-
-                        // Remove extra elements to match array.length.
-                        while (cachedViews.length > arrayLength) {
-
-                            cachedView = cachedViews.pop();
-                            child = cachedView.element;
-
-                            try { child.parentNode.removeChild(child); }
-                            catch (e) { console.error(e); }
 
                         }
 

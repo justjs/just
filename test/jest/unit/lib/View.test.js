@@ -1039,6 +1039,44 @@ describe('@lib/View.js', function () {
 
         });
 
+        test.each([
+            ['Should update elements instead of recreating them.', '', true],
+            ['Should update elements instead of recreating them.', 'cache=true', true],
+            ['Should recreate elements instead of caching them.', 'cache=false', false]
+        ])('%s', function (description, options, expected) {
+
+            var container = document.body;
+            var attributeName = 'data-var-for';
+            var data = {'items': [1], 'fn': jest.fn()};
+            var template, someElement;
+
+            container.innerHTML = [
+                '<span id=\'element\' class=\'template\' data-var-for=\'item in items, ' + options + '\' hidden>',
+                '<span data-var-for-item=\'${fn(this)}\'></span>',
+                '</span>'
+            ].join('');
+            template = container.querySelector('#element');
+
+            // Generate items.
+            View.updateLoops(template, data, attributeName);
+
+            // Make a modification on any generated item.
+            someElement = container.querySelector('.element');
+            someElement.setAttribute('data-new-attribute', true);
+
+            // Update again.
+            View.updateLoops(template, data, attributeName);
+
+            /**
+             * If cache=false, modifications must be kept
+             * because the source is the current element.
+             * Else, modifications must be ignored
+             * because the element was recreated.
+             */
+            expect(someElement.isConnected).toBe(expected);
+
+        });
+
     });
 
     describe('.attachListeners()', function () {
