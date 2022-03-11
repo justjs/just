@@ -207,7 +207,15 @@ var View = (function () {
     }
 
     /**
-     * Templarize elements easily.
+     * Templarize elements easily.<br>
+     *
+     * <aside class='note'>
+     *   <h3>Be careful:</h3>
+     *   <p>Use <var>just.View</var> carefully and/or with a
+     *   strong <a href='https://content-security-policy.com' rel='noopener noreferrer' target='_blank'>CSP policy</a>,
+     *   as it replicates DOM elements found on each update. If templates are modified
+     *   after writing them, all clones will suffer from those modifications.</p>
+     * </aside>
      *
      * @class
      * @memberof just
