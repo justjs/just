@@ -1,7 +1,7 @@
 /**
  * Same as <var>Array.prototype.reduce</var>, but for
  * the own enumerable properties of <var>object</var>,
- * and with an extra param (<var>thisArg</var>).
+ * and with an extra param (<var>thisArg</var>).<br>
  *
  * <aside class='note'>
  *   <h3>A few things to consider:</h3>
@@ -18,6 +18,7 @@
  * @returns <var>accumulator</var>
  * @example <caption>Get object keys (when Object.keys is unavailable).</caption>
  * just.reduce({'a': 1}, function (keys, value, key, object) { return keys.concat(key); }, []);
+ * // > ['a']
  */
 function reduce (object, fn, accumulator, thisArg) {
 

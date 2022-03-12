@@ -1,7 +1,7 @@
 var hasOwnProperty = Object.prototype.hasOwnProperty;
 
 /**
- * Same as <var>Object.assign</var>, but for ES5 environments.
+ * Same as <var>Object.assign</var>, but for ES5 environments.<br>
  *
  * <aside class='note'>
  *   <h3>A few things to consider</h3>
