@@ -67,4 +67,17 @@ describe('@lib/assign', function () {
 
     });
 
+    it('Should throw on non-writable properties.', function () {
+
+        var target = Object.defineProperty({}, 'a', {
+            'value': 1,
+            'writable': false,
+            'enumerable': true
+        });
+        var source = {'a': 2};
+
+        expect(function () { assign(target, source); }).toThrow();
+
+    });
+
 });
