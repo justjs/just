@@ -34,6 +34,7 @@ test.each([
 
         expect(window.just).toEqual(expect.objectContaining({
             'assign': expect.any(Function),
+            'reduce': expect.any(Function),
             'deprecate': expect.any(Function),
             'access': expect.any(Function),
             'prop': expect.any(Function),

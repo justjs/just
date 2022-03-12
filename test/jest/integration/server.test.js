@@ -4,6 +4,7 @@ describe('Server', function () {
 
     var members = [
         ['core', expect.any(Object)],
+        ['reduce', expect.any(Function)],
         ['assign', expect.any(Function)],
         ['deprecate', expect.any(Function)],
         ['access', expect.any(Function)],
