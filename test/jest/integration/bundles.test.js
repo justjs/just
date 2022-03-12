@@ -62,4 +62,12 @@ describe('Bundles', function () {
 
     });
 
+    test.each(bundleFilepathsRelativeToRoot)('Should use strict mode at the top.', function (filepath) {
+
+        var file = fs.readFileSync(filepath) + '';
+
+        expect(file).toMatch(/function\s*\(\)\s*{\s*["']use strict['"];/);
+
+    });
+
 });

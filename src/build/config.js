@@ -31,7 +31,7 @@ module.exports = {
             'else { ' +
                 'this.just = fn(); ' +
             '} ' +
-        '}).call(this, function () { ',
+        '}).call(this, function () { "use strict";\n',
         'end': 'return just; });'
     },
     'metadata': 'set(\'version\', \'' + pkg.version + '\'); set(\'just\', just);'
