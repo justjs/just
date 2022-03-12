@@ -54,11 +54,11 @@ describe('Bundles', function () {
 
     });
 
-    test.each(bundleFilepathsRelativeToRoot)('Should not use Object.assign.', function (filepath) {
+    test.each(bundleFilepathsRelativeToRoot)('Should not use Object.{assign|keys}.', function (filepath) {
 
         var file = fs.readFileSync(filepath) + '';
 
-        expect(file).not.toMatch(/Object\.assign\(/);
+        expect(file).not.toMatch(/Object\.(?:assign|keys)\(/);
 
     });
 

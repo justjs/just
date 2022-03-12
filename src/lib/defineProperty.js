@@ -1,3 +1,5 @@
+var reduce = require('./reduce');
+
 /**
  * Alternative to <var>Object.defineProperty</var> with more enhancements.
  *
@@ -32,7 +34,7 @@ function defineProperty (object, key, value) {
 
     var descriptor = Object(value);
     var defaultDescriptors = ['value', 'writable', 'get', 'set', 'configurable', 'enumerable'];
-    var descriptorKeys = Object.keys(descriptor);
+    var descriptorKeys = reduce(descriptor, function (keys, value, key) { return keys.concat(key); }, []);
     var isEmptyObject = !descriptorKeys.length;
     var notADescriptor = isEmptyObject || descriptorKeys.some(
         function notInDescriptors (key) { return this.indexOf(key) === -1; },

@@ -4,6 +4,7 @@ var defineProperties = require('./defineProperties');
 var eachProperty = require('./eachProperty');
 var parseJSON = require('./parseJSON');
 var assign = require('./assign');
+var reduce = require('./reduce');
 
 /**
  * A function to intercept and send the request.
@@ -178,9 +179,13 @@ defineProperties(request, /** @lends just.request */{
 
         if (typeof data !== 'object') { throw new TypeError(data + ' is not an object.'); }
 
-        return Object.keys(dataObject).map(
-            function (key) { return encodeURIComponent(key) + '=' + encodeURIComponent(dataObject[key]); }
-        ).join('&');
+        return reduce(dataObject, function (params, value, key) {
+
+            var param = encodeURIComponent(key) + '=' + encodeURIComponent(value);
+
+            return params.concat(param);
+
+        }, []).join('&');
 
     }
 
