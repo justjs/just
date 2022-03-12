@@ -37,7 +37,7 @@ module.exports = {
     }, {
         // @TODO Merge this with the previous tasks.
         'pattern': ['bin', 'precise-watcher.config.js', 'docs/static/versioned', 'docs/jsdoc.config.js'],
-        'on': ['ready', 'change'],
+        'on': ['change'],
         'run': [{
             'cmd': 'bin/document',
             'args': ['vx.x.x', '--run-jsdoc=true']
