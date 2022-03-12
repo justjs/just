@@ -7,6 +7,7 @@ var onDocumentReady = require('./onDocumentReady');
 var parseUrl = require('./parseUrl');
 var addEventListener = require('./addEventListener');
 var removeEventListener = require('./removeEventListener');
+var assign = require('./assign');
 var Define = (function () {
 
     var modules = {};
@@ -450,7 +451,7 @@ var Define = (function () {
          * just.Define('bar', 1);
          *
          * // index.js
-         * Object.assign(just.Define.urls, {
+         * just.assign(just.Define.urls, {
          *     'foo': 'js/index.js',
          *     'bar': 'js/index.js'
          * });
@@ -460,7 +461,7 @@ var Define = (function () {
          * });
          *
          * @example <caption>Since v1.0.0-rc.23: Adding custom attributes to the loaded element.</caption>
-         * Object.assign(just.Define.urls, {
+         * just.assign(just.Define.urls, {
          *     'id': {
          *         'src': 'https://some.cdn.com',
          *         'integrity': 'sha512-...',
@@ -474,7 +475,7 @@ var Define = (function () {
          * });
          *
          * @example <caption>Since v1.0.0-rc.23: Load a custom element.</caption>
-         * Object.assign(just.Define.urls, {
+         * just.assign(just.Define.urls, {
          *     'id': {
          *         'tagName': 'iframe',
          *         'src': 'https://example.org'
@@ -606,7 +607,7 @@ var Define = (function () {
          */
         'configure': function (properties) {
 
-            Object.assign(Define, properties);
+            assign(Define, properties);
 
             return Define;
 
@@ -721,7 +722,7 @@ var Define = (function () {
                     function (_, key) { return element.getAttribute(key); }
                 ));
 
-                Object.assign(this, urls);
+                assign(this, urls);
 
             }, urls);
 

@@ -5,6 +5,7 @@ var eachProperty = require('./eachProperty');
 var stringToJSON = require('./stringToJSON');
 var findElements = require('./findElements');
 var addEventListener = require('./addEventListener');
+var assign = require('./assign');
 var View = (function () {
 
     function matchNested (string, openSymbol, closeSymbol, transform) {
@@ -322,7 +323,7 @@ var View = (function () {
             }
         }, {'ignoreNull': true});
 
-        Object.assign(this, props, /** @lends just.View# */{
+        assign(this, props, /** @lends just.View# */{
             /**
              * Previous data set after a {@link just.View#update}.
              * @type {?object}
@@ -334,7 +335,7 @@ var View = (function () {
          * Original properties for this instance.
          * @type {?object}
          */
-        this.original = Object.assign({}, this);
+        this.original = assign({}, this);
 
     }
 
@@ -464,12 +465,12 @@ var View = (function () {
             var listeners = opts.listeners;
             var attributeName = View.INIT_ATTRIBUTE_NAME;
             var elements = findElements('[' + attributeName + ']');
-            var data = Object.assign({}, View.globals, listeners);
+            var data = assign({}, View.globals, listeners);
 
             return elements.map(function (element) {
 
                 var attributeValue = element.getAttribute(attributeName);
-                var nestedVarsData = Object.assign({'this': element}, data);
+                var nestedVarsData = assign({'this': element}, data);
                 var stringifiedJSON = View.replaceVars(attributeValue, nestedVarsData, null);
                 var options = stringToJSON(stringifiedJSON);
                 var view = new View(options).attachListeners(listeners);
@@ -942,7 +943,7 @@ var View = (function () {
                         );
                         var arrayLength = array.length;
                         var children = [].slice.call(parent.children);
-                        var viewData = Object.assign({}, data);
+                        var viewData = assign({}, data);
                         var cachedViews = children.reduce(function (views, child) {
 
                             var cachedView = child.view;
@@ -1042,13 +1043,13 @@ var View = (function () {
 
             return elementsWithAliases.reduce(function (data, element) {
 
-                return Object.assign(data, View.getAliases(
+                return assign(data, View.getAliases(
                     element,
                     data,
                     attributeForAliases
                 ));
 
-            }, Object.assign({}, globals, locals, currentData));
+            }, assign({}, globals, locals, currentData));
 
         },
         /**
@@ -1172,7 +1173,7 @@ var View = (function () {
         'refresh': function (newData, skip) {
 
             var previousData = this.previousData;
-            var data = Object.assign({}, previousData, newData);
+            var data = assign({}, previousData, newData);
 
             this.update(data, skip);
 
@@ -1241,7 +1242,7 @@ var View = (function () {
 
             var originalProperties = this.original;
 
-            Object.assign(this, originalProperties);
+            assign(this, originalProperties);
 
             return this;
 

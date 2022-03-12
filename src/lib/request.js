@@ -3,6 +3,7 @@ var parseUrl = require('./parseUrl');
 var defineProperties = require('./defineProperties');
 var eachProperty = require('./eachProperty');
 var parseJSON = require('./parseJSON');
+var assign = require('./assign');
 
 /**
  * A function to intercept and send the request.
@@ -70,12 +71,12 @@ function request (url, fn, options) {
         'async': true,
         'user': null,
         'pwd': null,
-        'headers': Object.assign({
+        'headers': assign({
             'X-Requested-With': 'XMLHttpRequest'
         }, (isJSON ? {
             'Content-Type': 'application/json'
         } : null)),
-        'props': Object.assign({}, (isJSON ? {
+        'props': assign({}, (isJSON ? {
             'responseType': 'json'
         } : null)),
         'send': function send (data) { return this.send(data); }
@@ -99,7 +100,7 @@ function request (url, fn, options) {
     xhr.open(method, url, async, user, password);
 
     eachProperty(headers, function setHeaders (value, key) { this.setRequestHeader(key, value); }, xhr);
-    Object.assign(xhr, props);
+    assign(xhr, props);
 
     xhr.onreadystatechange = function onReadyStateChange (e) {
 

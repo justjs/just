@@ -1,3 +1,5 @@
+var assign = require('./assign');
+
 /**
  * The given object (if <var>mutate</var> evals to `true`)
  * or a copy of each own property of the given object.
@@ -69,7 +71,7 @@
  * }); // returns {z: 1, a: {b: {c: 3}}}
  *
  * // if you want the prototype chain of obj, just copy it.
- * Object.assign(newObj.prototype, obj.prototype);
+ * just.assign(newObj.prototype, obj.prototype);
  *
  * @example <caption>Modifying the base object</caption>
  * var obj = {a: {b: false}, b: {b: false}, prototype: [...]};
@@ -85,7 +87,7 @@
  */
 function access (object, path, handler, opts) {
 
-    var options = Object.assign({
+    var options = assign({
         'override': true,
         'mutate': false
     }, opts);
@@ -95,7 +97,7 @@ function access (object, path, handler, opts) {
     );
     var initialObject = (options.mutate
         ? object
-        : Object.assign({}, object)
+        : assign({}, object)
     );
     var currentObject = initialObject;
     var isNewProperty = false;

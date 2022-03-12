@@ -1,3 +1,5 @@
+var assign = require('./assign');
+
 /**
  * Show a warning in the console, or throw an Error if called.
  *
@@ -13,7 +15,7 @@
  */
 function deprecate (member, type, options) {
 
-    var opts = Object.assign({}, options || {});
+    var opts = assign({}, options || {});
     var message = ('just' + member + ' is deprecated' +
 		(opts.since ? ' since ' + opts.since : '') + '. ' +
 		(opts.message || '')

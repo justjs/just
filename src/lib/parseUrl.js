@@ -1,3 +1,5 @@
+var assign = require('./assign');
+
 /**
  * Parses <var>url</var> without checking if it's a valid url.
  *
@@ -41,7 +43,7 @@ function parseUrl (url) {
 
         blob = parseUrl(url.replace(/^blob:/i, ''));
 
-        return Object.assign(blob, {
+        return assign(blob, {
             'protocol': 'blob:',
             'href': 'blob:' + blob.href,
             'host': '',

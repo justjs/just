@@ -1,3 +1,5 @@
+var assign = require('./assign');
+
 /**
  * @typedef {function} just.eachProperty~fn
  *
@@ -32,7 +34,7 @@
 function eachProperty (object, fn, thisArg, opts) {
 
     var properties = Object(object);
-    var options = Object.assign({
+    var options = assign({
         'addNonOwned': false
     }, opts);
     var wasInterrupted = false;

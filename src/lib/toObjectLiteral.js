@@ -1,5 +1,6 @@
 var check = require('./check');
 var deprecate = require('./deprecate');
+var assign = require('./assign');
 
 /**
  * Converts <code>[[k0, v0], {k1: v1}]</code> to <code>{k0: v0, k1: v1}</code>.
@@ -22,7 +23,7 @@ function toObjectLiteral (array) {
 
     if (check(array, {}, null)) {
 
-        return Object.assign({}, array);
+        return assign({}, array);
 
     }
 
@@ -45,7 +46,7 @@ function toObjectLiteral (array) {
         }
         else if (check(subArray, {})) {
 
-            Object.assign(this, subArray);
+            assign(this, subArray);
 
         }
         else {

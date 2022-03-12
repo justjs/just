@@ -1,3 +1,5 @@
+var assign = require('./assign');
+
 /**
  * Create an element with the given properties.
  *
@@ -12,7 +14,7 @@ function createElement (tag, properties) {
 
     var element = document.createElement(tag);
 
-    Object.assign(element, properties);
+    assign(element, properties);
 
     return element;
 

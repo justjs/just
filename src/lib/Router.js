@@ -4,6 +4,7 @@ var defineProperties = require('./defineProperties');
 var defaults = require('./defaults');
 var check = require('./check');
 var parseUrl = require('./parseUrl');
+var assign = require('./assign');
 var Router = (function () {
 
     var location = window.location;
@@ -44,7 +45,7 @@ var Router = (function () {
      */
     function Router () {
 
-        Object.assign(this, {
+        assign(this, {
             'routes': {}
         });
 
@@ -299,7 +300,7 @@ var Router = (function () {
 
                 eventInit = defaults(eventInit, defaultEventInit, {'ignoreNull': true});
                 eventInit.detail.data = data;
-                Object.assign(eventInit.detail.route, {
+                assign(eventInit.detail.route, {
                     'by': 'action',
                     'action': action
                 });

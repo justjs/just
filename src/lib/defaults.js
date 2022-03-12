@@ -1,5 +1,6 @@
 var check = require('./check');
 var eachProperty = require('./eachProperty');
+var assign = require('./assign');
 
 /**
  * Defaults to <var>defaultValue</var> if <var>value</var> looks like
@@ -57,7 +58,7 @@ var eachProperty = require('./eachProperty');
  */
 function defaults (value, defaultValue, opts) {
 
-    var options = Object.assign({
+    var options = assign({
         'ignoreDefaultKeys': false,
         'checkLooks': true,
         'checkDeepLooks': true,
