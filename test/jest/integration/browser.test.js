@@ -33,6 +33,7 @@ test.each([
         appendLibrary(src);
 
         expect(window.just).toEqual(expect.objectContaining({
+            'assign': expect.any(Function),
             'deprecate': expect.any(Function),
             'access': expect.any(Function),
             'prop': expect.any(Function),
