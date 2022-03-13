@@ -53,8 +53,18 @@ document () {
 	local BUILD_NAME=$1
 	local DESTINATION="$TEMP_DESTINATION_DIR/$BUILD_NAME"
 
-	echo "[Docs] Generating docs at $DESTINATION"
-	npm run doc:jsdoc -- "dist/$BUILD_NAME" -d "$DESTINATION"
+	if [ "$BUILD_NAME" = "server" ]; then
+
+		echo "[Docs] Generating docs at $DESTINATION"
+		npm run doc:jsdoc -- dist/"$BUILD_NAME" -d "$DESTINATION"
+
+	else
+
+		echo "[Docs] Generating docs at $DESTINATION/core/ and $DESTINATION/just/"
+		npm run doc:jsdoc -- dist/"$BUILD_NAME"/core.* -d "$DESTINATION"/core
+		npm run doc:jsdoc -- dist/"$BUILD_NAME"/just.* -d "$DESTINATION"/just
+
+	fi
 
 }
 
