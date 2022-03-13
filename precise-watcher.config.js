@@ -24,16 +24,43 @@ module.exports = {
     }, {
         'pattern': ['src'],
         'on': ['ready', 'change'],
-        'run': [{
-            'cmd': 'node',
-            'args': ['src/build']
-        }, {
-            'cmd': 'npm',
-            'args': 'run style dist'.split(' ')
-        }, {
-            'cmd': 'bin/document',
-            'args': ['vx.x.x', '--run-jsdoc=true']
-        }]
+        'run': (function () {
+
+            var running = false;
+
+            return [{
+                'cmd': 'node',
+                'args': ['src/build'],
+                'beforeRun': function () {
+
+                    if (running) { return false; }
+
+                    running = true;
+
+                    return running;
+
+                }
+            }, {
+                'cmd': 'npm',
+                'args': 'run style dist'.split(' '),
+                'beforeRun': function () { return running; }
+            }, {
+                'cmd': 'bin/document',
+                'args': ['vx.x.x', '--run-jsdoc=true'],
+                'beforeRun': function () { return running; }
+            }, {
+                'cmd': 'echo',
+                'args': ['Removing lock...'],
+                'beforeRun': function () {
+
+                    running = false;
+
+                    return true;
+
+                }
+            }];
+
+        })()
     }, {
         // @TODO Merge this with the previous tasks.
         'pattern': ['bin', 'precise-watcher.config.js', 'docs/static/versioned', 'docs/jsdoc.config.js'],
