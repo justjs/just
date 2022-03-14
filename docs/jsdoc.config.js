@@ -25,14 +25,14 @@ module.exports = {
                     '<meta name=\'msapplication\-TileImage\' content=\'/img/mstile-144x144.png?v=1.2.0\'/>',
                     '<meta name=\'msapplication\-config\' content=\'/img/browserconfig.xml?v=1.2.0\'/>',
                     '<meta name=\'theme\-color\' content=\'#641a5b\'/>',
-    				'<link rel="stylesheet" href="../css/jsdoc.css?v=' + version + '"/>'
+    				'<link rel="stylesheet" href="/v' + version +  '/css/jsdoc.css"/>'
     			],
     			'header': [
     				'<div id="logo"><a href="/" title="JustJs"><img src="/img/logo-white-64x64.png?v=1.2.0" alt="JustJs" srcset="/img/logo-white-128x128.png?v=1.2.0 2x"/></a></div>',
                     '<select id="versions">' + availableVersions.map(function (v) { return '<option value="' + v + '"' + (v === version ? ' selected' : '') + '>' + v + '</option>'; }).join('') + '</select>'
     			],
                 'footer': [
-                    '<script src="../js/index.js" defer></script>'
+                    '<script src="/v' + version + '/js/index.js" defer></script>'
                 ]
     		}
     	}
