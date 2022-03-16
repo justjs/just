@@ -84,8 +84,10 @@ fi
 if [ "$NODE_ENV" = "production" ] || [ "$MINIFY" = "true" ]; then
 
 	npm run doc:minify -- --input-dir "$TEMP_PUBLIC_DIR" --output-dir "$TEMP_PUBLIC_DIR"
+	rm -R "$PUBLIC_DIR"
+	mkdir "$PUBLIC_DIR"
 
 fi
 
-# Don't rename $PUBLIC_DIR. Doing so will make live-server's reloads stop working.
+# Don't rename $PUBLIC_DIR during development. Doing so will make live-server's reloads stop working.
 cp -R "$TEMP_PUBLIC_DIR"/* "$PUBLIC_DIR"
