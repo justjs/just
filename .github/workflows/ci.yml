@@ -27,4 +27,5 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm ci
-    - run: npm test
+    - name: Test and upload coverage to Coveralls
+      run: npm run test:coverage:coveralls
