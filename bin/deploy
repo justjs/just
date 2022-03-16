@@ -1,0 +1,40 @@
+#!/bin/bash
+#
+# This script clones the static website,
+# updates credentials to github-actions if CI=true,
+# copies the (already generated) documentation to the cloned repository,
+# and pushes those changes to that repository.
+#
+ROOT=`readlink -f "${BASH_SOURCE%/*}/.."`; cd "$ROOT" || exit
+
+GIT_REMOTE_URL=https://github.com/justjs/justjs.github.io
+GIT_BRANCH=master
+GIT_CLON_DESTINATION=docs/bot
+# This is an absolute path.
+SOURCE=`readlink -f docs/public`
+COMMIT_MSG="$VERSION_TAG"
+
+# Get the last pushed content and use git from the cloned directory.
+rm -rf "$GIT_CLON_DESTINATION"
+git clone "$GIT_REMOTE_URL" "$GIT_CLON_DESTINATION" --depth 1 --branch "$GIT_BRANCH"
+cd "$GIT_CLON_DESTINATION"
+
+# Setup github-actions credentials on github workflow.
+if [ "$CI" = "true" ]; then
+
+	git config user.name "github-actions[bot]"
+	git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+fi
+
+# Override pushed content with source files.
+cp --force --recursive "$SOURCE"/* ./
+# @TODO Handle deletions.
+
+# Push changes.
+git add .
+git commit -m "$COMMIT_MSG"
+git push "$GIT_REMOTE_NAME" "$GIT_BRANCH"
+
+# Return to the root path.
+cd "$ROOT"
