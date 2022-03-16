@@ -86,5 +86,6 @@ typings/
 /dist/*
 /build/*
 /docs/public*
+/docs/bot*
 
 .sizecache.json
