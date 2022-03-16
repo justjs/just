@@ -35,7 +35,7 @@
     "pretest": "npm run lint -- . --cache",
     "precommit": "npm run test",
     "prepack": "npm run build",
-    "postversion": "./bin/release"
+    "release": "./bin/release"
   },
   "repository": {
     "type": "git",
