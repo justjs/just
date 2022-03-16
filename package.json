@@ -12,7 +12,7 @@
   "scripts": {
     "start": "npm run dev",
     "dev": "npm run test:dev",
-    "build": "NODE_ENV=production node src/build && npm run style -- dist",
+    "build": "NODE_ENV=production node src/build && npm run style -- dist && npm run doc",
     "test": "npm run test:unit -- --ci",
     "test:unit": "npm run test:jest -- test/jest/unit",
     "test:integration": "npm run test:jest -- test/jest/integration",
