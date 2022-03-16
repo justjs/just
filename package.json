@@ -22,6 +22,7 @@
     "test:coverage": "npm run test -- --coverage",
     "test:coverage:coveralls": "npm run test:coverage && cat ./coverage/lcov.info | coveralls",
     "doc": "./bin/document",
+    "doc:test": "npm run test:e2e",
     "doc:jsdoc": "jsdoc -c docs/jsdoc.config.js",
     "doc:jsdoc:dev": "npm run doc:dev",
     "doc:dev": "precise-watcher --config=precise-watcher.config.js",
