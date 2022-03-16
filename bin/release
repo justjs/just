@@ -1,7 +1,13 @@
 #!/bin/bash
+#
+# This script is intended to be run in the "postversion" npm script,
+# so that it will use the last released version.
+# Otherwise, you can set the new version running this script
+# with the npm_package_version environment variable.
+#
 
 ROOT="${BASH_SOURCE%/*}/.." # Source: https://stackoverflow.com/a/12694189
-NEW_VERSION="$1"
+NEW_VERSION="$npm_package_version"
 
 cd "$ROOT"
 
@@ -25,12 +31,5 @@ release () {
 	npm version "$version" -m "$commitMessage"
 
 }
-
-if [[ ! "$NEW_VERSION" =~ ^[0-9]\. ]]; then
-
-	echo "You should provide a valid version."
-	exit 1
-
-fi
 
 release "$NEW_VERSION"

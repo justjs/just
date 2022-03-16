@@ -33,7 +33,7 @@ distributed files under the /dist directory.*
 
 Then, run ``` npm run doc:check ``` to check and modify the generated documentation. *—The browser will automatically start.*
 
-Later, if everything is correct, run ``` npm run release $next-version ``` *(where ``` $next-version ``` is a valid version in the [semver 2.0 format](https://semver.org/spec/v2.0.0.html)).*
+Later, if everything is correct, run ``` npm version ``` as normal.
 
 And that's it. You've published to NPM, updated the coveralls info, and pushed the new documentation to staging, ready to be published.
 
