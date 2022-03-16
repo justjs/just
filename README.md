@@ -2,7 +2,7 @@
 
 *Essential utilities for all your javascript proyects.*
 
-[![Build Status](https://travis-ci.org/justjs/just.svg?branch=master)](https://travis-ci.org/justjs/just) [![Coverage Status](https://coveralls.io/repos/github/justjs/just/badge.svg?branch=master)](https://coveralls.io/github/justjs/just?branch=master) [![npm version](https://badge.fury.io/js/%40just-js%2Fjust.svg)](https://badge.fury.io/js/%40just-js%2Fjust)
+![CI](https://github.com/justjs/just/actions/workflows/ci.yml/badge.svg) [![Build Status](https://travis-ci.org/justjs/just.svg?branch=master)](https://travis-ci.org/justjs/just) [![Coverage Status](https://coveralls.io/repos/github/justjs/just/badge.svg?branch=master)](https://coveralls.io/github/justjs/just?branch=master) [![npm version](https://badge.fury.io/js/%40just-js%2Fjust.svg)](https://badge.fury.io/js/%40just-js%2Fjust)
 
 **JustJs** is a fully-tested and well-documented open-source library that collects heavily-used utilities for javascript environments. Visit [justjs.github.io](https://justjs.github.io/) to know more.
 
