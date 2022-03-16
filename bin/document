@@ -7,7 +7,6 @@ PUBLIC_DIR='docs/public'
 TEMP_PUBLIC_DIR="$PUBLIC_DIR.temp"
 DESTINATION_DIR="$PUBLIC_DIR/$TAG"
 TEMP_DESTINATION_DIR="$TEMP_PUBLIC_DIR/$TAG"
-AVAILABLE_VERSIONS=(`./bin/get-available-versions`)
 runJsdoc=true
 
 # Source: https://stackoverflow.com/a/13359121
