@@ -1,0 +1,43 @@
+# This workflow will build code, run (unit, integration, and e2e) tests using node, and publish a package to NPM when a release tag is pushed
+# For more information see: https://help.github.com/actions/language-and-framework-guides/publishing-nodejs-packages
+
+name: Publish to NPM
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+
+      # Based on github.community/t/how-to-get-just-the-tag-name/16241/7
+      - name: Get version
+        id: get_version
+        run: echo ::set-output name=TAG::${GITHUB_REF#refs/tags/}
+
+      - run: npm ci
+      - run: npm run build -- ${{ steps.get_version.outputs.tag }}
+      - run: npm run test:unit -- --ci
+      - run: npm run test:integration -- --ci
+      - run: npm run test:e2e
+
+  publish-npm:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          registry-url: https://registry.npmjs.org/
+      - run: npm ci
+      - run: npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
