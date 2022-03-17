@@ -1,9 +1,6 @@
 #!/bin/bash
 
-if [ "$NODE_ENV" = 'production' ]; then
-	git fetch --tags
-fi
+DIR=docs/public
+AVAILABLE_TAGS=(`find "$DIR"/ -type d -name "v*"`)
 
-AVAILABLE_TAGS=(`git tag -l v[0-9]*`)
-
-echo "${AVAILABLE_TAGS[@]/v/}"
+echo "${AVAILABLE_TAGS[@]/$DIR\/v/}"
