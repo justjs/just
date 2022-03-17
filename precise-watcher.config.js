@@ -1,4 +1,6 @@
 var SERVER_DIR = 'docs/public';
+var GIT_STATIC_REPOSITORY = process.env.GIT_STATIC_REPOSITORY || 'https://github.com/justjs/justjs.github.io.git';
+var GIT_STATIC_DESTINATION = SERVER_DIR;
 
 module.exports = {
     'src': [{
@@ -10,6 +12,9 @@ module.exports = {
         }, {
             'cmd': 'mkdir',
             'args': [SERVER_DIR]
+        }, {
+            'cmd': 'git',
+            'args': ['clone', GIT_STATIC_REPOSITORY, GIT_STATIC_DESTINATION, '--depth=1']
         }, {
             'cmd': 'live-server',
             'args': [SERVER_DIR],

@@ -11,6 +11,9 @@
 - Run ``` npm run dev ``` and wait for Jest to start.
 - Run ``` npm run doc:dev ``` to check documentation or update the static website. *—The browser will automatically start and changes to the source code will update the documentation. Be mindful that it may take some time to automatically reload the website.*
 
+You can also start ``` npm run doc:dev ``` with the following environment variables:
+- `GIT_STATIC_REPOSITORY` is the url to the repository for the static website. By default it's set to the production url, but you can change it to your local clone.
+
 ## Testing
 
 - Run ``` npm test ``` to run unit test on --ci mode.
