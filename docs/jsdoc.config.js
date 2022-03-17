@@ -1,6 +1,12 @@
 var nunjucksConfig = require('../nunjucks.config.js');
 var nunjucks = nunjucksConfig.render.context;
-var availableVersions = [nunjucks.version].concat(nunjucks.getAvailableVersions());
+var availableVersions = [nunjucks.version].concat(nunjucks.getAvailableVersions()).reduce(function (unique, v) {
+
+    if (unique.indexOf(v) > -1) { return unique; }
+
+    return unique.concat(v);
+
+}, []);
 var version = nunjucks.version;
 
 module.exports = {
