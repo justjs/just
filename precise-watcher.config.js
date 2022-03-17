@@ -16,6 +16,9 @@ module.exports = {
             'cmd': 'git',
             'args': ['clone', GIT_STATIC_REPOSITORY, GIT_STATIC_DESTINATION, '--depth=1']
         }, {
+            'cmd': 'rm',
+            'args': [SERVER_DIR + '/index.html'] // Avoid showing latest version on start up.
+        }, {
             'cmd': 'live-server',
             'args': [SERVER_DIR],
         }]
