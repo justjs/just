@@ -7,7 +7,10 @@ var availableVersions = [nunjucks.version].concat(nunjucks.getAvailableVersions(
     return unique.concat(v);
 
 }, []);
-var availableBundles = ['server', 'browser'];
+var availableBundles = {
+    'server': 'server',
+    'browser': 'browser (full)'
+};
 var version = nunjucks.version;
 
 module.exports = {
@@ -37,7 +40,7 @@ module.exports = {
     			'header': [
     				'<div id="logo"><a href="/" title="JustJs"><img src="/img/logo-white-64x64.png?v=1.2.0" alt="JustJs" srcset="/img/logo-white-128x128.png?v=1.2.0 2x"/></a></div>',
                     '<div class="wrapper">',
-                    '<select id="bundles">' + availableBundles.map(function (v) { return '<option value="' + v + '"' + (v === 'browser' ? ' selected' : '') + '>' + v + '</option>'; }).join('') + '</select>',
+                    '<select id="bundles">' + Object.keys(availableBundles).map(function (k) { return '<option value="' + k + '"' + (k === 'browser' ? ' selected' : '') + '>' + availableBundles[k] + '</option>'; }).join('') + '</select>',
                     '<select id="versions">' + availableVersions.map(function (v) { return '<option value="' + v + '"' + (v === version ? ' selected' : '') + '>' + v + '</option>'; }).join('') + '</select>',
                     '</div>'
     			],
