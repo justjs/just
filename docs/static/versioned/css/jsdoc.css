@@ -11,17 +11,29 @@ a {
 	margin: auto;
 }
 
-#versions {
-	margin-left: auto;
-	display: table;
+#page-header select {
 	color: white;
 	background: rgba(127, 127, 137, .2);
 	padding: .5em;
 }
 
-#versions:hover,
-#versions:focus {
+#page-header select:hover,
+#page-header select:focus {
 	background: rgba(127, 127, 137, .3);
+}
+
+#page-header .wrapper {
+	margin-left: auto;
+	display: table;
+}
+
+#page-header .wrapper > * {
+	display: inline-block;
+	vertical-align: middle;
+}
+
+#page-header .wrapper > *:not(:first-child) {
+	margin-left: 1em;
 }
 
 td.description {
