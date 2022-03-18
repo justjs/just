@@ -29,7 +29,7 @@ td.description {
 }
 
 @media all and (max-width: 767px) {
-	h1, h2 {
+	.doc h1, .doc h2 {
 		font-size: 150%;
 		margin-bottom: 1em;
 	}
