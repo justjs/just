@@ -25,7 +25,7 @@
         var pathname = location.pathname;
         var newUrl = (isVersionBelow1Dot2(version)
             // Redirect to the full version.
-            ? pathname.replace(/(browser)\/just/, '$1')
+            ? pathname.replace(/(browser)\/(?:just|core)/, '$1')
             // Use as it is.
             : pathname
         ).replace(/v[^\/]+/, 'v' + version);
