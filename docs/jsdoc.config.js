@@ -1,12 +1,13 @@
+var semverSort = require('semver/functions/sort');
 var nunjucksConfig = require('../nunjucks.config.js');
 var nunjucks = nunjucksConfig.render.context;
-var availableVersions = [nunjucks.version].concat(nunjucks.getAvailableVersions()).reduce(function (unique, v) {
+var availableVersions = semverSort([nunjucks.version].concat(nunjucks.getAvailableVersions()).reduce(function (unique, v) {
 
     if (unique.indexOf(v) > -1) { return unique; }
 
     return unique.concat(v);
 
-}, []);
+}, [])).reverse();
 var availableBundles = {
     'server': 'server',
     'browser': 'browser (full)',
