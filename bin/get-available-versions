@@ -1,6 +1,6 @@
 #!/bin/bash
 
 DIR=docs/public
-AVAILABLE_TAGS=(`find "$DIR"/ -type d -name "v*"`)
+AVAILABLE_TAGS=(`find "$DIR"/ -type d -name "v*.*.*"`)
 
 echo "${AVAILABLE_TAGS[@]/$DIR\/v/}"
