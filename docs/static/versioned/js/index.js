@@ -54,4 +54,17 @@
 
     });
 
+    [versions, bundles].forEach(function (select) {
+
+        var id = select.id;
+        var options = el('option', select);
+        var selected = el('option[value="' + (id === 'versions'
+            ? activeVersion
+            : activeBundle
+        ) + '"]')[0];
+
+        select.value = selected.value;
+
+    });
+
 })();
