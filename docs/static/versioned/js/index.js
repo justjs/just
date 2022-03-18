@@ -10,7 +10,7 @@
      * Starting from version 1.1.0, documentation is generated
      * under /browser/{core,just}/index.html and server/index.html.
      */
-    var isVersionBelow1Dot2 = function (version) { return /^1\.[01]\./.test(version); };
+    var isVersionBelow1Dot2 = function (version) { return /^1\.[01]\./.test(version) && !/\-dev/.test(version); };
     var versions = el('#versions')[0];
     var bundles = el('#bundles')[0];
     var location = window.location;
