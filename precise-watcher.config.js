@@ -1,5 +1,8 @@
+var env = process.env;
+var npm_package_version = env.npm_package_version;
+var DEVELOPMENT_TAG = 'v' + npm_package_version;
 var SERVER_DIR = 'docs/public';
-var GIT_STATIC_REPOSITORY = process.env.GIT_STATIC_REPOSITORY || 'https://github.com/justjs/justjs.github.io.git';
+var GIT_STATIC_REPOSITORY = env.GIT_STATIC_REPOSITORY || 'https://github.com/justjs/justjs.github.io.git';
 var GIT_STATIC_DESTINATION = SERVER_DIR;
 
 module.exports = {
@@ -27,7 +30,7 @@ module.exports = {
         'on': ['change'],
         'run': [{
             'cmd': 'bin/document',
-            'args': ['vx.x.x', '--run-jsdoc=false'],
+            'args': [DEVELOPMENT_TAG, '--run-jsdoc=false'],
         }]
     }, {
         'pattern': ['src'],
@@ -54,7 +57,7 @@ module.exports = {
                 'beforeRun': function () { return running; }
             }, {
                 'cmd': 'bin/document',
-                'args': ['vx.x.x', '--run-jsdoc=true'],
+                'args': [DEVELOPMENT_TAG, '--run-jsdoc=true'],
                 'beforeRun': function () { return running; }
             }, {
                 'cmd': 'echo',
@@ -75,7 +78,7 @@ module.exports = {
         'on': ['change'],
         'run': [{
             'cmd': 'bin/document',
-            'args': ['vx.x.x', '--run-jsdoc=true']
+            'args': [DEVELOPMENT_TAG, '--run-jsdoc=true']
         }]
     }]
 };

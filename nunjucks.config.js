@@ -86,10 +86,7 @@ module.exports = {
             'env': NODE_ENV,
             'production': production,
             'development': development,
-            'version': (production
-                ? npmPackageVersion
-                : 'x.x.x'
-            ),
+            'version': npmPackageVersion,
             'getIntegrity': getIntegrity,
             'getCDNUrl': getCDNUrl,
             'buildScriptTag': buildScriptTag,
