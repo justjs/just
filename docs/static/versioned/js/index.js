@@ -14,9 +14,10 @@
     var versions = el('#versions')[0];
     var bundles = el('#bundles')[0];
     var location = window.location;
-    var urlParts = location.pathname.match(/\/v([^.]+\.[^.]\.[^\/]+)\/(browser|server)/) || [];
+    var urlParts = location.pathname.match(/\/v([^.]+\.[^.]\.[^\/]+)\/(browser(?:\/(core|just))|server)\//) || [];
     var activeVersion = urlParts[1];
-    var activeBundle = urlParts[2];
+    // Normalize browser/just -> browser
+    var activeBundle = (urlParts[2] || '').replace('/just', '');
 
     versions.addEventListener('change', function (e) {
 
@@ -38,15 +39,19 @@
         var bundle = this.value;
         var pathname = location.pathname;
         var newUrl = pathname
-            // This will redirect browser -> server or viceversa.
-            .replace(/(browser|server)/, bundle)
-            // This will change (invalid) server/just -> server
-            .replace(/(server)\/just/, '$1');
+            // This will redirect browser/ -> server/, browser/core -> server/core, or viceversa.
+            .replace(/(?:browser\/(?:(?:just|core)\/)?|server\/)/, bundle + '/')
+            // This will change (invalid) server/just/ & server/core/ -> server/
+            .replace(/(server)\/(?:just|core)\//, '$1/');
 
         if (!isVersionBelow1Dot2(activeVersion)) {
 
-            // This will change browser/ & browser/just/ -> browser/just/
-            newUrl = newUrl.replace(/(browser)\/(?:just\/)?/, '$1/just/');
+            // This will normalize urls -> browser/just | browser/core
+            newUrl = newUrl.replace(/(browser)\/((?:just|core)\/)?/, function ($0, $1, $2) {
+
+                return $1 + '/' + ($2 || 'just/');
+
+            });
 
         }
 
@@ -58,12 +63,15 @@
 
         var id = select.id;
         var options = el('option', select);
-        var selected = el('option[value="' + (id === 'versions'
+        var selected = (el('option[value="' + (id === 'versions'
             ? activeVersion
             : activeBundle
-        ) + '"]')[0];
+        ) + '"]') || [])[0];
 
-        select.value = selected.value;
+        select.value = (selected
+            ? selected.value
+            : ''
+        );
 
     });
 

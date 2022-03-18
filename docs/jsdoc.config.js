@@ -9,7 +9,8 @@ var availableVersions = [nunjucks.version].concat(nunjucks.getAvailableVersions(
 }, []);
 var availableBundles = {
     'server': 'server',
-    'browser': 'browser (full)'
+    'browser': 'browser (full)',
+    'browser/core': 'browser (core)'
 };
 var version = nunjucks.version;
 
