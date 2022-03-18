@@ -76,6 +76,7 @@
     "nunjucks-to-html": "^1.1.0",
     "precise-watcher": "^2.1.0",
     "requirejs": "^2.3.6",
+    "semver": "^7.3.5",
     "uglify-js": "^3.14.5"
   }
 }
