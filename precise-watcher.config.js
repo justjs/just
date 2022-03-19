@@ -1,6 +1,6 @@
 var env = process.env;
-var npm_package_version = env.npm_package_version;
-var DEVELOPMENT_TAG = 'v' + npm_package_version;
+var npmPackageVersion = env.npm_package_version;
+var DEVELOPMENT_TAG = 'v' + npmPackageVersion;
 var SERVER_DIR = 'docs/public';
 var GIT_STATIC_REPOSITORY = env.GIT_STATIC_REPOSITORY || 'https://github.com/justjs/justjs.github.io.git';
 var GIT_STATIC_DESTINATION = SERVER_DIR;
