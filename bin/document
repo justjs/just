@@ -102,3 +102,5 @@ fi
 
 # Don't rename $PUBLIC_DIR during development. Doing so will make live-server's reloads stop working.
 cp -R "$TEMP_PUBLIC_DIR"/* "$PUBLIC_DIR"
+
+node bin/replace-versions.js

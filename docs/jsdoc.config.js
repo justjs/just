@@ -1,13 +1,5 @@
-var semverSort = require('semver/functions/sort');
 var nunjucksConfig = require('../nunjucks.config.js');
 var nunjucks = nunjucksConfig.render.context;
-var availableVersions = semverSort([nunjucks.version].concat(nunjucks.getAvailableVersions()).reduce(function (unique, v) {
-
-    if (unique.indexOf(v) > -1) { return unique; }
-
-    return unique.concat(v);
-
-}, [])).reverse();
 var availableBundles = {
     'server': 'server',
     'browser': 'browser (full)',
@@ -43,7 +35,7 @@ module.exports = {
     				'<div id="logo"><a href="/" title="JustJs"><img src="/img/logo-white-64x64.png?v=1.2.0" alt="JustJs" srcset="/img/logo-white-128x128.png?v=1.2.0 2x"/></a></div>',
                     '<div class="wrapper">',
                     '<select id="bundles">' + Object.keys(availableBundles).map(function (k) { return '<option value="' + k + '"' + (k === 'browser' ? ' selected' : '') + '>' + availableBundles[k] + '</option>'; }).join('') + '</select>',
-                    '<select id="versions">' + availableVersions.map(function (v) { return '<option value="' + v + '"' + (v === version ? ' selected' : '') + '>' + v + '</option>'; }).join('') + '</select>',
+                    '<select id="versions"></select>', // This is a placeholder. Versions should be replaced later here.
                     '</div>'
     			],
                 'footer': [
