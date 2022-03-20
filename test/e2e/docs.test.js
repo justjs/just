@@ -53,21 +53,27 @@
 
     };
 
+    function testRawScripts () {
+
+        if (!rawScripts.length) {
+
+            return Promise.reject(
+                new Error('Scripts are not being shown.')
+            );
+
+        }
+
+        return Promise
+            .all(rawScripts.map(loadScript));
+
+    }
+
     window.karmaCustomEnv = {
         'execute': function (karma) {
 
-            if (!rawScripts.length) {
-
-                return karma.result({
-                    'success': false,
-                    'suite': [],
-                    'log': [new Error('Scripts are not being shown.')]
-                });
-
-            }
-
-            Promise
-                .all(rawScripts.map(loadScript))
+            return Promise.all([
+                    testRawScripts(karma)
+                ])
                 .then(function () {
 
                     karma.result({
