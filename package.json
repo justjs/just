@@ -27,7 +27,7 @@
     "doc:jsdoc": "jsdoc -c docs/jsdoc.config.js",
     "doc:jsdoc:dev": "npm run doc:dev",
     "doc:dev": "precise-watcher --config=precise-watcher.config.js",
-    "doc:check": "npm run doc:jsdoc:dev",
+    "doc:check": "live-server docs/public",
     "doc:minify": "npm run minify:html -- --input-dir docs/public --output-dir docs/public",
     "minify:html": "html-minifier --file-ext html --collapse-whitespace --minify-css true --minify-js true",
     "lint": "eslint",

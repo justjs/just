@@ -55,6 +55,7 @@ The following are a list of useful scripts:
 - Run ``` npm run doc:test ``` to run end-to-end tests.
 - Run ``` npm run doc:jsdoc ``` to run JSDOC.
 - Run ``` npm run doc:jsdoc:dev ``` to watch for changes and update the generated documentation continuously. *Same as ``` npm run doc:dev ```, for now.*
+- Run ``` npm run doc:check ``` to serve the generated website.
 - Run ``` npm run doc:minify ``` to minify the generated documentation.
 
 ## License
