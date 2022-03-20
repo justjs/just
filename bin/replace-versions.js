@@ -12,7 +12,7 @@ var availableVersions = semverSort([version].concat(nunjucks.getAvailableVersion
     return unique.concat(v);
 
 }, [])).reverse();
-var markup = '<select id="versions">' + availableVersions.map(function (v) { return '<option value="' + v + '"' + (v === version ? ' selected' : '') + '>' + v + '</option>'; }).join('') + '</select>';
+var markup = '<select id="versions">' + availableVersions.map(function (v) { return '<option value="' + v + '"' + (v === version ? ' selected' : '') + '>' + v + '</option>'; }).join('') + '</select><script src="/js/jsdoc.js?v=' + version + '" async></script><link rel="stylesheet" href="/css/jsdoc.css?v=' + version + '"/>';
 var source = 'docs/public/*/';
 
 // Replace or add #versions.
