@@ -24,10 +24,10 @@
         var version = this.value;
         var pathname = location.pathname;
         var newUrl = (isVersionBelow1Dot2(version)
-            // Redirect to the full version.
-            ? pathname.replace(/(browser)\/(?:just|core)\//, '$1')
-            // Use as it is.
-            : pathname
+            // Redirect to the /browser build.
+            ? pathname.replace(/(browser\/)(?:just|core)\//, '$1')
+            // Redirect to the /browser/just/ build (the full version).
+            : pathname.replace(/(browser)\//, '$1/just/')
         ).replace(/v[^\/]+/, 'v' + version);
 
         location.href = newUrl;
