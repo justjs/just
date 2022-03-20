@@ -1,14 +1,15 @@
 var env = process.env;
-var npmPackageVersion = env.npm_package_version;
-var DEVELOPMENT_TAG = 'v' + npmPackageVersion;
+var TAG = env.VERSION_TAG || 'v' + env.npm_package_version;
 var SERVER_DIR = 'docs/public';
 var GIT_STATIC_REPOSITORY = env.GIT_STATIC_REPOSITORY || 'https://github.com/justjs/justjs.github.io.git';
 var GIT_STATIC_DESTINATION = SERVER_DIR;
+var production = env.NODE_ENV === 'production';
+var development = !production;
 
 module.exports = {
     'src': [{
         'pattern': SERVER_DIR,
-        'on': 'ready',
+        'on': (development ? ['ready'] : null),
         'run': [{
             'cmd': 'rm',
             'args': [SERVER_DIR, '-R']
@@ -19,26 +20,28 @@ module.exports = {
             'cmd': 'git',
             'args': ['clone', GIT_STATIC_REPOSITORY, GIT_STATIC_DESTINATION, '--depth=1']
         }, {
-            // Replace all versions (old/new versions) once during development.
+            // Replace all versions (in old versions) once.
             'cmd': 'node',
             'args': ['bin/replace-versions.js', 'docs/public/*/']
-        }, {
+        }].concat(development ? [{
             'cmd': 'rm',
             'args': [SERVER_DIR + '/index.html'] // Avoid showing latest version on start up.
         }, {
             'cmd': 'live-server',
             'args': [SERVER_DIR],
-        }]
-    }, {
+        }] : [])
+    }].concat((development ? {
+        // @TODO Merge this with similar tasks.
         'pattern': ['docs/static/non-versioned'],
         'on': ['change'],
         'run': [{
             'cmd': 'bin/document',
-            'args': [DEVELOPMENT_TAG, '--run-jsdoc=false'],
+            'args': [TAG, '--run-jsdoc=false'],
         }]
-    }, {
+    } : []), {
+        // @TODO Merge this with similar tasks.
         'pattern': ['src'],
-        'on': ['ready', 'change'],
+        'on': (development ? ['ready', 'change'] : null),
         'run': (function () {
 
             var running = false;
@@ -61,7 +64,7 @@ module.exports = {
                 'beforeRun': function () { return running; }
             }, {
                 'cmd': 'bin/document',
-                'args': [DEVELOPMENT_TAG, '--run-jsdoc=true'],
+                'args': [TAG, '--run-jsdoc=true'],
                 'beforeRun': function () { return running; }
             }, {
                 'cmd': 'echo',
@@ -76,13 +79,13 @@ module.exports = {
             }];
 
         })()
-    }, {
-        // @TODO Merge this with the previous tasks.
+    }, (development ? {
+        // @TODO Merge this with similar tasks.
         'pattern': ['bin', 'precise-watcher.config.js', 'docs/static/versioned', 'docs/jsdoc.config.js'],
         'on': ['change'],
         'run': [{
             'cmd': 'bin/document',
-            'args': [DEVELOPMENT_TAG, '--run-jsdoc=true']
+            'args': [TAG, '--run-jsdoc=true']
         }]
-    }]
+    } : []))
 };
