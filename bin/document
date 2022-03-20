@@ -100,7 +100,21 @@ if [ "$NODE_ENV" = "production" ] || [ "$MINIFY" = "true" ]; then
 
 fi
 
+if [ "$NODE_ENV" = "development" ]; then
+
+	# Replace only versions from the current version.
+	# Old versions will be replaced once, from outside.
+	# Also, use TEMP_PUBLIC_DIR to prevent multiple reloads.
+	node bin/replace-versions.js "$TEMP_PUBLIC_DIR/*/"
+
+fi
+
 # Don't rename $PUBLIC_DIR during development. Doing so will make live-server's reloads stop working.
 cp -R "$TEMP_PUBLIC_DIR"/* "$PUBLIC_DIR"
 
-node bin/replace-versions.js
+if [ "$NODE_ENV" = "production" ]; then
+
+	# Replace all versions (from new/older versions) once.
+	node bin/replace-versions.js "$PUBLIC_DIR/*/"
+
+fi
