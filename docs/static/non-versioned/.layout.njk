@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+	{% block head %}
+		<meta charset='utf-8'/>
+		<title>{{ title or 'JustJs - Essential utilities for all your javascript projects.' }}</title>
+		<meta name='description' content='{{ description or "JustJs is a fully tested open-source library that collects heavily-used utilities for javascript environments." }}'/>
+		<link rel='preload' href='/font/spacemono/SpaceMono-Regular.ttf' as='font' />
+		<link rel='apple-touch-icon' sizes='180x180' href='/img/apple-touch-icon.png?v=1.2.0'/>
+		<link rel='icon' type='image/png' sizes='32x32' href='/img/favicon-32x32.png?v=1.2.0'/>
+		<link rel='icon' type='image/png' sizes='16x16' href='/img/favicon-16x16.png?v=1.2.0'/>
+		<link rel='manifest' href='/img/site.webmanifest?v=1.2.0'/>
+		<link rel='mask-icon' href='/img/safari-pinned-tab.svg?v=1.2.0' color='#641a5b'/>
+		<link rel='shortcut icon' href='/img/favicon.ico?v=1.2.0'/>
+		<meta name='msapplication-TileColor' content='#641a5b'/>
+		<meta name='msapplication-TileImage' content='/img/mstile-144x144.png?v=1.2.0'/>
+		<meta name='msapplication-config' content='/img/browserconfig.xml?v=1.2.0'/>
+		<meta name='theme-color' content='#641a5b'/>
+		<meta name='viewport' content='width=device-width, initial-scale=1'/>
+	{% endblock %}
+</head>
+<body>
+	{% block top %}
+	{% endblock %}
+	<main role='main'>
+		{% block main %}
+		{% endblock %}
+	</main>
+	<footer id='contentinfo' role='contentinfo'>
+		{% block footer %}
+			<div class='content-wrapper'>
+				<ul class='horizontal-list'>
+					<li><a href='https://github.com/justjs/just' rel='noopener noreferrer'>Contribute</a></li>
+					<li><a href='https://github.com/justjs/just/issues' rel='noopener noreferrer'>Report an issue</a></li>
+				</ul>
+				<br>
+				<small>© 2022 <a href='https://github.com/AlexisPuga' rel='noopener noreferrer' target='_blank'>Alexis Puga</a> and <a href='https://github.com/justjs/just/graphs/contributors' target='_blank' rel='noopener noreferrer'>contributors</a>. <a href='https://github.com/justjs/just' target='_blank' rel='noopener noreferrer'>JustJs</a> is released under the <a href='https://github.com/justjs/just/blob/master/LICENSE' target='_blank' rel='noopener noreferrer'>BSD 3-Clause License</a>.</small>
+			</div>	
+		{% endblock %}
+	</footer>
+	{% block bottom %}
+	{% endblock %}
+</body>
+</html>
