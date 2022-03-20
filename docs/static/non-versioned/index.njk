@@ -1,94 +1,68 @@
-<!DOCTYPE html>
-<html lang='en'>
-<head>
-	<meta charset='utf-8'/>
-	<title>JustJs - Essential utilities for all your javascript projects.</title>
-	<meta name='description' content='JustJs is a fully tested open-source library that collects heavily-used utilities for javascript environments.'/>
-	<link rel='preload' href='/font/spacemono/SpaceMono-Regular.ttf' as='font' />
-	<link rel='apple-touch-icon' sizes='180x180' href='/img/apple-touch-icon.png?v=1.2.0'/>
-	<link rel='icon' type='image/png' sizes='32x32' href='/img/favicon-32x32.png?v=1.2.0'/>
-	<link rel='icon' type='image/png' sizes='16x16' href='/img/favicon-16x16.png?v=1.2.0'/>
-	<link rel='manifest' href='/img/site.webmanifest?v=1.2.0'/>
-	<link rel='mask-icon' href='/img/safari-pinned-tab.svg?v=1.2.0' color='#641a5b'/>
-	<link rel='shortcut icon' href='/img/favicon.ico?v=1.2.0'/>
-	<meta name='msapplication-TileColor' content='#641a5b'/>
-	<meta name='msapplication-TileImage' content='/img/mstile-144x144.png?v=1.2.0'/>
-	<meta name='msapplication-config' content='/img/browserconfig.xml?v=1.2.0'/>
-	<meta name='theme-color' content='#641a5b'/>
-	<meta name='viewport' content='width=device-width, initial-scale=1'/>
+{% extends './.layout.njk' %}
+{% block head %}
+	{{ super() }}
 	<style>{% include './css/.index.css' %}</style>
-</head>
-<body>
-	<main role='main'>
-		<div id='home'>
-			<div id='banner'>
-				<a id='github-link' href='https://github.com/justjs' rel='noopener noreferrer' title='JustJs on Github'>
-					<svg xmlns='http://w3.org/2000/svg' width='24' height='24'>
-						<use xlink:href='#github-logo' href='#github-logo'/>
-					</svg>
-				</a>
-				<div class='content-wrapper'>
-					<img title='JustJs' src='/img/logo-black-128x128.png?v=1.2.0' alt='JustJs' srcset='/img/logo-black-256x256.png?v=1.2.0 2x'/>
-				</div>
-				{# FIXME: Link to the merged version of browser and server docs once generated. #}
-				<a id='floating-button' href='v{{ version }}/browser/just/' role='button'>Read the docs &rarr;</a>
-			</div
-			><section id='setup'>
-				<header>
-					<h2>Setup</h2>
-				</header>
-				<div class='content-wrapper'>
-					<figure id='browser-setup'>
-						<figcaption><a href='https://github.com/justjs/just/blob/master/src/browser/' rel='noopener noreferrer'>Browser</a></figcaption>
-						<dl>
-							<dt><a href='https://github.com/justjs/just/blob/master/src/browser/core.js' rel='noopener noreferrer'>Core</a> &rarr; <a href='{{ getCDNUrl("dist/browser/core.min.js", version) }}' rel='noopener noreferrer'>core.min.js</a> &rarr; <a href='v{{ version }}/browser/core/'>docs</a></dt>
-							<dd>
-								<div class='code-wrapper'>
-									<pre class='prettyprint'><code>{{ buildScriptTag('dist/browser/core.min.js', version) }}</code></pre>
-								</div>
-							</dd>
-							<dt><a href='https://github.com/justjs/just/blob/master/src/browser/just.js' rel='noopener noreferrer'>Full suite</a> &rarr; <a href='{{ getCDNUrl("dist/browser/just.min.js", version) }}'>just.min.js</a> &rarr; <a href='v{{ version }}/browser/just/'>docs</a></dt>
-							<dd>
-								<div class='code-wrapper'>
-									<pre class='prettyprint'><code>{{ buildScriptTag('dist/browser/just.min.js', version) }}</code></pre>
-								</div>
-							</dd>
-						</dl>
-					</figure>
-					<br>
-					<figure id='nodejs-setup'>
-						<figcaption><a href='https://github.com/justjs/just/blob/master/src/server/' rel='noopener noreferrer'>Node js</a> &rarr; <a href='v{{ version }}/server/'>docs</a></figcaption>
-						<div class='code-wrapper'>
-							<pre class='prettyprint'><code>npm i @just-js/just</code></pre>
-						</div>
-					</figure>
-				</div>
-			</section
-			><section id='usage'>
-				<header>
-					<h2>Usage</h2>
-				</header>
-				<div class='content-wrapper'>
+{% endblock %}
+{% block main %}
+	<div id='home'>
+		<div id='banner'>
+			<a id='github-link' href='https://github.com/justjs' rel='noopener noreferrer' title='JustJs on Github'>
+				<svg xmlns='http://w3.org/2000/svg' width='24' height='24'>
+					<use xlink:href='#github-logo' href='#github-logo'/>
+				</svg>
+			</a>
+			<div class='content-wrapper'>
+				<img title='JustJs' src='/img/logo-black-128x128.png?v=1.2.0' alt='JustJs' srcset='/img/logo-black-256x256.png?v=1.2.0 2x'/>
+			</div>
+			{# FIXME: Link to the merged version of browser and server docs once generated. #}
+			<a id='floating-button' href='v{{ version }}/browser/just/' role='button'>Read the docs &rarr;</a>
+		</div
+		><section id='setup'>
+			<header>
+				<h2>Setup</h2>
+			</header>
+			<div class='content-wrapper'>
+				<figure id='browser-setup'>
+					<figcaption><a href='https://github.com/justjs/just/blob/master/src/browser/' rel='noopener noreferrer'>Browser</a></figcaption>
+					<dl>
+						<dt><a href='https://github.com/justjs/just/blob/master/src/browser/core.js' rel='noopener noreferrer'>Core</a> &rarr; <a href='{{ getCDNUrl("dist/browser/core.min.js", version) }}' rel='noopener noreferrer'>core.min.js</a> &rarr; <a href='v{{ version }}/browser/core/'>docs</a></dt>
+						<dd>
+							<div class='code-wrapper'>
+								<pre class='prettyprint'><code>{{ buildScriptTag('dist/browser/core.min.js', version) }}</code></pre>
+							</div>
+						</dd>
+						<dt><a href='https://github.com/justjs/just/blob/master/src/browser/just.js' rel='noopener noreferrer'>Full suite</a> &rarr; <a href='{{ getCDNUrl("dist/browser/just.min.js", version) }}'>just.min.js</a> &rarr; <a href='v{{ version }}/browser/just/'>docs</a></dt>
+						<dd>
+							<div class='code-wrapper'>
+								<pre class='prettyprint'><code>{{ buildScriptTag('dist/browser/just.min.js', version) }}</code></pre>
+							</div>
+						</dd>
+					</dl>
+				</figure>
+				<br>
+				<figure id='nodejs-setup'>
+					<figcaption><a href='https://github.com/justjs/just/blob/master/src/server/' rel='noopener noreferrer'>Node js</a> &rarr; <a href='v{{ version }}/server/'>docs</a></figcaption>
 					<div class='code-wrapper'>
-						<pre class='prettyprint'><code>var just = window.just;</code><br/><code>// or: var just = require('@just-js/just');</code></pre>
+						<pre class='prettyprint'><code>npm i @just-js/just</code></pre>
 					</div>
+				</figure>
+			</div>
+		</section
+		><section id='usage'>
+			<header>
+				<h2>Usage</h2>
+			</header>
+			<div class='content-wrapper'>
+				<div class='code-wrapper'>
+					<pre class='prettyprint'><code>var just = window.just;</code><br/><code>// or: var just = require('@just-js/just');</code></pre>
 				</div>
-			</section>
-		</div>
-	</main>
-	<footer id='contentinfo' role='contentinfo'>
-		<div class='content-wrapper'>
-			<ul class='horizontal-list'>
-				<li><a href='https://github.com/justjs/just' rel='noopener noreferrer'>Contribute</a></li>
-				<li><a href='https://github.com/justjs/just/issues' rel='noopener noreferrer'>Report an issue</a></li>
-			</ul>
-			<br>
-			<small>© 2022 <a href='https://github.com/AlexisPuga' rel='noopener noreferrer' target='_blank'>Alexis Puga</a> and <a href='https://github.com/justjs/just/graphs/contributors' target='_blank' rel='noopener noreferrer'>contributors</a>. <a href='https://github.com/justjs/just' target='_blank' rel='noopener noreferrer'>JustJs</a> is released under the <a href='https://github.com/justjs/just/blob/master/LICENSE' target='_blank' rel='noopener noreferrer'>BSD 3-Clause License</a>.</small>
-		</div>
-	</footer>
+			</div>
+		</section>
+	</div>
+{% endblock %}
+{% block bottom %}
 	<svg xmlns='http://w3.org/2000/svg' width='24' height='24' hidden>
 		<symbol id='github-logo' viewBox='0 0 11.49291 11.209466'><g transform='translate(-111.43 -122.82)'><path d='m117.17 122.82c-3.1732 0-5.746 2.5728-5.746 5.7468 0 2.5389 1.6464 4.6926 3.9299 5.4529.28751.0526.39229-.12488.39229-.27728 0-.13617-.005-.49777-.008-.9772-1.5984.34714-1.9357-.77046-1.9357-.77046-.26141-.66358-.63818-.84032-.63818-.84032-.52176-.35666.0395-.3496.0395-.3496.57679.0409.88018.59231.88018.59231.51259.87807 1.3452.62442 1.6725.47766.0522-.37147.20038-.62477.36478-.76835-1.276-.14499-2.6176-.63817-2.6176-2.8402 0-.62724.22402-1.1402.59161-1.542-.0593-.14535-.25647-.72955.0561-1.5208 0 0 .4826-.15451 1.5804.58914.45826-.12735.95003-.1912 1.4386-.19332.48789.002.97966.066 1.4386.19332 1.0971-.74365 1.5787-.58914 1.5787-.58914.31362.79128.11642 1.3755.0571 1.5208.3683.40181.59091.91475.59091 1.542 0 2.2077-1.3437 2.6935-2.624 2.8356.20637.17744.39017.52811.39017 1.0643 0 .76799-.007 1.3878-.007 1.5762 0 .15381.10336.33267.39511.27658 2.2818-.76165 3.9268-2.914 3.9268-5.4522 0-3.174-2.5732-5.7468-5.7471-5.7468' fill-rule='evenodd' fill='currentColor'/></g></symbol>
 	</svg>
 	<script>{% include './js/.index.js' %}</script>
-</body>
-</html>
+{% endblock %}
