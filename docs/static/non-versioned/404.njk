@@ -1,0 +1,12 @@
+{% set title = 'Not Found - JustJs' %}
+{% extends './.layout.njk' %}
+{% block head %}
+	{{ super() }}
+	<style>{% include './css/.404.css' %}</style>
+{% endblock %}
+{% block body %}
+	<main role='main'>
+		<h1>404</h1>
+		<p>Not found in this version. <a href='javascript:history.back();'>Return</a>.</p>
+	</main>
+{% endblock %}
