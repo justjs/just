@@ -72,29 +72,26 @@
         'execute': function (karma) {
 
             return Promise.all([
-                    testRawScripts(karma)
-                ])
-                .then(function () {
+                testRawScripts(karma)
+            ]).then(function () {
 
-                    karma.result({
-                        'success': true
-                    });
-
-                })
-                .catch(function (e) {
-
-                    karma.result({
-                        'success': false,
-                        'suite': [],
-                        'log': [e]
-                    });
-
-                })
-                .finally(function () {
-
-                    karma.complete({});
-
+                karma.result({
+                    'success': true
                 });
+
+            }).catch(function (e) {
+
+                karma.result({
+                    'success': false,
+                    'suite': [],
+                    'log': [e]
+                });
+
+            }).finally(function () {
+
+                karma.complete({});
+
+            });
 
         }
     };
