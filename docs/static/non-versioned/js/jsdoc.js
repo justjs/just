@@ -14,7 +14,7 @@
     var versions = el('#versions')[0];
     var bundles = el('#bundles')[0];
     var location = window.location;
-    var urlParts = location.pathname.match(/\/v([^.]+\.[^.]\.[^\/]+)\/(browser(?:\/(core|just))|server)\//) || [];
+    var urlParts = location.pathname.match(/\/v([^.]+\.[^.]\.[^\/]+)\/(browser(?:\/(core|just))?|server)\//) || [];
     var activeVersion = urlParts[1];
     // Normalize browser/just -> browser
     var activeBundle = (urlParts[2] || '').replace('/just', '');
@@ -25,7 +25,7 @@
         var pathname = location.pathname;
         var newUrl = (isVersionBelow1Dot2(version)
             // Redirect to the full version.
-            ? pathname.replace(/(browser)\/(?:just|core)/, '$1')
+            ? pathname.replace(/(browser)\/(?:just|core)\//, '$1')
             // Use as it is.
             : pathname
         ).replace(/v[^\/]+/, 'v' + version);
