@@ -34,32 +34,40 @@
 
     });
 
-    bundles.addEventListener('change', function (e) {
+    if (bundles) {
 
-        var bundle = this.value;
-        var pathname = location.pathname;
-        var newUrl = pathname
-            // This will redirect browser/ -> server/, browser/core -> server/core, or viceversa.
-            .replace(/(?:browser\/(?:(?:just|core)\/)?|server\/)/, bundle + '/')
-            // This will change (invalid) server/just/ & server/core/ -> server/
-            .replace(/(server)\/(?:just|core)\//, '$1/');
+        bundles.addEventListener('change', function (e) {
 
-        if (!isVersionBelow1Dot2(activeVersion)) {
+            var bundle = this.value;
+            var pathname = location.pathname;
+            var newUrl = pathname
+                // This will redirect browser/ -> server/, browser/core -> server/core, or viceversa.
+                .replace(/(?:browser\/(?:(?:just|core)\/)?|server\/)/, bundle + '/')
+                // This will change (invalid) server/just/ & server/core/ -> server/
+                .replace(/(server)\/(?:just|core)\//, '$1/');
 
-            // This will normalize urls -> browser/just | browser/core
-            newUrl = newUrl.replace(/(browser)\/((?:just|core)\/)?/, function ($0, $1, $2) {
+            if (!isVersionBelow1Dot2(activeVersion)) {
 
-                return $1 + '/' + ($2 || 'just/');
+                // This will normalize urls -> browser/just | browser/core
+                newUrl = newUrl.replace(/(browser)\/((?:just|core)\/)?/, function ($0, $1, $2) {
 
-            });
+                    return $1 + '/' + ($2 || 'just/');
 
-        }
+                });
 
-        location.href = newUrl;
+            }
 
-    });
+            location.href = newUrl;
 
-    [versions, bundles].forEach(function (select) {
+        });
+
+    }
+
+    [versions, bundles].filter(function (v) {
+
+        return v;
+
+    }).forEach(function (select) {
 
         var id = select.id;
         var options = el('option', select);
