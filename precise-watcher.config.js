@@ -20,6 +20,9 @@ module.exports = {
             'cmd': 'git',
             'args': ['clone', GIT_STATIC_REPOSITORY, GIT_STATIC_DESTINATION, '--depth=1']
         }, {
+            'cmd': 'rm',
+            'args': [SERVER_DIR + '/.git', '-R']
+        }, {
             // Replace all versions (in old versions) once.
             'cmd': 'node',
             'args': ['bin/replace-versions.js', 'docs/public/*/']
