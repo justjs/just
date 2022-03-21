@@ -25,6 +25,9 @@ if [ "$CI" = "true" ]; then
 
 	git config user.name "github-actions[bot]"
 	git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+	# Add the GITHUB_TOKEN to the remote url.
+	# Based on: https://github.com/github/hub/issues/1644#issue-287574488
+	git remote set-url "$GIT_REMOTE_NAME" "${GIT_REMOTE_URL/\/\//\/\/$GITHUB_TOKEN:x-oauth-basic@}"
 
 fi
 
