@@ -1,7 +1,7 @@
 {
   "name": "@just-js/just",
   "title": "JustJs",
-  "version": "1.2.0-rc.2",
+  "version": "1.2.0-rc.3",
   "description": "Essential utilities for all your javascript proyects.",
   "main": "dist/server/index.js",
   "browser": "dist/browser/core.min.js",
