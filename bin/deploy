@@ -15,30 +15,39 @@ GIT_REMOTE_NAME=origin
 SOURCE=`readlink -f docs/public`
 COMMIT_MSG="$VERSION_TAG"
 
+echo "▸ Deleting $GIT_CLON_DESTINATION"
 # Get the last pushed content and use git from the cloned directory.
 rm -rf "$GIT_CLON_DESTINATION"
+
+echo "▸ Cloning $GIT_REMOTE_URL#$GIT_BRANCH into $GIT_CLON_DESTINATION"
 git clone "$GIT_REMOTE_URL" "$GIT_CLON_DESTINATION" --depth 1 --branch "$GIT_BRANCH"
+
+echo "▸ Changing directory to $GIT_CLON_DESTINATION"
 cd "$GIT_CLON_DESTINATION"
 
 # Setup github-actions credentials on github workflow.
 if [ "$CI" = "true" ]; then
 
+	echo "▸ Setting credentials"
 	git config user.name "github-actions[bot]"
 	git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-	# Add the GITHUB_TOKEN to the remote url.
+
+	echo "▸ Adding token to remote url for $GIT_REMOTE_NAME"
+	# Add the GITHUB_TOKEN to the remote url and silent the output (just in case).
 	# Based on: https://github.com/github/hub/issues/1644#issue-287574488
-	git remote set-url "$GIT_REMOTE_NAME" "${GIT_REMOTE_URL/\/\//\/\/$GITHUB_TOKEN:x-oauth-basic@}"
+	git remote set-url "$GIT_REMOTE_NAME" "${GIT_REMOTE_URL/\/\//\/\/$GITHUB_TOKEN:x-oauth-basic@}" > /dev/null 2>&1
 
 fi
 
-# Override pushed content with source files.
+echo "▸ Overriding pulled content with $SOURCE contents"
 cp --force --recursive "$SOURCE"/* ./
 # @TODO Handle deletions.
 
+echo "▸ Updating remote"
 # Push changes.
 git add .
 git commit -m "$COMMIT_MSG"
-git push "$GIT_REMOTE_NAME" "$GIT_BRANCH"
+git push "$GIT_REMOTE_NAME" "$GIT_BRANCH" -q
 
-# Return to the root path.
+echo "▸ Returning to the root path"
 cd "$ROOT"
