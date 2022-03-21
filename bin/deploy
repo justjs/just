@@ -10,6 +10,7 @@ ROOT=`readlink -f "${BASH_SOURCE%/*}/.."`; cd "$ROOT" || exit
 GIT_REMOTE_URL=https://github.com/justjs/justjs.github.io
 GIT_BRANCH=master
 GIT_CLON_DESTINATION=docs/bot
+GIT_REMOTE_NAME=origin
 # This is an absolute path.
 SOURCE=`readlink -f docs/public`
 COMMIT_MSG="$VERSION_TAG"
