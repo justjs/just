@@ -23,7 +23,6 @@ for arg in "$@"; do
 done
 
 cd "$ROOT"
-rm "$TEMP_PUBLIC_DIR" -R
 
 isValidTag () {
 	[[ "$1" =~ ^v[x0-9] ]]
