@@ -35,7 +35,7 @@ if [ "$CI" = "true" ]; then
 	echo "▸ Adding token to remote url for $GIT_REMOTE_NAME"
 	# Add the GITHUB_TOKEN to the remote url and silent the output (just in case).
 	# Based on: https://github.com/github/hub/issues/1644#issue-287574488
-	git remote set-url "$GIT_REMOTE_NAME" "${GIT_REMOTE_URL/\/\//\/\/$GITHUB_TOKEN:x-oauth-basic@}" > /dev/null 2>&1
+	git remote set-url "$GIT_REMOTE_NAME" "${GIT_REMOTE_URL/\/\//\/\/$GITHUB_TOKEN@}" > /dev/null 2>&1
 
 fi
 
