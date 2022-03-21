@@ -20,7 +20,7 @@ echo "▸ Deleting $GIT_CLON_DESTINATION"
 rm -rf "$GIT_CLON_DESTINATION"
 
 echo "▸ Cloning static website's $GIT_BRANCH branch into $GIT_CLON_DESTINATION"
-git clone "${GIT_REMOTE_URL/\/\//\/\/x-access-token:$GITHUB_TOKEN@}" "$GIT_CLON_DESTINATION" --depth 1 --branch "$GIT_BRANCH" -q || exit 1
+git clone "${GIT_REMOTE_URL/\/\//\/\/$GITHUB_ACTOR:$DEPLOYMENT_TOKEN@}" "$GIT_CLON_DESTINATION" --depth 1 --branch "$GIT_BRANCH" -q || exit 1
 
 echo "▸ Changing directory to $GIT_CLON_DESTINATION"
 cd "$GIT_CLON_DESTINATION"
