@@ -20,7 +20,7 @@ echo "▸ Deleting $GIT_CLON_DESTINATION"
 rm -rf "$GIT_CLON_DESTINATION"
 
 echo "▸ Cloning $GIT_REMOTE_URL#$GIT_BRANCH into $GIT_CLON_DESTINATION"
-git clone "$GIT_REMOTE_URL" "$GIT_CLON_DESTINATION" --depth 1 --branch "$GIT_BRANCH"
+git clone "$GIT_REMOTE_URL" "$GIT_CLON_DESTINATION" --depth 1 --branch "$GIT_BRANCH" || exit 1
 
 echo "▸ Changing directory to $GIT_CLON_DESTINATION"
 cd "$GIT_CLON_DESTINATION"
@@ -47,7 +47,7 @@ echo "▸ Updating remote"
 # Push changes.
 git add .
 git commit -m "$COMMIT_MSG"
-git push "$GIT_REMOTE_NAME" "$GIT_BRANCH" -q
+git push "$GIT_REMOTE_NAME" "$GIT_BRANCH" -q || exit 1
 
 echo "▸ Returning to the root path"
 cd "$ROOT"
