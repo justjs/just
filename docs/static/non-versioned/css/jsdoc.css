@@ -27,6 +27,12 @@ a {
 	background: rgba(127, 127, 137, .3);
 }
 
+#page-header option {
+	/* In chrome, <option> inherits the color of the <select>. This resets it. */
+	color: black;
+	background: white;
+}
+
 #page-header .wrapper,
 /* Versions below 1.2.0 don't have a wrapper. */
 #versions {
