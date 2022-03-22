@@ -30,29 +30,29 @@ var assign = require('./assign');
  *     and any <var>value</var> (except `undefined`) will be allowed.
  *
  * @example
- * defaults([1, 2], {a: 1}); // {a: 1}
+ * just.defaults([1, 2], {a: 1}); // {a: 1}
  *
  * @example
- * defaults({}, null); // null: null is not an object literal.
- * defaults([], null, {'checkLooks': false}); // []: null is an object.
- * defaults(null, {}); // {}: null is not an object literal.
- * defaults(null, []); // []: null is not an Array.
+ * just.defaults({}, null); // null: null is not an object literal.
+ * just.defaults([], null, {'checkLooks': false}); // []: null is an object.
+ * just.defaults(null, {}); // {}: null is not an object literal.
+ * just.defaults(null, []); // []: null is not an Array.
  *
  * @example
- * defaults(1, NaN); // 1 (NaN is an instance of a Number)
+ * just.defaults(1, NaN); // 1 (NaN is an instance of a Number)
  *
  * @example
- * defaults({'a': 1, 'b': 2}, {'a': 'some string'}, {'ignoreDefaultKeys': false}); // {'a': 'some string', 'b': 2}
+ * just.defaults({'a': 1, 'b': 2}, {'a': 'some string'}, {'ignoreDefaultKeys': false}); // {'a': 'some string', 'b': 2}
  *
  * @example
- * defaults({'a': 1}, {'b': 2}, {'ignoreDefaultKeys': false}); // {'a': 1, 'b': 2}
- * defaults({'a': 1}, {'b': 2}, {'ignoreDefaultKeys': true}); // {'a': 1}
+ * just.defaults({'a': 1}, {'b': 2}, {'ignoreDefaultKeys': false}); // {'a': 1, 'b': 2}
+ * just.defaults({'a': 1}, {'b': 2}, {'ignoreDefaultKeys': true}); // {'a': 1}
  *
  * @example
- * defaults(1, null, {'ignoreNull': false}) // null (1 is not an object)
- * defaults(1, null, {'ignoreNull': true}) // 1
- * defaults(undefined, null, {'ignoreNull': true}) // null
- * defaults({a: 1}, {a: null}, {'ignoreNull': true}) // {a: 1}
+ * just.defaults(1, null, {'ignoreNull': false}) // null (1 is not an object)
+ * just.defaults(1, null, {'ignoreNull': true}) // 1
+ * just.defaults(undefined, null, {'ignoreNull': true}) // null
+ * just.defaults({a: 1}, {a: null}, {'ignoreNull': true}) // {a: 1}
  *
  * @returns {value} <var>value</var> if it looks like <var>defaultValue</var> or <var>defaultValue</var> otherwise.
  */

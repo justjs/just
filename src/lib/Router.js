@@ -17,13 +17,7 @@ var Router = (function () {
      * @memberof just
      *
      * @example
-     * // routes/router.js
-     * const router = new Router();
-     *
-     * export default router;
-     *
-     * // routes/home.js
-     * import router from './router.js';
+     * const router = new just.Router();
      *
      * router.route('home', {
      *     'pathname': '/',

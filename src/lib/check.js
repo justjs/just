@@ -10,8 +10,8 @@ var deprecate = require('./deprecate');
  * @param {...*} [otherValues] - Values to check against.
  *
  * @example
- * check(null, {}, "null", []); // false. Neither is `null`.
- * check({}, [], {}); // true. {} is {}.
+ * just.check(null, {}, "null", []); // false. Neither is `null`.
+ * just.check({}, [], {}); // true. {} is {}.
  *
  * @return {boolean} `true` if some other value looks like <var>value</var>.
  */

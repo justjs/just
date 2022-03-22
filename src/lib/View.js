@@ -613,21 +613,21 @@ var View = (function () {
          * @param {*} defaultValue - By default, it skips replacements if some accessed value is undefined.
          *                           Any other value will be stringified (returned to the String#replace function).
          * @example <caption>Using a string</caption>
-         * View.replaceVars('${splitted.property}!', {
+         * just.View.replaceVars('${splitted.property}!', {
          *     'splitted': {'property': 'hey'}
          * }); // > "hey!"
          *
          * @example <caption>Using an object</caption>
-         * View.replaceVars({
+         * just.View.replaceVars({
          *     'a': 'Show ${a}',
          *     'b': 'Show ${b}'
          * }, {'b': 'me (b)'}); // > "Show me (b)"
          *
          * @example <caption>Inexistent property</caption>
-         * View.replaceVars("Don't replace ${me}!") // "Don't replace ${me}!"
+         * just.View.replaceVars("Don't replace ${me}!") // "Don't replace ${me}!"
          *
          * @example <caption>Setting a default value for an inexistent property</caption>
-         * View.replaceVars('Replace ${me}', null, 'who?') // "Replace who?"
+         * just.View.replaceVars('Replace ${me}', null, 'who?') // "Replace who?"
          *
          * @returns {string} The replaced string.
          *          If some value is undefined, it won't be replaced at all.
