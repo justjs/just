@@ -11,20 +11,20 @@ var assign = require('./assign');
  * @param {url} [url=window.location.href] - A relative, an absolute or a blob url.
  *
  * @example <caption>An absolute url:</caption>
- * parseUrl(window.location.href);
+ * just.parseUrl(window.location.href);
  *
  * @example <caption>A relative url:</caption>
- * parseUrl('/?a#c?d'); // "/" is the pathname, "?a" the search and "#c?d" the hash.
+ * just.parseUrl('/?a#c?d'); // "/" is the pathname, "?a" the search and "#c?d" the hash.
  *
  * @example <caption>A blob url:</caption>
- * parseUrl('blob:'); // Same as 'blob:' + `window.location.href`
+ * just.parseUrl('blob:'); // Same as 'blob:' + `window.location.href`
  *
  * @example <caption>Some good-to-know urls:</caption>
- * parseUrl(); // Same as `window.location`.
- * parseUrl('a'); // Something that doesn't start with "/", "?", or "#" is evaluated as a host.
- * parseUrl('a:b'); // "a:b" is a host, since "b" is not a number.
- * parseUrl('//'); // evals as the current origin.
- * parseUrl('blob://'); // Same as 'blob:' + `window.location.origin`.
+ * just.parseUrl(); // Same as `window.location`.
+ * just.parseUrl('a'); // Something that doesn't start with "/", "?", or "#" is evaluated as a host.
+ * just.parseUrl('a:b'); // "a:b" is a host, since "b" is not a number.
+ * just.parseUrl('//'); // evals as the current origin.
+ * just.parseUrl('blob://'); // Same as 'blob:' + `window.location.origin`.
  * // [...]
  *
  * @return {url_parts}

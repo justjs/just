@@ -10,10 +10,10 @@ var parseJSON = require('./parseJSON');
  * @param {*} string - Some string to parse.
  *
  * @example
- * stringToJSON('{"a": 1}'); // returns {a: 1}.
+ * just.stringToJSON('{"a": 1}'); // returns {a: 1}.
  *
  * @example
- * stringToJSON(1); // returns {}.
+ * just.stringToJSON(1); // returns {}.
  *
  * @return {!object} An object literal.
  */

@@ -42,13 +42,13 @@ var assign = require('./assign');
  * @throws {TypeError} If some property causes access problems.
  *
  * @example <caption>Accessing to some existent property</caption>
- * access({a: {b: {c: {d: 4}}}}, ['a', 'b', 'c', 'd'], function (currentObject, currentKey, hasProperty, path) {
+ * just.access({a: {b: {c: {d: 4}}}}, ['a', 'b', 'c', 'd'], function (currentObject, currentKey, hasProperty, path) {
  *     return hasProperty ? currentObject[currentKey] : null;
  * }); // returns 4.
  *
  * @example <caption>Accessing to some property with a non-JSON-like-object as a value</caption>
- * access({a: 1}, ['a', 'b', 'c']); // throws TypeError.
- * access({a: 1}, ['a', 'b', 'c'], null, {
+ * just.access({a: 1}, ['a', 'b', 'c']); // throws TypeError.
+ * just.access({a: 1}, ['a', 'b', 'c'], null, {
  *     'override': true
  * }); // returns undefined.
  * // Doesn't throw because it replaces `1` with an empty object
@@ -56,7 +56,7 @@ var assign = require('./assign');
  *
  * @example <caption>Accessing to some non-existent property</caption>
  * var obj = {z: 1, prototype: [...]};
- * var newObj = access(obj, 'a.b.c'.split('.'), function (currentObject, currentKey, hasProperty, path) {
+ * var newObj = just.access(obj, 'a.b.c'.split('.'), function (currentObject, currentKey, hasProperty, path) {
  *
  *     if (!hasProperty) {
  *         currentObject[currentKey] = path.length;
@@ -76,7 +76,7 @@ var assign = require('./assign');
  * @example <caption>Modifying the base object</caption>
  * var obj = {a: {b: false}, b: {b: false}, prototype: [...]};
  *
- * access(obj, 'a.b'.split('.'), function (currentObject, currentKey, hasProperty, path) {
+ * just.access(obj, 'a.b'.split('.'), function (currentObject, currentKey, hasProperty, path) {
  *     currentObject[currentKey] = 2;
  * }, true);
  *

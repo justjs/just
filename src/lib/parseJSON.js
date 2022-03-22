@@ -9,19 +9,19 @@
  * @param {*} value - Some value.
  *
  * @example
- * parseJSON('{"a": 1}'); // > {a: 1}
+ * just.parseJSON('{"a": 1}'); // > {a: 1}
  *
  * @example
- * parseJSON('[]'); // > []
+ * just.parseJSON('[]'); // > []
  *
  * @example
- * parseJSON(''); // > null
+ * just.parseJSON(''); // > null
  *
  * @example
- * parseJSON({}); // > null
+ * just.parseJSON({}); // > null
  *
  * @example
- * parseJSON(1); // > 1
+ * just.parseJSON(1); // > 1
  *
  * @return {*} The given value (if it's an object), the parsed value or null.
  */

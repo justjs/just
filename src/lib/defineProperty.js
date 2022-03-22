@@ -20,13 +20,13 @@ var reduce = require('./reduce');
  * @param {string} key - Key for the property.
  * @param {!object} [value={'value': value}] - A {@link propertyDescriptor|property descriptor} or some value.
  * @example <caption>Define a property using a value.</caption>
- * defineProperty({}, 'a', 1); // Same as Object.defineProperty({}, 'a', {'value': 1})
+ * just.defineProperty({}, 'a', 1); // Same as Object.defineProperty({}, 'a', {'value': 1})
  *
  * @example <caption>Define a property using a {@link propertyDescriptor|property descriptor}.</caption>
- * defineProperty({}, 'a', {'writable': true}); // Same as Object.defineProperty({}, 'a', {'writable': true})
+ * just.defineProperty({}, 'a', {'writable': true}); // Same as Object.defineProperty({}, 'a', {'writable': true})
  *
  * @example <caption>Define a property with an empty object.</caption>
- * defineProperty({}, 'a', {}); // Same as Object.defineProperty({}, 'a', {'value': {}});
+ * just.defineProperty({}, 'a', {}); // Same as Object.defineProperty({}, 'a', {'value': {}});
  *
  * @return <var>object</var>.
  */

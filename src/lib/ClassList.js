@@ -12,7 +12,7 @@ var defineProperties = require('./defineProperties');
  * @example
  * let force;
  *
- * ClassList(button)
+ * just.ClassList(button)
  *     .add('a', 'b', 'c')
  *     .remove('b')
  *     .toggle('c', (force = true))
