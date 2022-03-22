@@ -27,7 +27,7 @@
             // Redirect to the /browser build.
             ? pathname.replace(/(browser\/)(?:just|core)\//, '$1')
             // Redirect to the /browser/just/ build (the full version).
-            : pathname.replace(/(browser)\//, '$1/just/')
+            : pathname.replace(/(browser)\/((?:just|core)\/)?/, function ($0, $1, $2) { return $1 + '/' + ($2 || 'just/'); })
         ).replace(/v[^\/]+/, 'v' + version);
 
         location.href = newUrl;
