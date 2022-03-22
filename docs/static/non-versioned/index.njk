@@ -2,6 +2,8 @@
 {% block head %}
 	{{ super() }}
 	<link rel='preload' href='/font/spacemono/SpaceMono-Regular.ttf' as='font' />
+	<link rel='preload' href='/v{{ version }}/browser/just/js/prettify.min.js' as='script' />
+	<link rel='preload' href='/v{{ version }}/browser/just/css/tomorrow.min.css' as='style' />
 	<style>{% include './css/.index.css' %}</style>
 {% endblock %}
 {% block main %}
