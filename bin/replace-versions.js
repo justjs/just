@@ -4,10 +4,12 @@ var childProcess = require('child_process');
 var nunjucksConfig = require('../nunjucks.config.js');
 var nunjucks = nunjucksConfig.render.context;
 var version = nunjucks.version;
+var production = nunjucks.production;
 var execSync = childProcess.execSync;
 var availableVersions = semverSort([version].concat(nunjucks.getAvailableVersions()).reduce(function (unique, v) {
 
-    if (unique.indexOf(v) > -1) { return unique; }
+    // Ignore repeated and, during production, release candidates.
+    if (unique.indexOf(v) > -1 || (production && /-rc/.test(v))) { return unique; }
 
     return unique.concat(v);
 
