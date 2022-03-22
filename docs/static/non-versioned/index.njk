@@ -29,13 +29,13 @@
 						<dt><a href='https://github.com/justjs/just/blob/master/src/browser/core.js' rel='noopener noreferrer'>Core</a> &rarr; <a href='{{ getCDNUrl("dist/browser/core.min.js", version) }}' rel='noopener noreferrer'>core.min.js</a> &rarr; <a href='v{{ version }}/browser/core/'>docs</a></dt>
 						<dd>
 							<div class='code-wrapper'>
-								<pre class='prettyprint'><code>{{ buildScriptTag('dist/browser/core.min.js', version) }}</code></pre>
+								<pre class='prettyprint'><code>{{ buildScriptTag('dist/browser/core.min.js', version) | replace(r/\s+/g, '\n  ') }}</code></pre>
 							</div>
 						</dd>
 						<dt><a href='https://github.com/justjs/just/blob/master/src/browser/just.js' rel='noopener noreferrer'>Full suite</a> &rarr; <a href='{{ getCDNUrl("dist/browser/just.min.js", version) }}'>just.min.js</a> &rarr; <a href='v{{ version }}/browser/just/'>docs</a></dt>
 						<dd>
 							<div class='code-wrapper'>
-								<pre class='prettyprint'><code>{{ buildScriptTag('dist/browser/just.min.js', version) }}</code></pre>
+								<pre class='prettyprint'><code>{{ buildScriptTag('dist/browser/just.min.js', version) | replace(r/\s+/g, '\n  ') }}</code></pre>
 							</div>
 						</dd>
 					</dl>
