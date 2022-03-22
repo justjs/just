@@ -54,7 +54,7 @@ main {
 }
 
 footer[role='contentinfo'] {
-	background: #54184d;
+	background: black;
 	color: white;
 	padding: 2em;
 }
@@ -86,20 +86,18 @@ footer[role='contentinfo'] .content-wrapper {
 	display: table-cell;
 	vertical-align: middle;
 	padding: 2em;
-	overflow-y: auto;
+	overflow-x: hidden;
 	position: relative;
+	/* Shadow from left to right */
+	box-shadow: -3px 0 5px rgba(0, 0, 0, .05);
 }
 
 #setup {
-	/* Based on jsdoc-template's colors. */
-	background: #f3f3f3;
-	color: #1f1e26;
+	background: #fbfbfb;
 }
 
 #usage {
-	/* Based on jsdoc-template's colors. */
-	background: #181826;
-	color: white;
+	background: #f6f6f6;
 }
 
 #home header {
@@ -115,8 +113,8 @@ footer[role='contentinfo'] .content-wrapper {
 
 .prettyprint {
 	width: 100%;
-	padding: 2em;
-	overflow-x: auto;
+	padding: 1em;
+	background: transparent !important;
 }
 
 code {
@@ -125,7 +123,7 @@ code {
 
 a[role='button'] {
 	padding: .5em 1em;
-	background: #54184d;
+	background: #000;
 	color: white;
 	text-decoration: none;
 }
@@ -133,7 +131,7 @@ a[role='button'] {
 a[role='button']:hover,
 a[role='button']:focus {
 	/* Show a lighter color */
-	background: #641a5b;
+	background: #37373b;
 }
 
 #floating-button {
@@ -209,6 +207,7 @@ a[role='button']:focus {
 	#usage {
 		width: 100%;
 		padding: 2em;
+		box-shadow: 0 -3px 5px rgba(0, 0, 0, .05);
 	}
 
 	#banner .content-wrapper,
@@ -241,6 +240,7 @@ a[role='button']:focus {
 	#home > * {
 		display: block;
 		height: auto;
+		box-shadow: 0 -3px 5px rgba(0, 0, 0, .05);
 	}
 
 	#banner {
@@ -265,6 +265,11 @@ a[role='button']:focus {
 	#setup .content-wrapper,
 	#usage .content-wrapper {
 		padding: 2em 0;
+	}
+
+	.prettyprint {
+		overflow-x: auto;
+		padding: 2em;
 	}
 
 	footer[role='contentinfo'] {
