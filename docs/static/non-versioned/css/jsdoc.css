@@ -27,6 +27,16 @@ a {
 	background: rgba(127, 127, 137, .3);
 }
 
+#bundles {
+	/* HOTFIX: Selects look unaligned on windows */
+	max-width: 120px;
+}
+
+#versions {
+	/* HOTFIX: Selects look unaligned on windows */
+	max-width: 95px;
+}
+
 #page-header option {
 	/* In chrome, <option> inherits the color of the <select>. This resets it. */
 	color: black;
