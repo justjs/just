@@ -73,7 +73,7 @@
     "karma-custom": "^1.1.9",
     "karma-firefox-launcher": "^2.1.2",
     "live-server": "^1.2.1",
-    "mock-xmlhttprequest": "^7.0.4",
+    "mock-xmlhttprequest": "^8.1.0",
     "nunjucks-to-html": "^1.1.0",
     "precise-watcher": "^2.1.0",
     "requirejs": "^2.3.6",
