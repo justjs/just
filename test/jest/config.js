@@ -8,10 +8,10 @@ module.exports = {
     },
     'globalSetup': '<rootDir>/test/jest/setup.js',
     'globalTeardown': '<rootDir>/test/jest/teardown.js',
-    'testURL': 'http://localhost:7890',
     'coverageReporters': ['lcov', 'text-summary'],
     'testEnvironment': 'jsdom',
     'testEnvironmentOptions': {
-        'resources': 'usable'
+        'resources': 'usable',
+        'url': 'http://127.0.0.1:7890'
     }
 };
