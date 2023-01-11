@@ -68,7 +68,7 @@
     "html-minifier": "^4.0.0",
     "jest": "^29.3.1",
     "jest-environment-jsdom": "^29.3.1",
-    "jsdoc": "^3.6.7",
+    "jsdoc": "^4.0.0",
     "karma": "^6.3.17",
     "karma-custom": "^1.1.9",
     "karma-firefox-launcher": "^2.1.2",
