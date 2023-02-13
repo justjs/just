@@ -1,6 +1,6 @@
 # Just
 
-*Essential utilities for all your javascript proyects.*
+*Essential utilities for all your javascript projects.*
 
 ![CI](https://github.com/justjs/just/actions/workflows/ci.yml/badge.svg) [![Coverage Status](https://coveralls.io/repos/github/justjs/just/badge.svg?branch=master)](https://coveralls.io/github/justjs/just?branch=master) [![npm version](https://badge.fury.io/js/%40just-js%2Fjust.svg)](https://badge.fury.io/js/%40just-js%2Fjust)
 
